@@ -1,6 +1,6 @@
 package com.tyzsskills;
 
-import com.tyzsskills.server.active.JsonManager;
+import com.tyzsskills.server.active.FileManager;
 import com.tyzsskills.server.active.SkillManager;
 import com.tyzsskills.server.commands.MainCommand;
 import com.tyzsskills.server.events.RuntimeEvents;
@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.food.FoodProperties;
@@ -20,7 +19,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
@@ -101,6 +99,7 @@ public class Tyzsskills {
 
     private void commonSetup(FMLCommonSetupEvent event) {
         // Some common setup code
+
     }
 
     // Add the example block item to the building blocks tab
@@ -116,7 +115,8 @@ public class Tyzsskills {
 
     @SubscribeEvent
     public void OnServerBeforeStart(ServerAboutToStartEvent event) throws IOException {
-        JsonManager.Get().LoadDefaultGlobalJson(event.getServer());
+        FileManager.Get().InitPath(event.getServer());
+        FileManager.Get().LoadDefaultJson(event.getServer());
     }
 
     @SubscribeEvent

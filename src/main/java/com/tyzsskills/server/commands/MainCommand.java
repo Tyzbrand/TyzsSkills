@@ -148,7 +148,7 @@ public class MainCommand {
                                 .executes(ctx ->{
                                     var player = EntityArgument.getPlayer(ctx, "player");
                                     var amount = SkillManager.Get().GetLoadedSkills();
-                                    player.sendSystemMessage(Component.literal("Xp: " + amount));
+                                    player.sendSystemMessage(Component.literal("Loaded skills: " + amount));
                                     return 1;}
                                 )
                         )

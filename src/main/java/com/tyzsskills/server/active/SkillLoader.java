@@ -40,7 +40,7 @@ public class SkillLoader {
 
 
         SkillManager.Get().RegisterSKill(
-                new PassiveSkill(state, id, displayName, maxLevel, prices,
+                new PassiveSkill(state, id, maxLevel, prices,
                         type, category, modifier, values)
         );
     }

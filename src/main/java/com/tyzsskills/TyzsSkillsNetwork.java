@@ -7,7 +7,7 @@ public class TyzsSkillsNetwork {
 
     private static final String PROTOCOL_VERSION = "1";
 
-    public static final NetworkChannel CHANNEL= NetworkRegistry.
+    //public static final NetworkChannel CHANNEL= NetworkRegistry.
 
     }
-}
+
