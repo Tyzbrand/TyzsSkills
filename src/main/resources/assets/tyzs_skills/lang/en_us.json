@@ -1,0 +1,13 @@
+{
+  "itemGroup.tyzs_skills": "Example Mod Tab",
+  "block.tyzs_skills.example_block": "Example Block",
+  "item.tyzs_skills.example_item": "Example Item",
+
+  "tyzs_skills.configuration.title": "Tyz's skills Configs",
+  "tyzs_skills.configuration.section.tyzs_skills.common.toml": "Tyz's skills Configs",
+  "tyzs_skills.configuration.section.tyzs_skills.common.toml.title": "Tyz's skills Configs",
+  "tyzs_skills.configuration.items": "Item List",
+  "tyzs_skills.configuration.logDirtBlock": "Log Dirt Block",
+  "tyzs_skills.configuration.magicNumberIntroduction": "Magic Number Text",
+  "tyzs_skills.configuration.magicNumber": "Magic Number"
+}
