@@ -11,15 +11,13 @@ public class XpValuesPreset {
             "category_A": {
                 "xp" : 0.5,
                 "blocks": [
-                "minecraft:dirt",
-                "minecraft:cobblestone",
-                "minecraft:gravel"
+                "minecraft:dirt"
                 ]
             },
             "category_B": {
                 "xp" : 1,
                 "blocks": [
-                "minecraft:stone",
+                "minecraft:stone"
                 ]
             }
         }""";

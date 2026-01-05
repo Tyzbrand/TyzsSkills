@@ -5,6 +5,7 @@ import com.tyzsskills.server.active.SkillManager;
 import com.tyzsskills.server.commands.MainCommand;
 import com.tyzsskills.server.events.RuntimeEvents;
 import com.tyzsskills.server.payloads.ClientMainCachePayload;
+import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
@@ -137,12 +138,14 @@ public class Tyzsskills {
 
         fileManager.InitPath(server);
         fileManager.LoadDefaultJson(server);
-        fileManager.LoadDefaultXpValues(server);
+        fileManager.LoadDefaultBlocksXpValues(server);
     }
 
     @SubscribeEvent
     public void OnServerStop(ServerStoppingEvent event){
+
         SkillManager.Get().ClearSkills();
+        XpBlock.ClearValues();;
     }
 
 

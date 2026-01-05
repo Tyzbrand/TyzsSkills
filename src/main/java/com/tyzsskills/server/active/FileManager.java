@@ -3,7 +3,9 @@ package com.tyzsskills.server.active;
 import java.io.IOException;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.tyzsskills.server.model.*;
+import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import net.minecraft.server.MinecraftServer;
 
 import com.google.gson.Gson;
@@ -58,16 +60,17 @@ public class FileManager {
         }
     }
 
-    public void LoadDefaultXpValues(MinecraftServer server) throws IOException {
+    public void LoadDefaultBlocksXpValues(MinecraftServer server) throws IOException {
         Path file = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("BlockXpValues.json");
 
+
         if(!Files.exists(file)) Files.writeString(file, XpValuesPreset.GetDefaultXpValues());
     }
 
-    //Permet de lire et d'appeler la construction des skills
-    public void ReadSkills(MinecraftServer server) throws IOException{
+    //Lit les jsons par derfaut
+    public void ReadJsons(MinecraftServer server) throws IOException{
         Path globalPath = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("skills")
@@ -91,6 +94,20 @@ public class FileManager {
         catch (IOException ex){throw new RuntimeException(ex);}
 
     }
+
+    public void ReadBlocksXpValues(MinecraftServer server) throws IOException {
+        Path targetedFile = server.getServerDirectory().resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("BlockXpValues.json");
+
+        if(Files.exists(targetedFile)){
+            var content = Files.readString(targetedFile);
+            var obj = JsonParser.parseString(content).getAsJsonObject();
+            XpBlock.LoadValues(obj);
+        }
+    }
+
+
 
     //Utilitaire
     private void WriteSkill(Skill skill, Path path) throws IOException{

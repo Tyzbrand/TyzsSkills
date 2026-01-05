@@ -2,6 +2,8 @@ package com.tyzsskills.server.events;
 
 import com.tyzsskills.server.active.*;
 import com.tyzsskills.server.xp.XpManager;
+import com.tyzsskills.server.xp.xpEvents.XpBlock;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -39,13 +41,16 @@ public class RuntimeEvents {
         if(!(event.getLevel() instanceof ServerLevel serverLevel)) return;
 
         var server = serverLevel.getServer();
-        if(!SkillManager.Get().AreSkillsLoaded()) FileManager.Get().ReadSkills(server);
+        if(!SkillManager.Get().AreSkillsLoaded()) FileManager.Get().ReadJsons(server);
+        if(!XpBlock.AreValuesLoaded()) FileManager.Get().ReadBlocksXpValues(server);
     }
 
     @SubscribeEvent
     public static void OnBlockBreak(BlockEvent.BreakEvent event){
-        if(event.getPlayer() instanceof ServerPlayer){
 
+        if(event.getPlayer() instanceof ServerPlayer serverPlayer){
+            var blockID = BuiltInRegistries.BLOCK.getKey(event.getState().getBlock()).toString();
+            XpBlock.BlockBreakProfit(blockID, serverPlayer);
         }
     }
 
