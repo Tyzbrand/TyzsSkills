@@ -20,7 +20,6 @@ public record ClientMainCachePayload(int level, int sp, float xp) implements Cus
             ClientMainCachePayload::new
     );
 
-
     @Override
     public Type<? extends CustomPacketPayload> type(){
         return TYPE;

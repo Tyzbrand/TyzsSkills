@@ -132,8 +132,12 @@ public class Tyzsskills {
 
     @SubscribeEvent
     public void OnServerBeforeStart(ServerAboutToStartEvent event) throws IOException {
-        FileManager.Get().InitPath(event.getServer());
-        FileManager.Get().LoadDefaultJson(event.getServer());
+        var fileManager = FileManager.Get();
+        var server = event.getServer();
+
+        fileManager.InitPath(server);
+        fileManager.LoadDefaultJson(server);
+        fileManager.LoadDefaultXpValues(server);
     }
 
     @SubscribeEvent

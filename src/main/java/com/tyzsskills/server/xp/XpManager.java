@@ -1,5 +1,7 @@
-package com.tyzsskills.server.active;
+package com.tyzsskills.server.xp;
 
+import com.tyzsskills.server.active.LevelManager;
+import com.tyzsskills.server.active.SpManager;
 import com.tyzsskills.server.payloads.ClientMainCachePayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;

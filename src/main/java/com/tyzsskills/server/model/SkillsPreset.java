@@ -1,7 +1,4 @@
-package com.tyzsskills.server.active;
-
-import com.tyzsskills.server.model.PassiveSkill;
-import com.tyzsskills.server.model.Skill;
+package com.tyzsskills.server.model;
 
 import java.util.ArrayList;
 import java.util.List;

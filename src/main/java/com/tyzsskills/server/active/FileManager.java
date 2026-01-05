@@ -1,6 +1,5 @@
 package com.tyzsskills.server.active;
 
-import java.io.File;
 import java.io.IOException;
 
 import com.google.gson.JsonObject;
@@ -11,7 +10,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.nio.file.Files;
@@ -60,8 +58,16 @@ public class FileManager {
         }
     }
 
-    //Permet de lire les jsons
-    public void ReadJson(MinecraftServer server) throws IOException{
+    public void LoadDefaultXpValues(MinecraftServer server) throws IOException {
+        Path file = server.getServerDirectory().resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("BlockXpValues.json");
+
+        if(!Files.exists(file)) Files.writeString(file, XpValuesPreset.GetDefaultXpValues());
+    }
+
+    //Permet de lire et d'appeler la construction des skills
+    public void ReadSkills(MinecraftServer server) throws IOException{
         Path globalPath = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("skills")
