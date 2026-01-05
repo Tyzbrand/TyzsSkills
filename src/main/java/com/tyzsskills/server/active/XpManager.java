@@ -1,6 +1,8 @@
 package com.tyzsskills.server.active;
 
+import com.tyzsskills.server.payloads.ClientMainCachePayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 
 public class XpManager {
@@ -12,17 +14,23 @@ public class XpManager {
 
         var playerData = player.getPersistentData();
         playerData.putFloat(dataKey, amount);
+
+        UpdateClient(player);
     }
 
     public static void AddXP(ServerPlayer player, float amount){
         if(amount <= 0) return;
         SetXP(player, GetXP(player) + amount);
+
+        UpdateClient(player);
     }
 
     public static void RemoveXP(ServerPlayer player, float amount){
         if(amount <= 0) return;
         var result = Math.max(0f, GetXP(player) - amount);
         SetXP(player, result);
+
+        UpdateClient(player);
     }
 
     public static void RestorePlayerXPData(ServerPlayer oldPlayer, ServerPlayer newPlayer){
@@ -30,11 +38,24 @@ public class XpManager {
         var oldData = oldPlayer.getPersistentData();
         var newData = newPlayer.getPersistentData();
 
-        if(oldData.contains(dataKey)) newData.putFloat(dataKey, oldData.getFloat(dataKey));
+        if(oldData.contains(dataKey)) {
+            newData.putFloat(dataKey, oldData.getFloat(dataKey));
+            UpdateClient(newPlayer);
+        }
+        else SetXP(newPlayer, 0f);
     }
 
     public static void EnsureDefaultXP(ServerPlayer player){
         if(!player.getPersistentData().contains(dataKey)) SetXP(player,0f);
+    }
+
+    //Utilitaire
+    private static void UpdateClient(ServerPlayer player){
+        PacketDistributor.sendToPlayer(player, new ClientMainCachePayload(
+                LevelManager.GetLevel(player),
+                SpManager.GetSP(player),
+                GetXP(player)
+        ));
     }
 
     //Getters

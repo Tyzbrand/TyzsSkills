@@ -4,9 +4,13 @@ import com.tyzsskills.server.active.FileManager;
 import com.tyzsskills.server.active.SkillManager;
 import com.tyzsskills.server.commands.MainCommand;
 import com.tyzsskills.server.events.RuntimeEvents;
+import com.tyzsskills.server.payloads.ClientMainCachePayload;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -90,6 +94,9 @@ public class Tyzsskills {
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
 
+        //Register network
+        modEventBus.addListener(this::RegisterPayloads);
+
         //Register commands
         NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, this::RegisterCommands);
 
@@ -111,6 +118,16 @@ public class Tyzsskills {
 
     private void RegisterCommands(RegisterCommandsEvent event){
         event.getDispatcher().register(MainCommand.register());
+    }
+
+    private void RegisterPayloads(final RegisterPayloadHandlersEvent event){
+        final PayloadRegistrar registrar = event.registrar("1");
+
+        registrar.playToClient(
+                ClientMainCachePayload.TYPE,
+                ClientMainCachePayload.STREAM_CODEC,
+                ClientMainCachePayload::Handle
+        );
     }
 
     @SubscribeEvent

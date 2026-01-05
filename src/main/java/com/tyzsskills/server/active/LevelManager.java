@@ -1,6 +1,8 @@
 package com.tyzsskills.server.active;
 
+import com.tyzsskills.server.payloads.ClientMainCachePayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class LevelManager {
 
@@ -11,17 +13,23 @@ public class LevelManager {
 
         var playerData = player.getPersistentData();
         playerData.putInt(dataKey, level);
+
+        UpdateClient(player);
     }
 
     public static void AddLevel(ServerPlayer player, int level){
         if(level <= 0) return;
         SetLevel(player, GetLevel(player) + level);
+
+        UpdateClient(player);
     }
 
     public static void RemoveLevel(ServerPlayer player, int level){
         if(level <= 0) return;
         var result = Math.max(1, GetLevel(player) - level);
         SetLevel(player, result);
+
+        UpdateClient(player);
     }
 
     public static void RestorePlayerLevelData(ServerPlayer oldPlayer, ServerPlayer newPlayer){
@@ -29,12 +37,25 @@ public class LevelManager {
         var oldData = oldPlayer.getPersistentData();
         var newData = newPlayer.getPersistentData();
 
-        if(oldData.contains(dataKey)) newData.putInt(dataKey, oldData.getInt(dataKey));
+        if(oldData.contains(dataKey)) {
+            newData.putInt(dataKey, oldData.getInt(dataKey));
+            UpdateClient(newPlayer);
+        }
         else SetLevel(newPlayer, 1);
     }
 
     public static void EnsureDefaultLevel(ServerPlayer player){
         if(!player.getPersistentData().contains(dataKey)) SetLevel(player,1);
+        else UpdateClient(player); //SEULEMENT ICI ET PAS DANS LES AUTRES MANAGER CAR SINON 3 PAQUETS IDENTIQUES
+    }
+
+    //Utilitaire
+    private static void UpdateClient(ServerPlayer player){
+        PacketDistributor.sendToPlayer(player, new ClientMainCachePayload(
+                GetLevel(player),
+                SpManager.GetSP(player),
+                XpManager.GetXP(player)
+                ));
     }
 
     //Getters

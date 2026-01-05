@@ -1,6 +1,8 @@
 package com.tyzsskills.server.active;
 
+import com.tyzsskills.server.payloads.ClientMainCachePayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class SpManager {
 
@@ -11,17 +13,23 @@ public class SpManager {
 
             var playerData = player.getPersistentData();
             playerData.putInt(dataKey, amount);
+
+            UpdateClient(player);
         }
 
         public static void AddSP(ServerPlayer player, int amount){
             if(amount <= 0) return;
             SetSP(player, GetSP(player) + amount);
+
+            UpdateClient(player);
         }
 
         public static void RemoveSP(ServerPlayer player, int amount){
             if(amount <= 0) return;
             var result = Math.max(0, GetSP(player) - amount);
             SetSP(player, result);
+
+            UpdateClient(player);
         }
 
         public static void RestorePlayerSPData(ServerPlayer oldPlayer, ServerPlayer newPlayer){
@@ -29,12 +37,24 @@ public class SpManager {
             var oldData = oldPlayer.getPersistentData();
             var newData = newPlayer.getPersistentData();
 
-            if(oldData.contains(dataKey)) newData.putInt(dataKey, oldData.getInt(dataKey));
-            else SetSP(newPlayer, 1);
+            if(oldData.contains(dataKey)) {
+                newData.putInt(dataKey, oldData.getInt(dataKey));
+                UpdateClient(newPlayer);
+            }
+            else SetSP(newPlayer, 0);
         }
 
         public static void EnsureDefaultSP(ServerPlayer player){
             if(!player.getPersistentData().contains(dataKey)) SetSP(player,0);
+        }
+
+        //Utilitaire
+        private static void UpdateClient(ServerPlayer player){
+            PacketDistributor.sendToPlayer(player, new ClientMainCachePayload(
+                    LevelManager.GetLevel(player),
+                    GetSP(player),
+                    XpManager.GetXP(player)
+            ));
         }
 
         //Getters
