@@ -1,9 +1,6 @@
 package com.tyzsskills.server.model;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-public class XpValuesPreset {
+public class BlockXpValuesPreset {
 
     public static String GetDefaultXpValues(){
         return"""
@@ -104,11 +101,12 @@ public class XpValuesPreset {
                         "minecraft:tall_grass",
                         "minecraft:large_fern",
                         "#minecraft:flowers",
-                        "#minecraft:small_flowers ",
+                        "#minecraft:small_flowers",
                         "#minecraft:ice",
                         "#minecraft:leaves",
                         "#minecraft:saplings",
-                        "#minecraft:snow"
+                        "#minecraft:snow",
+                        "#c:leaves"
                 ]
             },
             "category_D": {
@@ -145,7 +143,8 @@ public class XpValuesPreset {
                         "minecraft:nether_quartz_ore",
                         "minecraft:sculk",
                         "minecraft:end_stone",
-                        "#minecraft:base_stone_overworld"
+                        "#minecraft:base_stone_overworld",
+                        "minecraft:blackstone"
                 ]
             },
             "category_F": {
@@ -199,7 +198,12 @@ public class XpValuesPreset {
                         "minecraft:warped_stem",
                         "minecraft:crimson_stem",
                         "#minecraft:crops",
-                        "#minecraft:logs_that_burn"
+                        "#minecraft:logs_that_burn",
+                        "#c:ores",
+                        "#c:logs",
+                        "#c:crops",
+                        "minecraft:sweet_berries",
+                        "minecraft:glow_berries"
                 ]
             },
             "category_H": {
@@ -228,7 +232,8 @@ public class XpValuesPreset {
                         "minecraft:horn_coral_fan",
                         "#minecraft:corals",
                         "#minecraft:coral_blocks",
-                        "#minecraft:coral_plants"
+                        "#minecraft:coral_plants",
+                        "minecraft:pointed_dripstone"
                 ]
             },
             "category_I": {
@@ -239,14 +244,14 @@ public class XpValuesPreset {
                         "minecraft:deepslate_iron_ore",
                         "minecraft:deepslate_redstone_ore",
                         "minecraft:lapis_ore",
-                        "minecraft:deepslate_lapis_ore",
-                        "minecraft:blue_ice"
+                        "minecraft:deepslate_lapis_ore"
                 ]
             },
             "category_J": {
                 "xp": 10,
                 "blocks":[
-                    "minecraft:emerald_ore"
+                    "minecraft:emerald_ore",
+                    "minecraft:amethyst_cluster"
                 ]
             },
             "category_K": {
@@ -261,7 +266,8 @@ public class XpValuesPreset {
                 "xp": 30,
                 "blocks":[
                         "minecraft:diamond_ore",
-                        "minecraft:deepslate_diamond_ore"
+                        "minecraft:deepslate_diamond_ore",
+                        "minecraft:crying_obsidian"
                 ]
             },
             "category_M": {

@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tyzsskills.server.model.*;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
+import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import net.minecraft.server.MinecraftServer;
 
 import com.google.gson.Gson;
@@ -60,13 +61,18 @@ public class FileManager {
         }
     }
 
-    public void LoadDefaultBlocksXpValues(MinecraftServer server) throws IOException {
-        Path file = server.getServerDirectory().resolve("config")
+    public void LoadDefaultXpValues(MinecraftServer server) throws IOException {
+        Path blockFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
-                .resolve("BlockXpValues.json");
+                .resolve("Block-Xp-Values.json");
+
+        Path entityFile = server.getServerDirectory().resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("Entity-Xp-Values.json");
 
 
-        if(!Files.exists(file)) Files.writeString(file, XpValuesPreset.GetDefaultXpValues());
+        if(!Files.exists(blockFile)) Files.writeString(blockFile, BlockXpValuesPreset.GetDefaultXpValues());
+        if(!Files.exists(entityFile)) Files.writeString(entityFile, EntityXpValuesPreset.GetDefaultXpValues());
     }
 
     //Lit les jsons par derfaut
@@ -95,18 +101,27 @@ public class FileManager {
 
     }
 
-    public void ReadBlocksXpValues(MinecraftServer server) throws IOException {
-        Path targetedFile = server.getServerDirectory().resolve("config")
+    public void ReadXpValues(MinecraftServer server) throws IOException {
+        Path blockFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
-                .resolve("BlockXpValues.json");
+                .resolve("Block-Xp-Values.json");
 
-        if(Files.exists(targetedFile)){
-            var content = Files.readString(targetedFile);
+        Path entityFile = server.getServerDirectory().resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("Entity-Xp-Values.json");
+
+        if(Files.exists(blockFile) && !XpBlock.AreValuesLoaded()){
+            var content = Files.readString(blockFile);
             var obj = JsonParser.parseString(content).getAsJsonObject();
             XpBlock.LoadValues(obj);
         }
-    }
 
+        if (Files.exists(entityFile) && !XpEntity.AreValuesLoaded()) {
+            var content = Files.readString(entityFile);
+            var obj = JsonParser.parseString(content).getAsJsonObject();
+            XpEntity.LoadValues(obj);
+        }
+    }
 
 
     //Utilitaire

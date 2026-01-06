@@ -3,10 +3,12 @@ package com.tyzsskills.server.events;
 import com.tyzsskills.server.active.*;
 import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
-import net.minecraft.core.registries.BuiltInRegistries;
+import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.EntityEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
@@ -42,16 +44,27 @@ public class RuntimeEvents {
         if(!(event.getLevel() instanceof ServerLevel serverLevel)) return;
 
         var server = serverLevel.getServer();
-        if(!SkillManager.Get().AreSkillsLoaded()) FileManager.Get().ReadJsons(server);
-        if(!XpBlock.AreValuesLoaded()) FileManager.Get().ReadBlocksXpValues(server);
+        FileManager.Get().ReadJsons(server);
+        FileManager.Get().ReadXpValues(server);
     }
 
     @SubscribeEvent
     public static void OnBlockBreak(BlockEvent.BreakEvent event){
 
+        if(event.isCanceled()) return;
+
         if(event.getPlayer() instanceof ServerPlayer serverPlayer){
             XpBlock.BlockBreakProfit(event.getState(), serverPlayer);
         }
+    }
+
+    @SubscribeEvent
+    public static void OnEntityDeath(LivingDeathEvent event){
+
+        if(event.isCanceled()) return;
+
+        if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
+        XpEntity.EntityKillProfit(event.getEntity(), player);
     }
 
 }
