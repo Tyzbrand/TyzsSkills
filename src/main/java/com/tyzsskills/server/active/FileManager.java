@@ -83,6 +83,7 @@ public class FileManager {
                 .resolve("DEFAULT");
 
         if(!Files.exists(globalPath)) return;
+        if(SkillManager.Get().AreSkillsLoaded()) return;
 
         try{
             Files.walk(globalPath)
