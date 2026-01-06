@@ -1,7 +1,6 @@
 package com.tyzsskills.server.active;
 
-import com.tyzsskills.server.payloads.ClientMainCachePayload;
-import com.tyzsskills.server.xp.XpManager;
+import com.tyzsskills.server.payloads.SpUpdatePayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -47,15 +46,12 @@ public class SpManager {
 
         public static void EnsureDefaultSP(ServerPlayer player){
             if(!player.getPersistentData().contains(dataKey)) SetSP(player,0);
+            else UpdateClient(player);
         }
 
         //Utilitaire
         private static void UpdateClient(ServerPlayer player){
-            PacketDistributor.sendToPlayer(player, new ClientMainCachePayload(
-                    LevelManager.GetLevel(player),
-                    GetSP(player),
-                    XpManager.GetXP(player)
-            ));
+            PacketDistributor.sendToPlayer(player, new SpUpdatePayload(GetSP(player)));
         }
 
         //Getters

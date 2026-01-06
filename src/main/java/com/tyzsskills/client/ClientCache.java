@@ -1,6 +1,7 @@
 package com.tyzsskills.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 
 public class ClientCache {
@@ -9,15 +10,21 @@ public class ClientCache {
     private static int clientSP = 0;
     private static float clientXP = 0f;
 
-    public static void UpdateClientMainCache(int level, int sp, float xp){
-        clientLevel = level;
-        clientSP = sp;
-        clientXP = xp;
 
-        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Update " +
-                "lvl: " + level +
-                " SP: " + sp +
-                " XP: " + xp), false);
+
+    public static void UpdateClientCacheLevel(int level){
+        clientLevel = level;
+        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Level Update: " + level), false);
+    }
+
+    public static void UpdateClientCacheSP(int sp){
+        clientSP = sp;
+        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP Update: " + sp), false);
+    }
+
+    public static void UpdateClientCacheXP(float xp){
+        clientXP = xp;
+        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp), false);
     }
 
     public static void ClearCache(){

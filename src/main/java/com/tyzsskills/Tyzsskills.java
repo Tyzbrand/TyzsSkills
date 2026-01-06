@@ -4,9 +4,10 @@ import com.tyzsskills.server.active.FileManager;
 import com.tyzsskills.server.active.SkillManager;
 import com.tyzsskills.server.commands.MainCommand;
 import com.tyzsskills.server.events.RuntimeEvents;
-import com.tyzsskills.server.payloads.ClientMainCachePayload;
+import com.tyzsskills.server.payloads.LevelUpdatePayload;
+import com.tyzsskills.server.payloads.SpUpdatePayload;
+import com.tyzsskills.server.payloads.XpUpdatePayload;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -125,9 +126,21 @@ public class Tyzsskills {
         final PayloadRegistrar registrar = event.registrar("1");
 
         registrar.playToClient(
-                ClientMainCachePayload.TYPE,
-                ClientMainCachePayload.STREAM_CODEC,
-                ClientMainCachePayload::Handle
+                LevelUpdatePayload.TYPE,
+                LevelUpdatePayload.STREAM_CODEC,
+                LevelUpdatePayload::Handle
+        );
+
+        registrar.playToClient(
+                SpUpdatePayload.TYPE,
+                SpUpdatePayload.STREAM_CODEC,
+                SpUpdatePayload::Handle
+        );
+
+        registrar.playToClient(
+                XpUpdatePayload.TYPE,
+                XpUpdatePayload.STREAM_CODEC,
+                XpUpdatePayload::Handle
         );
     }
 
@@ -143,7 +156,6 @@ public class Tyzsskills {
 
     @SubscribeEvent
     public void OnServerStop(ServerStoppingEvent event){
-
         SkillManager.Get().ClearSkills();
         XpBlock.ClearValues();;
     }

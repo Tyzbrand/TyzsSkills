@@ -1,8 +1,6 @@
 package com.tyzsskills.server.xp;
 
-import com.tyzsskills.server.active.LevelManager;
-import com.tyzsskills.server.active.SpManager;
-import com.tyzsskills.server.payloads.ClientMainCachePayload;
+import com.tyzsskills.server.payloads.XpUpdatePayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -23,16 +21,12 @@ public class XpManager {
     public static void AddXP(ServerPlayer player, float amount){
         if(amount <= 0) return;
         SetXP(player, GetXP(player) + amount);
-
-        UpdateClient(player);
     }
 
     public static void RemoveXP(ServerPlayer player, float amount){
         if(amount <= 0) return;
         var result = Math.max(0f, GetXP(player) - amount);
         SetXP(player, result);
-
-        UpdateClient(player);
     }
 
     public static void RestorePlayerXPData(ServerPlayer oldPlayer, ServerPlayer newPlayer){
@@ -49,15 +43,12 @@ public class XpManager {
 
     public static void EnsureDefaultXP(ServerPlayer player){
         if(!player.getPersistentData().contains(dataKey)) SetXP(player,0f);
+        else UpdateClient(player);
     }
 
     //Utilitaire
     private static void UpdateClient(ServerPlayer player){
-        PacketDistributor.sendToPlayer(player, new ClientMainCachePayload(
-                LevelManager.GetLevel(player),
-                SpManager.GetSP(player),
-                GetXP(player)
-        ));
+        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(GetXP(player)));
     }
 
     //Getters

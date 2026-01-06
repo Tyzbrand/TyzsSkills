@@ -17,18 +17,19 @@ public class RuntimeEvents {
 
     @SubscribeEvent
     public static void OnPlayerLogin(PlayerEvent.PlayerLoggedInEvent event){
-        LevelManager.EnsureDefaultLevel((ServerPlayer) event.getEntity());
-        XpManager.EnsureDefaultXP((ServerPlayer) event.getEntity());
-        SpManager.EnsureDefaultSP((ServerPlayer) event.getEntity());
+        if(!(event.getEntity() instanceof ServerPlayer player)) return;
+        LevelManager.EnsureDefaultLevel(player);
+        XpManager.EnsureDefaultXP(player);
+        SpManager.EnsureDefaultSP(player);
     }
 
     @SubscribeEvent
     public static void OnPlayerClone(PlayerEvent.Clone event){
 
-        if(event.isWasDeath()){
-            var oldPlayer = (ServerPlayer) event.getOriginal();
-            var newPlayer = (ServerPlayer) event.getEntity();
+        if(!(event.getOriginal() instanceof ServerPlayer oldPlayer) ||
+                !(event.getEntity() instanceof ServerPlayer newPlayer)) return;
 
+        if(event.isWasDeath()){
             XpManager.RestorePlayerXPData(oldPlayer, newPlayer);
             LevelManager.RestorePlayerLevelData(oldPlayer, newPlayer);
             SpManager.RestorePlayerSPData(oldPlayer, newPlayer);
@@ -49,8 +50,7 @@ public class RuntimeEvents {
     public static void OnBlockBreak(BlockEvent.BreakEvent event){
 
         if(event.getPlayer() instanceof ServerPlayer serverPlayer){
-            var blockID = BuiltInRegistries.BLOCK.getKey(event.getState().getBlock()).toString();
-            XpBlock.BlockBreakProfit(blockID, serverPlayer);
+            XpBlock.BlockBreakProfit(event.getState(), serverPlayer);
         }
     }
 

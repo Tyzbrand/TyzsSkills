@@ -1,6 +1,6 @@
 package com.tyzsskills.server.active;
 
-import com.tyzsskills.server.payloads.ClientMainCachePayload;
+import com.tyzsskills.server.payloads.LevelUpdatePayload;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -47,16 +47,12 @@ public class LevelManager {
 
     public static void EnsureDefaultLevel(ServerPlayer player){
         if(!player.getPersistentData().contains(dataKey)) SetLevel(player,1);
-        else UpdateClient(player); //SEULEMENT ICI ET PAS DANS LES AUTRES MANAGER CAR SINON 3 PAQUETS IDENTIQUES
+        else UpdateClient(player);
     }
 
     //Utilitaire
     private static void UpdateClient(ServerPlayer player){
-        PacketDistributor.sendToPlayer(player, new ClientMainCachePayload(
-                GetLevel(player),
-                SpManager.GetSP(player),
-                XpManager.GetXP(player)
-                ));
+        PacketDistributor.sendToPlayer(player, new LevelUpdatePayload(GetLevel(player)));
     }
 
     //Getters
