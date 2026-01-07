@@ -61,8 +61,6 @@ public class XpBlock {
 
 
     //Getters
-    public static boolean AreValuesLoaded() {return !Xpvalues.isEmpty() || !XpTagValues.isEmpty();}
-
     public static float GetBlockValue(BlockState state) {
 
         var block = state.getBlock();

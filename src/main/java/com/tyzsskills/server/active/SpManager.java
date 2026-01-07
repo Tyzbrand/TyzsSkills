@@ -20,16 +20,12 @@ public class SpManager {
         public static void AddSP(ServerPlayer player, int amount){
             if(amount <= 0) return;
             SetSP(player, GetSP(player) + amount);
-
-            UpdateClient(player);
         }
 
         public static void RemoveSP(ServerPlayer player, int amount){
             if(amount <= 0) return;
             var result = Math.max(0, GetSP(player) - amount);
             SetSP(player, result);
-
-            UpdateClient(player);
         }
 
         public static void RestorePlayerSPData(ServerPlayer oldPlayer, ServerPlayer newPlayer){

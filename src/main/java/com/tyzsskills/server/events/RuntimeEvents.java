@@ -38,15 +38,6 @@ public class RuntimeEvents {
         }
     }
 
-    @SubscribeEvent
-    public static void OnWorldLoad(LevelEvent.Load event) throws IOException {
-
-        if(!(event.getLevel() instanceof ServerLevel serverLevel)) return;
-
-        var server = serverLevel.getServer();
-        FileManager.Get().ReadJsons(server);
-        FileManager.Get().ReadXpValues(server);
-    }
 
     @SubscribeEvent
     public static void OnBlockBreak(BlockEvent.BreakEvent event){

@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tyzsskills.server.model.*;
+import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import net.minecraft.server.MinecraftServer;
@@ -75,6 +76,14 @@ public class FileManager {
         if(!Files.exists(entityFile)) Files.writeString(entityFile, EntityXpValuesPreset.GetDefaultXpValues());
     }
 
+    public void LoadDefaulltLevelPool(MinecraftServer server) throws IOException {
+        Path poolFile = server.getServerDirectory().resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("Level-Pool.json");
+
+        if(!Files.exists(poolFile)) Files.writeString(poolFile, LevelPoolPreset.GetDefaultRewardValues());
+    }
+
     //Lit les jsons par derfaut
     public void ReadJsons(MinecraftServer server) throws IOException{
         Path globalPath = server.getServerDirectory().resolve("config")
@@ -83,11 +92,9 @@ public class FileManager {
                 .resolve("DEFAULT");
 
         if(!Files.exists(globalPath)) return;
-        if(SkillManager.Get().AreSkillsLoaded()) return;
 
-        try{
-            Files.walk(globalPath)
-                    .filter(Files::isRegularFile)
+        try(var stream = Files.walk(globalPath)){
+            stream.filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".json"))
                     .forEach(path ->{
                         try{
@@ -111,16 +118,28 @@ public class FileManager {
                 .resolve("tyzs_skills")
                 .resolve("Entity-Xp-Values.json");
 
-        if(Files.exists(blockFile) && !XpBlock.AreValuesLoaded()){
+        if(Files.exists(blockFile)){
             var content = Files.readString(blockFile);
             var obj = JsonParser.parseString(content).getAsJsonObject();
             XpBlock.LoadValues(obj);
         }
 
-        if (Files.exists(entityFile) && !XpEntity.AreValuesLoaded()) {
+        if (Files.exists(entityFile)) {
             var content = Files.readString(entityFile);
             var obj = JsonParser.parseString(content).getAsJsonObject();
             XpEntity.LoadValues(obj);
+        }
+    }
+
+    public void ReadLevelPool(MinecraftServer server) throws IOException {
+        Path poolFile = server.getServerDirectory().resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("Level-Pool.json");
+
+        if(Files.exists((poolFile))){
+            var content = Files.readString(poolFile);
+            var obj = JsonParser.parseString(content).getAsJsonObject();
+            XpManager.LoadPool(obj);
         }
     }
 

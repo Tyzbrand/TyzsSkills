@@ -21,16 +21,12 @@ public class LevelManager {
     public static void AddLevel(ServerPlayer player, int level){
         if(level <= 0) return;
         SetLevel(player, GetLevel(player) + level);
-
-        UpdateClient(player);
     }
 
     public static void RemoveLevel(ServerPlayer player, int level){
         if(level <= 0) return;
         var result = Math.max(1, GetLevel(player) - level);
         SetLevel(player, result);
-
-        UpdateClient(player);
     }
 
     public static void RestorePlayerLevelData(ServerPlayer oldPlayer, ServerPlayer newPlayer){

@@ -7,10 +7,12 @@ import com.tyzsskills.server.events.RuntimeEvents;
 import com.tyzsskills.server.payloads.LevelUpdatePayload;
 import com.tyzsskills.server.payloads.SpUpdatePayload;
 import com.tyzsskills.server.payloads.XpUpdatePayload;
+import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -153,13 +155,19 @@ public class Tyzsskills {
         fileManager.InitPath(server);
         fileManager.LoadDefaultJson(server);
         fileManager.LoadDefaultXpValues(server);
+        fileManager.LoadDefaulltLevelPool(server);
+
+        fileManager.ReadJsons(server);
+        fileManager.ReadXpValues(server);
+        fileManager.ReadLevelPool(server);
     }
 
     @SubscribeEvent
     public void OnServerStop(ServerStoppingEvent event){
         SkillManager.Get().ClearSkills();
-        XpBlock.ClearValues();;
+        XpBlock.ClearValues();
         XpEntity.ClearValues();
+        XpManager.ClearPool();
     }
 
 
