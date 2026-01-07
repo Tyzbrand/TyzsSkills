@@ -9,5 +9,11 @@
   "tyzs_skills.configuration.items": "Item List",
   "tyzs_skills.configuration.logDirtBlock": "Log Dirt Block",
   "tyzs_skills.configuration.magicNumberIntroduction": "Magic Number Text",
-  "tyzs_skills.configuration.magicNumber": "Magic Number"
+  "tyzs_skills.configuration.magicNumber": "Magic Number",
+
+  "gui.tyzs_skills.title" : "Test GUI",
+
+
+  "key.tyzs_skills.open_menu" : "Open skill GUI",
+  "key.categories.tyzs_skills" : "Tyz's skills"
 }

@@ -1,6 +1,8 @@
 package com.tyzsskills;
 
 import com.tyzsskills.client.ClientCache;
+import com.tyzsskills.client.key.MainKeybind;
+import com.tyzsskills.client.screen.MainGUI;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -9,6 +11,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
@@ -35,5 +39,17 @@ public class TyzsskillsClient {
     public static void onClientLogOut(ClientPlayerNetworkEvent.LoggingOut event){
         ClientCache.ClearCache();
         Tyzsskills.LOGGER.info("CACHE CLEARED");
+    }
+
+    @SubscribeEvent
+    public static void RegisterKeys(RegisterKeyMappingsEvent event){
+        event.register(MainKeybind.OPEN_SKILL_KEY);
+    }
+
+    @SubscribeEvent
+    public static void OnClientTick(ClientTickEvent.Post event){
+        while (MainKeybind.OPEN_SKILL_KEY.consumeClick()){
+            Minecraft.getInstance().setScreen(new MainGUI());
+        }
     }
 }
