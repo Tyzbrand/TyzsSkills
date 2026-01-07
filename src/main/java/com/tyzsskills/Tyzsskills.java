@@ -4,6 +4,7 @@ import com.tyzsskills.server.active.FileManager;
 import com.tyzsskills.server.active.SkillManager;
 import com.tyzsskills.server.commands.MainCommand;
 import com.tyzsskills.server.events.RuntimeEvents;
+import com.tyzsskills.server.payloads.LevelDataUpdatePayload;
 import com.tyzsskills.server.payloads.LevelUpdatePayload;
 import com.tyzsskills.server.payloads.SpUpdatePayload;
 import com.tyzsskills.server.payloads.XpUpdatePayload;
@@ -144,6 +145,12 @@ public class Tyzsskills {
                 XpUpdatePayload.TYPE,
                 XpUpdatePayload.STREAM_CODEC,
                 XpUpdatePayload::Handle
+        );
+
+        registrar.playToClient(
+                LevelDataUpdatePayload.TYPE,
+                LevelDataUpdatePayload.STREAM_CODEC,
+                LevelDataUpdatePayload::Handle
         );
     }
 

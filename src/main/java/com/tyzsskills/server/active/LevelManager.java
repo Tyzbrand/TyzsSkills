@@ -1,5 +1,6 @@
 package com.tyzsskills.server.active;
 
+import com.tyzsskills.server.payloads.LevelDataUpdatePayload;
 import com.tyzsskills.server.payloads.LevelUpdatePayload;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.server.level.ServerPlayer;
@@ -49,6 +50,7 @@ public class LevelManager {
     //Utilitaire
     private static void UpdateClient(ServerPlayer player){
         PacketDistributor.sendToPlayer(player, new LevelUpdatePayload(GetLevel(player)));
+        PacketDistributor.sendToPlayer(player, new LevelDataUpdatePayload(XpManager.GetLevelData(GetLevel(player))));
     }
 
     //Getters

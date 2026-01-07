@@ -15,7 +15,7 @@ public class XpManager {
 
     private static final String dataKey = "SKILL_XP";
 
-    private record LevelData(float goal, int reward) {}
+    public record LevelData(float goal, int reward) {}
     private static LevelData fallback = new LevelData(100f, 1);
 
     private static final Map<Integer, LevelData> POOL = new HashMap<>();
@@ -129,7 +129,7 @@ public class XpManager {
         return player.getPersistentData().getFloat(dataKey);
     }
 
-    private static LevelData GetLevelData(int lvl){
+    public static LevelData GetLevelData(int lvl){
         if(POOL.containsKey(lvl)) return POOL.get(lvl);
         else if(POOL.containsKey(-1)) return POOL.get(-1);
 
