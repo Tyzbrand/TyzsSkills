@@ -6,13 +6,17 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Locale;
 
 public class MainGUI extends Screen {
     private static final ResourceLocation background = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID,
-            "textures/gui/rework-mix.png");
+            "textures/gui/background.png");
+
+    private static final ResourceLocation mainFont = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID,
+            "main_font");
 
     private final int imageWidth = 270;
     private final int imageHeight = 139;
@@ -35,9 +39,9 @@ public class MainGUI extends Screen {
 
         guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 300, 300);
 
-        guiGraphics.drawCenteredString(this.font, this.title, this.width/2, this.topPos-10, 0xFFFFFF);
 
-        this.renderPlayerStats(guiGraphics);
+        this.renderPlayerStats(guiGraphics, mouseX, mouseY);
+
         this.renderXpBar(guiGraphics);
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -47,18 +51,26 @@ public class MainGUI extends Screen {
 
 
     //helpers
-    private void renderPlayerStats(GuiGraphics gui){
+    private void renderPlayerStats(GuiGraphics gui, int mouseX, int mouseY){
 
-        int lineGap = 10;
-        int xStart = leftPos + 15;
-        int yStart = topPos + 16;
+        int color1 = isHovering(mouseX, mouseY, leftPos+1, topPos+81, 36, 12 )? 0xD6AD55 : 0x737373;
+        MutableComponent lvlStat = Component.translatable("gui.tyzs_skills.Lvl").withStyle(Style.EMPTY.withFont(mainFont));
+        gui.drawString(this.font, lvlStat, leftPos+8, topPos+84, color1, false);
 
-        MutableComponent lvlStat = Component.translatable("gui.tyzs_skills.Lvl").append(" " + ClientCache.GetLvl());
-        gui.drawString(this.font, lvlStat, xStart, yStart, 0xFF000000, false);
+        MutableComponent lvlValue = Component.literal(String.valueOf(ClientCache.GetLvl())).withStyle(Style.EMPTY.withFont(mainFont));
+        int text1W = this.font.width(lvlValue);
+        int rightLimit1 = leftPos+31;
+        gui.drawString(this.font, lvlValue, rightLimit1 - text1W, topPos+84, color1, false);
 
-        MutableComponent spStat = Component.translatable("gui.tyzs_skills.SP").append(" " + ClientCache.GetSP());
-        yStart += lineGap;
-        gui.drawString(this.font, spStat, xStart, yStart, 0xFF000000, false);
+
+        int color2 = isHovering(mouseX, mouseY, leftPos+38, topPos+81, 36, 12 )? 0xD6AD55 : 0x737373;
+        MutableComponent spStat = Component.translatable("gui.tyzs_skills.SP").withStyle(Style.EMPTY.withFont(mainFont));
+        gui.drawString(this.font, spStat, leftPos+45, topPos+84, color2, false);
+
+        MutableComponent spValue = Component.literal(String.valueOf(ClientCache.GetSP())).withStyle(Style.EMPTY.withFont(mainFont));
+        int text2W = this.font.width(spValue);
+        int rightLimit2 = leftPos+68;
+        gui.drawString(this.font, spValue, rightLimit2 -text2W, topPos+84, color2, false);
     }
 
     private void renderXpBar(GuiGraphics gui){
@@ -72,21 +84,18 @@ public class MainGUI extends Screen {
         int widthToDraw = (int)(ratio*70);
 
         if(widthToDraw > 0) {
-            gui.blit(background, leftPos + 3, topPos + 95, 82, 142, widthToDraw, 5, 300, 300);
+            gui.blit(background, leftPos + 2, topPos + 98, 82, 142, widthToDraw, 5, 300, 300);
         }
     }
 
     private void renderTooltips(GuiGraphics gui, int mouseX, int mouseY){
 
-        int barTooltipX = leftPos+3; int barTooltipY = topPos+95; int barTooltipW = 70; int barTooltipH = 5;
+        int barTooltipX = leftPos+2; int barTooltipY = topPos+98; int barTooltipW = 70; int barTooltipH = 5;
 
-        if(mouseX >= barTooltipX && mouseX <= barTooltipX + barTooltipW &&
-            mouseY >= barTooltipY && mouseY <= barTooltipY + barTooltipH){
-
-            String xpTooltip = SmartFormat(ClientCache.GetXP()) + "/" + SmartFormat(ClientCache.GetXPGOAL());
+        if(isHovering(mouseX, mouseY, barTooltipX, barTooltipY, barTooltipW, barTooltipH)){
+            String xpTooltip = SmartFormat(ClientCache.GetXP()) + "/" + SmartFormat(ClientCache.GetXPGOAL()) ;
             gui.renderTooltip(this.font, Component.literal(xpTooltip), mouseX, mouseY);
         }
-
     }
 
 
@@ -96,6 +105,9 @@ public class MainGUI extends Screen {
             return String.format("%d", (long)value);
         }
         else return String.format(Locale.US, "%.1f", value);
+    }
+    private boolean isHovering(int mouseX, int mouseY, int x, int y, int width, int height){
+        return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
     }
     //states
     @Override
