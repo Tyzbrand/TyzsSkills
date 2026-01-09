@@ -12,8 +12,9 @@
   "tyzs_skills.configuration.magicNumber": "Magic Number",
 
   "gui.tyzs_skills.title" : "Test GUI",
+  "gui.tyzs_skills.SP" : "SP",
+  "gui.tyzs_skills.Lvl" : "Lvl",
 
-
-  "key.tyzs_skills.open_menu" : "Open skill GUI",
+  "key.tyzs_skills.open_menu" : "Open skill UI",
   "key.categories.tyzs_skills" : "Tyz's skills"
 }

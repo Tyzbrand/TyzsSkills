@@ -1,9 +1,15 @@
 package com.tyzsskills.client;
 
+import com.tyzsskills.server.model.PassiveSkill;
+import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class ClientCache {
 
@@ -13,6 +19,7 @@ public class ClientCache {
 
     private static XpManager.LevelData clientLevelData = new XpManager.LevelData(100f, 1);
 
+    private static List<PassiveSkill> clientSkills = new ArrayList<>();
 
 
     public static void UpdateClientCacheLevel(int level){
@@ -41,4 +48,11 @@ public class ClientCache {
         clientXP = 0f;
         clientLevelData = new XpManager.LevelData(100f, 1);
     }
+
+
+    //getters
+    public static float GetXP(){return clientXP;}
+    public static int GetSP(){return clientSP;}
+    public static int GetLvl(){return clientLevel;}
+    public static float GetXPGOAL(){return clientLevelData.goal();}
 }
