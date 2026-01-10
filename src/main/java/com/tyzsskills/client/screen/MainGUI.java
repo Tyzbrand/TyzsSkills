@@ -2,9 +2,8 @@ package com.tyzsskills.client.screen;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.client.ClientCache;
-import com.tyzsskills.client.models.CustomButton;
+import com.tyzsskills.client.models.CustomTabButton;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
@@ -32,8 +31,7 @@ public class MainGUI extends Screen {
 
     public MainGUI(){super(Component.translatable("gui.tyzs_skills.title"));}
 
-    private enum ContainerType {SKILLS, QUESTS}
-    private ContainerType currentContainerType = ContainerType.SKILLS;
+    public enum ContainerType {SKILLS, QUESTS}
 
     @Override
     protected void init(){
@@ -46,8 +44,9 @@ public class MainGUI extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick){
-        guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 300, 300);
+        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
+        guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 300, 300);
 
         this.renderPlayerStats(guiGraphics, mouseX, mouseY);
 
@@ -57,8 +56,6 @@ public class MainGUI extends Screen {
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-
         this.renderTooltips(guiGraphics, mouseX, mouseY);
     }
 
@@ -66,9 +63,9 @@ public class MainGUI extends Screen {
     //helpers
     private void renderPlayerStats(GuiGraphics gui, int mouseX, int mouseY){
 
-        int color1 = isHovering(mouseX, mouseY, leftPos+1, topPos+81, 36, 12 )? 0xD6AD55 : 0x737373;
+        int color1 = isHovering(mouseX, mouseY, leftPos, topPos+81, 36, 12 )? 0xD6AD55 : 0x737373;
         MutableComponent lvlStat = Component.translatable("gui.tyzs_skills.Lvl").withStyle(Style.EMPTY.withFont(mainFont));
-        gui.drawString(this.font, lvlStat, leftPos+8, topPos+84, color1, false);
+        gui.drawString(this.font, lvlStat, leftPos+7, topPos+84, color1, false);
 
         MutableComponent lvlValue = Component.literal(String.valueOf(ClientCache.GetLvl())).withStyle(Style.EMPTY.withFont(mainFont));
         int text1W = this.font.width(lvlValue);
@@ -76,13 +73,13 @@ public class MainGUI extends Screen {
         gui.drawString(this.font, lvlValue, rightLimit1 - text1W, topPos+84, color1, false);
 
 
-        int color2 = isHovering(mouseX, mouseY, leftPos+38, topPos+81, 36, 12 )? 0xD6AD55 : 0x737373;
+        int color2 = isHovering(mouseX, mouseY, leftPos+37, topPos+81, 36, 12 )? 0xD6AD55 : 0x737373;
         MutableComponent spStat = Component.translatable("gui.tyzs_skills.SP").withStyle(Style.EMPTY.withFont(mainFont));
-        gui.drawString(this.font, spStat, leftPos+45, topPos+84, color2, false);
+        gui.drawString(this.font, spStat, leftPos+46, topPos+84, color2, false);
 
         MutableComponent spValue = Component.literal(String.valueOf(ClientCache.GetSP())).withStyle(Style.EMPTY.withFont(mainFont));
         int text2W = this.font.width(spValue);
-        int rightLimit2 = leftPos+68;
+        int rightLimit2 = leftPos+69;
         gui.drawString(this.font, spValue, rightLimit2 -text2W, topPos+84, color2, false);
     }
 
@@ -102,23 +99,29 @@ public class MainGUI extends Screen {
     }
 
     private void addButtons(){
-        CustomButton skillBtn = new CustomButton(
+        CustomTabButton skillBtn = new CustomTabButton(
                 leftPos + 55, topPos + 6,
                 16, 16,
                 82, 150,
                 114, 150,
-                background, 300, 300,
-                (b) -> System.out.println("FONCTIONNE"));
+                98, 150,
+                 300, 300,
+                () -> ClientCache.GetContainerType() == ContainerType.SKILLS,
+                background,
+                (b) -> ClientCache.SetContainerType(ContainerType.SKILLS));
 
         this.addRenderableWidget(skillBtn);
 
-        CustomButton questBtn = new CustomButton(
+        CustomTabButton questBtn = new CustomTabButton(
                 leftPos + 55, topPos + 24,
                 16, 16,
                 82, 167,
                 114, 167,
-                background, 300, 300,
-                (b) -> System.out.println("FONCTIONNE AUSSI"));
+                98, 167,
+                300, 300,
+                () -> ClientCache.GetContainerType() == ContainerType.QUESTS,
+                background,
+                (b) -> ClientCache.SetContainerType(ContainerType.QUESTS));
 
         this.addRenderableWidget(questBtn);
     }
