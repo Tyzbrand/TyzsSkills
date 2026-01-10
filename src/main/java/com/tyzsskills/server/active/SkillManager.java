@@ -1,10 +1,10 @@
 package com.tyzsskills.server.active;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.JsonObject;
 import com.tyzsskills.server.model.Skill;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -45,7 +45,9 @@ public class SkillManager {
         if(player == null || !IsSkillValid(id)) return;
     }
 
+
     //getters
     public boolean AreSkillsLoaded(){return !skillCollection.isEmpty();}
     public int GetLoadedSkills(){return  skillCollection.size();}
+    public List<Skill> GetAllSkills() {return new ArrayList<>(skillCollection.values());}
 }

@@ -1,6 +1,8 @@
 package com.tyzsskills.server.events;
 
 import com.tyzsskills.server.active.*;
+import com.tyzsskills.server.effects.GenericEffects;
+import com.tyzsskills.server.payloads.SkillSyncPayload;
 import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
@@ -12,6 +14,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.io.IOException;
 
@@ -23,6 +26,8 @@ public class RuntimeEvents {
         LevelManager.EnsureDefaultLevel(player);
         XpManager.EnsureDefaultXP(player);
         SpManager.EnsureDefaultSP(player);
+
+        PacketDistributor.sendToPlayer(player, new SkillSyncPayload(SkillManager.Get().GetAllSkills()));
     }
 
     @SubscribeEvent
@@ -35,6 +40,7 @@ public class RuntimeEvents {
             XpManager.RestorePlayerXPData(oldPlayer, newPlayer);
             LevelManager.RestorePlayerLevelData(oldPlayer, newPlayer);
             SpManager.RestorePlayerSPData(oldPlayer, newPlayer);
+            GenericEffects.RestaureEffects(oldPlayer, newPlayer);
         }
     }
 

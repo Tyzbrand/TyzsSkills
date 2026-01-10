@@ -1,15 +1,12 @@
 package com.tyzsskills.client;
 
 import com.tyzsskills.client.screen.MainGUI;
-import com.tyzsskills.server.model.PassiveSkill;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ClientCache {
@@ -20,7 +17,7 @@ public class ClientCache {
 
     private static XpManager.LevelData clientLevelData = new XpManager.LevelData(100f, 1);
 
-    private static List<PassiveSkill> clientSkills = new ArrayList<>();
+    private static List<Skill> clientSkills = new ArrayList<>();
 
     private static MainGUI.ContainerType currentContainerType = MainGUI.ContainerType.SKILLS;
 
@@ -49,11 +46,18 @@ public class ClientCache {
         currentContainerType = MainGUI.ContainerType.SKILLS; //Temporaire le temps de gérer les quetes
     }
 
+    public static void UpdateSkills(List<Skill> skills){
+        clientSkills.clear();
+        clientSkills.addAll(skills);
+        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skills sync: " + clientSkills.size() + " skills cached" ), false);
+    }
+
     public static void ClearCache(){
         clientLevel = 1;
         clientSP = 0;
         clientXP = 0f;
         clientLevelData = new XpManager.LevelData(100f, 1);
+        clientSkills.clear();
     }
 
 

@@ -1,8 +1,8 @@
 package com.tyzsskills.server.active;
 
 import com.google.gson.JsonObject;
-import com.tyzsskills.server.model.PassiveSkill;
 import com.tyzsskills.server.model.Skill;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,19 +30,24 @@ public class SkillLoader {
         List<Float> values = GetSafeFloatArray(source, "values");
         if(values == null || values.size() != prices.size()) {LogError(id); return;}
 
-        PassiveSkill.SkillType type = GetSafeType(source, "type");
+        Skill.SkillType type = GetSafeType(source, "type");
         if(type == null) {LogError(id); return;}
 
-        PassiveSkill.SkillCategory category = GetSafeCategory(source, "category");
-        if(category == null) category = PassiveSkill.SkillCategory.MISC;
+        Skill.SkillCategory category = GetSafeCategory(source, "category");
+        if(category == null) category = Skill.SkillCategory.MISC;
+
+        Boolean purchasable = GetSafeBool(source,"purchasable");
+        if(purchasable == null) purchasable = true;
+
+        AttributeModifier.Operation operation = GetSafeOperation(source, "operation");
+        if(operation == null) {LogError(id); return;}
 
         String modifier = GetSafeString(source, "modifier");
 
 
         SkillManager.Get().RegisterSKill(
-                new PassiveSkill(state, id, maxLevel, prices,
-                         modifier, values, type, category)
-        );
+                new Skill(state, id, maxLevel, prices, values, type,
+                        category, modifier, operation, purchasable));
     }
 
 
@@ -102,7 +107,7 @@ public class SkillLoader {
         return values;
     }
 
-    private static PassiveSkill.SkillType GetSafeType(JsonObject obj, String key){
+    private static Skill.SkillType GetSafeType(JsonObject obj, String key){
         if (obj == null || key == null) return null;
 
         var typeValue = obj.get(key);
@@ -111,14 +116,14 @@ public class SkillLoader {
         var typeValueString = typeValue.getAsString();
         if(typeValueString == null) return null;
 
-        PassiveSkill.SkillType type;
-        try {type = PassiveSkill.SkillType.valueOf(typeValueString.toUpperCase());}
+        Skill.SkillType type;
+        try {type = Skill.SkillType.valueOf(typeValueString.toUpperCase());}
         catch (IllegalArgumentException e) {return null;}
 
         return type;
     }
 
-    private static PassiveSkill.SkillCategory GetSafeCategory(JsonObject obj, String key){
+    private static Skill.SkillCategory GetSafeCategory(JsonObject obj, String key){
         if (obj == null || key == null) return null;
 
         var typeValue = obj.get(key);
@@ -127,11 +132,28 @@ public class SkillLoader {
         var typeValueString = typeValue.getAsString();
         if(typeValueString == null) return null;
 
-        PassiveSkill.SkillCategory category;
-        try {category = PassiveSkill.SkillCategory.valueOf(typeValueString.toUpperCase());}
+        Skill.SkillCategory category;
+        try {category = Skill.SkillCategory.valueOf(typeValueString.toUpperCase());}
         catch (IllegalArgumentException e) {return null;}
 
         return category;
+    }
+
+    private static AttributeModifier.Operation GetSafeOperation(JsonObject obj, String key){
+        if (obj == null || key == null) return null;
+
+        var typeValue = obj.get(key);
+        if(typeValue == null || !typeValue.isJsonPrimitive()) return null;
+
+        var typeValueString = typeValue.getAsString();
+        if(typeValueString == null) return null;
+
+        AttributeModifier.Operation operation;
+        try {
+            operation = AttributeModifier.Operation.valueOf(typeValueString.toUpperCase());}
+        catch (IllegalArgumentException e) {return null;}
+
+        return operation;
     }
 
     //Utilitaire
