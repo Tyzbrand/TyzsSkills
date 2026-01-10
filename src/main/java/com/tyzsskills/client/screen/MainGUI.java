@@ -2,7 +2,9 @@ package com.tyzsskills.client.screen;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.client.ClientCache;
+import com.tyzsskills.client.models.CustomButton;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
@@ -30,17 +32,20 @@ public class MainGUI extends Screen {
 
     public MainGUI(){super(Component.translatable("gui.tyzs_skills.title"));}
 
+    private enum ContainerType {SKILLS, QUESTS}
+    private ContainerType currentContainerType = ContainerType.SKILLS;
+
     @Override
     protected void init(){
         super.init();
         this.leftPos = (this.width - this.imageWidth)/2;
         this.topPos = (this.height - this.imageHeight)/2;
+
+        this.addButtons();
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick){
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-
         guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 300, 300);
 
 
@@ -51,6 +56,8 @@ public class MainGUI extends Screen {
         this.renderEntity(guiGraphics, 30, mouseX, mouseY );
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
+
+        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         this.renderTooltips(guiGraphics, mouseX, mouseY);
     }
@@ -94,12 +101,35 @@ public class MainGUI extends Screen {
         }
     }
 
+    private void addButtons(){
+        CustomButton skillBtn = new CustomButton(
+                leftPos + 55, topPos + 6,
+                16, 16,
+                82, 150,
+                114, 150,
+                background, 300, 300,
+                (b) -> System.out.println("FONCTIONNE"));
+
+        this.addRenderableWidget(skillBtn);
+
+        CustomButton questBtn = new CustomButton(
+                leftPos + 55, topPos + 24,
+                16, 16,
+                82, 167,
+                114, 167,
+                background, 300, 300,
+                (b) -> System.out.println("FONCTIONNE AUSSI"));
+
+        this.addRenderableWidget(questBtn);
+    }
+
     private void renderEntity(GuiGraphics gui, int scale,  int mouseX, int mouseY){
         LivingEntity player = this.minecraft.player;
         if(player == null) return;
 
         int renderX = leftPos + 29;
         int renderY = topPos + 72;
+
 
         float mouseXOffset = (float)(renderX) - mouseX;
         float mouseYOffset = (float)(renderY - 50) - mouseY;
@@ -170,5 +200,7 @@ public class MainGUI extends Screen {
     public boolean isPauseScreen(){
         return false;
     }
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
 }
