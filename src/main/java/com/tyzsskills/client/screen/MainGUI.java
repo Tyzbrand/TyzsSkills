@@ -4,10 +4,14 @@ import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.client.ClientCache;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.Locale;
 
@@ -43,6 +47,8 @@ public class MainGUI extends Screen {
         this.renderPlayerStats(guiGraphics, mouseX, mouseY);
 
         this.renderXpBar(guiGraphics);
+
+        this.renderEntity(guiGraphics, 30, mouseX, mouseY );
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
@@ -86,6 +92,54 @@ public class MainGUI extends Screen {
         if(widthToDraw > 0) {
             gui.blit(background, leftPos + 2, topPos + 98, 82, 142, widthToDraw, 5, 300, 300);
         }
+    }
+
+    private void renderEntity(GuiGraphics gui, int scale,  int mouseX, int mouseY){
+        LivingEntity player = this.minecraft.player;
+        if(player == null) return;
+
+        int renderX = leftPos + 29;
+        int renderY = topPos + 72;
+
+        float mouseXOffset = (float)(renderX) - mouseX;
+        float mouseYOffset = (float)(renderY - 50) - mouseY;
+
+        float f = (float)Math.atan((double)mouseXOffset / 40f);
+        float f1 = (float)Math.atan((double)mouseYOffset / 40f);
+
+        Quaternionf quatF = (new Quaternionf()).rotateZ((float)Math.PI);
+        Quaternionf quatF1 = (new Quaternionf()).rotateX(f1 * 20f * (float)Math.PI/180f);
+        quatF.mul(quatF1);
+
+        float f2 = player.yBodyRot;
+        float f3 = player.getYRot();
+        float f4 = player.getXRot();
+        float f5 = player.yHeadRotO;
+        float f6 = player.yHeadRot;
+
+        player.yBodyRot = 180f + f * 20f;
+        player.setYRot(180f + f * 40f);
+        player.setXRot(-f1 * 20f);
+        player.yHeadRot = player.getYRot();
+        player.yHeadRotO = player.getYRot();
+
+        InventoryScreen.renderEntityInInventory(
+                gui,
+                (float) renderX,
+                (float) renderY,
+                scale,
+                new Vector3f(),
+                quatF,
+                null,
+                player
+        );
+
+        player.yBodyRot = f2;
+        player.setYRot(f3);
+        player.setXRot(f4);
+        player.yHeadRot = f5;
+        player.yHeadRotO = f6;
+
     }
 
     private void renderTooltips(GuiGraphics gui, int mouseX, int mouseY){
