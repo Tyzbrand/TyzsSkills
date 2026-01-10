@@ -30,18 +30,18 @@ public class SkillLoader {
         List<Float> values = GetSafeFloatArray(source, "values");
         if(values == null || values.size() != prices.size()) {LogError(id); return;}
 
-        Skill.SkillType type = GetSafeType(source, "type");
+        PassiveSkill.SkillType type = GetSafeType(source, "type");
         if(type == null) {LogError(id); return;}
 
-        Skill.SkillCategory category = GetSafeCategory(source, "category");
-        if(category == null) category = Skill.SkillCategory.MISC;
+        PassiveSkill.SkillCategory category = GetSafeCategory(source, "category");
+        if(category == null) category = PassiveSkill.SkillCategory.MISC;
 
         String modifier = GetSafeString(source, "modifier");
 
 
         SkillManager.Get().RegisterSKill(
                 new PassiveSkill(state, id, maxLevel, prices,
-                        type, category, modifier, values)
+                         modifier, values, type, category)
         );
     }
 
@@ -102,7 +102,7 @@ public class SkillLoader {
         return values;
     }
 
-    private static Skill.SkillType GetSafeType(JsonObject obj, String key){
+    private static PassiveSkill.SkillType GetSafeType(JsonObject obj, String key){
         if (obj == null || key == null) return null;
 
         var typeValue = obj.get(key);
@@ -111,14 +111,14 @@ public class SkillLoader {
         var typeValueString = typeValue.getAsString();
         if(typeValueString == null) return null;
 
-        Skill.SkillType type;
-        try {type = Skill.SkillType.valueOf(typeValueString.toUpperCase());}
+        PassiveSkill.SkillType type;
+        try {type = PassiveSkill.SkillType.valueOf(typeValueString.toUpperCase());}
         catch (IllegalArgumentException e) {return null;}
 
         return type;
     }
 
-    private static Skill.SkillCategory GetSafeCategory(JsonObject obj, String key){
+    private static PassiveSkill.SkillCategory GetSafeCategory(JsonObject obj, String key){
         if (obj == null || key == null) return null;
 
         var typeValue = obj.get(key);
@@ -127,8 +127,8 @@ public class SkillLoader {
         var typeValueString = typeValue.getAsString();
         if(typeValueString == null) return null;
 
-        Skill.SkillCategory category;
-        try {category = Skill.SkillCategory.valueOf(typeValueString.toUpperCase());}
+        PassiveSkill.SkillCategory category;
+        try {category = PassiveSkill.SkillCategory.valueOf(typeValueString.toUpperCase());}
         catch (IllegalArgumentException e) {return null;}
 
         return category;

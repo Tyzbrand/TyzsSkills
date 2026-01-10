@@ -22,10 +22,10 @@ public class SkillsPreset {
                 "Health_boost",
                 10,
                 List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
-                Skill.SkillType.GENERIC,
-                Skill.SkillCategory.ABILITIES,
                 "generic.max_health",
-                List.of(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f)));
+                List.of(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f),
+                PassiveSkill.SkillType.GENERIC,
+                PassiveSkill.SkillCategory.ABILITIES));
 
         return finalList;
     }

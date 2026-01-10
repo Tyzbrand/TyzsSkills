@@ -58,7 +58,10 @@ public class FileManager {
     //Ecrit les jsons par defaut
     public void LoadDefaultJson(MinecraftServer server) throws IOException {
         for(var skill : SkillsPreset.GetDefaultSkills()){
-            WriteSkill(skill, GetSkillPath(skill.GetCategory(), server));
+            if(skill instanceof PassiveSkill passiveSkill){
+                WriteSkill(skill, GetSkillPath(passiveSkill.GetCategory(), server));
+            }
+
         }
     }
 
@@ -155,7 +158,7 @@ public class FileManager {
         Files.writeString(skillFile, skillJson);
     }
 
-    private Path GetSkillPath(Skill.SkillCategory category, MinecraftServer server){
+    private Path GetSkillPath(PassiveSkill.SkillCategory category, MinecraftServer server){
 
         Path skillPath = server.getServerDirectory()
                 .resolve("config")
