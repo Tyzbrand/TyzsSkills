@@ -20,6 +20,7 @@ public class ClientCache {
     private static List<Skill> clientSkills = new ArrayList<>();
 
     private static MainGUI.ContainerType currentContainerType = MainGUI.ContainerType.SKILLS;
+    private static MainGUI.CategoryType currentContainerCatgory = MainGUI.CategoryType.ALL;
 
 
     public static void UpdateClientCacheLevel(int level){
@@ -46,6 +47,10 @@ public class ClientCache {
         currentContainerType = MainGUI.ContainerType.SKILLS; //Temporaire le temps de gérer les quetes
     }
 
+    public static void SetCategoryType(MainGUI.CategoryType category){
+        currentContainerCatgory = category; //Temporaire le temps de gérer les autres categories
+    }
+
     public static void UpdateSkills(List<Skill> skills){
         clientSkills.clear();
         clientSkills.addAll(skills);
@@ -67,4 +72,6 @@ public class ClientCache {
     public static int GetLvl(){return clientLevel;}
     public static float GetXPGOAL(){return clientLevelData.goal();}
     public static MainGUI.ContainerType GetContainerType(){return currentContainerType;}
+    public static MainGUI.CategoryType GetCategoryType(){return currentContainerCatgory;}
+    public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills);}
 }
