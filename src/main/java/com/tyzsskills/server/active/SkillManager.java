@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.tyzsskills.server.effects.GenericEffects;
 import com.tyzsskills.server.model.Skill;
+import com.tyzsskills.server.payloads.SkillLevelSyncPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class SkillManager {
 
@@ -16,7 +19,6 @@ public class SkillManager {
 
     private final Map<String, Skill> skillCollection = new HashMap<>();
 
-    public Boolean IsSkillValid(String id) {return skillCollection.containsKey(id);}
 
 
 
@@ -32,22 +34,41 @@ public class SkillManager {
 
     public void BuySkill(ServerPlayer player, String id)
     {
-        if(player == null || !IsSkillValid(id)) return;
+        var skill = GetSkill(id);
+        if(player == null || skill == null) return;
+
+        var data = player.getPersistentData();
+        var key = skill.GetID() + "_lvl";
+
+        int currentLvl = data.getInt(key);
+        if(currentLvl >= skill.GetMaximumLevel()) return;
+
+        var prices = skill.GetPrices();
+        if(currentLvl > prices.size()) return;
+        int price = prices.get(currentLvl);
+
+
+        if(SpManager.GetSP(player) >= price){
+            SpManager.RemoveSP(player, price);
+            data.putInt(key, currentLvl+1);
+            PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl+1));
+            if(skill.GetType() == Skill.SkillType.GENERIC) GenericEffects.ApplyEffect(skill, player);
+        }
     }
 
     public void RefundSkill(ServerPlayer player, String id)
     {
-        if(player == null || !IsSkillValid(id)) return;
+        if(player == null) return;
     }
 
     public void ResetSkill(ServerPlayer player, String id)
     {
-        if(player == null || !IsSkillValid(id)) return;
+        if(player == null) return;
     }
 
 
     //getters
-    public boolean AreSkillsLoaded(){return !skillCollection.isEmpty();}
+    public Skill GetSkill(String id){return skillCollection.getOrDefault(id, null);}
     public int GetLoadedSkills(){return  skillCollection.size();}
     public List<Skill> GetAllSkills() {return new ArrayList<>(skillCollection.values());}
 }
