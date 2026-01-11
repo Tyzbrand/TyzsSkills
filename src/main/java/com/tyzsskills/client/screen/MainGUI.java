@@ -4,6 +4,9 @@ import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.client.ClientCache;
 import com.tyzsskills.client.models.CustomScrollView;
 import com.tyzsskills.client.models.CustomTabButton;
+import com.tyzsskills.client.models.SkillEntry;
+import com.tyzsskills.client.models.SkillWidget;
+import com.tyzsskills.server.model.Skill;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -45,6 +48,8 @@ public class MainGUI extends Screen {
 
         this.addButtons();
         this.addScrollView();
+
+        refreshList();
     }
 
     @Override
@@ -285,7 +290,7 @@ public class MainGUI extends Screen {
          scrollView = new CustomScrollView(
                 this.minecraft,
                 leftPos + 89, topPos + 20,
-                174, 112, 20,
+                174, 112, 35,
                 background, 325, 325,
                 142, 150, 149, 150,
                 7, 15);
@@ -302,6 +307,25 @@ public class MainGUI extends Screen {
 
         scrollView.clearEntries();
 
+        int maxPerLine = 3;
+
+        SkillEntry currentRow = null;
+        int countInRow = 0;
+
+        for(Skill skill : ClientCache.GetAllSkills()){
+            if(skill.GetCategory() != categoryToLoad &&
+            categoryToLoad != CategoryType.ALL) continue;
+
+
+            if(currentRow == null || countInRow >= maxPerLine){
+                currentRow = new SkillEntry();
+                this.scrollView.AddEntry(currentRow);
+                countInRow = 0;
+            }
+
+            currentRow.addWidget(new SkillWidget(skill));
+            countInRow++;
+        }
         this.scrollView.setScrollAmount(0);
     }
 

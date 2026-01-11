@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.server.model.*;
 import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
@@ -155,7 +156,7 @@ public class FileManager {
         Files.writeString(skillFile, skillJson);
     }
 
-    private Path GetSkillPath(Skill.SkillCategory category, MinecraftServer server){
+    private Path GetSkillPath(MainGUI.CategoryType category, MinecraftServer server){
 
         Path skillPath = server.getServerDirectory()
                 .resolve("config")
@@ -173,8 +174,8 @@ public class FileManager {
             case MISC -> {
                 return skillPath.resolve("misc");
             }
-            case SPECIAL -> {
-                return skillPath.resolve("special");
+            case ALL -> {
+                return skillPath.resolve("Misc");
             }
         }
         return skillPath;

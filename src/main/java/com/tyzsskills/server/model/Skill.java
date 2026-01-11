@@ -1,5 +1,7 @@
 package com.tyzsskills.server.model;
 
+import com.tyzsskills.client.screen.MainGUI;
+import net.minecraft.data.Main;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,7 +17,7 @@ import java.util.List;
 public class Skill{
 
     public Skill(boolean active, String id, int maximumLevel,
-                 List<Integer> prices, List<Float> values, SkillType type, SkillCategory category,
+                 List<Integer> prices, List<Float> values, SkillType type, MainGUI.CategoryType category,
                  String modifier, AttributeModifier.Operation operation, boolean purchasable,
                  String icon, String displayName, String description)
     {
@@ -33,10 +35,11 @@ public class Skill{
         this.icon = icon;
         this.displayName = displayName;
         this.description = description;
+
+        if(category == MainGUI.CategoryType.ALL) category = MainGUI.CategoryType.MISC;
     }
 
     public enum SkillType {GENERIC, CUSTOM, IMMUTABLE}
-    public enum SkillCategory {ABILITIES, FIGHT, MISC, SPECIAL}
 
 
     protected boolean active;
@@ -45,7 +48,7 @@ public class Skill{
     protected List<Integer> prices;
     protected List<Float> values;
     protected SkillType type;
-    protected SkillCategory category;
+    protected MainGUI.CategoryType category;
     protected String modifier;
     protected AttributeModifier.Operation operation;
     protected boolean purchasable;
@@ -62,7 +65,7 @@ public class Skill{
     public String GetModifier() {return modifier;}
     public List<Float> GetValues() {return Collections.unmodifiableList(values);}
     public SkillType GetType(){return type;}
-    public SkillCategory GetCategory(){return category;}
+    public MainGUI.CategoryType GetCategory(){return category;}
     public AttributeModifier.Operation GetModifierOperation(){return operation;}
     public boolean IsPurchasable(){return purchasable;}
     public String GetIcon(){return icon;}
@@ -105,7 +108,7 @@ public class Skill{
         List<Float> values = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readFloat);
 
         SkillType type = buffer.readEnum(SkillType.class);
-        SkillCategory category = buffer.readEnum(SkillCategory.class);
+        MainGUI.CategoryType category = buffer.readEnum(MainGUI.CategoryType.class);
 
         String modifier = buffer.readUtf();
         AttributeModifier.Operation operation = buffer.readEnum(AttributeModifier.Operation.class);

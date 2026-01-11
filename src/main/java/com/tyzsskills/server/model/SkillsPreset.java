@@ -1,5 +1,6 @@
 package com.tyzsskills.server.model;
 
+import com.tyzsskills.client.screen.MainGUI;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class SkillsPreset {
                 List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
                 List.of(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f),
                 Skill.SkillType.GENERIC,
-                Skill.SkillCategory.ABILITIES,
+                MainGUI.CategoryType.ABILITIES,
                 "minecraft:generic.max_health",
                 AttributeModifier.Operation.ADD_VALUE,
                 true,

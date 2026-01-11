@@ -2,6 +2,7 @@ package com.tyzsskills.server.active;
 
 import com.google.gson.JsonObject;
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.server.model.Skill;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -34,8 +35,8 @@ public class SkillLoader {
         Skill.SkillType type = GetSafeType(source, "type");
         if(type == null) {LogError(id); return;}
 
-        Skill.SkillCategory category = GetSafeCategory(source, "category");
-        if(category == null) category = Skill.SkillCategory.MISC;
+        MainGUI.CategoryType category = GetSafeCategory(source, "category");
+        if(category == null) category = MainGUI.CategoryType.MISC;
 
         Boolean purchasable = GetSafeBool(source,"purchasable");
         if(purchasable == null) purchasable = true;
@@ -135,7 +136,7 @@ public class SkillLoader {
         return type;
     }
 
-    private static Skill.SkillCategory GetSafeCategory(JsonObject obj, String key){
+    private static MainGUI.CategoryType GetSafeCategory(JsonObject obj, String key){
         if (obj == null || key == null) return null;
 
         var typeValue = obj.get(key);
@@ -144,8 +145,8 @@ public class SkillLoader {
         var typeValueString = typeValue.getAsString();
         if(typeValueString == null) return null;
 
-        Skill.SkillCategory category;
-        try {category = Skill.SkillCategory.valueOf(typeValueString.toUpperCase());}
+        MainGUI.CategoryType category;
+        try {category = MainGUI.CategoryType.valueOf(typeValueString.toUpperCase());}
         catch (IllegalArgumentException e) {return null;}
 
         return category;

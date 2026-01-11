@@ -52,8 +52,8 @@ public class SkillWidget {
             gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
         }
 
-        MutableComponent name = Component.translatable(skill.GetDisplayName());
-        gui.drawWordWrap(font, name, x+27, y+7, 30, 0x000000);
+        MutableComponent count = Component.translatable(skill.GetDisplayName());
+        gui.drawWordWrap(font, count, x+27, y+7, 30, 0x000000);
 
 
         if(skill.IsPurchasable()) {
@@ -71,7 +71,7 @@ public class SkillWidget {
         }
     }
 
-    public boolean mouseCLicked(double mouseX, double mouseY, int button){
+    public boolean mouseClicked(double mouseX, double mouseY, int button){
         if(isMouseOver((int)mouseX, (int)mouseY, x+27, y+17, BTN_W, BTN_H)){
             if(!skill.IsPurchasable()) return false;
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
