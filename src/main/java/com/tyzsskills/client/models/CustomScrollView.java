@@ -83,10 +83,6 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
         super.clearEntries();
     }
 
-    public void addEntry(CustomScrollView.Entry entry) {
-        super.addEntry(entry);
-    }
-
     @Override
     protected int getScrollbarPosition(){
         return this.getX() + this.width - scrollWidth - 2;

@@ -24,7 +24,7 @@ public class MainGUI extends Screen {
     private static final ResourceLocation mainFont = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID,
             "main_font");
 
-    private final int imageWidth = 270;
+    private final int imageWidth = 294;
     private final int imageHeight = 139;
 
     private int leftPos;
@@ -51,7 +51,11 @@ public class MainGUI extends Screen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick){
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
-        guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 300, 300);
+        if (this.scrollView != null) {
+            this.scrollView.visible = (ClientCache.GetContainerType() == ContainerType.SKILLS);
+        }
+
+        guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 325, 325);
 
         this.renderStrings(guiGraphics, mouseX, mouseY);
 
@@ -105,7 +109,7 @@ public class MainGUI extends Screen {
         int widthToDraw = (int)(ratio*70);
 
         if(widthToDraw > 0) {
-            gui.blit(background, leftPos + 2, topPos + 98, 82, 142, widthToDraw, 5, 300, 300);
+            gui.blit(background, leftPos + 2, topPos + 98, 82, 142, widthToDraw, 5, 325, 325);
         }
     }
 
@@ -198,7 +202,7 @@ public class MainGUI extends Screen {
                 82, 150,
                 114, 150,
                 98, 150,
-                300, 300,
+                325, 325,
                 () -> ClientCache.GetContainerType() == ContainerType.SKILLS,
                 background,
                 (b) -> ClientCache.SetContainerType(ContainerType.SKILLS));
@@ -210,7 +214,7 @@ public class MainGUI extends Screen {
                 82, 167,
                 114, 167,
                 98, 167,
-                300, 300,
+                325, 325,
                 () -> ClientCache.GetContainerType() == ContainerType.QUESTS,
                 background,
                 (b) -> ClientCache.SetContainerType(ContainerType.QUESTS));
@@ -222,7 +226,7 @@ public class MainGUI extends Screen {
                 82, 199,
                 82, 212,
                 82, 186,
-                300, 300,
+                325, 325,
                 () -> ClientCache.GetCategoryType() == CategoryType.ALL,
                 background,
                 (b) -> {
@@ -237,7 +241,7 @@ public class MainGUI extends Screen {
                 111, 199,
                 111, 212,
                 111, 186,
-                300, 300,
+                325, 325,
                 () -> ClientCache.GetCategoryType() == CategoryType.ABILITIES,
                 background,
                 (b) -> {
@@ -252,7 +256,7 @@ public class MainGUI extends Screen {
                 140, 199,
                 140, 212,
                 140, 186,
-                300, 300,
+                325, 325,
                 () -> ClientCache.GetCategoryType() == CategoryType.FIGHT,
                 background,
                 (b) -> {
@@ -267,7 +271,7 @@ public class MainGUI extends Screen {
                 169, 199,
                 169, 212,
                 169, 186,
-                300, 300,
+                325, 325,
                 () -> ClientCache.GetCategoryType() == CategoryType.MISC,
                 background,
                 (b) -> {
@@ -282,7 +286,7 @@ public class MainGUI extends Screen {
                 this.minecraft,
                 leftPos + 89, topPos + 20,
                 174, 112, 20,
-                background, 300, 300,
+                background, 325, 325,
                 142, 150, 149, 150,
                 7, 15);
 

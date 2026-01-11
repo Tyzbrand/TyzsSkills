@@ -1,7 +1,9 @@
 package com.tyzsskills.server.model;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
@@ -14,7 +16,8 @@ public class Skill{
 
     public Skill(boolean active, String id, int maximumLevel,
                  List<Integer> prices, List<Float> values, SkillType type, SkillCategory category,
-                 String modifier, AttributeModifier.Operation operation, boolean purchasable)
+                 String modifier, AttributeModifier.Operation operation, boolean purchasable,
+                 String icon, String displayName, String description)
     {
         this.active = active;
         this.id = id;
@@ -26,6 +29,10 @@ public class Skill{
         this.modifier = modifier;
         this.operation = operation;
         this.purchasable = purchasable;
+
+        this.icon = icon;
+        this.displayName = displayName;
+        this.description = description;
     }
 
     public enum SkillType {GENERIC, CUSTOM, IMMUTABLE}
@@ -43,6 +50,10 @@ public class Skill{
     protected AttributeModifier.Operation operation;
     protected boolean purchasable;
 
+    protected String icon;
+    protected String displayName;
+    protected String description;
+
 
     public boolean IsSkillActive(){return active;}
     public String GetID() {return id;}
@@ -54,6 +65,10 @@ public class Skill{
     public SkillCategory GetCategory(){return category;}
     public AttributeModifier.Operation GetModifierOperation(){return operation;}
     public boolean IsPurchasable(){return purchasable;}
+    public String GetIcon(){return icon;}
+    public String GetDisplayName(){return displayName;}
+    public String GetDescription(){return description;}
+
 
 
     //Network
@@ -75,6 +90,10 @@ public class Skill{
         buffer.writeUtf(modifier);
         buffer.writeEnum(operation);
         buffer.writeBoolean(purchasable);
+
+        buffer.writeUtf(icon);
+        buffer.writeUtf(displayName);
+        buffer.writeUtf(description);
     }
 
     public static Skill ReadToBuffer(FriendlyByteBuf buffer){
@@ -92,6 +111,11 @@ public class Skill{
         AttributeModifier.Operation operation = buffer.readEnum(AttributeModifier.Operation.class);
         boolean purchasable = buffer.readBoolean();
 
-        return new Skill(active, id, maxLevel, prices, values, type, category, modifier, operation, purchasable);
+        String icon = buffer.readUtf();
+        String displayName = buffer.readUtf();
+        String description = buffer.readUtf();
+
+        return new Skill(active, id, maxLevel, prices, values, type, category, modifier, operation, purchasable,
+                            icon, displayName, description);
     }
 }

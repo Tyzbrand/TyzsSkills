@@ -25,5 +25,9 @@
 
 
   "key.tyzs_skills.open_menu" : "Open skill UI",
-  "key.categories.tyzs_skills" : "Tyz's skills"
+  "key.categories.tyzs_skills" : "Tyz's skills",
+
+
+  "skill.tyzs_skills.health_boost.displayName" : "Health boost",
+  "skill.tyzs_skills.health_boost.description" : "Add some extra heart"
 }

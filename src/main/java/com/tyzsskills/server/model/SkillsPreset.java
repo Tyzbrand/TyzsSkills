@@ -29,7 +29,10 @@ public class SkillsPreset {
                 Skill.SkillCategory.ABILITIES,
                 "minecraft:generic.max_health",
                 AttributeModifier.Operation.ADD_VALUE,
-                true));
+                true,
+                "tyzs_skills:textures/gui/skills/health_boost.png",
+                "skill.tyzs_skills.health_boost.displayName",
+                "skill.tyzs_skills.health_boost.description"));
 
         return finalList;
     }

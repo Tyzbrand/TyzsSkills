@@ -1,7 +1,11 @@
 package com.tyzsskills.server.active;
 
 import com.google.gson.JsonObject;
+import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.server.model.Skill;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.ArrayList;
@@ -16,9 +20,6 @@ public class SkillLoader {
         Boolean state = GetSafeBool(source, "active");
         if(state == null) state = false;
         if(!state) return; //Les skills désactivés de sont pas chargés
-
-        String displayName = GetSafeString(source, "name");
-        if(displayName == null) displayName = "Custom Skill";
 
         Integer maxLevel = GetSafeInt(source, "maximumLevel");
         if(maxLevel == null) {LogError(id); return;}
@@ -42,12 +43,22 @@ public class SkillLoader {
         AttributeModifier.Operation operation = GetSafeOperation(source, "operation");
         if(operation == null) {LogError(id); return;}
 
+        String icon = GetSafeString(source, "icon");
+        if(icon == null) {LogError(id); return;} //A mettre une icon par defaut
+
+        String displayName = GetSafeString(source, "displayName");
+        if(displayName == null) displayName = "Unknown skill";
+
+        String description = GetSafeString(source, "description");
+        if(description == null) description = "Missing description";
+
         String modifier = GetSafeString(source, "modifier");
+        if(modifier == null) modifier = "";
 
 
         SkillManager.Get().RegisterSKill(
                 new Skill(state, id, maxLevel, prices, values, type,
-                        category, modifier, operation, purchasable));
+                        category, modifier, operation, purchasable, icon, displayName, description));
     }
 
 
@@ -60,6 +71,7 @@ public class SkillLoader {
 
         return value.getAsString();
     }
+
 
     private static Integer GetSafeInt(JsonObject obj, String key){
         if(obj == null || key == null) return null;
