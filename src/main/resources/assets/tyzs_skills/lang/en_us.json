@@ -29,5 +29,26 @@
 
 
   "skill.tyzs_skills.health_boost.displayName" : "Health boost",
-  "skill.tyzs_skills.health_boost.description" : "Add some extra heart"
+  "skill.tyzs_skills.health_boost.description" : "Temporary description",
+
+  "skill.tyzs_skills.oxygen_boost.displayName" : "Oxygen boost",
+  "skill.tyzs_skills.oxygen_boost.description" : "Temporary description",
+
+  "skill.tyzs_skills.block_reach.displayName" : "Block reach",
+  "skill.tyzs_skills.block_reach.description" : "Temporary description",
+
+  "skill.tyzs_skills.attack_damage.displayName" : "Attack_damage",
+  "skill.tyzs_skills.attack_damage.description" : "Temporary description",
+
+  "skill.tyzs_skills.sneaking_speed.displayName" : "Sneaking speed",
+  "skill.tyzs_skills.sneaking_speed.description" : "Temporary description",
+
+  "skill.tyzs_skills.speed.displayName" : "Speed",
+  "skill.tyzs_skills.speed.description" : "Temporary description",
+
+  "skill.tyzs_skills.step_height.displayName" : "Step height",
+  "skill.tyzs_skills.step_height.description" : "Temporary description",
+
+  "skill.tyzs_skills.swim_speed.displayName" : "Swim speed",
+  "skill.tyzs_skills.swim_speed.description" : "Temporary description"
 }
