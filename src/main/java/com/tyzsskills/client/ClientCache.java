@@ -60,12 +60,6 @@ public class ClientCache {
         Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skills sync: " + clientSkills.size() + " skills cached" ), false);
     }
 
-    public static void UpdateSkillLevels(Map<String, Integer> skillLevels){
-        clientSkillLevels.clear();
-        clientSkillLevels.putAll(skillLevels);
-        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skill levels sync: " + clientSkillLevels.size() + " level found" ), false);
-    }
-
     public static void UpdateSkillLevels(String id, int lvl){
         clientSkillLevels.put(id, lvl);
         Minecraft.getInstance().player.displayClientMessage(Component.literal("New skill level: " + id + " level " + lvl ), false);

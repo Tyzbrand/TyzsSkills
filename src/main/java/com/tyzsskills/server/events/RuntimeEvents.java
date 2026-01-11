@@ -26,6 +26,7 @@ public class RuntimeEvents {
 
         AutoSyncClient.SyncMainData(player);
         AutoSyncClient.SyncSkillList(player);
+        AutoSyncClient.SyncSkillLevels(player);
     }
 
     @SubscribeEvent
