@@ -12,7 +12,6 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
 
     private final ResourceLocation texture;
     private final int textureW, textureH;
-    private final int uBackground, vBackground;
     private final int uScroll, vScroll;
     private final int uScrollHover, vScrollHover;
     private final int scrollWidth, scrollHeight;
@@ -27,8 +26,7 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
 
     public CustomScrollView(Minecraft minecraft, int x, int y, int width, int height, int itemHeight,
                                 ResourceLocation texture, int textureW, int textureH,
-                                int uBackground, int vBackground, int uScroll, int vScroll,
-                                int uScrollHover, int vScrollHover, int scrollWidth, int scrollHeight){
+                               int uScroll, int vScroll, int uScrollHover, int vScrollHover, int scrollWidth, int scrollHeight){
 
         super (minecraft, width, height, y, itemHeight);
 
@@ -37,8 +35,6 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
         this.texture = texture;
         this.textureW = textureW;
         this.textureH = textureH;
-        this.uBackground = uBackground;
-        this.vBackground = vBackground;
         this.uScroll = uScroll;
         this.vScroll = vScroll;
         this.uScrollHover = uScrollHover;
@@ -51,11 +47,12 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
 
     @Override
     public void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTick){
-        gui.blit(texture, this.getX(), this.getY(), uBackground, vBackground, this.width, this.height, textureW, textureH);
 
         gui.enableScissor(this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height);
 
         this.renderListItems(gui, mouseX, mouseY, partialTick);
+
+        gui.disableScissor();
 
         int maxScroll = this.getMaxScroll();
         if(maxScroll > 0){
@@ -80,6 +77,14 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
             gui.blit(texture, scrollBarX, scrollBarY, currentU, currentV, scrollWidth, barH, textureW, textureH);
 
         }
+    }
+
+    public void clearEntries(){
+        super.clearEntries();
+    }
+
+    public void addEntry(CustomScrollView.Entry entry) {
+        super.addEntry(entry);
     }
 
     @Override

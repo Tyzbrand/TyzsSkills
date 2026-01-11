@@ -2,6 +2,7 @@ package com.tyzsskills.client.screen;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.client.ClientCache;
+import com.tyzsskills.client.models.CustomScrollView;
 import com.tyzsskills.client.models.CustomTabButton;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -34,6 +35,8 @@ public class MainGUI extends Screen {
     public enum ContainerType {SKILLS, QUESTS}
     public enum CategoryType {ALL, ABILITIES, FIGHT, MISC}
 
+    private CustomScrollView scrollView;
+
     @Override
     protected void init(){
         super.init();
@@ -41,6 +44,7 @@ public class MainGUI extends Screen {
         this.topPos = (this.height - this.imageHeight)/2;
 
         this.addButtons();
+        this.addScrollView();
     }
 
     @Override
@@ -90,7 +94,6 @@ public class MainGUI extends Screen {
         gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+8, 0x737373, false);
     }
 
-
     private void renderXpBar(GuiGraphics gui){
 
         float xpStat = ClientCache.GetXP();
@@ -104,80 +107,6 @@ public class MainGUI extends Screen {
         if(widthToDraw > 0) {
             gui.blit(background, leftPos + 2, topPos + 98, 82, 142, widthToDraw, 5, 300, 300);
         }
-    }
-
-    private void addButtons(){
-        CustomTabButton skillBtn = new CustomTabButton(
-                leftPos + 55, topPos + 6,
-                16, 16,
-                82, 150,
-                114, 150,
-                98, 150,
-                 300, 300,
-                () -> ClientCache.GetContainerType() == ContainerType.SKILLS,
-                background,
-                (b) -> ClientCache.SetContainerType(ContainerType.SKILLS));
-        this.addRenderableWidget(skillBtn);
-
-        CustomTabButton questBtn = new CustomTabButton(
-                leftPos + 55, topPos + 24,
-                16, 16,
-                82, 167,
-                114, 167,
-                98, 167,
-                300, 300,
-                () -> ClientCache.GetContainerType() == ContainerType.QUESTS,
-                background,
-                (b) -> ClientCache.SetContainerType(ContainerType.QUESTS));
-        this.addRenderableWidget(questBtn);
-
-        CustomTabButton allBtn = new CustomTabButton(
-                leftPos + 91, topPos + 6,
-                29, 13,
-                82, 199,
-                82, 212,
-                82, 186,
-                300, 300,
-                () -> ClientCache.GetCategoryType() == CategoryType.ALL,
-                background,
-                (b) -> ClientCache.SetCategoryType(CategoryType.ALL));
-        this.addRenderableWidget(allBtn);
-
-        CustomTabButton abilitiesBtn = new CustomTabButton(
-                leftPos + 122, topPos + 6,
-                29, 13,
-                111, 199,
-                111, 212,
-                111, 186,
-                300, 300,
-                () -> ClientCache.GetCategoryType() == CategoryType.ABILITIES,
-                background,
-                (b) -> ClientCache.SetCategoryType(CategoryType.ABILITIES));
-        this.addRenderableWidget(abilitiesBtn);
-
-        CustomTabButton fightBtn = new CustomTabButton(
-                leftPos + 153, topPos + 6,
-                29, 13,
-                140, 199,
-                140, 212,
-                140, 186,
-                300, 300,
-                () -> ClientCache.GetCategoryType() == CategoryType.FIGHT,
-                background,
-                (b) -> ClientCache.SetCategoryType(CategoryType.FIGHT));
-        this.addRenderableWidget(fightBtn);
-
-        CustomTabButton miscBtn = new CustomTabButton(
-                leftPos + 184, topPos + 6,
-                29, 13,
-                169, 199,
-                169, 212,
-                169, 186,
-                300, 300,
-                () -> ClientCache.GetCategoryType() == CategoryType.MISC,
-                background,
-                (b) -> ClientCache.SetCategoryType(CategoryType.MISC));
-        this.addRenderableWidget(miscBtn);
     }
 
     private void renderEntity(GuiGraphics gui, int scale,  int mouseX, int mouseY){
@@ -261,6 +190,116 @@ public class MainGUI extends Screen {
         }
     }
 
+
+    private void addButtons(){
+        CustomTabButton skillBtn = new CustomTabButton(
+                leftPos + 55, topPos + 6,
+                16, 16,
+                82, 150,
+                114, 150,
+                98, 150,
+                300, 300,
+                () -> ClientCache.GetContainerType() == ContainerType.SKILLS,
+                background,
+                (b) -> ClientCache.SetContainerType(ContainerType.SKILLS));
+        this.addRenderableWidget(skillBtn);
+
+        CustomTabButton questBtn = new CustomTabButton(
+                leftPos + 55, topPos + 24,
+                16, 16,
+                82, 167,
+                114, 167,
+                98, 167,
+                300, 300,
+                () -> ClientCache.GetContainerType() == ContainerType.QUESTS,
+                background,
+                (b) -> ClientCache.SetContainerType(ContainerType.QUESTS));
+        this.addRenderableWidget(questBtn);
+
+        CustomTabButton allBtn = new CustomTabButton(
+                leftPos + 91, topPos + 6,
+                29, 13,
+                82, 199,
+                82, 212,
+                82, 186,
+                300, 300,
+                () -> ClientCache.GetCategoryType() == CategoryType.ALL,
+                background,
+                (b) -> {
+                    ClientCache.SetCategoryType(CategoryType.ALL);
+                    this.refreshList();
+                });
+        this.addRenderableWidget(allBtn);
+
+        CustomTabButton abilitiesBtn = new CustomTabButton(
+                leftPos + 122, topPos + 6,
+                29, 13,
+                111, 199,
+                111, 212,
+                111, 186,
+                300, 300,
+                () -> ClientCache.GetCategoryType() == CategoryType.ABILITIES,
+                background,
+                (b) -> {
+                    ClientCache.SetCategoryType(CategoryType.ABILITIES);
+                    this.refreshList();
+                });
+        this.addRenderableWidget(abilitiesBtn);
+
+        CustomTabButton fightBtn = new CustomTabButton(
+                leftPos + 153, topPos + 6,
+                29, 13,
+                140, 199,
+                140, 212,
+                140, 186,
+                300, 300,
+                () -> ClientCache.GetCategoryType() == CategoryType.FIGHT,
+                background,
+                (b) -> {
+                    ClientCache.SetCategoryType(CategoryType.FIGHT);
+                    this.refreshList();
+                });
+        this.addRenderableWidget(fightBtn);
+
+        CustomTabButton miscBtn = new CustomTabButton(
+                leftPos + 184, topPos + 6,
+                29, 13,
+                169, 199,
+                169, 212,
+                169, 186,
+                300, 300,
+                () -> ClientCache.GetCategoryType() == CategoryType.MISC,
+                background,
+                (b) -> {
+                    ClientCache.SetCategoryType(CategoryType.MISC);
+                    this.refreshList();
+                });
+        this.addRenderableWidget(miscBtn);
+    }
+
+    private void addScrollView(){
+         scrollView = new CustomScrollView(
+                this.minecraft,
+                leftPos + 89, topPos + 20,
+                174, 112, 20,
+                background, 300, 300,
+                142, 150, 149, 150,
+                7, 15);
+
+        this.addRenderableWidget(this.scrollView);
+    }
+
+
+    //Actifs
+    private void refreshList(){
+        if(this.scrollView == null) return;
+
+        var categoryToLoad = ClientCache.GetCategoryType();
+
+        scrollView.clearEntries();
+
+        this.scrollView.setScrollAmount(0);
+    }
 
     //Uilitaires
     private String SmartFormat(float value){
