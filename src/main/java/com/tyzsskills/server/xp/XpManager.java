@@ -72,10 +72,6 @@ public class XpManager {
         else SetXP(newPlayer, 0f);
     }
 
-    public static void EnsureDefaultXP(ServerPlayer player){
-        if(!player.getPersistentData().contains(dataKey)) SetXP(player,0f);
-        else UpdateClient(player);
-    }
 
     public static void ClearPool(){
         POOL.clear();
@@ -125,9 +121,7 @@ public class XpManager {
 
 
     //Getters
-    public static float GetXP(ServerPlayer player){
-        return player.getPersistentData().getFloat(dataKey);
-    }
+    public static float GetXP(ServerPlayer player){return player.getPersistentData().getFloat(dataKey);}
 
     public static LevelData GetLevelData(int lvl){
         if(POOL.containsKey(lvl)) return POOL.get(lvl);

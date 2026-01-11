@@ -40,11 +40,6 @@ public class SpManager {
             else SetSP(newPlayer, 0);
         }
 
-        public static void EnsureDefaultSP(ServerPlayer player){
-            if(!player.getPersistentData().contains(dataKey)) SetSP(player,0);
-            else UpdateClient(player);
-        }
-
         //Utilitaire
         private static void UpdateClient(ServerPlayer player){
             PacketDistributor.sendToPlayer(player, new SpUpdatePayload(GetSP(player)));

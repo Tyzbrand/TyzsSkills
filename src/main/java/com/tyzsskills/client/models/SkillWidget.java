@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
@@ -56,21 +57,19 @@ public class SkillWidget {
             gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
         }
 
-        MutableComponent count = Component.translatable(skill.GetDisplayName());
+        MutableComponent count = Component.literal(String.valueOf(skill.GetMaximumLevel()));
         gui.drawWordWrap(font, count, x+27, y+7, 30, 0x000000);
 
-
-        if(skill.IsPurchasable()) {
+        if(skill.IsPurchasable()){
             boolean isHoverBuyBtn = isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H);
-            boolean isHoverRefundBtn = isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H);
-
             int currentBuyU = U_BUY_BTN;
-            int currentRefundU = U_REFUND_BTN;
-
             if(isHoverBuyBtn){currentBuyU = U_BUY_BTN_HOVER;}
-            if(isHoverRefundBtn){currentRefundU = U_REFUND_BTN_HOVER;}
-
             gui.blit(REF_TEXTURE, x+27, y+17, currentBuyU, V_BUY_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
+        }
+        if(skill.IsPurchasable()) { //A rajouter une verification pour le remboursement
+            boolean isHoverRefundBtn = isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H);
+            int currentRefundU = U_REFUND_BTN;
+            if(isHoverRefundBtn){currentRefundU = U_REFUND_BTN_HOVER;}
             gui.blit(REF_TEXTURE, x+38, y+17, currentRefundU, V_REFUND_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
         }
     }
@@ -85,17 +84,16 @@ public class SkillWidget {
         }
 
         //Plusieurs TOOTLIPS
-        tooltip.add(Component.literal(skill.GetDisplayName()).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+        /*tooltip.add(Component.translatable(skill.GetDisplayName()));
 
-        String rawDescription = skill.GetDescription();
-        if(!rawDescription.isEmpty()){
-            Font font = Minecraft.getInstance().font;
-            List<FormattedCharSequence> splitLines = font.split(Component.literal(rawDescription), 150);
+        MutableComponent rawDescription = Component.translatable(skill.GetDescription());
 
-            for(var line : splitLines){
-                tooltip.add(Component.literal(new StringBuilder().append(line).toString()).withStyle(ChatFormatting.GRAY));
-            }
-        }
+        Font font = Minecraft.getInstance().font;
+        List<FormattedCharSequence> splitLines = font.split(rawDescription, 150);
+
+        for(var line : splitLines){
+            tooltip.add(Component.literal(String.valueOf(line)));
+        }*/
         return tooltip;
     }
 

@@ -23,11 +23,9 @@ public class RuntimeEvents {
     @SubscribeEvent
     public static void OnPlayerLogin(PlayerEvent.PlayerLoggedInEvent event){
         if(!(event.getEntity() instanceof ServerPlayer player)) return;
-        LevelManager.EnsureDefaultLevel(player);
-        XpManager.EnsureDefaultXP(player);
-        SpManager.EnsureDefaultSP(player);
 
-        PacketDistributor.sendToPlayer(player, new SkillSyncPayload(SkillManager.Get().GetAllSkills()));
+        AutoSyncClient.SyncMainData(player);
+        AutoSyncClient.SyncSkillList(player);
     }
 
     @SubscribeEvent

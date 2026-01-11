@@ -7,7 +7,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClientCache {
 
@@ -17,7 +19,8 @@ public class ClientCache {
 
     private static XpManager.LevelData clientLevelData = new XpManager.LevelData(100f, 1);
 
-    private static List<Skill> clientSkills = new ArrayList<>();
+    private final static List<Skill> clientSkills = new ArrayList<>();
+    private final static Map<String, Integer> clientSkillLevels = new HashMap<>();
 
     private static MainGUI.ContainerType currentContainerType = MainGUI.ContainerType.SKILLS;
     private static MainGUI.CategoryType currentContainerCatgory = MainGUI.CategoryType.ALL;
@@ -25,17 +28,17 @@ public class ClientCache {
 
     public static void UpdateClientCacheLevel(int level){
         clientLevel = level;
-        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Level Update: " + level), false);
+        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Level Update: " + level), false);
     }
 
     public static void UpdateClientCacheSP(int sp){
         clientSP = sp;
-        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP Update: " + sp), false);
+        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP Update: " + sp), false);
     }
 
     public static void UpdateClientCacheXP(float xp){
         clientXP = xp;
-        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp), false);
+        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp), false);
     }
 
     public static void UpdateClientCacheLevelData(XpManager.LevelData data){
@@ -57,12 +60,24 @@ public class ClientCache {
         Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skills sync: " + clientSkills.size() + " skills cached" ), false);
     }
 
+    public static void UpdateSkillLevels(Map<String, Integer> skillLevels){
+        clientSkillLevels.clear();
+        clientSkillLevels.putAll(skillLevels);
+        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skill levels sync: " + clientSkillLevels.size() + " level found" ), false);
+    }
+
+    public static void UpdateSkillLevels(String id, int lvl){
+        clientSkillLevels.put(id, lvl);
+        Minecraft.getInstance().player.displayClientMessage(Component.literal("New skill level: " + id + " level " + lvl ), false);
+    }
+
     public static void ClearCache(){
         clientLevel = 1;
         clientSP = 0;
         clientXP = 0f;
         clientLevelData = new XpManager.LevelData(100f, 1);
         clientSkills.clear();
+        clientSkillLevels.clear();
     }
 
 

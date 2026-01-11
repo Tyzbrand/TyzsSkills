@@ -42,11 +42,6 @@ public class LevelManager {
         else SetLevel(newPlayer, 1);
     }
 
-    public static void EnsureDefaultLevel(ServerPlayer player){
-        if(!player.getPersistentData().contains(dataKey)) SetLevel(player,1);
-        else UpdateClient(player);
-    }
-
     //Utilitaire
     private static void UpdateClient(ServerPlayer player){
         PacketDistributor.sendToPlayer(player, new LevelUpdatePayload(GetLevel(player)));
@@ -54,8 +49,6 @@ public class LevelManager {
     }
 
     //Getters
-    public static int GetLevel(ServerPlayer player){
-        return player.getPersistentData().getInt(dataKey);
-    }
+    public static int GetLevel(ServerPlayer player){return Math.max(1, player.getPersistentData().getInt(dataKey));}
 
 }
