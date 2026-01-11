@@ -49,7 +49,7 @@ public class MainGUI extends Screen {
 
         guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 300, 300);
 
-        this.renderPlayerStats(guiGraphics, mouseX, mouseY);
+        this.renderStrings(guiGraphics, mouseX, mouseY);
 
         this.renderXpBar(guiGraphics);
 
@@ -62,7 +62,7 @@ public class MainGUI extends Screen {
 
 
     //helpers
-    private void renderPlayerStats(GuiGraphics gui, int mouseX, int mouseY){
+    private void renderStrings(GuiGraphics gui, int mouseX, int mouseY){
 
         int color1 = isHovering(mouseX, mouseY, leftPos, topPos+81, 36, 12 )? 0xD6AD55 : 0x737373;
         MutableComponent lvlStat = Component.translatable("gui.tyzs_skills.Lvl").withStyle(Style.EMPTY.withFont(mainFont));
@@ -82,7 +82,14 @@ public class MainGUI extends Screen {
         int text2W = this.font.width(spValue);
         int rightLimit2 = leftPos+69;
         gui.drawString(this.font, spValue, rightLimit2 -text2W, topPos+84, color2, false);
+
+        String localizationKey = "gui.tyzs_skills.Tab." + ClientCache.GetCategoryType().toString().toLowerCase();
+        MutableComponent enumDisplayName = Component.translatable(localizationKey);
+        int text3W = this.font.width(enumDisplayName);
+        int rightLimit3 = leftPos+265;
+        gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+8, 0x737373, false);
     }
+
 
     private void renderXpBar(GuiGraphics gui){
 
@@ -224,11 +231,33 @@ public class MainGUI extends Screen {
 
     private void renderTooltips(GuiGraphics gui, int mouseX, int mouseY){
 
-        int barTooltipX = leftPos+2; int barTooltipY = topPos+98; int barTooltipW = 70; int barTooltipH = 5;
-
-        if(isHovering(mouseX, mouseY, barTooltipX, barTooltipY, barTooltipW, barTooltipH)){
+        if(isHovering(mouseX, mouseY, leftPos+2, topPos+98, 70, 5)){ //Xp bar
             String xpTooltip = SmartFormat(ClientCache.GetXP()) + "/" + SmartFormat(ClientCache.GetXPGOAL()) ;
             gui.renderTooltip(this.font, Component.literal(xpTooltip), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 55, topPos + 6, 15, 15)){ //Skills button
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Skills"), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 55, topPos + 24, 15, 15)){ //Quests button
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Quests"), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 91, topPos + 6, 28, 12)){ //All tab
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 122, topPos + 6, 28, 12)){ //Abilities tab
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.abilities"), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 153, topPos + 6, 28, 12)){ //Fight tab
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.fight"), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 184, topPos + 6, 28, 12)){ //Misc tab
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.misc"), mouseX, mouseY);
         }
     }
 

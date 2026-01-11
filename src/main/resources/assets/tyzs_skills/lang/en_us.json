@@ -14,6 +14,15 @@
   "gui.tyzs_skills.title" : "Skill UI",
   "gui.tyzs_skills.SP" : "SP",
   "gui.tyzs_skills.Lvl" : "Lvl",
+  "gui.tyzs_skills.Skills" : "Skills",
+  "gui.tyzs_skills.Quests" : "Quests",
+
+
+  "gui.tyzs_skills.Tab.all" : "All",
+  "gui.tyzs_skills.Tab.abilities" : "Abilities",
+  "gui.tyzs_skills.Tab.fight" : "Fight",
+  "gui.tyzs_skills.Tab.misc" : "Misc",
+
 
   "key.tyzs_skills.open_menu" : "Open skill UI",
   "key.categories.tyzs_skills" : "Tyz's skills"
