@@ -18,6 +18,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.List;
 import java.util.Locale;
 
 public class MainGUI extends Screen {
@@ -196,6 +197,17 @@ public class MainGUI extends Screen {
 
         if(isHovering(mouseX, mouseY, leftPos + 184, topPos + 6, 28, 12)){ //Misc tab
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.misc"), mouseX, mouseY);
+        }
+
+        if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)){
+            SkillWidget hoveredWidget = this.scrollView.getHoveredWidget(mouseX, mouseY);
+
+            if(hoveredWidget != null){
+                List<Component> lines = hoveredWidget.getTooltip(mouseX, mouseY);
+                if(!lines.isEmpty()){
+                    gui.renderComponentTooltip(this.font, lines, mouseX, mouseY);
+                }
+            }
         }
     }
 

@@ -87,6 +87,16 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
         super.addEntry(entry);
     }
 
+    public SkillWidget getHoveredWidget(int mouseX, int mouseY) {
+        CustomScrollView.Entry entry = this.getEntryAtPosition(mouseX, mouseY);
+
+        if (entry instanceof SkillEntry skillEntry) {
+            return skillEntry.getHoveredWidget(mouseX, mouseY);
+        }
+
+        return null;
+    }
+
     @Override
     protected int getScrollbarPosition(){
         return this.getX() + this.width - scrollWidth - 2;
@@ -107,5 +117,9 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
         public @NotNull Component getNarration(){
             return Component.empty();
         }
+    }
+
+    @Override
+    protected void renderSelection(GuiGraphics gui, int top, int width, int height, int outerColor, int innerColor) {
     }
 }

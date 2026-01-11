@@ -2,6 +2,7 @@ package com.tyzsskills.client.models;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.server.model.Skill;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,8 +11,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FormattedCharSequence;
 
-import java.awt.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SkillWidget {
 
@@ -71,6 +75,34 @@ public class SkillWidget {
         }
     }
 
+    public List<Component> getTooltip(int mouseX, int mouseY){
+        List<Component> tooltip = new ArrayList<>();
+
+        //Simple TOOLTIP
+        if(skill.IsPurchasable() && isMouseOver(mouseX, mouseY, x+27, x+17, BTN_W, BTN_H)){
+            tooltip.add(Component.literal("Acheter"));
+            return tooltip;
+        }
+
+        //Plusieurs TOOTLIPS
+        tooltip.add(Component.literal(skill.GetDisplayName()).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+
+        String rawDescription = skill.GetDescription();
+        if(!rawDescription.isEmpty()){
+            Font font = Minecraft.getInstance().font;
+            List<FormattedCharSequence> splitLines = font.split(Component.literal(rawDescription), 150);
+
+            for(var line : splitLines){
+                tooltip.add(Component.literal(new StringBuilder().append(line).toString()).withStyle(ChatFormatting.GRAY));
+            }
+        }
+        return tooltip;
+    }
+
+    public boolean isMouseOver(int mouseX, int mouseY) {
+        return isMouseOver(mouseX, mouseY, x, y, WIDTH, HEIGHT);
+    }
+
     public boolean mouseClicked(double mouseX, double mouseY, int button){
         if(isMouseOver((int)mouseX, (int)mouseY, x+27, y+17, BTN_W, BTN_H)){
             if(!skill.IsPurchasable()) return false;
@@ -87,6 +119,8 @@ public class SkillWidget {
 
         return false;
     }
+
+
 
     private boolean isMouseOver(int mouseX, int mouseY, int x, int y, int width, int height) {
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;

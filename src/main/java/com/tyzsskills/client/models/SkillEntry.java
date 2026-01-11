@@ -19,6 +19,15 @@ public class SkillEntry extends CustomScrollView.Entry{
         this.widgets.add(widget);
     }
 
+    public SkillWidget getHoveredWidget(double mouseX, double mouseY) {
+        for (SkillWidget widget : widgets) {
+            if (widget.isMouseOver((int)mouseX, (int)mouseY)) {
+                return widget;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void render(GuiGraphics gui, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isHovered, float partialTick) {
         int currentX = left;
