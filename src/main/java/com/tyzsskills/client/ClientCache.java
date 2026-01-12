@@ -1,7 +1,7 @@
 package com.tyzsskills.client;
 
 import com.tyzsskills.client.screen.MainGUI;
-import com.tyzsskills.server.model.Skill;
+import com.tyzsskills.server.model.*;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -91,5 +91,19 @@ public class ClientCache {
     public static MainGUI.ContainerType GetContainerType(){return currentContainerType;}
     public static MainGUI.CategoryType GetCategoryType(){return currentContainerCatgory;}
     public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills);}
-    public static Object GetConfigValue(String id){return clientConfigMap.getOrDefault(id, null);}
+    public static int GetSkillLevel(String id){return clientSkillLevels.getOrDefault(id, 0);}
+
+    //getters config
+    public static boolean GetConfigBool(String id, boolean fallback){
+        var value = clientConfigMap.get(id);
+        if(value instanceof Boolean bool) return bool;
+        else return fallback;
+    }
+
+    public static double GetConfigDouble(String id, double fallback){
+        var value = clientConfigMap.get(id);
+        if(value instanceof Double dbl) return dbl;
+        else if(value instanceof Number nbr) return nbr.doubleValue();
+        else return fallback;
+    }
 }

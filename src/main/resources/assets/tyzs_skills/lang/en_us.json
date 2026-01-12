@@ -16,6 +16,10 @@
   "gui.tyzs_skills.Lvl" : "Lvl",
   "gui.tyzs_skills.Skills" : "Skills",
   "gui.tyzs_skills.Quests" : "Quests",
+  "gui.tyzs_skills.refund" : "Refund",
+  "gui.tyzs_skills.error_value" : "N/A",
+  "gui.tyzs_skills.level_max" : "Level max",
+  "gui.tyzs_skills.cost" : "Cost",
 
 
   "gui.tyzs_skills.Tab.all" : "All",

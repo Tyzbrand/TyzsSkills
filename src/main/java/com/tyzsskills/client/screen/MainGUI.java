@@ -301,8 +301,8 @@ public class MainGUI extends Screen {
     private void addScrollView(){
          scrollView = new CustomScrollView(
                 this.minecraft,
-                leftPos + 89, topPos + 20,
-                174, 112, 35,
+                leftPos + 83, topPos + 20,
+                205, 112, 32,
                 background, 325, 325,
                 142, 150, 149, 150,
                 7, 15);
