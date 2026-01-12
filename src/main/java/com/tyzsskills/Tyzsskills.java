@@ -161,6 +161,12 @@ public class Tyzsskills {
                 SkillLevelSyncPayload.STREAM_CODEC,
                 SkillLevelSyncPayload::Handle
         );
+
+        registrar.playToClient(
+                ConfigSyncPayload.TYPE,
+                ConfigSyncPayload.STREAM_CODEC,
+                ConfigSyncPayload::Handle
+        );
     }
 
     @SubscribeEvent

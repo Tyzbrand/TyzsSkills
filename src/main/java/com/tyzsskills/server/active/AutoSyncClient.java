@@ -1,5 +1,6 @@
 package com.tyzsskills.server.active;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.server.payloads.*;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,6 +21,10 @@ public class AutoSyncClient {
                 PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), lvl));
             }
         }
+    }
+
+    public static void SyncConfig(ServerPlayer player){
+        PacketDistributor.sendToPlayer(player, new ConfigSyncPayload(Config.REFUND_SYSTEM.get(), Config.REFUND_PERCENTAGE.get()));
     }
 
     public static void SyncMainData(ServerPlayer player){

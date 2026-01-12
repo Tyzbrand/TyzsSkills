@@ -27,6 +27,7 @@ public class RuntimeEvents {
         AutoSyncClient.SyncMainData(player);
         AutoSyncClient.SyncSkillList(player);
         AutoSyncClient.SyncSkillLevels(player);
+        AutoSyncClient.SyncConfig(player);
     }
 
     @SubscribeEvent
@@ -39,7 +40,9 @@ public class RuntimeEvents {
             XpManager.RestorePlayerXPData(oldPlayer, newPlayer);
             LevelManager.RestorePlayerLevelData(oldPlayer, newPlayer);
             SpManager.RestorePlayerSPData(oldPlayer, newPlayer);
-            GenericEffects.RestaureEffects(oldPlayer, newPlayer);
+            SkillManager.Get().RestaureSkillData(oldPlayer, newPlayer);
+
+            GenericEffects.RestaureEffects(newPlayer);
         }
     }
 

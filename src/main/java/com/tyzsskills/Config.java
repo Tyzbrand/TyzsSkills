@@ -2,17 +2,20 @@ package com.tyzsskills;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 
+
 // An example config class. This is not required, but it's a good idea to have one to keep your config organized.
 // Demonstrates how to use Neo's config APIs
 public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
+    public static final String REFUND_SYSTEM_KEY = "refund_system";
     public static final ModConfigSpec.BooleanValue REFUND_SYSTEM = BUILDER
             .comment("Play with the refund system")
             .define("Refund system", true);
 
+    public static final String REFUND_PERCENTAGE_KEY = "refund_percentage";
     public static final ModConfigSpec.DoubleValue REFUND_PERCENTAGE = BUILDER
-            .comment("A magic number")
+            .comment("Percentage of the initial price refunded")
             .defineInRange("Refund percentage", 30.0, 1.0, 100.0);
 
 

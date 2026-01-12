@@ -17,7 +17,9 @@ import java.util.Optional;
 public class GenericEffects {
     public static void ApplyEffect(Skill skill, ServerPlayer player){
 
-        ResourceLocation attributeID = ResourceLocation.parse(skill.GetModifier());
+        ResourceLocation attributeID = ResourceLocation.tryParse(skill.GetModifier());
+        if(attributeID == null) return;
+
         Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
 
         if(attribute == null) {return;}
@@ -43,17 +45,32 @@ public class GenericEffects {
         instance.addOrReplacePermanentModifier(modifier);
     }
 
-    public static void RestaureEffects(ServerPlayer oldPlayer, ServerPlayer newPlayer){
+    public static void RemoveEffect(Skill skill, ServerPlayer player){
+        ResourceLocation attributeID = ResourceLocation.parse(skill.GetModifier());
+        Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
+
+        if(attribute == null) {return;}
+
+        Optional<Holder.Reference<Attribute>> attributeHolderOpt = BuiltInRegistries.ATTRIBUTE.getHolder(attributeID);
+        if(attributeHolderOpt.isEmpty()) return;
+
+        AttributeInstance instance = player.getAttribute(attributeHolderOpt.get());
+        if(instance == null) return;
+
+        ResourceLocation modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.GetID());
+
+        instance.removeModifier(modifierID);
+    }
+
+    public static void RestaureEffects(ServerPlayer newPlayer){
         for(var skill : SkillManager.Get().GetAllSkills()){
 
             if(skill.GetType() != Skill.SkillType.GENERIC){continue;}
 
             String key = skill.GetID() + "_lvl";
 
-            int oldValue = oldPlayer.getPersistentData().getInt(key);
-            if(oldValue <= 0) continue;
-
-            newPlayer.getPersistentData().putInt(key, oldValue);
+            int value = newPlayer.getPersistentData().getInt(key);
+            if(value <= 0) continue;
 
             ApplyEffect(skill, newPlayer);
         }

@@ -21,6 +21,7 @@ public class ClientCache {
 
     private final static List<Skill> clientSkills = new ArrayList<>();
     private final static Map<String, Integer> clientSkillLevels = new HashMap<>();
+    private final static Map<String, Object> clientConfigMap = new HashMap<>();
 
     private static MainGUI.ContainerType currentContainerType = MainGUI.ContainerType.SKILLS;
     private static MainGUI.CategoryType currentContainerCatgory = MainGUI.CategoryType.ALL;
@@ -65,6 +66,12 @@ public class ClientCache {
         Minecraft.getInstance().player.displayClientMessage(Component.literal("New skill level: " + id + " level " + lvl ), false);
     }
 
+    public static void SyncConfig(Map<String, Object> syncedMap){
+        clientConfigMap.clear();
+        clientConfigMap.putAll(syncedMap);
+        Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced config: " + clientConfigMap.size() + " entries"), false);
+    }
+
     public static void ClearCache(){
         clientLevel = 1;
         clientSP = 0;
@@ -72,6 +79,7 @@ public class ClientCache {
         clientLevelData = new XpManager.LevelData(100f, 1);
         clientSkills.clear();
         clientSkillLevels.clear();
+        clientConfigMap.clear();
     }
 
 
@@ -83,4 +91,5 @@ public class ClientCache {
     public static MainGUI.ContainerType GetContainerType(){return currentContainerType;}
     public static MainGUI.CategoryType GetCategoryType(){return currentContainerCatgory;}
     public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills);}
+    public static Object GetConfigValue(String id){return clientConfigMap.getOrDefault(id, null);}
 }
