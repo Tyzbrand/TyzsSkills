@@ -1,7 +1,7 @@
 package com.tyzsskills.server.effects;
 
 import com.tyzsskills.Tyzsskills;
-import com.tyzsskills.server.active.SkillManager;
+import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.model.Skill;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;

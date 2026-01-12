@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
+import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +42,7 @@ public class Skill{
 
     public enum SkillType {GENERIC, CUSTOM, IMMUTABLE}
 
+    private transient SkillBehaviour behaviour;
 
     protected boolean active;
     protected String id;
@@ -58,6 +60,7 @@ public class Skill{
     protected String description;
 
 
+    //Getters
     public boolean IsSkillActive(){return active;}
     public String GetID() {return id;}
     public int GetMaximumLevel() {return maximumLevel;}
@@ -71,6 +74,14 @@ public class Skill{
     public String GetIcon(){return icon;}
     public String GetDisplayName(){return displayName;}
     public String GetDescription(){return description;}
+    public SkillBehaviour GetBehaviour(){return behaviour;}
+    public boolean HasBehaviour(){return behaviour != null;}
+
+
+    //Setters
+    public void SetBehaviour(SkillBehaviour behaviour){
+        if(behaviour != null) this.behaviour = behaviour;
+    }
 
 
 

@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.server.model.*;
+import com.tyzsskills.server.skills.SkillLoader;
 import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;

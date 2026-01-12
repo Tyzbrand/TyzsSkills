@@ -54,5 +54,8 @@
   "skill.tyzs_skills.step_height.description" : "Temporary description",
 
   "skill.tyzs_skills.swim_speed.displayName" : "Swim speed",
-  "skill.tyzs_skills.swim_speed.description" : "Temporary description"
+  "skill.tyzs_skills.swim_speed.description" : "Temporary description",
+
+  "skill.tyzs_skills.venomous_attack.displayName" : "Venomous attack",
+  "skill.tyzs_skills.venomous_attack.description" : "Temporary description"
 }

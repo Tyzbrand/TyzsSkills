@@ -62,7 +62,7 @@ public class ClientCache {
     }
 
     public static void UpdateSkillLevels(String id, int lvl){
-        clientSkillLevels.put(id, lvl);
+        clientSkillLevels.put(id.toLowerCase(), lvl);
         Minecraft.getInstance().player.displayClientMessage(Component.literal("New skill level: " + id + " level " + lvl ), false);
     }
 
@@ -91,7 +91,7 @@ public class ClientCache {
     public static MainGUI.ContainerType GetContainerType(){return currentContainerType;}
     public static MainGUI.CategoryType GetCategoryType(){return currentContainerCatgory;}
     public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills);}
-    public static int GetSkillLevel(String id){return clientSkillLevels.getOrDefault(id, 0);}
+    public static int GetSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
 
     //getters config
     public static boolean GetConfigBool(String id, boolean fallback){

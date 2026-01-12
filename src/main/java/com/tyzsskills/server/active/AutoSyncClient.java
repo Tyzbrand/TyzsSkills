@@ -2,6 +2,7 @@ package com.tyzsskills.server.active;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.server.payloads.*;
+import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;

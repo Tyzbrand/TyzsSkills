@@ -22,7 +22,7 @@ public class SkillsPreset {
 
         finalList.add(new Skill(
                 true,
-                "Health_boost",
+                "health_boost",
                 10,
                 List.of(2, 2, 3, 3, 5, 5, 7, 7, 9, 9),
                 List.of(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f),
@@ -37,7 +37,7 @@ public class SkillsPreset {
 
         finalList.add(new Skill(
                 true,
-                "Oxygen_boost",
+                "oxygen_boost",
                 4,
                 List.of(3, 5, 7, 9),
                 List.of(1.25f, 1.50f, 1.75f, 2f),
@@ -52,7 +52,7 @@ public class SkillsPreset {
 
         finalList.add(new Skill(
                 true,
-                "Block_reach",
+                "block_reach",
                 4,
                 List.of(3, 5, 9, 13),
                 List.of(1f, 2f, 3f, 4f),
@@ -67,7 +67,7 @@ public class SkillsPreset {
 
         finalList.add(new Skill(
                 true,
-                "Attack_damage",
+                "attack_damage",
                 3,
                 List.of(5, 10, 16),
                 List.of(1f, 2f, 3f),
@@ -82,7 +82,7 @@ public class SkillsPreset {
 
         finalList.add(new Skill(
                 true,
-                "Sneaking_speed",
+                "sneaking_speed",
                 5,
                 List.of(1, 2, 3, 4, 5),
                 List.of(1.2f, 1.4f, 1.6f, 1.8f, 2f),
@@ -97,7 +97,7 @@ public class SkillsPreset {
 
         finalList.add(new Skill(
                 true,
-                "Speed_boost",
+                "speed_boost",
                 5,
                 List.of(2, 4, 6, 8, 11),
                 List.of(1.2f, 1.4f, 1.6f, 1.8f, 2f),
@@ -112,7 +112,7 @@ public class SkillsPreset {
 
         finalList.add(new Skill(
                 true,
-                "Step_height",
+                "step_height",
                 2,
                 List.of(3, 5),
                 List.of(1f, 2f),
@@ -127,7 +127,7 @@ public class SkillsPreset {
 
         finalList.add(new Skill(
                 true,
-                "Swim_speed",
+                "swim_speed",
                 5,
                 List.of(2, 4, 6, 8, 11),
                 List.of(1.2f, 1.4f, 1.6f, 1.8f, 2f),
@@ -143,8 +143,25 @@ public class SkillsPreset {
         return finalList;
     }
 
+
     private static List<Skill> GetFightSkills(){
         List<Skill> finalList = new ArrayList<>();
+
+        finalList.add(new Skill(
+                true,
+                "venomous_attack",
+                5,
+                List.of(3, 5, 7, 9, 13),
+                List.of(3f, 5f, 8f, 11f, 15f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.FIGHT,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/venomous_attack.png",
+                "skill.tyzs_skills.venomous_attack.displayName",
+                "skill.tyzs_skills.venomous_attack.description"));
+
         return finalList;
     }
 }

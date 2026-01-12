@@ -1,4 +1,4 @@
-package com.tyzsskills.server.active;
+package com.tyzsskills.server.skills;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.server.active.SpManager;
 import com.tyzsskills.server.effects.GenericEffects;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.payloads.SkillLevelSyncPayload;
@@ -25,6 +26,9 @@ public class SkillManager {
 
     public void RegisterSKill(Skill skill)
     {
+        var behaviour = SkillBehaviourRegistry.GetBehaviour(skill.GetID());
+        if(behaviour != null){skill.SetBehaviour(behaviour);}
+
         if(!skillCollection.containsKey(skill.GetID())) skillCollection.put(skill.GetID(), skill);
     }
 
@@ -104,7 +108,16 @@ public class SkillManager {
 
 
     //getters
-    public Skill GetSkill(String id){return skillCollection.getOrDefault(id, null);}
+    public Skill GetSkill(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}
     public int GetLoadedSkills(){return  skillCollection.size();}
     public List<Skill> GetAllSkills() {return new ArrayList<>(skillCollection.values());}
+    public int GetPlayerSkillLevel(ServerPlayer player, String id){
+        var data = player.getPersistentData();
+
+        var skill = GetSkill(id);
+        if(skill == null) return 0;
+
+        var key = id.toLowerCase() + "_lvl";
+        return data.getInt(key);
+    }
 }

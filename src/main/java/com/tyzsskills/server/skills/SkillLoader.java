@@ -1,12 +1,8 @@
-package com.tyzsskills.server.active;
+package com.tyzsskills.server.skills;
 
 import com.google.gson.JsonObject;
-import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.server.model.Skill;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.ArrayList;
@@ -17,6 +13,7 @@ public class SkillLoader {
     public static void LoadSKill(JsonObject source){
         String id = GetSafeString(source, "id");
         if(id == null) {LogError("Unknow"); return;}
+        id = id.toLowerCase();
 
         Boolean state = GetSafeBool(source, "active");
         if(state == null) state = false;
@@ -42,7 +39,11 @@ public class SkillLoader {
         if(purchasable == null) purchasable = true;
 
         AttributeModifier.Operation operation = GetSafeOperation(source, "operation");
-        if(operation == null) {LogError(id); return;}
+        if(operation == null){
+            if(type == Skill.SkillType.GENERIC || type == Skill.SkillType.CUSTOM) {LogError(id); return;}
+            else operation = AttributeModifier.Operation.ADD_VALUE;
+        }
+
 
         String icon = GetSafeString(source, "icon");
         if(icon == null) {LogError(id); return;} //A mettre une icon par defaut
@@ -54,8 +55,7 @@ public class SkillLoader {
         if(description == null) description = "Missing description";
 
         String modifier = GetSafeString(source, "modifier");
-        if(modifier == null) modifier = "";
-
+        if(modifier == null && (type == Skill.SkillType.GENERIC || type == Skill.SkillType.CUSTOM)) {LogError(id); return;}
 
         SkillManager.Get().RegisterSKill(
                 new Skill(state, id, maxLevel, prices, values, type,

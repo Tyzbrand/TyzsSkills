@@ -2,21 +2,17 @@ package com.tyzsskills.server.events;
 
 import com.tyzsskills.server.active.*;
 import com.tyzsskills.server.effects.GenericEffects;
-import com.tyzsskills.server.payloads.SkillSyncPayload;
+import com.tyzsskills.server.model.Skill;
+import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.entity.EntityEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.io.IOException;
 
 public class RuntimeEvents {
 
@@ -64,6 +60,24 @@ public class RuntimeEvents {
 
         if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
         XpEntity.EntityKillProfit(event.getEntity(), player);
+    }
+
+    @SubscribeEvent
+    public static void OnPlayerAttack(LivingIncomingDamageEvent event){
+        if(event.isCanceled()) return;
+        var manager = SkillManager.Get();
+
+        if (event.getSource().getEntity() instanceof ServerPlayer player){
+            for (Skill skill : manager.GetAllSkills()){
+                if(skill.HasBehaviour()){
+                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    if( lvl<= 0) continue;
+
+                    skill.GetBehaviour().onPlayerAttack(event, player, lvl, skill);
+                }
+
+            }
+        }
     }
 
 }

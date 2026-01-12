@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.server.active.LevelManager;
-import com.tyzsskills.server.active.SkillManager;
+import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.active.SpManager;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.commands.CommandSourceStack;

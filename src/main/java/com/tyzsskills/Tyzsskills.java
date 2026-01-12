@@ -1,7 +1,8 @@
 package com.tyzsskills;
 
 import com.tyzsskills.server.active.FileManager;
-import com.tyzsskills.server.active.SkillManager;
+import com.tyzsskills.server.skills.SkillBehaviourRegistry;
+import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.commands.MainCommand;
 import com.tyzsskills.server.events.RuntimeEvents;
 import com.tyzsskills.server.payloads.*;
@@ -10,7 +11,6 @@ import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -105,6 +105,9 @@ public class Tyzsskills {
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+        //Initialize skill behaviours
+        SkillBehaviourRegistry.Init();
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
