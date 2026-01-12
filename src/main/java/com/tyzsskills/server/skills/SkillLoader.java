@@ -46,7 +46,7 @@ public class SkillLoader {
 
 
         String icon = GetSafeString(source, "icon");
-        if(icon == null) {LogError(id); return;} //A mettre une icon par defaut
+        if(icon == null) icon = "tyzs_skills:textures/gui/skills/default.png";
 
         String displayName = GetSafeString(source, "displayName");
         if(displayName == null) displayName = "Unknown skill";

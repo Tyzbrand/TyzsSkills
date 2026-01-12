@@ -222,6 +222,51 @@ public class SkillsPreset {
                 "skill.tyzs_skills.resistance.displayName",
                 "skill.tyzs_skills.resistance.description"));
 
+        finalList.add(new Skill(
+                true,
+                "backstab",
+                5,
+                List.of(3, 5, 7, 9, 13),
+                List.of(5f, 10f, 15f, 20f, 25f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.FIGHT,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/backstab.png",
+                "skill.tyzs_skills.resistance.displayName",
+                "skill.tyzs_skills.resistance.description"));
+
+        finalList.add(new Skill(
+                true,
+                "rage",
+                4,
+                List.of(4, 6, 8, 10),
+                List.of(15f, 25f, 35f, 45f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.FIGHT,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/rage.png",
+                "skill.tyzs_skills.rage.displayName",
+                "skill.tyzs_skills.rage.description"));
+
+        finalList.add(new Skill(
+                true,
+                "adrenaline",
+                1,
+                List.of(9),
+                List.of(15f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.FIGHT,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/adrenaline.png",
+                "skill.tyzs_skills.adrenaline.displayName",
+                "skill.tyzs_skills.adrenaline.description"));
+
         return finalList;
     }
 }

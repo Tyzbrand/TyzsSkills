@@ -15,6 +15,9 @@ public class SkillBehaviourRegistry {
         behaviours.put("damage_deal", new DamageDealEffect());
         behaviours.put("bloodlust", new BloodlustEffect());
         behaviours.put("resistance", new ResistanceEffect());
+        behaviours.put("backstab", new BackstabEffect());
+        behaviours.put("rage", new RageEffect());
+        behaviours.put("adrenaline", new AdrenalineEffect());
     }
 
     public static SkillBehaviour GetBehaviour(String id){

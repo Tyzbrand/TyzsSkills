@@ -3,6 +3,10 @@ package com.tyzsskills.server.effects.skillEffects;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.SkillBehaviour;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 public class ResistanceEffect  extends SkillBehaviour {
@@ -12,6 +16,9 @@ public class ResistanceEffect  extends SkillBehaviour {
 
         var values = skill.GetValues();
         if (values == null || values.isEmpty()) return;
+
+        var damageSource = event.getSource();
+        if(damageSource.is(DamageTypeTags.BYPASSES_RESISTANCE)) return;
 
         int index = Math.min(lvl - 1, values.size() - 1);
 

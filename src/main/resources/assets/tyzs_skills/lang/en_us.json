@@ -69,5 +69,14 @@
   "skill.tyzs_skills.bloodlust.description" : "Temporary description",
 
   "skill.tyzs_skills.resistance.displayName" : "Resistance",
-  "skill.tyzs_skills.resistance.description" : "Temporary description"
+  "skill.tyzs_skills.resistance.description" : "Temporary description",
+
+  "skill.tyzs_skills.backstab.displayName" : "Backstab",
+  "skill.tyzs_skills.backstab.description" : "Temporary description",
+
+  "skill.tyzs_skills.rage.displayName" : "Rage",
+  "skill.tyzs_skills.rage.description" : "Temporary description",
+
+  "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
+  "skill.tyzs_skills.adrenaline.description" : "Temporary description"
 }

@@ -26,6 +26,8 @@ import java.util.Locale;
 
 public class SkillWidget {
 
+    private static final ResourceLocation DEFAULT_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/default.png");
+
     private static final ResourceLocation REF_TEXTURE = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png");
     private static final int TEXTURE_W = 325, TEXTURE_H = 325;
 
@@ -48,7 +50,12 @@ public class SkillWidget {
 
     public SkillWidget(Skill skill){
         this.skill = skill;
-        this.icon = ResourceLocation.tryParse(skill.GetIcon());
+
+        var candidate = ResourceLocation.tryParse(skill.GetIcon());
+        if(candidate != null && Minecraft.getInstance().getResourceManager().getResource(candidate).isPresent()){
+            this.icon = candidate;
+        }
+        else this.icon = DEFAULT_ICON;
     }
 
     public void render(GuiGraphics gui, int x, int y, int mouseX, int mouseY, float partialTick){
@@ -59,9 +66,7 @@ public class SkillWidget {
 
         gui.blit(REF_TEXTURE, x, y, U_BACKGROUND, V_BACKGROUND, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
 
-        if(icon != null){
-            gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
-        }
+        gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
 
         MutableComponent count =  Component.translatable("gui.tyzs_skills.Lvl")
                 .append(": " + ClientCache.GetSkillLevel(skill.GetID()) + "/" + skill.GetMaximumLevel());
