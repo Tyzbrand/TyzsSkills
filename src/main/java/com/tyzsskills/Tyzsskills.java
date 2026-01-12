@@ -170,6 +170,12 @@ public class Tyzsskills {
                 ConfigSyncPayload.STREAM_CODEC,
                 ConfigSyncPayload::Handle
         );
+
+        registrar.playToServer(
+                CActionSkillPayload.TYPE,
+                CActionSkillPayload.STREAM_CODEC,
+                CActionSkillPayload::Handle
+        );
     }
 
     @SubscribeEvent

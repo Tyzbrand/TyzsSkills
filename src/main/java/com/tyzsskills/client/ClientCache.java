@@ -1,5 +1,6 @@
 package com.tyzsskills.client;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.server.model.*;
 import com.tyzsskills.server.xp.XpManager;
@@ -29,22 +30,22 @@ public class ClientCache {
 
     public static void UpdateClientCacheLevel(int level){
         clientLevel = level;
-        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Level Update: " + level), false);
+        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Level Update: " + level), false);
     }
 
     public static void UpdateClientCacheSP(int sp){
         clientSP = sp;
-        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP Update: " + sp), false);
+        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP Update: " + sp), false);
     }
 
     public static void UpdateClientCacheXP(float xp){
         clientXP = xp;
-        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp), false);
+        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp), false);
     }
 
     public static void UpdateClientCacheLevelData(XpManager.LevelData data){
         clientLevelData = data;
-        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client LevelData Update: " + data.goal() + "xp, " + data.reward() + "sp"), false);
+        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client LevelData Update: " + data.goal() + "xp, " + data.reward() + "sp"), false);
     }
 
     public static void SetContainerType(MainGUI.ContainerType type){
@@ -63,7 +64,7 @@ public class ClientCache {
 
     public static void UpdateSkillLevels(String id, int lvl){
         clientSkillLevels.put(id.toLowerCase(), lvl);
-        Minecraft.getInstance().player.displayClientMessage(Component.literal("New skill level: " + id + " level " + lvl ), false);
+        //Minecraft.getInstance().player.displayClientMessage(Component.literal("New skill level: " + id + " level " + lvl ), false);
     }
 
     public static void SyncConfig(Map<String, Object> syncedMap){
@@ -80,6 +81,39 @@ public class ClientCache {
         clientSkills.clear();
         clientSkillLevels.clear();
         clientConfigMap.clear();
+    }
+
+    public static void PredictBuy(Skill skill) {
+        String id = skill.GetID().toLowerCase();
+        int currentLvl = GetSkillLevel(id);
+
+        if (currentLvl >= skill.GetMaximumLevel()) return;
+
+        var prices = skill.GetPrices();
+        if (currentLvl >= prices.size()) return;
+        int price = prices.get(currentLvl);
+
+        clientSP -= price;
+        clientSkillLevels.put(id, currentLvl + 1);
+    }
+
+    public static void PredictRefund(Skill skill) {
+
+        String id = skill.GetID().toLowerCase();
+        int currentLvl = GetSkillLevel(id);
+
+        if (currentLvl <= 0) return;
+
+        clientSkillLevels.put(id, currentLvl - 1);
+
+        double percentage = GetConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
+
+        List<Integer> prices = skill.GetPrices();
+        if (currentLvl - 1 < prices.size()) {
+            int initialPrice = prices.get(currentLvl - 1);
+            int refundAmount = Math.max(1, (int)(initialPrice * (percentage / 100.0)));
+            clientSP += refundAmount;
+        }
     }
 
 

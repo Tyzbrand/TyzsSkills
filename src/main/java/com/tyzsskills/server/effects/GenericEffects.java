@@ -37,12 +37,18 @@ public class GenericEffects {
 
         int index = Math.min(currentLvl - 1, skill.GetValues().size() - 1);
         float value = skill.GetValues().get(index);
+        if(skill.GetModifierOperation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE ||
+                skill.GetModifierOperation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL){
+            value /= 100f;
+        }
 
         AttributeModifier modifier = new AttributeModifier(
                 modifierID, value, skill.GetModifierOperation()
         );
 
-        instance.addOrReplacePermanentModifier(modifier);
+        if (instance.hasModifier(modifierID)) {instance.removeModifier(modifierID);}
+
+        instance.addPermanentModifier(modifier);
     }
 
     public static void RemoveEffect(Skill skill, ServerPlayer player){
