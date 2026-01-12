@@ -115,7 +115,7 @@ public class SkillsPreset {
                 "step_height",
                 2,
                 List.of(3, 5),
-                List.of(0.5f, 1f),
+                List.of(0.5f, 1.5f),
                 Skill.SkillType.GENERIC,
                 MainGUI.CategoryType.ABILITIES,
                 "minecraft:generic.step_height",
@@ -152,7 +152,7 @@ public class SkillsPreset {
                 "venomous_attack",
                 5,
                 List.of(3, 5, 7, 9, 13),
-                List.of(3f, 5f, 8f, 11f, 15f),
+                List.of(3f, 8f, 14f, 25f, 40f),
                 Skill.SkillType.IMMUTABLE,
                 MainGUI.CategoryType.FIGHT,
                 "",
@@ -161,6 +161,66 @@ public class SkillsPreset {
                 "tyzs_skills:textures/gui/skills/venomous_attack.png",
                 "skill.tyzs_skills.venomous_attack.displayName",
                 "skill.tyzs_skills.venomous_attack.description"));
+
+        finalList.add(new Skill(
+                true,
+                "critical_hit",
+                5,
+                List.of(4, 7, 9, 10, 15),
+                List.of(3f, 5f, 8f, 11f, 15f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.FIGHT,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/critical_hit.png",
+                "skill.tyzs_skills.critical_hit.displayName",
+                "skill.tyzs_skills.critical_hit.description"));
+
+        finalList.add(new Skill(
+                true,
+                "damage_deal",
+                5,
+                List.of(3, 5, 7, 9, 13),
+                List.of(3f, 7f, 11f, 15f, 20f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.FIGHT,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/damage_deal.png",
+                "skill.tyzs_skills.damage_deal.displayName",
+                "skill.tyzs_skills.damage_deal.description"));
+
+        finalList.add(new Skill(
+                true,
+                "bloodlust",
+                4,
+                List.of(4, 7, 10, 15),
+                List.of(1f, 2f, 3f, 4f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.FIGHT,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/bloodlust.png",
+                "skill.tyzs_skills.bloodlust.displayName",
+                "skill.tyzs_skills.bloodlust.description"));
+
+        finalList.add(new Skill(
+                true,
+                "resistance",
+                5,
+                List.of(3, 5, 7, 9, 13),
+                List.of(10f, 20f, 30f, 40f, 50f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.FIGHT,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/resistance.png",
+                "skill.tyzs_skills.resistance.displayName",
+                "skill.tyzs_skills.resistance.description"));
 
         return finalList;
     }

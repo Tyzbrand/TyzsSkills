@@ -1,6 +1,6 @@
 package com.tyzsskills.server.skills;
 
-import com.tyzsskills.server.effects.skillEffects.VenomousAttackEffect;
+import com.tyzsskills.server.effects.skillEffects.*;
 import com.tyzsskills.server.model.SkillBehaviour;
 
 import java.util.HashMap;
@@ -11,6 +11,10 @@ public class SkillBehaviourRegistry {
 
     public static void Init(){
         behaviours.put("venomous_attack", new VenomousAttackEffect());
+        behaviours.put("critical_hit", new CriticalHitEffect());
+        behaviours.put("damage_deal", new DamageDealEffect());
+        behaviours.put("bloodlust", new BloodlustEffect());
+        behaviours.put("resistance", new ResistanceEffect());
     }
 
     public static SkillBehaviour GetBehaviour(String id){

@@ -57,5 +57,17 @@
   "skill.tyzs_skills.swim_speed.description" : "Temporary description",
 
   "skill.tyzs_skills.venomous_attack.displayName" : "Venomous attack",
-  "skill.tyzs_skills.venomous_attack.description" : "Temporary description"
+  "skill.tyzs_skills.venomous_attack.description" : "Temporary description",
+
+  "skill.tyzs_skills.critical_hit.displayName" : "Critical hit",
+  "skill.tyzs_skills.critical_hit.description" : "Temporary description",
+
+  "skill.tyzs_skills.damage_deal.displayName" : "Damage deal",
+  "skill.tyzs_skills.damage_deal.description" : "Temporary description",
+
+  "skill.tyzs_skills.bloodlust.displayName" : "Bloodlust",
+  "skill.tyzs_skills.bloodlust.description" : "Temporary description",
+
+  "skill.tyzs_skills.resistance.displayName" : "Resistance",
+  "skill.tyzs_skills.resistance.description" : "Temporary description"
 }

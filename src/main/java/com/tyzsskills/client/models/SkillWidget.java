@@ -64,8 +64,7 @@ public class SkillWidget {
         }
 
         MutableComponent count =  Component.translatable("gui.tyzs_skills.Lvl")
-                .append(": " + ClientCache.GetSkillLevel(skill.GetID()) + "/" + skill.GetMaximumLevel())
-                .withStyle(ChatFormatting.BOLD);
+                .append(": " + ClientCache.GetSkillLevel(skill.GetID()) + "/" + skill.GetMaximumLevel());
 
         float scale = 0.62f;
         gui.pose().pushPose();
@@ -98,7 +97,9 @@ public class SkillWidget {
             var text = Component.empty()
                     .append(Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY))
                     .append(": ")
-                    .append(GetPriceString(skill).append(Component.translatable("gui.tyzs_skills.SP")));
+                    .append(GetPriceString(skill))
+                    .append(" ")
+                    .append(Component.translatable("gui.tyzs_skills.SP"));
 
             tooltip.add(text);
             return tooltip;

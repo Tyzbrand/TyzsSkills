@@ -8,6 +8,7 @@ import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -74,6 +75,44 @@ public class RuntimeEvents {
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onPlayerAttack(event, player, lvl, skill);
+                }
+
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void OnIncomingDamage(LivingIncomingDamageEvent event){
+        if(event.isCanceled()) return;
+        var manager = SkillManager.Get();
+
+        if (event.getEntity() instanceof ServerPlayer player){
+            for (Skill skill : manager.GetAllSkills()){
+                if(skill.HasBehaviour()){
+
+                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    if( lvl<= 0) continue;
+
+                    skill.GetBehaviour().onIncomingDamage(event, player, lvl, skill);
+                }
+
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void OnPlayerKill(LivingDeathEvent event){
+        if(event.isCanceled()) return;
+        var manager = SkillManager.Get();
+
+        if (event.getSource().getEntity() instanceof ServerPlayer player){
+            for (Skill skill : manager.GetAllSkills()){
+                if(skill.HasBehaviour()){
+
+                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    if( lvl<= 0) continue;
+
+                    skill.GetBehaviour().onPlayerKill(event, player, lvl, skill);
                 }
 
             }
