@@ -19,14 +19,13 @@ public class RageEffect extends SkillBehaviour {
 
         if(currentHp >= maxHp) return;
 
-        float missingPercentage = (maxHp - currentHp) / maxHp;
 
         int index = Math.min(lvl - 1, values.size() - 1);
-        float maxBonus = values.get(index);
+        float damageBonus = values.get(index);
 
-        float damageMultiplier = 1f + (missingPercentage * (maxBonus/100f));
+        float finalDamage = event.getAmount() * (1f + (damageBonus/100f));
 
-        event.setAmount(event.getAmount() * damageMultiplier);
+        event.setAmount(finalDamage);
         NotifyClient(player, skill);
     }
     }

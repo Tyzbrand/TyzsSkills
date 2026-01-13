@@ -22,17 +22,19 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
 
     private static final List<Notification> activeNotifications = new ArrayList<>();
 
-    private static final long duration = 3000L;
+    private static final long duration = 2500L;
     private static final long fadeIn = 200L;
     private static final long fadeOut = 500L;
 
     private static final int spacing = 32;
 
-    private static final float scale = .5f;
+    private static final float scale = .65f;
 
-    private static final ResourceLocation REF_TEXTURE = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png");
     private static final ResourceLocation DEFAULT_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/default.png");
 
+
+    private static final int COLOR_BG = 0XAA000000;
+    private static final int COLOR_BORDER = 0XFFD6AD55;
 
     public static void ShowSkillIcon(String id){
         Skill skill = ClientCache.GetSkill(id.toLowerCase());
@@ -90,7 +92,7 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
         else if (timeSinceActivation > (duration - fadeOut)) alpha = (float)(duration - timeSinceActivation)/fadeOut;
         else{
             float timeInPhase = timeSinceActivation - fadeIn;
-            float speed = .01f;
+            float speed = .03f;
 
             alpha = .8f + .2f * Mth.sin(timeInPhase * speed);
         }
@@ -99,18 +101,29 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(scale, scale, 1f);
 
-        int drawX = (int)(10/scale);
-
-
         int iconSize = 16;
-        int scaledScreenHeight = (int)(screenHeight/scale);
+        int padding = 5;
+        int boxSize = iconSize + padding * 2;
 
-        int startY = (scaledScreenHeight/2) - iconSize / 2;
+
+        int scaledScreenHeight = (int)(screenHeight/scale);
+        int startY = (int)(scaledScreenHeight * .25f);
+
+        int drawX = (int)(padding + 2);
         int drawY = startY + (index * spacing);
 
-        RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
+        int boxY = startY + (index * spacing) - padding;
+        int boxX = drawX - padding;
 
-        guiGraphics.blit(REF_TEXTURE, drawX-4, drawY -4, 206, 193, 26, 26, 325, 325);
+        int bgAlpha = (int)((COLOR_BG >> 24 & 255) * alpha);
+        int bgColor = (bgAlpha << 24) | (COLOR_BG & 0x00FFFFFF);
+        renderTooltipStyleRect(guiGraphics, boxX, boxY, boxSize, boxSize, bgColor);
+
+        int borderAlpha = (int)((COLOR_BORDER >> 24 & 255) * alpha);
+        int borderColor = (borderAlpha << 24) | (COLOR_BORDER & 0x00FFFFFF);
+        renderTooltipStyleBorder(guiGraphics, boxX, boxY, boxSize, boxSize, borderColor);
+
+        RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
 
         guiGraphics.blit(notif.icon(), drawX, drawY, 0, 0, iconSize, iconSize, iconSize, iconSize);
 
@@ -119,5 +132,18 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
 
     public static void Clear(){
         activeNotifications.clear();
+    }
+
+    private void renderTooltipStyleRect(GuiGraphics gui, int x, int y, int width, int height, int color) {
+        gui.fill(x, y + 1, x + width, y + height - 1, color);
+        gui.fill(x + 1, y, x + width - 1, y + 1, color);
+        gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
+    }
+
+    private void renderTooltipStyleBorder(GuiGraphics gui, int x, int y, int width, int height, int color) {
+        gui.fill(x + 1, y, x + width - 1, y + 1, color);
+        gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
+        gui.fill(x, y + 1, x + 1, y + height - 1, color);
+        gui.fill(x + width - 1, y + 1, x + width, y + height - 1, color);
     }
 }

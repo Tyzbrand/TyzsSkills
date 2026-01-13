@@ -34,6 +34,7 @@ public class DamageDealEffect extends SkillBehaviour {
                 try{
                     var damageSrc = player.damageSources().playerAttack(player);
                     source.hurt(damageSrc, event.getAmount());
+                    NotifyClient(player, skill);
                 }
                 finally {
                     IS_REFLECTING.set(false);

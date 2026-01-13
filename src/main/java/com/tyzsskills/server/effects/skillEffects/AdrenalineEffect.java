@@ -25,7 +25,7 @@ public class AdrenalineEffect extends SkillBehaviour {
 
         if(currentHealth <= healthFlag && !player.hasEffect(MobEffects.MOVEMENT_SPEED)){
             player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200, 2));
-
+            NotifyClient(player, skill);
         }
     }
 
