@@ -11,10 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
+import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -214,6 +211,22 @@ public class RuntimeEvents {
                 var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
                 if( lvl<= 0) return;
                 skill.GetBehaviour().onPlayerTick(player, lvl, skill);
+            }
+
+        }
+    }
+
+    @SubscribeEvent
+    public static void OnLivingVisibility(LivingEvent.LivingVisibilityEvent event){
+        var manager = SkillManager.Get();
+
+        if (event.getEntity() instanceof ServerPlayer player){
+            var skill = manager.GetSkill("stealth");
+            if(skill != null && skill.HasBehaviour()){
+
+                var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                if( lvl<= 0) return;
+                skill.GetBehaviour().onLivingVisibility(event, player, lvl, skill);
             }
 
         }

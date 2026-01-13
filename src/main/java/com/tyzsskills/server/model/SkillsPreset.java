@@ -366,9 +366,9 @@ public class SkillsPreset {
         finalList.add(new Skill(
                 true,
                 "stealth",
-                8,
-                List.of(2, 4, 6, 8, 11, 15, 20, 25),
-                List.of(30f, 60f, 90f, 120f, 150f, 180f, 210f, 240f),
+                5,
+                List.of(2, 4, 6, 8, 10),
+                List.of(15f, 30f, 45f, 60f, 75f),
                 Skill.SkillType.IMMUTABLE,
                 MainGUI.CategoryType.MISC,
                 "",

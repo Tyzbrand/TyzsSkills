@@ -24,6 +24,7 @@ public class SkillBehaviourRegistry {
         behaviours.put("nutrition", new NutritionEffect());
         behaviours.put("experience_boost", new ExperienceBoostEffect());
         behaviours.put("magnet", new MagnetEffect());
+        behaviours.put("stealth", new StealthEffect());
     }
 
     public static SkillBehaviour GetBehaviour(String id){
