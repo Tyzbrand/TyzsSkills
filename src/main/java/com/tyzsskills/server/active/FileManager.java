@@ -47,10 +47,6 @@ public class FileManager {
                 .resolve("DEFAULT")
                 .resolve("misc"));
 
-        allPaths.add(globalPath.resolve("skills")
-                .resolve("DEFAULT")
-                .resolve("special"));
-
         for(var path : allPaths){
             try {Files.createDirectories(path);}
             catch(IOException ex) {throw new RuntimeException(ex);}

@@ -22,6 +22,7 @@ public class Config {
     public static final ModConfigSpec.BooleanValue SHOW_XP_OVERLAY;
     public static final ModConfigSpec.BooleanValue SHOW_LEVEL_OVERLAY;
     public static final ModConfigSpec.BooleanValue SHOW_SKILL_OVERLAY;
+    public static final ModConfigSpec.BooleanValue SHOW_OVERLAYS_IN_CREATIVE;
 
     static {
         //Construction du COMMON
@@ -58,6 +59,10 @@ public class Config {
         SHOW_SKILL_OVERLAY = clientBuilder
                 .comment("Display skill activation icons")
                 .define("show_skill_overlay", true);
+
+        SHOW_OVERLAYS_IN_CREATIVE = clientBuilder
+                .comment("Display overlays in creative")
+                .define("show_overlays_in_creative", false);
 
         clientBuilder.pop();
         CLIENT_SPEC = clientBuilder.build();

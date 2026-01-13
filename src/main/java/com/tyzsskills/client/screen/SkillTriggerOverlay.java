@@ -62,6 +62,9 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
         if (activeNotifications.isEmpty()) return;
 
         var mc = Minecraft.getInstance();
+        if(mc.player == null) return;
+        if(mc.player.isCreative() && !Config.SHOW_OVERLAYS_IN_CREATIVE.get()) return;
+
         int height = mc.getWindow().getGuiScaledHeight();
         long now = System.currentTimeMillis();
 

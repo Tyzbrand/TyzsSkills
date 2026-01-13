@@ -34,6 +34,10 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
     public static void AddXp(float amount){
         if(!Config.SHOW_XP_OVERLAY.get()) return;
 
+        var mc = Minecraft.getInstance();
+        if(mc.player == null) return;
+        if(mc.player.isCreative() && !Config.SHOW_OVERLAYS_IN_CREATIVE.get()) return;
+
         long now = System.currentTimeMillis();
 
         boolean isActive = (now - lastUpdateTime < duration) && (accumulatedXp > 0);

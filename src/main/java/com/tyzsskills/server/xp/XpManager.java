@@ -1,6 +1,7 @@
 package com.tyzsskills.server.xp;
 
 import com.google.gson.JsonObject;
+import com.tyzsskills.server.active.AttributeRegistry;
 import com.tyzsskills.server.active.LevelManager;
 import com.tyzsskills.server.active.SpManager;
 import com.tyzsskills.server.payloads.LevelToastPayload;
@@ -17,7 +18,7 @@ public class XpManager {
     private static final String dataKey = "SKILL_XP";
 
     public record LevelData(float goal, int reward) {}
-    private static LevelData fallback = new LevelData(100f, 1);
+    private static final LevelData fallback = new LevelData(Float.MAX_VALUE, 0);
 
     private static final Map<Integer, LevelData> POOL = new HashMap<>();
 
@@ -98,6 +99,8 @@ public class XpManager {
         int levelBuffer = 0;
         boolean flag = false;
 
+        var multiplierAttribute = player.getAttributeValue(AttributeRegistry.SP_MULTIPLIER);
+
         while (true){
             LevelData data = GetLevelData(currentLevel);
 
@@ -109,7 +112,8 @@ public class XpManager {
                 currentLevel++;
                 levelBuffer++;
 
-                spBuffer += data.reward();
+                long spGains = Math.round(data.reward() * multiplierAttribute);
+                spBuffer += (int)Math.max(spGains, 1);
             }
             else break;
         }
