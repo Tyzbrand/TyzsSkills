@@ -13,6 +13,7 @@ public class SkillsPreset {
 
         finalList.addAll(GetAbilitySkills());
         finalList.addAll(GetFightSkills());
+        finalList.addAll(GetMiscSkills());
 
         return finalList;
     }
@@ -46,7 +47,7 @@ public class SkillsPreset {
                 "minecraft:generic.oxygen_bonus",
                 AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
                 true,
-                "tyzs_skills:textures/gui/skills/oxygene_boost.png",
+                "tyzs_skills:textures/gui/skills/oxygen_boost.png",
                 "skill.tyzs_skills.oxygen_boost.displayName",
                 "skill.tyzs_skills.oxygen_boost.description"));
 
@@ -82,7 +83,7 @@ public class SkillsPreset {
 
         finalList.add(new Skill(
                 true,
-                "sneaking_speed",
+                "sneak_speed",
                 5,
                 List.of(1, 2, 3, 4, 5),
                 List.of(20f, 40f, 60f, 80f, 100f),
@@ -91,9 +92,9 @@ public class SkillsPreset {
                 "minecraft:player.sneaking_speed",
                 AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
                 true,
-                "tyzs_skills:textures/gui/skills/sneaking_speed.png",
-                "skill.tyzs_skills.sneaking_speed.displayName",
-                "skill.tyzs_skills.sneaking_speed.description"));
+                "tyzs_skills:textures/gui/skills/sneak_speed.png",
+                "skill.tyzs_skills.sneak_speed.displayName",
+                "skill.tyzs_skills.sneak_speed.description"));
 
         finalList.add(new Skill(
                 true,
@@ -142,7 +143,6 @@ public class SkillsPreset {
 
         return finalList;
     }
-
 
     private static List<Skill> GetFightSkills(){
         List<Skill> finalList = new ArrayList<>();
@@ -281,6 +281,87 @@ public class SkillsPreset {
                 "tyzs_skills:textures/gui/skills/resilience.png",
                 "skill.tyzs_skills.resilience.displayName",
                 "skill.tyzs_skills.resilience.description"));
+
+        return finalList;
+    }
+
+    private static List<Skill> GetMiscSkills(){
+        List<Skill> finalList = new ArrayList<>();
+
+        finalList.add(new Skill(
+                true,
+                "swift_learn",
+                5,
+                List.of(3, 5, 7, 9, 13),
+                List.of(5f, 10f, 15f, 20f, 25f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.MISC,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/swift_learn.png",
+                "skill.tyzs_skills.swift_learn.displayName",
+                "skill.tyzs_skills.swift_learn.description"));
+
+        finalList.add(new Skill(
+                true,
+                "green_thumb",
+                5,
+                List.of(3, 5, 7, 9, 13),
+                List.of(15f, 30f, 45f, 60f, 75f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.MISC,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/green_thumb.png",
+                "skill.tyzs_skills.green_thumb.displayName",
+                "skill.tyzs_skills.green_thumb.description"));
+
+        finalList.add(new Skill(
+                true,
+                "nutrition",
+                5,
+                List.of(2, 4, 6, 8, 11),
+                List.of(5f, 10f, 15f, 20f, 25f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.MISC,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/nutrition.png",
+                "skill.tyzs_skills.nutrition.displayName",
+                "skill.tyzs_skills.nutrition.description"));
+
+        finalList.add(new Skill(
+                true,
+                "experience_boost",
+                4,
+                List.of(3, 5, 7, 9, 13),
+                List.of(20f, 40f, 60f, 80f, 100f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.MISC,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/experience_boost.png",
+                "skill.tyzs_skills.experience_boost.displayName",
+                "skill.tyzs_skills.experience_boost.description"));
+
+        finalList.add(new Skill(
+                true,
+                "excavation",
+                8,
+                List.of(2, 4, 6, 8, 11, 15, 20, 25),
+                List.of(30f, 60f, 90f, 120f, 150f, 180f, 210f, 240f),
+                Skill.SkillType.GENERIC,
+                MainGUI.CategoryType.MISC,
+                "minecraft:player.block_break_speed",
+                AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
+                true,
+                "tyzs_skills:textures/gui/skills/excavation.png",
+                "skill.tyzs_skills.excavation.displayName",
+                "skill.tyzs_skills.excavation.description"));
 
         return finalList;
     }

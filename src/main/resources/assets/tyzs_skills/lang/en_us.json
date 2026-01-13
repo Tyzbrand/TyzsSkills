@@ -48,8 +48,8 @@
   "skill.tyzs_skills.attack_damage.displayName" : "Attack_damage",
   "skill.tyzs_skills.attack_damage.description" : "Temporary description",
 
-  "skill.tyzs_skills.sneaking_speed.displayName" : "Sneaking speed",
-  "skill.tyzs_skills.sneaking_speed.description" : "Temporary description",
+  "skill.tyzs_skills.sneak_speed.displayName" : "Sneaking speed",
+  "skill.tyzs_skills.sneak_speed.description" : "Temporary description",
 
   "skill.tyzs_skills.speed.displayName" : "Speed",
   "skill.tyzs_skills.speed.description" : "Temporary description",
@@ -85,5 +85,20 @@
   "skill.tyzs_skills.adrenaline.description" : "Temporary description",
 
   "skill.tyzs_skills.resilience.displayName" : "Resilience",
-  "skill.tyzs_skills.resilience.description" : "Temporary description"
+  "skill.tyzs_skills.resilience.description" : "Temporary description",
+
+  "skill.tyzs_skills.swift_learn.displayName" : "Swift learn",
+  "skill.tyzs_skills.swift_learn.description" : "Temporary description",
+
+  "skill.tyzs_skills.green_thumb.displayName" : "Green thumb",
+  "skill.tyzs_skills.green_thumb.description" : "Temporary description",
+
+  "skill.tyzs_skills.nutrition.displayName" : "Nutrition",
+  "skill.tyzs_skills.nutrition.description" : "Temporary description",
+
+  "skill.tyzs_skills.experience_boost.displayName" : "Experience boost",
+  "skill.tyzs_skills.experience_boost.description" : "Temporary description",
+
+  "skill.tyzs_skills.excavation.displayName" : "Excavation",
+  "skill.tyzs_skills.excavation.description" : "Temporary description"
 }

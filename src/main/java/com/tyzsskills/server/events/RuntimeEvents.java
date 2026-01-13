@@ -64,6 +64,11 @@ public class RuntimeEvents {
         XpEntity.EntityKillProfit(event.getEntity(), player);
     }
 
+
+
+
+
+    //EVENTS FOR SKILL EFFETCS
     @SubscribeEvent
     public static void OnPlayerAttack(LivingIncomingDamageEvent event){
         if(event.isCanceled()) return;
@@ -132,6 +137,25 @@ public class RuntimeEvents {
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onStartingEffect(event, player, lvl, skill);
+                }
+
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void OnPlayerBreakBlock(BlockEvent.BreakEvent event){
+        if(event.isCanceled()) return;
+        var manager = SkillManager.Get();
+
+        if (event.getPlayer() instanceof ServerPlayer player){
+            for (Skill skill : manager.GetAllSkills()){
+                if(skill.HasBehaviour()){
+
+                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    if( lvl<= 0) continue;
+
+                    skill.GetBehaviour().onPlayerBreakBlock(event, player, lvl, skill);
                 }
 
             }
