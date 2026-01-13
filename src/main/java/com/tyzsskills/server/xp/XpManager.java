@@ -40,24 +40,30 @@ public class XpManager {
 
 
     //Actifs
+    private static void SetXPInternal(ServerPlayer player, float amount, float gains){
+        if(amount < 0f) return;
+
+        var data = player.getPersistentData();
+        data.putFloat(dataKey, amount);
+
+        LevelUpCheck(player);
+
+        UpdateClient(player, gains);
+    }
+
     public static void SetXP(ServerPlayer player, float amount){
-        if(amount < 0) return;
-
-        var playerData = player.getPersistentData();
-        playerData.putFloat(dataKey, amount);
-
-        if(!LevelUpCheck(player)) UpdateClient(player);
+        SetXPInternal(player, amount, 0f);
     }
 
     public static void AddXP(ServerPlayer player, float amount){
         if(amount <= 0) return;
-        SetXP(player, GetXP(player) + amount);
+        SetXPInternal(player, GetXP(player) + amount, amount);
     }
 
     public static void RemoveXP(ServerPlayer player, float amount){
         if(amount <= 0) return;
         var result = Math.max(0f, GetXP(player) - amount);
-        SetXP(player, result);
+        SetXPInternal(player, result, 0f);
     }
 
     public static void RestorePlayerXPData(ServerPlayer oldPlayer, ServerPlayer newPlayer){
@@ -67,7 +73,7 @@ public class XpManager {
 
         if(oldData.contains(dataKey)) {
             newData.putFloat(dataKey, oldData.getFloat(dataKey));
-            UpdateClient(newPlayer);
+            UpdateClient(newPlayer, 0f);
         }
         else SetXP(newPlayer, 0f);
     }
@@ -78,19 +84,18 @@ public class XpManager {
     }
 
     //Utilitaire
-    private static void UpdateClient(ServerPlayer player){
-        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(GetXP(player)));
+    private static void UpdateClient(ServerPlayer player, float gains){
+        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(GetXP(player), gains));
     }
 
-    private static boolean LevelUpCheck(ServerPlayer player){
-
-        boolean flag = false; //Est ce que ça a changé
+    private static void LevelUpCheck(ServerPlayer player){
 
         int currentLevel = LevelManager.GetLevel(player);
         float currentXp = GetXP(player);
 
         int spBuffer = 0;
         int levelBuffer = 0;
+        boolean flag = false;
 
         while (true){
             LevelData data = GetLevelData(currentLevel);
@@ -114,9 +119,7 @@ public class XpManager {
             if(levelBuffer > 0){LevelManager.AddLevel(player, levelBuffer);}
 
             player.getPersistentData().putFloat(dataKey, currentXp);
-            UpdateClient(player);
         }
-        return flag;
     }
 
 

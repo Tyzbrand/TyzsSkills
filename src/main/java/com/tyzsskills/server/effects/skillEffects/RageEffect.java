@@ -14,10 +14,9 @@ public class RageEffect extends SkillBehaviour {
         var values = skill.GetValues();
         if(values == null || values.isEmpty()) return;
 
-        float maxHp = player.getMaxHealth();
         float currentHp = player.getHealth();
 
-        if(currentHp >= maxHp) return;
+        if(currentHp >= 6f) return;
 
 
         int index = Math.min(lvl - 1, values.size() - 1);

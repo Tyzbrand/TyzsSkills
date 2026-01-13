@@ -29,7 +29,7 @@ public class AutoSyncClient {
     }
 
     public static void SyncMainData(ServerPlayer player){
-        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(XpManager.GetXP(player)));
+        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(XpManager.GetXP(player), 0f));
         PacketDistributor.sendToPlayer(player, new LevelUpdatePayload(LevelManager.GetLevel(player)));
         PacketDistributor.sendToPlayer(player, new SpUpdatePayload(SpManager.GetSP(player)));
         PacketDistributor.sendToPlayer(player, new LevelDataUpdatePayload(XpManager.GetLevelData(LevelManager.GetLevel(player))));

@@ -20,6 +20,7 @@
   "gui.tyzs_skills.error_value" : "N/A",
   "gui.tyzs_skills.level_max" : "Level max",
   "gui.tyzs_skills.cost" : "Cost",
+  "gui.tyzs_skills.xp" : "Xp",
 
 
   "gui.tyzs_skills.Tab.all" : "All",

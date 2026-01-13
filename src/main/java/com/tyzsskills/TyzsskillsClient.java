@@ -4,6 +4,7 @@ import com.tyzsskills.client.ClientCache;
 import com.tyzsskills.client.key.MainKeybind;
 import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.client.screen.SkillTriggerOverlay;
+import com.tyzsskills.client.screen.XpTriggerOverlay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
@@ -44,12 +45,17 @@ public class TyzsskillsClient {
         event.registerAbove(VanillaGuiLayers.CROSSHAIR,
                 ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_notification"),
                 new SkillTriggerOverlay());
+
+        event.registerAbove(VanillaGuiLayers.CROSSHAIR,
+                ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "xp_notification"),
+                new XpTriggerOverlay());
     }
 
     @SubscribeEvent
     public static void onClientLogOut(ClientPlayerNetworkEvent.LoggingOut event){
         ClientCache.ClearCache();
         SkillTriggerOverlay.Clear();
+        XpTriggerOverlay.Clear();
         Tyzsskills.LOGGER.info("CACHE CLEARED");
     }
 

@@ -29,29 +29,36 @@ public class ResilienceEffect extends SkillBehaviour {
 
         int index = Math.min(lvl - 1, values.size() - 1);
         float reductionPercentage = values.get(index);
+        if(reductionPercentage <= 0) return;
 
         int newDuration = (int)(originalDuration * (1- reductionPercentage/100f));
         if(newDuration < 20) return;
 
-        IS_MODIFYING.set(true);
+        final int capturedDuration = newDuration;
+        player.getServer().execute(() -> {
+            if(player.isRemoved()) return;
+            IS_MODIFYING.set(true);
 
-        try{
-            player.removeEffect(effect.getEffect());
-            var newEffect = new MobEffectInstance(
-                    effect.getEffect(),
-                    newDuration,
-                    effect.getAmplifier(),
-                    effect.isAmbient(),
-                    effect.isVisible(),
-                    effect.showIcon()
-            );
+            try{
+                player.removeEffect(effect.getEffect());
+                var newEffect = new MobEffectInstance(
+                        effect.getEffect(),
+                        capturedDuration,
+                        effect.getAmplifier(),
+                        effect.isAmbient(),
+                        effect.isVisible(),
+                        effect.showIcon()
+                );
 
-            player.addEffect(newEffect);
-            NotifyClient(player, skill);
-        }
-        finally {
-            IS_MODIFYING.set(false);
-        }
+                player.addEffect(newEffect);
+                NotifyClient(player, skill);
+            }
+            finally {
+                IS_MODIFYING.set(false);
+            }
+
+        });
+
 
 
 

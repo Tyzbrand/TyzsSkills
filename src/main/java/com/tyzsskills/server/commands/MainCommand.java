@@ -21,20 +21,12 @@ public class MainCommand {
                 .requires(src -> src.hasPermission(4))
                 .then(xp())
                 .then(level())
-                .then(sp())
-                .then(skill());
+                .then(sp());
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> xp(){
         return Commands.literal("xp")
                 .then(Commands.argument("player", EntityArgument.player())
-
-                        .then(Commands.literal("get")
-                                .executes(ctx ->{
-                                    var player = EntityArgument.getPlayer(ctx, "player");
-                                    var amount = XpManager.GetXP(player);
-                                    player.sendSystemMessage(Component.literal("Xp: " + amount));
-                                    return 1;}))
 
                         .then(Commands.literal("add")
                                 .then(Commands.argument("amount", FloatArgumentType.floatArg(0.1f))
@@ -67,13 +59,6 @@ public class MainCommand {
         return Commands.literal("level")
                 .then(Commands.argument("player", EntityArgument.player())
 
-                        .then(Commands.literal("get")
-                                .executes(ctx ->{
-                                    var player = EntityArgument.getPlayer(ctx, "player");
-                                    var amount = LevelManager.GetLevel(player);
-                                    player.sendSystemMessage(Component.literal("Level: " + amount));
-                                    return 1;}))
-
                         .then(Commands.literal("add")
                                 .then(Commands.argument("amount", IntegerArgumentType.integer(1))
                                         .executes(ctx ->{
@@ -105,13 +90,6 @@ public class MainCommand {
         return Commands.literal("point")
                 .then(Commands.argument("player", EntityArgument.player())
 
-                        .then(Commands.literal("get")
-                                .executes(ctx ->{
-                                    var player = EntityArgument.getPlayer(ctx, "player");
-                                    var amount = SpManager.GetSP(player);
-                                    player.sendSystemMessage(Component.literal("Skill points: " + amount));
-                                    return 1;}))
-
                         .then(Commands.literal("add")
                                 .then(Commands.argument("amount", IntegerArgumentType.integer(1))
                                         .executes(ctx ->{
@@ -138,21 +116,4 @@ public class MainCommand {
                 );
 
     }
-
-    private static LiteralArgumentBuilder<CommandSourceStack> skill(){
-        return Commands.literal("skill")
-                .then(Commands.argument("player", EntityArgument.player())
-
-                        .then(Commands.literal("getloaded")
-                                .executes(ctx ->{
-                                    var player = EntityArgument.getPlayer(ctx, "player");
-                                    var amount = SkillManager.Get().GetLoadedSkills();
-                                    player.sendSystemMessage(Component.literal("Loaded skills: " + amount));
-                                    return 1;}
-                                )
-                        )
-
-        );
-    }
-
 }

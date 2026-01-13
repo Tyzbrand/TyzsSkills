@@ -2,6 +2,7 @@ package com.tyzsskills.client;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.client.screen.MainGUI;
+import com.tyzsskills.client.screen.XpTriggerOverlay;
 import com.tyzsskills.server.model.*;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.client.Minecraft;
@@ -38,7 +39,8 @@ public class ClientCache {
         //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP Update: " + sp), false);
     }
 
-    public static void UpdateClientCacheXP(float xp){
+    public static void UpdateClientCacheXP(float xp, float gained){
+        if(gained > 0) XpTriggerOverlay.AddXp(gained);
         clientXP = xp;
         //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp), false);
     }

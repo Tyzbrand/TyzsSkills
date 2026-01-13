@@ -97,6 +97,7 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
             alpha = .8f + .2f * Mth.sin(timeInPhase * speed);
         }
         alpha = Mth.clamp(alpha, 0f, 1f);
+        if (alpha <= 0.05f) return;
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(scale, scale, 1f);
