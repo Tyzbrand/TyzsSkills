@@ -10,6 +10,7 @@ import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -17,6 +18,7 @@ import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 public class RuntimeEvents {
 
@@ -198,6 +200,22 @@ public class RuntimeEvents {
                 }
 
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void OnPlayerTick(PlayerTickEvent.Post event){
+        var manager = SkillManager.Get();
+
+        if (event.getEntity() instanceof ServerPlayer player){
+            var skill = manager.GetSkill("magnet");
+            if(skill != null && skill.HasBehaviour()){
+
+                var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                if( lvl<= 0) return;
+                skill.GetBehaviour().onPlayerTick(player, lvl, skill);
+            }
+
         }
     }
 

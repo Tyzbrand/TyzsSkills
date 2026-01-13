@@ -336,7 +336,7 @@ public class SkillsPreset {
         finalList.add(new Skill(
                 true,
                 "experience_boost",
-                4,
+                5,
                 List.of(3, 5, 7, 9, 13),
                 List.of(20f, 40f, 60f, 80f, 100f),
                 Skill.SkillType.IMMUTABLE,
@@ -362,6 +362,36 @@ public class SkillsPreset {
                 "tyzs_skills:textures/gui/skills/excavation.png",
                 "skill.tyzs_skills.excavation.displayName",
                 "skill.tyzs_skills.excavation.description"));
+
+        finalList.add(new Skill(
+                true,
+                "stealth",
+                8,
+                List.of(2, 4, 6, 8, 11, 15, 20, 25),
+                List.of(30f, 60f, 90f, 120f, 150f, 180f, 210f, 240f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.MISC,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/stealth.png",
+                "skill.tyzs_skills.stealth.displayName",
+                "skill.tyzs_skills.stealth.description"));
+
+        finalList.add(new Skill(
+                true,
+                "magnet",
+                4,
+                List.of(3, 5, 7, 10),
+                List.of(3f, 5f, 7f, 10f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.MISC,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/magnet.png",
+                "skill.tyzs_skills.magnet.displayName",
+                "skill.tyzs_skills.magnet.description"));
 
         return finalList;
     }

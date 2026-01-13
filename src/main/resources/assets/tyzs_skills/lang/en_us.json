@@ -100,5 +100,11 @@
   "skill.tyzs_skills.experience_boost.description" : "Temporary description",
 
   "skill.tyzs_skills.excavation.displayName" : "Excavation",
-  "skill.tyzs_skills.excavation.description" : "Temporary description"
+  "skill.tyzs_skills.excavation.description" : "Temporary description",
+
+  "skill.tyzs_skills.stealth.displayName" : "Stealth",
+  "skill.tyzs_skills.stealth.description" : "Temporary description",
+
+  "skill.tyzs_skills.magnet.displayName" : "Magnet",
+  "skill.tyzs_skills.magnet.description" : "Temporary description"
 }
