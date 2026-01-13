@@ -3,6 +3,7 @@ package com.tyzsskills.server.xp;
 import com.google.gson.JsonObject;
 import com.tyzsskills.server.active.LevelManager;
 import com.tyzsskills.server.active.SpManager;
+import com.tyzsskills.server.payloads.LevelToastPayload;
 import com.tyzsskills.server.payloads.XpUpdatePayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -116,7 +117,12 @@ public class XpManager {
         if(flag) {
 
             if(spBuffer > 0){SpManager.AddSP(player, spBuffer);}
-            if(levelBuffer > 0){LevelManager.AddLevel(player, levelBuffer);}
+            if(levelBuffer > 0){
+                LevelManager.AddLevel(player, levelBuffer);
+                PacketDistributor.sendToPlayer(player, new LevelToastPayload(
+                        currentLevel, spBuffer
+                ));
+            }
 
             player.getPersistentData().putFloat(dataKey, currentXp);
         }

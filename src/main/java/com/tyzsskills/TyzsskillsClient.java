@@ -2,6 +2,7 @@ package com.tyzsskills;
 
 import com.tyzsskills.client.ClientCache;
 import com.tyzsskills.client.key.MainKeybind;
+import com.tyzsskills.client.screen.LevelTriggerOverlay;
 import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.client.screen.SkillTriggerOverlay;
 import com.tyzsskills.client.screen.XpTriggerOverlay;
@@ -49,6 +50,10 @@ public class TyzsskillsClient {
         event.registerAbove(VanillaGuiLayers.CROSSHAIR,
                 ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "xp_notification"),
                 new XpTriggerOverlay());
+
+        event.registerAbove(VanillaGuiLayers.CROSSHAIR,
+                ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "level_notification"),
+                new LevelTriggerOverlay());
     }
 
     @SubscribeEvent

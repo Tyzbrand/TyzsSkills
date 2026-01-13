@@ -12,7 +12,7 @@
   "tyzs_skills.configuration.magicNumber": "Magic Number",
 
   "gui.tyzs_skills.title" : "Skill UI",
-  "gui.tyzs_skills.SP" : "SP",
+  "gui.tyzs_skills.SP" : "Sp",
   "gui.tyzs_skills.Lvl" : "Lvl",
   "gui.tyzs_skills.Skills" : "Skills",
   "gui.tyzs_skills.Quests" : "Quests",
@@ -21,6 +21,9 @@
   "gui.tyzs_skills.level_max" : "Level max",
   "gui.tyzs_skills.cost" : "Cost",
   "gui.tyzs_skills.xp" : "Xp",
+
+  "toast.tyzs_skills.title" : "Level UP",
+  "toast.tyzs_skills.description" : "You have reached lvl",
 
 
   "gui.tyzs_skills.Tab.all" : "All",
