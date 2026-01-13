@@ -78,5 +78,8 @@
   "skill.tyzs_skills.rage.description" : "Temporary description",
 
   "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
-  "skill.tyzs_skills.adrenaline.description" : "Temporary description"
+  "skill.tyzs_skills.adrenaline.description" : "Temporary description",
+
+  "skill.tyzs_skills.resilience.displayName" : "Resilience",
+  "skill.tyzs_skills.resilience.description" : "Temporary description"
 }

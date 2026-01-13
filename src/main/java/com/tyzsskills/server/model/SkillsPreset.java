@@ -197,7 +197,7 @@ public class SkillsPreset {
                 "bloodlust",
                 4,
                 List.of(4, 7, 10, 15),
-                List.of(1f, 2f, 3f, 4f),
+                List.of(7f, 15f, 22f, 30f),
                 Skill.SkillType.IMMUTABLE,
                 MainGUI.CategoryType.FIGHT,
                 "",
@@ -266,6 +266,21 @@ public class SkillsPreset {
                 "tyzs_skills:textures/gui/skills/adrenaline.png",
                 "skill.tyzs_skills.adrenaline.displayName",
                 "skill.tyzs_skills.adrenaline.description"));
+
+        finalList.add(new Skill(
+                true,
+                "resilience",
+                7,
+                List.of(4, 6, 8, 10, 12, 14, 16),
+                List.of(15f, 25f, 35f, 45f, 55f, 65f, 75f),
+                Skill.SkillType.IMMUTABLE,
+                MainGUI.CategoryType.FIGHT,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/resilience.png",
+                "skill.tyzs_skills.resilience.displayName",
+                "skill.tyzs_skills.resilience.description"));
 
         return finalList;
     }
