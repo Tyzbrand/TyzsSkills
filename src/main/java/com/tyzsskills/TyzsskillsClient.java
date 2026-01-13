@@ -3,7 +3,9 @@ package com.tyzsskills;
 import com.tyzsskills.client.ClientCache;
 import com.tyzsskills.client.key.MainKeybind;
 import com.tyzsskills.client.screen.MainGUI;
+import com.tyzsskills.client.screen.SkillTriggerOverlay;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -12,9 +14,11 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = Tyzsskills.MODID, dist = Dist.CLIENT)
@@ -36,8 +40,16 @@ public class TyzsskillsClient {
     }
 
     @SubscribeEvent
+    public static void registerGuiLayers(RegisterGuiLayersEvent event){
+        event.registerAbove(VanillaGuiLayers.CROSSHAIR,
+                ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_notification"),
+                new SkillTriggerOverlay());
+    }
+
+    @SubscribeEvent
     public static void onClientLogOut(ClientPlayerNetworkEvent.LoggingOut event){
         ClientCache.ClearCache();
+        SkillTriggerOverlay.Clear();
         Tyzsskills.LOGGER.info("CACHE CLEARED");
     }
 

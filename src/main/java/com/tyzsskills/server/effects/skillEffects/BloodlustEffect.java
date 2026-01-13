@@ -22,6 +22,7 @@ public class BloodlustEffect extends SkillBehaviour {
 
         if (event.getSource().getEntity() instanceof ServerPlayer) {
             player.heal(healthAmount);
+            NotifyClient(player, skill);
         }
 
     }

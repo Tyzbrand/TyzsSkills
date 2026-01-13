@@ -27,5 +27,6 @@ public class RageEffect extends SkillBehaviour {
         float damageMultiplier = 1f + (missingPercentage * (maxBonus/100f));
 
         event.setAmount(event.getAmount() * damageMultiplier);
+        NotifyClient(player, skill);
     }
     }

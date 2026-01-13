@@ -1,5 +1,6 @@
 package com.tyzsskills;
 
+import com.tyzsskills.client.screen.SkillTriggerOverlay;
 import com.tyzsskills.server.active.FileManager;
 import com.tyzsskills.server.skills.SkillBehaviourRegistry;
 import com.tyzsskills.server.skills.SkillManager;
@@ -175,6 +176,12 @@ public class Tyzsskills {
                 CActionSkillPayload.TYPE,
                 CActionSkillPayload.STREAM_CODEC,
                 CActionSkillPayload::Handle
+        );
+
+        registrar.playToClient(
+                SkillTriggerPayload.TYPE,
+                SkillTriggerPayload.STREAM_CODEC,
+                SkillTriggerPayload::Handle
         );
     }
 

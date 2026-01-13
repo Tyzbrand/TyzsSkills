@@ -20,7 +20,7 @@ public class ClientCache {
 
     private static XpManager.LevelData clientLevelData = new XpManager.LevelData(100f, 1);
 
-    private final static List<Skill> clientSkills = new ArrayList<>();
+    private final static Map<String, Skill> clientSkills = new HashMap<>();
     private final static Map<String, Integer> clientSkillLevels = new HashMap<>();
     private final static Map<String, Object> clientConfigMap = new HashMap<>();
 
@@ -58,7 +58,7 @@ public class ClientCache {
 
     public static void UpdateSkills(List<Skill> skills){
         clientSkills.clear();
-        clientSkills.addAll(skills);
+        for(var skill : skills){clientSkills.put(skill.GetID(), skill);}
         Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skills sync: " + clientSkills.size() + " skills cached" ), false);
     }
 
@@ -124,8 +124,9 @@ public class ClientCache {
     public static float GetXPGOAL(){return clientLevelData.goal();}
     public static MainGUI.ContainerType GetContainerType(){return currentContainerType;}
     public static MainGUI.CategoryType GetCategoryType(){return currentContainerCatgory;}
-    public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills);}
+    public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills.values());}
     public static int GetSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
+    public static Skill GetSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}
 
     //getters config
     public static boolean GetConfigBool(String id, boolean fallback){
