@@ -104,8 +104,13 @@ public class Tyzsskills {
         //Register commands
         NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, this::RegisterCommands);
 
-        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        // Register config (Gameplay)
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.COMMON_SPEC);
+
+        // Register config (Visual)
+        modContainer.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
+
+
 
         //Initialize skill behaviours
         SkillBehaviourRegistry.Init();

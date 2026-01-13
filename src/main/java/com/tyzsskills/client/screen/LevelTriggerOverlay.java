@@ -1,5 +1,6 @@
 package com.tyzsskills.client.screen;
 
+import com.tyzsskills.Config;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -31,6 +32,8 @@ public class LevelTriggerOverlay implements LayeredDraw.Layer {
     private static final int COLOR_TEXT_SP = 0xFFD6AD55;
 
     public static void ShowLevelUp(int level, int spReward){
+        if(!Config.SHOW_LEVEL_OVERLAY.get()) return;
+
         long now = System.currentTimeMillis();
 
         boolean isActive = (now - lastUpdateTime < duration);
@@ -85,7 +88,8 @@ public class LevelTriggerOverlay implements LayeredDraw.Layer {
 
         String spTextRaw = Component.translatable("gui.tyzs_skills.SP").getString().toUpperCase();
 
-        MutableComponent text = Component.literal("Level " + currentLevel)
+        MutableComponent text = Component.translatable("overlay.tyzs_skills.level")
+                .append(Component.literal(String.valueOf(currentLevel)))
                 .append(Component.literal(" [+" + accumulatedSp + " " + spTextRaw + "]").withColor(COLOR_TEXT_SP));
 
         int textWidth = font.width(text);

@@ -1,5 +1,6 @@
 package com.tyzsskills.client.screen;
 
+import com.tyzsskills.Config;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -31,6 +32,8 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
     private static final int COLOR_TEXT_XP = 0xA2E158;
 
     public static void AddXp(float amount){
+        if(!Config.SHOW_XP_OVERLAY.get()) return;
+
         long now = System.currentTimeMillis();
 
         boolean isActive = (now - lastUpdateTime < duration) && (accumulatedXp > 0);

@@ -1,6 +1,7 @@
 package com.tyzsskills.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.client.ClientCache;
 import com.tyzsskills.server.model.Skill;
@@ -37,6 +38,7 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
     private static final int COLOR_BORDER = 0XFFD6AD55;
 
     public static void ShowSkillIcon(String id){
+        if(!Config.SHOW_SKILL_OVERLAY.get()) return;
         Skill skill = ClientCache.GetSkill(id.toLowerCase());
         if(skill != null){
             var icon = ResourceLocation.tryParse(skill.GetIcon());
@@ -92,7 +94,7 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
         else if (timeSinceActivation > (duration - fadeOut)) alpha = (float)(duration - timeSinceActivation)/fadeOut;
         else{
             float timeInPhase = timeSinceActivation - fadeIn;
-            float speed = .03f;
+            float speed = .01f;
 
             alpha = .8f + .2f * Mth.sin(timeInPhase * speed);
         }
