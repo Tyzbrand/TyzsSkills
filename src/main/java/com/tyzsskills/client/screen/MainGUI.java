@@ -69,7 +69,11 @@ public class MainGUI extends Screen {
 
         this.renderEntity(guiGraphics, 30, mouseX, mouseY );
 
+
+
         super.render(guiGraphics, mouseX, mouseY, partialTick);
+
+        this.renderIcons(guiGraphics);
 
         this.renderTooltips(guiGraphics, mouseX, mouseY);
     }
@@ -211,6 +215,11 @@ public class MainGUI extends Screen {
         }
     }
 
+    private void renderIcons(GuiGraphics gui){
+
+    }
+
+
 
     private void addButtons(){
         CustomTabButton skillBtn = new CustomTabButton(
@@ -238,11 +247,11 @@ public class MainGUI extends Screen {
         this.addRenderableWidget(questBtn);
 
         CustomTabButton allBtn = new CustomTabButton(
-                leftPos + 91, topPos + 6,
-                29, 13,
-                82, 199,
-                82, 212,
-                82, 186,
+                leftPos + 92, topPos + 7,
+                29, 20,
+                82, 187,
+                82, 227,
+                82, 207,
                 325, 325,
                 () -> ClientCache.GetCategoryType() == CategoryType.ALL,
                 background,
@@ -253,11 +262,11 @@ public class MainGUI extends Screen {
         this.addRenderableWidget(allBtn);
 
         CustomTabButton abilitiesBtn = new CustomTabButton(
-                leftPos + 122, topPos + 6,
-                29, 13,
-                111, 199,
-                111, 212,
-                111, 186,
+                leftPos + 123, topPos + 7,
+                29, 20,
+                140, 187,
+                140, 227,
+                140, 207,
                 325, 325,
                 () -> ClientCache.GetCategoryType() == CategoryType.ABILITIES,
                 background,
@@ -268,11 +277,11 @@ public class MainGUI extends Screen {
         this.addRenderableWidget(abilitiesBtn);
 
         CustomTabButton fightBtn = new CustomTabButton(
-                leftPos + 153, topPos + 6,
-                29, 13,
-                140, 199,
-                140, 212,
-                140, 186,
+                leftPos + 154, topPos + 7,
+                29, 20,
+                111, 187,
+                111, 227,
+                111, 207,
                 325, 325,
                 () -> ClientCache.GetCategoryType() == CategoryType.FIGHT,
                 background,
@@ -283,11 +292,11 @@ public class MainGUI extends Screen {
         this.addRenderableWidget(fightBtn);
 
         CustomTabButton miscBtn = new CustomTabButton(
-                leftPos + 184, topPos + 6,
-                29, 13,
-                169, 199,
-                169, 212,
-                169, 186,
+                leftPos + 185, topPos + 7,
+                29, 20,
+                169, 187,
+                169, 227,
+                169, 207,
                 325, 325,
                 () -> ClientCache.GetCategoryType() == CategoryType.MISC,
                 background,
@@ -301,11 +310,11 @@ public class MainGUI extends Screen {
     private void addScrollView(){
          scrollView = new CustomScrollView(
                 this.minecraft,
-                leftPos + 83, topPos + 20,
-                213, 113, 32,
+                leftPos + 83, topPos + 27,
+                213, 106, 32,
                 background, 325, 325,
-                142, 150, 149, 150,
-                7, 15);
+                142, 149, 149, 149,
+                7, 16);
 
         this.addRenderableWidget(this.scrollView);
     }
@@ -350,6 +359,29 @@ public class MainGUI extends Screen {
     }
     private boolean isHovering(int mouseX, int mouseY, int x, int y, int width, int height){
         return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
+    }
+
+    private void renderIcon(GuiGraphics gui, float scale, int u, int v, int w, int h, int btnX, int btnY, int btnS){
+
+        float scaledSize = w * scale;
+        float offset = (btnS -scaledSize) / 2f;
+
+        float targetVisualX = btnX + offset;
+        float targetVisualY = btnY + offset;
+
+        int drawX = (int)(targetVisualX / scale);
+        int drawY = (int)(targetVisualY / scale);
+
+
+        gui.pose().pushPose();
+        gui.pose().scale(scale, scale, 1.0f);
+        gui.setColor(1.0f, 1.0f, 1.0f, 1f);
+
+
+        gui.blit(background, drawX, drawY, u, v, w, h, 325, 325);
+
+        gui.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gui.pose().popPose();
     }
 
 
