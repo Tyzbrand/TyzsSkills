@@ -21,6 +21,8 @@ public class SkillBehaviourRegistry {
         behaviours.put("resilience", new ResilienceEffect());
 
         behaviours.put("green_thumb", new GreenThumbEffect());
+        behaviours.put("nutrition", new NutritionEffect());
+        behaviours.put("experience_boost", new ExperienceBoostEffect());
     }
 
     public static SkillBehaviour GetBehaviour(String id){

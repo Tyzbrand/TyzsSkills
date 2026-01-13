@@ -9,6 +9,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
+import net.minecraft.world.level.block.TallGrassBlock;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
 public class GreenThumbEffect extends SkillBehaviour {

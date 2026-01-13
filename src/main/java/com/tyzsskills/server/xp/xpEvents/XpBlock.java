@@ -1,6 +1,7 @@
 package com.tyzsskills.server.xp.xpEvents;
 
 import com.google.gson.JsonObject;
+import com.tyzsskills.server.active.AttributeRegistry;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -54,7 +55,7 @@ public class XpBlock {
 
     //Actifs
     public static void BlockBreakProfit(BlockState state, ServerPlayer player){
-        var amount = GetBlockValue(state);
+        var amount = GetBlockValue(state) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
         if(amount > 0) XpManager.AddXP(player, amount);
     }
 

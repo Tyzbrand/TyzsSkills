@@ -1,6 +1,6 @@
 package com.tyzsskills;
 
-import com.tyzsskills.client.screen.SkillTriggerOverlay;
+import com.tyzsskills.server.active.AttributeRegistry;
 import com.tyzsskills.server.active.FileManager;
 import com.tyzsskills.server.skills.SkillBehaviourRegistry;
 import com.tyzsskills.server.skills.SkillManager;
@@ -10,7 +10,9 @@ import com.tyzsskills.server.payloads.*;
 import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
+import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -88,6 +90,9 @@ public class Tyzsskills {
         ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
+        //Register attributes
+        AttributeRegistry.ATTRIBUTES.register(modEventBus);
+        modEventBus.addListener(this::RegisterAttributes);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (Tyzsskills) to respond directly to events.
@@ -130,6 +135,12 @@ public class Tyzsskills {
 
     private void RegisterCommands(RegisterCommandsEvent event){
         event.getDispatcher().register(MainCommand.register());
+    }
+
+    private void RegisterAttributes(EntityAttributeModificationEvent event) {
+        if (!event.has(EntityType.PLAYER, AttributeRegistry.SKILL_XP_MULTIPLIER)) {
+            event.add(EntityType.PLAYER, AttributeRegistry.SKILL_XP_MULTIPLIER);
+        }
     }
 
     private void RegisterPayloads(final RegisterPayloadHandlersEvent event){
