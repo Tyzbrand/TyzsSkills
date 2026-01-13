@@ -28,7 +28,7 @@ public class MainGUI extends Screen {
     private static final ResourceLocation mainFont = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID,
             "main_font");
 
-    private final int imageWidth = 294;
+    private final int imageWidth = 301;
     private final int imageHeight = 139;
 
     private int leftPos;
@@ -100,7 +100,7 @@ public class MainGUI extends Screen {
         String localizationKey = "gui.tyzs_skills.Tab." + ClientCache.GetCategoryType().toString().toLowerCase();
         MutableComponent enumDisplayName = Component.translatable(localizationKey);
         int text3W = this.font.width(enumDisplayName);
-        int rightLimit3 = leftPos+265;
+        int rightLimit3 = leftPos+295;
         gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+8, 0x737373, false);
     }
 
@@ -170,7 +170,7 @@ public class MainGUI extends Screen {
 
     private void renderTooltips(GuiGraphics gui, int mouseX, int mouseY){
 
-        if(isHovering(mouseX, mouseY, leftPos+2, topPos+98, 70, 5)){ //Xp bar
+        if(isHovering(mouseX, mouseY, leftPos, topPos+96, 75, 8)){ //Xp bar
             String xpTooltip = SmartFormat(ClientCache.GetXP()) + "/" + SmartFormat(ClientCache.GetXPGOAL()) ;
             gui.renderTooltip(this.font, Component.literal(xpTooltip), mouseX, mouseY);
         }
@@ -302,7 +302,7 @@ public class MainGUI extends Screen {
          scrollView = new CustomScrollView(
                 this.minecraft,
                 leftPos + 83, topPos + 20,
-                205, 112, 32,
+                213, 113, 32,
                 background, 325, 325,
                 142, 150, 149, 150,
                 7, 15);
@@ -351,6 +351,8 @@ public class MainGUI extends Screen {
     private boolean isHovering(int mouseX, int mouseY, int x, int y, int width, int height){
         return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
     }
+
+
     //states
     @Override
     protected void renderBlurredBackground(float partialTick){}

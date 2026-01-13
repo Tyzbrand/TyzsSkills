@@ -57,24 +57,17 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
         int maxScroll = this.getMaxScroll();
         if(maxScroll > 0){
             int scrollBarX = this.getScrollbarPosition();
-
-            int contentHeight = this.getItemCount() * this.itemHeight;
-
-            int barH = (int)((float)(this.height * this.height) / (float)contentHeight);
-            barH = Mth.clamp(barH, 32, this.height - 8);
-
-            int scrollBarY = this.getY() + (int)((float)this.getScrollAmount() * (float)(this.height - barH) / (float)maxScroll);
-            if(scrollBarY < this.getY()) scrollBarY = this.getY();
+            int scrollBarY = this.getScrollBarTop();
 
             boolean isHoveringBar = mouseX >= scrollBarX && mouseX < scrollBarX + scrollWidth
-                    && mouseY >= scrollBarY && mouseY < scrollBarY + barH;
+                    && mouseY >= scrollBarY && mouseY < scrollBarY + scrollHeight;
 
             int currentU = uScroll;
             int currentV = vScroll;
 
             if(isHoveringBar) {currentU = uScrollHover; currentV = vScrollHover;}
 
-            gui.blit(texture, scrollBarX, scrollBarY, currentU, currentV, scrollWidth, barH, textureW, textureH);
+            gui.blit(texture, scrollBarX, scrollBarY, currentU, currentV, scrollWidth, scrollHeight, textureW, textureH);
 
         }
     }
@@ -95,6 +88,18 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
         }
 
         return null;
+    }
+
+    private int getScrollBarTop() {
+        int maxScroll = this.getMaxScroll();
+        if (maxScroll <= 0) return this.getY();
+
+        int barTop = this.getY() + (int)((float)this.getScrollAmount() * (float)(this.height - scrollHeight) / (float)maxScroll);
+
+        if (barTop < this.getY()) barTop = this.getY();
+        if (barTop > this.getY() + this.height - scrollHeight) barTop = this.getY() + this.height - scrollHeight;
+
+        return barTop;
     }
 
     @Override
@@ -121,5 +126,40 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
 
     @Override
     protected void renderSelection(GuiGraphics gui, int top, int width, int height, int outerColor, int innerColor) {
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.getMaxScroll() > 0) {
+            int barX = this.getScrollbarPosition();
+            int barY = this.getScrollBarTop();
+
+            if (mouseX >= barX && mouseX <= barX + scrollWidth &&
+                    mouseY >= barY && mouseY <= barY + scrollHeight) {
+
+                this.setDragging(true);
+                return true;
+            }
+        }
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (this.isDragging()) {
+            int maxScroll = this.getMaxScroll();
+            int trackHeight = this.height;
+
+            if (trackHeight > scrollHeight) {
+                double d0 = Math.max(0, mouseY - this.getY() - (double)(scrollHeight / 2.0F)); // Centré sur la souris
+
+                double newScroll = d0 * (double)maxScroll / (double)(trackHeight - scrollHeight);
+
+                this.setScrollAmount(newScroll);
+            }
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 }
