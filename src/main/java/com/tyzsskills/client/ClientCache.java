@@ -24,6 +24,7 @@ public class ClientCache {
     private final static Map<String, Skill> clientSkills = new HashMap<>();
     private final static Map<String, Integer> clientSkillLevels = new HashMap<>();
     private final static Map<String, Object> clientConfigMap = new HashMap<>();
+    private final static Map<String, Boolean> clientBookmarks = new HashMap<>();
 
     private static MainGUI.ContainerType currentContainerType = MainGUI.ContainerType.SKILLS;
     private static MainGUI.CategoryType currentContainerCatgory = MainGUI.CategoryType.ALL;
@@ -75,6 +76,12 @@ public class ClientCache {
         Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced config: " + clientConfigMap.size() + " entries"), false);
     }
 
+    public static void SyncBookmark(String id, boolean state){
+        clientBookmarks.put(id.toLowerCase(), state);
+        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced bookmark: " + id + ": " + state), false);
+    }
+
+
     public static void ClearCache(){
         clientLevel = 1;
         clientSP = 0;
@@ -83,6 +90,13 @@ public class ClientCache {
         clientSkills.clear();
         clientSkillLevels.clear();
         clientConfigMap.clear();
+        clientBookmarks.clear();
+    }
+
+    public static void PredictBookmark(Skill skill){
+        String id = skill.GetID();
+        var value = GetBookmarkState(id);
+        clientBookmarks.put(id, !value);
     }
 
     public static void PredictBuy(Skill skill) {
@@ -129,6 +143,7 @@ public class ClientCache {
     public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills.values());}
     public static int GetSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
     public static Skill GetSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}
+    public static boolean GetBookmarkState(String id){return clientBookmarks.getOrDefault(id.toLowerCase(), false);}
 
     //getters config
     public static boolean GetConfigBool(String id, boolean fallback){

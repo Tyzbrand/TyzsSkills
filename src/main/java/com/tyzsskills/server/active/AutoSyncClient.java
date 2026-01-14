@@ -15,11 +15,22 @@ public class AutoSyncClient {
     public static void SyncSkillLevels(ServerPlayer player){
         for(var skill : SkillManager.Get().GetAllSkills()) {
             var data = player.getPersistentData();
-            var key = skill.GetID() + "_lvl";
+            var key = skill.GetID().toLowerCase() + SkillManager.SKILL_LEVEL_SIGNATURE;
 
             var lvl = data.getInt(key);
             if (lvl > 0) {
                 PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), lvl));
+            }
+        }
+    }
+
+    public static void SyncSkillBookmarks(ServerPlayer player){
+        for(var skill : SkillManager.Get().GetAllSkills()) {
+            var data = player.getPersistentData();
+            var key = skill.GetID().toLowerCase() + SkillManager.BOOKMARK_SIGNATURE;
+
+            if (data.getBoolean(key)) {
+                PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(skill.GetID().toLowerCase(), true));
             }
         }
     }

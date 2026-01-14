@@ -37,7 +37,7 @@ public class MainGUI extends Screen {
     public MainGUI(){super(Component.translatable("gui.tyzs_skills.title"));}
 
     public enum ContainerType {SKILLS, QUESTS}
-    public enum CategoryType {ALL, ABILITIES, FIGHT, MISC}
+    public enum CategoryType {ALL, ABILITIES, FIGHT, MISC, BOOKMARKS}
 
     private CustomScrollView scrollView;
 
@@ -101,11 +101,12 @@ public class MainGUI extends Screen {
         int rightLimit2 = leftPos+69;
         gui.drawString(this.font, spValue, rightLimit2 -text2W, topPos+84, color2, false);
 
+        if(ClientCache.GetCategoryType() == CategoryType.BOOKMARKS) return;
         String localizationKey = "gui.tyzs_skills.Tab." + ClientCache.GetCategoryType().toString().toLowerCase();
         MutableComponent enumDisplayName = Component.translatable(localizationKey);
         int text3W = this.font.width(enumDisplayName);
         int rightLimit3 = leftPos+295;
-        gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+8, 0x737373, false);
+        gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+15, 0x000000, false);
     }
 
     private void renderXpBar(GuiGraphics gui){
@@ -187,20 +188,24 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Quests"), mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY, leftPos + 91, topPos + 6, 28, 12)){ //All tab
+        if(isHovering(mouseX, mouseY, leftPos + 92, topPos + 7, 29, 20)){ //All tab
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY, leftPos + 122, topPos + 6, 28, 12)){ //Abilities tab
+        if(isHovering(mouseX, mouseY, leftPos + 123, topPos + 7, 29, 20)){ //Abilities tab
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.abilities"), mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY, leftPos + 153, topPos + 6, 28, 12)){ //Fight tab
+        if(isHovering(mouseX, mouseY, leftPos + 154, topPos + 7, 29, 20)){ //Fight tab
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.fight"), mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY, leftPos + 184, topPos + 6, 28, 12)){ //Misc tab
+        if(isHovering(mouseX, mouseY, leftPos + 185, topPos + 7, 29, 20)){ //Misc tab
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.misc"), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 216, topPos + 7, 29, 20)){ //Bookmarks tab
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.bookmarks"), mouseX, mouseY);
         }
 
         if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)){
@@ -305,6 +310,21 @@ public class MainGUI extends Screen {
                     this.refreshList();
                 });
         this.addRenderableWidget(miscBtn);
+
+        CustomTabButton bookmarksBtn = new CustomTabButton(
+                leftPos + 216, topPos + 7,
+                29, 20,
+                198, 187,
+                198, 227,
+                198, 207,
+                325, 325,
+                () -> ClientCache.GetCategoryType() == CategoryType.BOOKMARKS,
+                background,
+                (b) -> {
+                    ClientCache.SetCategoryType(CategoryType.BOOKMARKS);
+                    this.refreshList();
+                });
+        this.addRenderableWidget(bookmarksBtn);
     }
 
     private void addScrollView(){
@@ -321,7 +341,7 @@ public class MainGUI extends Screen {
 
 
     //Actifs
-    private void refreshList(){
+    public void refreshList(){
         if(this.scrollView == null) return;
 
         var categoryToLoad = ClientCache.GetCategoryType();
@@ -335,8 +355,9 @@ public class MainGUI extends Screen {
 
         for(Skill skill : ClientCache.GetAllSkills()){
             if(skill.GetCategory() != categoryToLoad &&
-            categoryToLoad != CategoryType.ALL) continue;
+            categoryToLoad != CategoryType.ALL && categoryToLoad != CategoryType.BOOKMARKS) continue;
 
+            if(categoryToLoad == CategoryType.BOOKMARKS && !ClientCache.GetBookmarkState(skill.GetID())) continue;
 
             if(currentRow == null || countInRow >= maxPerLine){
                 currentRow = new SkillEntry();
@@ -351,7 +372,7 @@ public class MainGUI extends Screen {
     }
 
     //Uilitaires
-    private String SmartFormat(float value){
+    public static String SmartFormat(float value){
         if(value == (long)value){
             return String.format("%d", (long)value);
         }

@@ -9,6 +9,7 @@ import com.tyzsskills.Config;
 import com.tyzsskills.server.active.SpManager;
 import com.tyzsskills.server.effects.GenericEffects;
 import com.tyzsskills.server.model.Skill;
+import com.tyzsskills.server.payloads.SkillBookmarksPayload;
 import com.tyzsskills.server.payloads.SkillLevelSyncPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -18,6 +19,8 @@ public class SkillManager {
     private static final SkillManager instance = new SkillManager();
     public static SkillManager Get() {return instance;}
 
+    public static final String BOOKMARK_SIGNATURE = "_bookmark";
+    public static final String SKILL_LEVEL_SIGNATURE = "_lvl";
 
     private final Map<String, Skill> skillCollection = new HashMap<>();
 
@@ -43,7 +46,7 @@ public class SkillManager {
         if(player == null || skill == null) return;
 
         var data = player.getPersistentData();
-        var key = skill.GetID() + "_lvl";
+        var key = skill.GetID() + SKILL_LEVEL_SIGNATURE;
 
         int currentLvl = data.getInt(key);
         if(currentLvl >= skill.GetMaximumLevel()) return;
@@ -67,7 +70,7 @@ public class SkillManager {
         if(player == null || skill == null || !Config.REFUND_SYSTEM.get()) return;
 
         var data = player.getPersistentData();
-        var key = skill.GetID() + "_lvl";
+        var key = skill.GetID() + SKILL_LEVEL_SIGNATURE;
 
         int currentLvl = data.getInt(key);
         if(currentLvl <= 0 || currentLvl > skill.GetMaximumLevel()) return;
@@ -96,15 +99,43 @@ public class SkillManager {
     {
         if(oldPlayer == null || newPlayer == null) return;
         for(var skill : skillCollection.values()){
-            String key = skill.GetID() + "_lvl";
+            String key = skill.GetID() + SKILL_LEVEL_SIGNATURE;
 
             int oldValue = oldPlayer.getPersistentData().getInt(key);
-            if(oldValue <= 0) continue;
+            if(oldValue > 0){
+                newPlayer.getPersistentData().putInt(key, oldValue);
+                PacketDistributor.sendToPlayer(newPlayer, new SkillLevelSyncPayload(skill.GetID().toLowerCase(), oldValue));
+            }
 
-            newPlayer.getPersistentData().putInt(key, oldValue);
-            PacketDistributor.sendToPlayer(newPlayer, new SkillLevelSyncPayload(skill.GetID(), oldValue));
+            String key2 = skill.GetID() + BOOKMARK_SIGNATURE;
+            boolean oldValue2 = oldPlayer.getPersistentData().getBoolean(key);
+            if(oldValue2){
+                newPlayer.getPersistentData().putBoolean(key2, true);
+                PacketDistributor.sendToPlayer(newPlayer, new SkillBookmarksPayload(skill.GetID().toLowerCase(), true));
+            }
         }
     }
+
+    public void BookmarkSkill(ServerPlayer player, String id){
+        if(player == null || GetSkill(id.toLowerCase()) == null) return;
+
+        var data = player.getPersistentData();
+        var key = id.toLowerCase() + BOOKMARK_SIGNATURE;
+
+        if(!data.contains(key)) {
+            data.putBoolean(key, true);
+            PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(id.toLowerCase(), true));
+        }
+        else {
+            var value = !data.getBoolean(key);
+            data.putBoolean(key, value);
+            PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(id.toLowerCase(), value));
+        }
+
+
+
+    }
+
 
 
     //getters
@@ -117,7 +148,7 @@ public class SkillManager {
         var skill = GetSkill(id);
         if(skill == null) return 0;
 
-        var key = id.toLowerCase() + "_lvl";
+        var key = id.toLowerCase() + SKILL_LEVEL_SIGNATURE;
         return data.getInt(key);
     }
 }

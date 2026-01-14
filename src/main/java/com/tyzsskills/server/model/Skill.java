@@ -37,7 +37,7 @@ public class Skill{
         this.displayName = displayName;
         this.description = description;
 
-        if(category == MainGUI.CategoryType.ALL) category = MainGUI.CategoryType.MISC;
+        if(category == MainGUI.CategoryType.ALL || category == MainGUI.CategoryType.BOOKMARKS) category = MainGUI.CategoryType.MISC;
     }
 
     public enum SkillType {GENERIC, CUSTOM, IMMUTABLE}

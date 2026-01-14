@@ -234,8 +234,8 @@ public class SkillsPreset {
                 null,
                 true,
                 "tyzs_skills:textures/gui/skills/backstab.png",
-                "skill.tyzs_skills.resistance.displayName",
-                "skill.tyzs_skills.resistance.description"));
+                "skill.tyzs_skills.backstab.displayName",
+                "skill.tyzs_skills.backstab.description"));
 
         finalList.add(new Skill(
                 true,

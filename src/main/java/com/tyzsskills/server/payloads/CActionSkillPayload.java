@@ -31,6 +31,7 @@ public record CActionSkillPayload(String id, int actionType) implements CustomPa
             if(ctx.player() instanceof ServerPlayer player){
                 if(payload.actionType() == 0) SkillManager.Get().BuySkill(player, payload.id().toLowerCase());
                 else if (payload.actionType() == 1) SkillManager.Get().RefundSkill(player, payload.id().toLowerCase());
+                else if (payload.actionType() == 2) SkillManager.Get().BookmarkSkill(player, payload.id().toLowerCase());
             }
 
         });

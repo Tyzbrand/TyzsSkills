@@ -209,6 +209,12 @@ public class Tyzsskills {
                 LevelToastPayload.STREAM_CODEC,
                 LevelToastPayload::Handle
         );
+
+        registrar.playToClient(
+                SkillBookmarksPayload.TYPE,
+                SkillBookmarksPayload.STREAM_CODEC,
+                SkillBookmarksPayload::Handle
+        );
     }
 
     @SubscribeEvent

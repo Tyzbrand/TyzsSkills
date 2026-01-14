@@ -3,6 +3,7 @@ package com.tyzsskills.client.models;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.client.ClientCache;
+import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.payloads.CActionSkillPayload;
 import net.minecraft.ChatFormatting;
@@ -40,6 +41,10 @@ public class SkillWidget {
 
     private static final int U_BUY_BTN = 169 ,V_BUY_BTN = 173;
     private static final int U_BUY_BTN_HOVER = 178;
+
+    private static final int U_BOOK_BTN_HOVER = 226 ,V_BOOK_BTN_HOVER = 173;
+    private static final int U_BOOK_ACTIVE = 237 , V_BOOK_ACTIVE = 174;
+
 
 
     private static final int U_REFUND_BTN = 200 ,V_REFUND_BTN = 173;
@@ -93,6 +98,14 @@ public class SkillWidget {
 
         gui.pose().popPose();
 
+        boolean isHoveringBookBtn = isMouseOver(mouseX, mouseY, x+49, y+17, BTN_W, BTN_H);
+        if(isHoveringBookBtn) gui.blit(REF_TEXTURE, x+48, y+16, U_BOOK_BTN_HOVER, V_BOOK_BTN_HOVER, 11, 11, TEXTURE_W, TEXTURE_H);
+
+       if(ClientCache.GetBookmarkState(skill.GetID().toLowerCase())){
+            gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_ACTIVE, V_BOOK_ACTIVE, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
+        }
+
+
         if(CanBuy(skill)){
             boolean isHoverBuyBtn = isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H);
             int currentBuyU = U_BUY_BTN;
@@ -111,7 +124,7 @@ public class SkillWidget {
         List<Component> tooltip = new ArrayList<>();
 
         //Simple TOOLTIP
-        if(CanBuy(skill) && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){
+        if(skill.IsPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){
 
             var text = Component.empty()
                     .append(Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY))
@@ -130,16 +143,46 @@ public class SkillWidget {
         }
 
         //Plusieurs TOOTLIPS
-        /*tooltip.add(Component.translatable(skill.GetDisplayName()));
+        if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)){
+            tooltip.add(Component.translatable(skill.GetDisplayName()).withStyle(ChatFormatting.DARK_PURPLE));
+            String rawDesc = Component.translatable(skill.GetDescription()).getString();
 
-        MutableComponent rawDescription = Component.translatable(skill.GetDescription());
+            if (rawDesc.contains("{value}")) {
+                int currentLvl = ClientCache.GetSkillLevel(skill.GetID().toLowerCase());
+                var values = skill.GetValues();
 
-        Font font = Minecraft.getInstance().font;
-        List<FormattedCharSequence> splitLines = font.split(rawDescription, 150);
+                float val = 0f;
 
-        for(var line : splitLines){
-            tooltip.add(Component.literal(String.valueOf(line)));
-        }*/
+                if (values != null && !values.isEmpty()) {
+                    if (currentLvl > 0) {
+                        int index = Math.min(currentLvl - 1, values.size() - 1);
+                        val = values.get(index);
+                    }
+
+                    String coloredValue = ChatFormatting.GREEN + MainGUI.SmartFormat(val) + ChatFormatting.WHITE;
+                    rawDesc = rawDesc.replace("{value}", coloredValue);
+
+                } else {
+                    rawDesc = rawDesc.replace("{value}", ChatFormatting.GREEN + "0" + ChatFormatting.WHITE);
+                }
+            }
+
+            Font font = Minecraft.getInstance().font;
+            MutableComponent fullDesc = Component.literal(rawDesc).withStyle(ChatFormatting.WHITE);
+
+            List<FormattedCharSequence> splitLines = font.split(fullDesc, 145);
+
+            for (FormattedCharSequence line : splitLines) {
+                MutableComponent lineComponent = Component.empty();
+
+                line.accept((index, style, codePoint) -> {
+                    lineComponent.append(Component.literal(String.valueOf((char) codePoint)).withStyle(style));
+                    return true;
+                });
+
+                tooltip.add(lineComponent);
+            }
+        }
         return tooltip;
     }
 
@@ -162,6 +205,20 @@ public class SkillWidget {
             ClientCache.PredictRefund(skill);
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.GetID().toLowerCase(), 1));
             return true;
+        }
+
+        if(isMouseOver((int)mouseX, (int)mouseY, x+49, y+17, BTN_W, BTN_H)) {
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            ClientCache.PredictBookmark(skill);
+            PacketDistributor.sendToServer(new CActionSkillPayload(skill.GetID().toLowerCase(), 2));
+
+            if (ClientCache.GetCategoryType() == MainGUI.CategoryType.BOOKMARKS) {
+                if (Minecraft.getInstance().screen instanceof MainGUI gui) {
+                    gui.refreshList();
+                }
+
+                return true;
+            }
         }
 
         return false;
