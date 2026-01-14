@@ -36,17 +36,17 @@ displayName="${mod_name}" #mandatory
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 
 # A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="examplemod.png" #optional
+logoFile = "assets/tyzs_skills/logo.png"
 
 # A text field displayed in the mod UI
-#credits="" #optional
+#credits=""
 
 # The authors of the mod, displayed in the mod UI (optional)
 authors="Tyzbrand"
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Example mod description.
+Increase your level passively to unlock a variety of skills and customize your gameplay in Minecraft. Enhance your abilities, become more powerful, and get extra features. All this with a deep and flexible skill system.
 '''
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
