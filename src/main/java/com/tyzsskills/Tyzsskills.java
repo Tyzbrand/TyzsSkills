@@ -1,6 +1,7 @@
 package com.tyzsskills;
 
 import com.tyzsskills.server.active.AttributeRegistry;
+import com.tyzsskills.server.active.BlockMarker;
 import com.tyzsskills.server.active.FileManager;
 import com.tyzsskills.server.skills.SkillBehaviourRegistry;
 import com.tyzsskills.server.skills.SkillManager;
@@ -93,6 +94,8 @@ public class Tyzsskills {
         //Register attributes
         AttributeRegistry.ATTRIBUTES.register(modEventBus);
         modEventBus.addListener(this::RegisterAttributes);
+        //Register Attachments
+        BlockMarker.ATTACHMENT_TYPES.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (Tyzsskills) to respond directly to events.

@@ -1,5 +1,6 @@
 package com.tyzsskills.server.events;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.server.active.*;
 import com.tyzsskills.server.effects.GenericEffects;
 import com.tyzsskills.server.model.Skill;
@@ -9,6 +10,10 @@ import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.NetherWartBlock;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.entity.living.*;
@@ -46,13 +51,34 @@ public class RuntimeEvents {
         }
     }
 
+    @SubscribeEvent
+    public static void OnBlockPlace(BlockEvent.EntityPlaceEvent event){
+        if(event.isCanceled() || !Config.PREVENT_PLACED_BLOCK_XP.get()) return;
+        if(!(event.getEntity() instanceof ServerPlayer)) return;
+
+        if(event.getState().getBlock() instanceof CropBlock ||
+                event.getState().getBlock() instanceof NetherWartBlock) return;
+
+
+        if(XpBlock.GetBlockValue(event.getState()) > 0){
+            BlockMarker.MarkBlock((net.minecraft.world.level.Level)event.getLevel(), event.getPos());
+        }
+    }
 
     @SubscribeEvent
     public static void OnBlockBreak(BlockEvent.BreakEvent event){
-
         if(event.isCanceled()) return;
 
         if(event.getPlayer() instanceof ServerPlayer serverPlayer){
+            if(Config.PREVENT_PLACED_BLOCK_XP.get()) {
+                Level level = (net.minecraft.world.level.Level) event.getLevel();
+                var pos = event.getPos();
+
+                if (BlockMarker.IsPlayerPlaced(level, pos)) {
+                    BlockMarker.RemoveBlock(level, pos);
+                    return;
+                }
+            }
             XpBlock.BlockBreakProfit(event.getState(), serverPlayer);
         }
     }

@@ -9,6 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
@@ -55,6 +57,15 @@ public class XpBlock {
 
     //Actifs
     public static void BlockBreakProfit(BlockState state, ServerPlayer player){
+
+        if(state.getBlock() instanceof CropBlock crop){
+            if(!crop.isMaxAge(state)) return;
+        }
+        else if (state.getBlock() instanceof NetherWartBlock) {
+            if (state.getValue(NetherWartBlock.AGE) < 3) return;
+        }
+
+
         var amount = GetBlockValue(state) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
         if(amount > 0) XpManager.AddXP(player, amount);
     }

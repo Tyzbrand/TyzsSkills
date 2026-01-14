@@ -15,6 +15,8 @@ public class Config {
     public static final String REFUND_PERCENTAGE_KEY = "refund_percentage";
     public static final ModConfigSpec.DoubleValue REFUND_PERCENTAGE;
 
+    public static final ModConfigSpec.BooleanValue PREVENT_PLACED_BLOCK_XP;
+
 
     //==================Client Config==================
     public static final ModConfigSpec CLIENT_SPEC;
@@ -37,6 +39,10 @@ public class Config {
         REFUND_PERCENTAGE = commonBuilder
                 .comment("Percentage of the initial price refunded")
                 .defineInRange("refund percentage", 30.0, 1.0, 100.0);
+
+        PREVENT_PLACED_BLOCK_XP = commonBuilder
+                .comment("Prevent manually placed block from providing xp")
+                .define("prevent placed block xp", true);
 
         commonBuilder.pop();
         COMMON_SPEC = commonBuilder.build();
