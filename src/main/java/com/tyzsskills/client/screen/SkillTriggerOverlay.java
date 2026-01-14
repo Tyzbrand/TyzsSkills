@@ -23,7 +23,7 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
 
     private static final List<Notification> activeNotifications = new ArrayList<>();
 
-    private static final long duration = 2500L;
+    private static final long duration = 2000L;
     private static final long fadeIn = 200L;
     private static final long fadeOut = 500L;
 

@@ -32,6 +32,7 @@ public class SkillWidget {
     private static final int TEXTURE_W = 325, TEXTURE_H = 325;
 
     private static final int U_BACKGROUND = 166, V_BACKGROUND = 142;
+    private static final int U_BACKGROUND_FINAL = 230;
 
     public static final int WIDTH = 64, HEIGHT = 30; //Widget Size on screen
 
@@ -64,32 +65,45 @@ public class SkillWidget {
 
         Font font = Minecraft.getInstance().font;
 
-        gui.blit(REF_TEXTURE, x, y, U_BACKGROUND, V_BACKGROUND, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
+        int currentU = U_BACKGROUND;
+        if(ClientCache.GetSkillLevel(skill.GetID().toLowerCase()) >= skill.GetMaximumLevel()){currentU = U_BACKGROUND_FINAL;}
+        gui.blit(REF_TEXTURE, x, y, currentU, V_BACKGROUND, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
 
         gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
 
         MutableComponent count =  Component.translatable("gui.tyzs_skills.Lvl")
                 .append(": " + ClientCache.GetSkillLevel(skill.GetID()) + "/" + skill.GetMaximumLevel());
 
-        float scale = 0.62f;
+
+
+        float scale = 0.58f;
+        int fixedWidth = (int)(30 / scale);
+
+        int textHeight = font.wordWrapHeight(count, fixedWidth);
+        int padding = 3;
+
+
+
         gui.pose().pushPose();
-        gui.pose().translate(x+27, y+8, 0);
+        gui.pose().translate(x+29, y+8, 0);
         gui.pose().scale(scale, scale, 1f);
 
-        gui.drawWordWrap(font, count, 0, 0, (int)(37/scale), 0x666666);
+        renderBackdrop(gui, -padding, -padding, fixedWidth + (padding*2), textHeight + (padding*2));
+        gui.drawWordWrap(font, count, 0, 1, fixedWidth, 0xFFFFFF);
+
         gui.pose().popPose();
 
         if(CanBuy(skill)){
-            boolean isHoverBuyBtn = isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H);
+            boolean isHoverBuyBtn = isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H);
             int currentBuyU = U_BUY_BTN;
             if(isHoverBuyBtn){currentBuyU = U_BUY_BTN_HOVER;}
-            gui.blit(REF_TEXTURE, x+27, y+17, currentBuyU, V_BUY_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
+            gui.blit(REF_TEXTURE, x+38, y+17, currentBuyU, V_BUY_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
         }
         if(CanRefund(skill)) {
-            boolean isHoverRefundBtn = isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H);
+            boolean isHoverRefundBtn = isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H);
             int currentRefundU = U_REFUND_BTN;
             if(isHoverRefundBtn){currentRefundU = U_REFUND_BTN_HOVER;}
-            gui.blit(REF_TEXTURE, x+38, y+17, currentRefundU, V_REFUND_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
+            gui.blit(REF_TEXTURE, x+27, y+17, currentRefundU, V_REFUND_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
         }
     }
 
@@ -97,7 +111,7 @@ public class SkillWidget {
         List<Component> tooltip = new ArrayList<>();
 
         //Simple TOOLTIP
-        if(CanBuy(skill) && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)){
+        if(CanBuy(skill) && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){
 
             var text = Component.empty()
                     .append(Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY))
@@ -110,7 +124,7 @@ public class SkillWidget {
             return tooltip;
         }
 
-        if(CanRefund(skill) && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){
+        if(CanRefund(skill) && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)){
             tooltip.add(Component.translatable("gui.tyzs_skills.refund"));
             return tooltip;
         }
@@ -134,7 +148,7 @@ public class SkillWidget {
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button){
-        if(isMouseOver((int)mouseX, (int)mouseY, x+27, y+17, BTN_W, BTN_H)){
+        if(isMouseOver((int)mouseX, (int)mouseY, x+38, y+17, BTN_W, BTN_H)){
             if(!CanBuy(skill)) return false;
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             ClientCache.PredictBuy(skill);
@@ -142,7 +156,7 @@ public class SkillWidget {
             return true;
         }
 
-        if(isMouseOver((int)mouseX, (int)mouseY, x+38, y+17, BTN_W, BTN_H)){
+        if(isMouseOver((int)mouseX, (int)mouseY, x+27, y+17, BTN_W, BTN_H)){
             if(!CanRefund(skill)) return false;
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
             ClientCache.PredictRefund(skill);
@@ -197,9 +211,24 @@ public class SkillWidget {
     }
 
 
-
-
     private boolean isMouseOver(int mouseX, int mouseY, int x, int y, int width, int height) {
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
+    }
+
+    //Utils
+    private static final int COLOR_BG = 0xAA000000;
+    private static final int COLOR_BORDER = 0xFFD6AD55;
+    private void renderBackdrop(GuiGraphics gui, int x, int y, int width, int height) {
+        // Fond
+        gui.fill(x, y + 1, x + width, y + height - 1, COLOR_BG);
+        gui.fill(x + 1, y, x + width - 1, y + 1, COLOR_BG);
+        gui.fill(x + 1, y + height - 1, x + width - 1, y + height, COLOR_BG);
+
+        // Bordure
+        if(ClientCache.GetSkillLevel(skill.GetID().toLowerCase()) < skill.GetMaximumLevel()) return;
+        gui.fill(x + 1, y, x + width - 1, y + 1, COLOR_BORDER); // Haut
+        gui.fill(x + 1, y + height - 1, x + width - 1, y + height, COLOR_BORDER); // Bas
+        gui.fill(x, y + 1, x + 1, y + height - 1, COLOR_BORDER); // Gauche
+        gui.fill(x + width - 1, y + 1, x + width, y + height - 1, COLOR_BORDER); // Droite
     }
 }

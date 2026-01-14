@@ -16,6 +16,9 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
     private final int uScrollHover, vScrollHover;
     private final int scrollWidth, scrollHeight;
 
+    private boolean isScrolling = false;
+    private double scrollClickOffset = 0;
+
     /*
      * Constructor:
      * x,y : Screen coordinates (where to draw list container)
@@ -65,7 +68,7 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
             int currentU = uScroll;
             int currentV = vScroll;
 
-            if(isHoveringBar) {currentU = uScrollHover; currentV = vScrollHover;}
+            if(isHoveringBar || isScrolling) {currentU = uScrollHover; currentV = vScrollHover;}
 
             gui.blit(texture, scrollBarX, scrollBarY, currentU, currentV, scrollWidth, scrollHeight, textureW, textureH);
 
@@ -130,6 +133,8 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        this.isScrolling = false;
+
         if (this.getMaxScroll() > 0) {
             int barX = this.getScrollbarPosition();
             int barY = this.getScrollBarTop();
@@ -137,29 +142,35 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
             if (mouseX >= barX && mouseX <= barX + scrollWidth &&
                     mouseY >= barY && mouseY <= barY + scrollHeight) {
 
-                this.setDragging(true);
+                this.isScrolling = true;
+                this.scrollClickOffset = mouseY - barY;
                 return true;
             }
         }
-
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        this.isScrolling = false;
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (this.isDragging()) {
+        if (this.isScrolling) {
             int maxScroll = this.getMaxScroll();
             int trackHeight = this.height;
 
             if (trackHeight > scrollHeight) {
-                double d0 = Math.max(0, mouseY - this.getY() - (double)(scrollHeight / 2.0F)); // Centré sur la souris
+                double d0 = mouseY - this.getY() - this.scrollClickOffset;
 
                 double newScroll = d0 * (double)maxScroll / (double)(trackHeight - scrollHeight);
-
                 this.setScrollAmount(newScroll);
             }
             return true;
         }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return false;
+
     }
 }
