@@ -90,11 +90,6 @@ public class SkillManager {
         }
     }
 
-    public void ResetSkill(ServerPlayer player, String id)
-    {
-        if(player == null) return;
-    }
-
     public void RestaureSkillData(ServerPlayer oldPlayer, ServerPlayer newPlayer)
     {
         if(oldPlayer == null || newPlayer == null) return;
@@ -131,10 +126,37 @@ public class SkillManager {
             data.putBoolean(key, value);
             PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(id.toLowerCase(), value));
         }
-
-
-
     }
+
+    public void SetSkillLevel(ServerPlayer player, String id, int lvl){
+        if(player == null || lvl < 0 || lvl > 10) return;
+
+        var skill = GetSkill(id.toLowerCase());
+        if(skill == null) return;
+
+        var data = player.getPersistentData();
+        var key = id + SKILL_LEVEL_SIGNATURE;
+
+        lvl = Math.max(0, Math.min(lvl, skill.GetMaximumLevel()));
+
+        data.putInt(key, lvl);
+        PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(id, lvl));
+        if(skill.GetType() == Skill.SkillType.GENERIC){
+            if(lvl > 0) GenericEffects.ApplyEffect(skill, player);
+            else GenericEffects.RemoveEffect(skill, player);
+        }
+    }
+
+    public void AddSKillLevel(ServerPlayer player, String id, int amount){
+        int current = GetPlayerSkillLevel(player, id);
+        SetSkillLevel(player, id, current + amount);
+    }
+
+    public void RemoveSkillLevel(ServerPlayer player, String id, int amount){
+        int current = GetPlayerSkillLevel(player, id);
+        SetSkillLevel(player, id, current - amount);
+    }
+
 
 
 

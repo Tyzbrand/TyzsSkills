@@ -90,7 +90,7 @@ public class XpManager {
         PacketDistributor.sendToPlayer(player, new XpUpdatePayload(GetXP(player), gains));
     }
 
-    private static void LevelUpCheck(ServerPlayer player){
+    public static void LevelUpCheck(ServerPlayer player){
 
         int currentLevel = LevelManager.GetLevel(player);
         float currentXp = GetXP(player);
