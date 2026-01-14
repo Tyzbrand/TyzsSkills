@@ -2,6 +2,7 @@ package com.tyzsskills.server.events;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.server.active.*;
+import com.tyzsskills.server.attachments.BlockMarker;
 import com.tyzsskills.server.effects.GenericEffects;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.skills.SkillManager;
@@ -9,13 +10,10 @@ import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
@@ -33,6 +31,8 @@ public class RuntimeEvents {
         AutoSyncClient.SyncSkillLevels(player);
         AutoSyncClient.SyncConfig(player);
         AutoSyncClient.SyncSkillBookmarks(player);
+
+        CompatibilityManager.ProcessMigration(player);
     }
 
     @SubscribeEvent

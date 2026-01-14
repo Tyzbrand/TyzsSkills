@@ -1,4 +1,4 @@
-package com.tyzsskills.server.active;
+package com.tyzsskills.server.attachments;
 
 import com.tyzsskills.Tyzsskills;
 import net.minecraft.core.BlockPos;
@@ -13,7 +13,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 

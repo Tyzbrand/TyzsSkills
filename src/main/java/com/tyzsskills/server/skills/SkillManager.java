@@ -81,7 +81,12 @@ public class SkillManager {
         int finalPrice = Math.max(1, (int)(initialPrice * (Config.REFUND_PERCENTAGE.get() / 100f)));
 
         SpManager.AddSP(player, finalPrice);
-        data.putInt(key, currentLvl - 1);
+
+        int newLvl = currentLvl - 1;
+
+        if(newLvl > 0) data.putInt(key, currentLvl - 1);
+        else data.remove(key);
+
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl-1));
 
         if(skill.GetType() == Skill.SkillType.GENERIC){
@@ -103,7 +108,7 @@ public class SkillManager {
             }
 
             String key2 = skill.GetID() + BOOKMARK_SIGNATURE;
-            boolean oldValue2 = oldPlayer.getPersistentData().getBoolean(key);
+            boolean oldValue2 = oldPlayer.getPersistentData().getBoolean(key2);
             if(oldValue2){
                 newPlayer.getPersistentData().putBoolean(key2, true);
                 PacketDistributor.sendToPlayer(newPlayer, new SkillBookmarksPayload(skill.GetID().toLowerCase(), true));
@@ -117,15 +122,13 @@ public class SkillManager {
         var data = player.getPersistentData();
         var key = id.toLowerCase() + BOOKMARK_SIGNATURE;
 
-        if(!data.contains(key)) {
-            data.putBoolean(key, true);
-            PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(id.toLowerCase(), true));
-        }
-        else {
-            var value = !data.getBoolean(key);
-            data.putBoolean(key, value);
-            PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(id.toLowerCase(), value));
-        }
+        var isCurrentlyBookmarked = data.getBoolean(key);
+        var newValue = !isCurrentlyBookmarked;
+
+        if(newValue) data.putBoolean(key, true);
+        else data.remove(key);
+
+        PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(id.toLowerCase(), newValue));
     }
 
     public void SetSkillLevel(ServerPlayer player, String id, int lvl){
@@ -139,8 +142,11 @@ public class SkillManager {
 
         lvl = Math.max(0, Math.min(lvl, skill.GetMaximumLevel()));
 
-        data.putInt(key, lvl);
+        if(lvl > 0) data.putInt(key, lvl);
+        else data.remove(key);
+
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(id, lvl));
+
         if(skill.GetType() == Skill.SkillType.GENERIC){
             if(lvl > 0) GenericEffects.ApplyEffect(skill, player);
             else GenericEffects.RemoveEffect(skill, player);
