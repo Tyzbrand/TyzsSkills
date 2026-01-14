@@ -5,10 +5,8 @@ import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.io.IOException;
 
@@ -22,6 +20,7 @@ public class DebugManager {
         FileManager.Get().ReadJsons(server);
         FileManager.Get().ReadLevelPool(server);
         FileManager.Get().ReadXpValues(server);
+        FileManager.Get().ReadCustomSkills(server);
 
         var manager = SkillManager.Get();
 

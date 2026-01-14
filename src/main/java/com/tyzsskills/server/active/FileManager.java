@@ -47,6 +47,9 @@ public class FileManager {
                 .resolve("DEFAULT")
                 .resolve("misc"));
 
+        allPaths.add(globalPath.resolve("skills")
+                .resolve("CUSTOM"));
+
         for(var path : allPaths){
             try {Files.createDirectories(path);}
             catch(IOException ex) {throw new RuntimeException(ex);}
@@ -139,6 +142,29 @@ public class FileManager {
             var obj = JsonParser.parseString(content).getAsJsonObject();
             XpManager.LoadPool(obj);
         }
+    }
+
+    public void ReadCustomSkills(MinecraftServer server){
+        Path skillPath = server.getServerDirectory().resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("skills")
+                .resolve("CUSTOM");
+
+        if(!Files.exists(skillPath)) return;
+
+        try(var stream = Files.walk(skillPath)){
+            stream.filter(Files::isRegularFile)
+                    .filter(p -> p.toString().endsWith(".json"))
+                    .forEach(path ->{
+                        try{
+                            var jsonString = Files.readString(path);
+                            var jsonObj = gson.fromJson(jsonString, JsonObject.class);
+                            SkillLoader.LoadSKill(jsonObj);
+                        }
+                        catch (IOException ex){throw new RuntimeException(ex);}
+                    });
+        }
+        catch (IOException ex){throw new RuntimeException(ex);}
     }
 
 

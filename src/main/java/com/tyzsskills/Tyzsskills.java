@@ -235,6 +235,7 @@ public class Tyzsskills {
         fileManager.ReadJsons(server);
         fileManager.ReadXpValues(server);
         fileManager.ReadLevelPool(server);
+        fileManager.ReadCustomSkills(server);
     }
 
     @SubscribeEvent
