@@ -82,7 +82,7 @@ public class FileManager {
         if(!Files.exists(poolFile)) Files.writeString(poolFile, LevelPoolPreset.GetDefaultRewardValues());
     }
 
-    //Lit les jsons par derfaut
+    //Lit les jsons par defaut
     public void ReadJsons(MinecraftServer server) throws IOException{
         Path globalPath = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")

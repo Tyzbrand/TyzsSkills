@@ -23,11 +23,20 @@ public class DebugManager {
         FileManager.Get().ReadLevelPool(server);
         FileManager.Get().ReadXpValues(server);
 
+        var manager = SkillManager.Get();
+
         for(var player : server.getPlayerList().getPlayers()){
             AutoSyncClient.SyncSkillList(player);
             AutoSyncClient.SyncMainData(player);
-
             XpManager.LevelUpCheck(player);
+        }
+
+        for(var player : server.getPlayerList().getPlayers()){
+            for (var skill : manager.GetAllSkills()){
+                if(manager.GetPlayerSkillLevel(player, skill.GetID().toLowerCase()) > skill.GetMaximumLevel()){
+                    manager.SetSkillLevel(player, skill.GetID().toLowerCase(), skill.GetMaximumLevel());
+                }
+            }
         }
     }
 
@@ -43,7 +52,5 @@ public class DebugManager {
                 manager.SetSkillLevel(player, skill.GetID().toLowerCase(), 0);
             }
         }
-
-        player.sendSystemMessage(net.minecraft.network.chat.Component.literal("Player data has been fully reset"));
     }
 }

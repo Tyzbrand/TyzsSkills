@@ -32,23 +32,33 @@ public class ClientCache {
 
     public static void UpdateClientCacheLevel(int level){
         clientLevel = level;
-        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Level Update: " + level), false);
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Level Update: " + level), false);
+        }
     }
 
     public static void UpdateClientCacheSP(int sp){
         clientSP = sp;
-        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP Update: " + sp), false);
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP Update: " + sp), false);
+        }
     }
 
     public static void UpdateClientCacheXP(float xp, float gained){
         if(gained > 0) XpTriggerOverlay.AddXp(gained);
         clientXP = xp;
-        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp), false);
+
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp), false);
+        }
     }
 
     public static void UpdateClientCacheLevelData(XpManager.LevelData data){
         clientLevelData = data;
-        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Client LevelData Update: " + data.goal() + "xp, " + data.reward() + "sp"), false);
+
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client LevelData Update: " + data.goal() + "xp, " + data.reward() + "sp"), false);
+        }
     }
 
     public static void SetContainerType(MainGUI.ContainerType type){
@@ -62,23 +72,37 @@ public class ClientCache {
     public static void UpdateSkills(List<Skill> skills){
         clientSkills.clear();
         for(var skill : skills){clientSkills.put(skill.GetID(), skill);}
-        Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skills sync: " + clientSkills.size() + " skills cached" ), false);
+
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skills sync: " + clientSkills.size() + " skills cached" ), false);
+        }
+
     }
 
     public static void UpdateSkillLevels(String id, int lvl){
         clientSkillLevels.put(id.toLowerCase(), lvl);
-        //Minecraft.getInstance().player.displayClientMessage(Component.literal("New skill level: " + id + " level " + lvl ), false);
+
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("New skill level: " + id + " level " + lvl ), false);
+        }
     }
 
     public static void SyncConfig(Map<String, Object> syncedMap){
         clientConfigMap.clear();
         clientConfigMap.putAll(syncedMap);
-        Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced config: " + clientConfigMap.size() + " entries"), false);
+
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced config: " + clientConfigMap.size() + " entries"), false);
+        }
+
     }
 
     public static void SyncBookmark(String id, boolean state){
         clientBookmarks.put(id.toLowerCase(), state);
-        //Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced bookmark: " + id + ": " + state), false);
+
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced bookmark: " + id + ": " + state), false);
+        }
     }
 
 
@@ -91,6 +115,7 @@ public class ClientCache {
         clientSkillLevels.clear();
         clientConfigMap.clear();
         clientBookmarks.clear();
+
     }
 
     public static void PredictBookmark(Skill skill){

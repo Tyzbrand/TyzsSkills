@@ -25,6 +25,7 @@ public class Config {
     public static final ModConfigSpec.BooleanValue SHOW_LEVEL_OVERLAY;
     public static final ModConfigSpec.BooleanValue SHOW_SKILL_OVERLAY;
     public static final ModConfigSpec.BooleanValue SHOW_OVERLAYS_IN_CREATIVE;
+    public static final ModConfigSpec.BooleanValue SHOW_DEBUG_MESSAGES;
 
     static {
         //Construction du COMMON
@@ -69,6 +70,10 @@ public class Config {
         SHOW_OVERLAYS_IN_CREATIVE = clientBuilder
                 .comment("Display overlays in creative")
                 .define("show_overlays_in_creative", false);
+
+        SHOW_DEBUG_MESSAGES = clientBuilder
+                .comment("Show debug messages")
+                .define("show_debug_messages", false);
 
         clientBuilder.pop();
         CLIENT_SPEC = clientBuilder.build();
