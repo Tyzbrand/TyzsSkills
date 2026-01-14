@@ -11,7 +11,9 @@ public class BlockXpValuesPreset {
                         "minecraft:cobblestone",
                         "minecraft:cobbled_deepslate",
                         "minecraft:moss_block",
-                        "minecraft:netherrack"
+                        "minecraft:netherrack",
+                        "minecraft:stone",
+                        "minecraft:deepslate"
                 ]
             },
             "category_B": {
@@ -131,8 +133,6 @@ public class BlockXpValuesPreset {
             "category_E": {
                 "xp": 1.5,
                 "blocks":[
-                        "minecraft:stone",
-                        "minecraft:deepslate",
                         "minecraft:sandstone",
                         "minecraft:granite",
                         "minecraft:diorite",
