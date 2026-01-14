@@ -1,7 +1,6 @@
 package com.tyzsskills.server.skills;
 
 import com.google.gson.JsonObject;
-import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.server.model.Skill;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
@@ -32,8 +31,8 @@ public class SkillLoader {
         Skill.SkillType type = GetSafeType(source, "type");
         if(type == null) {LogError(id); return;}
 
-        MainGUI.CategoryType category = GetSafeCategory(source, "category");
-        if(category == null) category = MainGUI.CategoryType.MISC;
+        Skill.CategoryType category = GetSafeCategory(source, "category");
+        if(category == null) category = Skill.CategoryType.MISC;
 
         Boolean purchasable = GetSafeBool(source,"purchasable");
         if(purchasable == null) purchasable = true;
@@ -136,7 +135,7 @@ public class SkillLoader {
         return type;
     }
 
-    private static MainGUI.CategoryType GetSafeCategory(JsonObject obj, String key){
+    private static Skill.CategoryType GetSafeCategory(JsonObject obj, String key){
         if (obj == null || key == null) return null;
 
         var typeValue = obj.get(key);
@@ -145,8 +144,8 @@ public class SkillLoader {
         var typeValueString = typeValue.getAsString();
         if(typeValueString == null) return null;
 
-        MainGUI.CategoryType category;
-        try {category = MainGUI.CategoryType.valueOf(typeValueString.toUpperCase());}
+        Skill.CategoryType category;
+        try {category = Skill.CategoryType.valueOf(typeValueString.toUpperCase());}
         catch (IllegalArgumentException e) {return null;}
 
         return category;

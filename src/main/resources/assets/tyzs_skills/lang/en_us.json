@@ -1,26 +1,14 @@
 {
-  "itemGroup.tyzs_skills": "Example Mod Tab",
-  "block.tyzs_skills.example_block": "Example Block",
-  "item.tyzs_skills.example_item": "Example Item",
-
-  "tyzs_skills.configuration.title": "Tyz's skills Configs",
-  "tyzs_skills.configuration.section.tyzs_skills.common.toml": "Tyz's skills Configs",
-  "tyzs_skills.configuration.section.tyzs_skills.common.toml.title": "Tyz's skills Configs",
-  "tyzs_skills.configuration.items": "Item List",
-  "tyzs_skills.configuration.logDirtBlock": "Log Dirt Block",
-  "tyzs_skills.configuration.magicNumberIntroduction": "Magic Number Text",
-  "tyzs_skills.configuration.magicNumber": "Magic Number",
-
   "gui.tyzs_skills.title" : "Skill UI",
-  "gui.tyzs_skills.SP" : "Sp",
+  "gui.tyzs_skills.SP" : "SP",
   "gui.tyzs_skills.Lvl" : "Lvl",
   "gui.tyzs_skills.Skills" : "Skills",
   "gui.tyzs_skills.Quests" : "Quests",
   "gui.tyzs_skills.refund" : "Refund",
   "gui.tyzs_skills.error_value" : "N/A",
-  "gui.tyzs_skills.level_max" : "Level max",
+  "gui.tyzs_skills.level_max" : "Max level",
   "gui.tyzs_skills.cost" : "Cost",
-  "gui.tyzs_skills.xp" : "Xp",
+  "gui.tyzs_skills.xp" : "XP",
 
 
   "overlay.tyzs_skills.level" : "Level",
@@ -41,7 +29,7 @@
   "skill.tyzs_skills.health_boost.description" : "Increases maximum health by {value} half hearts",
 
   "skill.tyzs_skills.oxygen_boost.displayName" : "Oxygen boost",
-  "skill.tyzs_skills.oxygen_boost.description" : "Increases by {value}% underwater breathing capacity",
+  "skill.tyzs_skills.oxygen_boost.description" : "Increases underwater breathing capacity by {value}%",
 
   "skill.tyzs_skills.block_reach.displayName" : "Block reach",
   "skill.tyzs_skills.block_reach.description" : "Increases the range at which the player can place and destroy by {value} blocks",
@@ -50,25 +38,25 @@
   "skill.tyzs_skills.attack_damage.description" : "Increases damage by {value}",
 
   "skill.tyzs_skills.sneak_speed.displayName" : "Sneaking speed",
-  "skill.tyzs_skills.sneak_speed.description" : "Increases by {value}% sneak movement speed",
+  "skill.tyzs_skills.sneak_speed.description" : "Increases sneak movement speed by {value}%",
 
   "skill.tyzs_skills.speed.displayName" : "Speed",
-  "skill.tyzs_skills.speed.description" : "Increases by {value}% movement speed",
+  "skill.tyzs_skills.speed.description" : "Increases movement speed by {value}%",
 
   "skill.tyzs_skills.step_height.displayName" : "Step height",
   "skill.tyzs_skills.step_height.description" : "Increases the height at which the player can climb without jumping by {value} blocks",
 
   "skill.tyzs_skills.swim_speed.displayName" : "Swim speed",
-  "skill.tyzs_skills.swim_speed.description" : "Increases by {value}% swim speed",
+  "skill.tyzs_skills.swim_speed.description" : "Increases swim speed by {value}%",
 
   "skill.tyzs_skills.venomous_attack.displayName" : "Venomous attack",
-  "skill.tyzs_skills.venomous_attack.description" : "Increase by {value}% the chance of poisoning the entity you hit",
+  "skill.tyzs_skills.venomous_attack.description" : "Increase the chance of poisoning the entity you hit by {value}%",
 
   "skill.tyzs_skills.critical_hit.displayName" : "Critical hit",
-  "skill.tyzs_skills.critical_hit.description" : "Increase by {value}% the chance of dealing a critical hit (double damage)",
+  "skill.tyzs_skills.critical_hit.description" : "Increase the chance of dealing a critical hit (double damage) by {value}%",
 
   "skill.tyzs_skills.damage_deal.displayName" : "Damage deal",
-  "skill.tyzs_skills.damage_deal.description" : "Increase by {value}% the chance of canceling and returning an attack",
+  "skill.tyzs_skills.damage_deal.description" : "Increase the chance of canceling and returning an attack by {value}%",
 
   "skill.tyzs_skills.bloodlust.displayName" : "Bloodlust",
   "skill.tyzs_skills.bloodlust.description" : "Killing an entity regenerates {value}% of its maximum health",
@@ -77,7 +65,7 @@
   "skill.tyzs_skills.resistance.description" : "Increases damage resistance from any source by {value}%.",
 
   "skill.tyzs_skills.backstab.displayName" : "Backstab",
-  "skill.tyzs_skills.backstab.description" : "Increases damage by {value}% when a hit is dealt from behind",
+  "skill.tyzs_skills.backstab.description" : "Increases damage when a hit is dealt from behind by {value}%",
 
   "skill.tyzs_skills.rage.displayName" : "Rage",
   "skill.tyzs_skills.rage.description" : "Increases damage when health falls below 3 hearts by {value}% ",
@@ -86,7 +74,7 @@
   "skill.tyzs_skills.adrenaline.description" : "Provides absorption and speed III effects when life falls below {value}%",
 
   "skill.tyzs_skills.resilience.displayName" : "Resilience",
-  "skill.tyzs_skills.resilience.description" : "Reduces by {value}% the duration of an undesirable potion effect",
+  "skill.tyzs_skills.resilience.description" : "Reduces the duration of an harmful potion effect by {value}%",
 
   "skill.tyzs_skills.swift_learn.displayName" : "Swift learn",
   "skill.tyzs_skills.swift_learn.description" : "Increases skill xp gain by {value}%",
@@ -104,7 +92,7 @@
   "skill.tyzs_skills.excavation.description" : "Increases mining speed by {value}%",
 
   "skill.tyzs_skills.stealth.displayName" : "Stealth",
-  "skill.tyzs_skills.stealth.description" : "Reduces by {value}% the detection distance of hostile mobs",
+  "skill.tyzs_skills.stealth.description" : "Reduces the detection distance of hostile mobs by {value}%",
 
   "skill.tyzs_skills.magnet.displayName" : "Magnet",
   "skill.tyzs_skills.magnet.description" : "Attracts all dropped items within a radius of {value} blocks"

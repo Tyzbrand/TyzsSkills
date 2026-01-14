@@ -26,8 +26,8 @@ public class ClientCache {
     private final static Map<String, Object> clientConfigMap = new HashMap<>();
     private final static Map<String, Boolean> clientBookmarks = new HashMap<>();
 
-    private static MainGUI.ContainerType currentContainerType = MainGUI.ContainerType.SKILLS;
-    private static MainGUI.CategoryType currentContainerCatgory = MainGUI.CategoryType.ALL;
+    private static Skill.ContainerType currentContainerType = Skill.ContainerType.SKILLS;
+    private static Skill.CategoryType currentContainerCatgory = Skill.CategoryType.ALL;
 
 
     public static void UpdateClientCacheLevel(int level){
@@ -61,11 +61,11 @@ public class ClientCache {
         }
     }
 
-    public static void SetContainerType(MainGUI.ContainerType type){
-        currentContainerType = MainGUI.ContainerType.SKILLS; //Temporaire le temps de gérer les quetes
+    public static void SetContainerType(Skill.ContainerType type){
+        currentContainerType = Skill.ContainerType.SKILLS; //Temporaire le temps de gérer les quetes
     }
 
-    public static void SetCategoryType(MainGUI.CategoryType category){
+    public static void SetCategoryType(Skill.CategoryType category){
         currentContainerCatgory = category; //Temporaire le temps de gérer les autres categories
     }
 
@@ -163,8 +163,8 @@ public class ClientCache {
     public static int GetSP(){return clientSP;}
     public static int GetLvl(){return clientLevel;}
     public static float GetXPGOAL(){return clientLevelData.goal();}
-    public static MainGUI.ContainerType GetContainerType(){return currentContainerType;}
-    public static MainGUI.CategoryType GetCategoryType(){return currentContainerCatgory;}
+    public static Skill.ContainerType GetContainerType(){return currentContainerType;}
+    public static Skill.CategoryType GetCategoryType(){return currentContainerCatgory;}
     public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills.values());}
     public static int GetSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
     public static Skill GetSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}

@@ -36,19 +36,19 @@ public class FileManager {
         List<Path> allPaths = new ArrayList<>();
 
         allPaths.add(globalPath.resolve("skills")
-                .resolve("DEFAULT")
+                .resolve("default")
                 .resolve("abilities"));
 
         allPaths.add(globalPath.resolve("skills")
-                .resolve("DEFAULT")
+                .resolve("default")
                 .resolve("fight"));
 
         allPaths.add(globalPath.resolve("skills")
-                .resolve("DEFAULT")
+                .resolve("default")
                 .resolve("misc"));
 
         allPaths.add(globalPath.resolve("skills")
-                .resolve("CUSTOM"));
+                .resolve("custom"));
 
         for(var path : allPaths){
             try {Files.createDirectories(path);}
@@ -66,11 +66,11 @@ public class FileManager {
     public void LoadDefaultXpValues(MinecraftServer server) throws IOException {
         Path blockFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
-                .resolve("Block-Xp-Values.json");
+                .resolve("block-xp-values.json");
 
         Path entityFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
-                .resolve("Entity-Xp-Values.json");
+                .resolve("entity-xp-values.json");
 
 
         if(!Files.exists(blockFile)) Files.writeString(blockFile, BlockXpValuesPreset.GetDefaultXpValues());
@@ -80,7 +80,7 @@ public class FileManager {
     public void LoadDefaulltLevelPool(MinecraftServer server) throws IOException {
         Path poolFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
-                .resolve("Level-Pool.json");
+                .resolve("level-pool.json");
 
         if(!Files.exists(poolFile)) Files.writeString(poolFile, LevelPoolPreset.GetDefaultRewardValues());
     }
@@ -90,7 +90,7 @@ public class FileManager {
         Path globalPath = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("skills")
-                .resolve("DEFAULT");
+                .resolve("default");
 
         if(!Files.exists(globalPath)) return;
 
@@ -113,11 +113,11 @@ public class FileManager {
     public void ReadXpValues(MinecraftServer server) throws IOException {
         Path blockFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
-                .resolve("Block-Xp-Values.json");
+                .resolve("block-xp-values.json");
 
         Path entityFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
-                .resolve("Entity-Xp-Values.json");
+                .resolve("entity-xp-values.json");
 
         if(Files.exists(blockFile)){
             var content = Files.readString(blockFile);
@@ -135,7 +135,7 @@ public class FileManager {
     public void ReadLevelPool(MinecraftServer server) throws IOException {
         Path poolFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
-                .resolve("Level-Pool.json");
+                .resolve("level-pool.json");
 
         if(Files.exists((poolFile))){
             var content = Files.readString(poolFile);
@@ -148,7 +148,7 @@ public class FileManager {
         Path skillPath = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("skills")
-                .resolve("CUSTOM");
+                .resolve("custom");
 
         if(!Files.exists(skillPath)) return;
 
@@ -179,13 +179,13 @@ public class FileManager {
         Files.writeString(skillFile, skillJson);
     }
 
-    private Path GetSkillPath(MainGUI.CategoryType category, MinecraftServer server){
+    private Path GetSkillPath(Skill.CategoryType category, MinecraftServer server){
 
         Path skillPath = server.getServerDirectory()
                 .resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("skills")
-                .resolve("DEFAULT");
+                .resolve("default");
 
         switch (category){
             case ABILITIES -> {
@@ -194,11 +194,8 @@ public class FileManager {
             case FIGHT -> {
                 return skillPath.resolve("fight");
             }
-            case MISC -> {
+            case MISC, ALL, BOOKMARKS -> {
                 return skillPath.resolve("misc");
-            }
-            case ALL -> {
-                return skillPath.resolve("Misc");
             }
         }
         return skillPath;

@@ -17,8 +17,12 @@ import java.util.List;
 
 public class Skill{
 
+    public enum ContainerType {SKILLS, QUESTS}
+    public enum CategoryType {ALL, ABILITIES, FIGHT, MISC, BOOKMARKS}
+
+
     public Skill(boolean active, String id, int maximumLevel,
-                 List<Integer> prices, List<Float> values, SkillType type, MainGUI.CategoryType category,
+                 List<Integer> prices, List<Float> values, SkillType type, CategoryType category,
                  String modifier, AttributeModifier.Operation operation, boolean purchasable,
                  String icon, String displayName, String description)
     {
@@ -37,7 +41,7 @@ public class Skill{
         this.displayName = displayName;
         this.description = description;
 
-        if(category == MainGUI.CategoryType.ALL || category == MainGUI.CategoryType.BOOKMARKS) category = MainGUI.CategoryType.MISC;
+        if(category == CategoryType.ALL || category == CategoryType.BOOKMARKS) category = CategoryType.MISC;
     }
 
     public enum SkillType {GENERIC, CUSTOM, IMMUTABLE}
@@ -50,7 +54,7 @@ public class Skill{
     protected List<Integer> prices;
     protected List<Float> values;
     protected SkillType type;
-    protected MainGUI.CategoryType category;
+    protected CategoryType category;
     protected String modifier;
     protected AttributeModifier.Operation operation;
     protected boolean purchasable;
@@ -68,7 +72,7 @@ public class Skill{
     public String GetModifier() {return modifier;}
     public List<Float> GetValues() {return Collections.unmodifiableList(values);}
     public SkillType GetType(){return type;}
-    public MainGUI.CategoryType GetCategory(){return category;}
+    public CategoryType GetCategory(){return category;}
     public AttributeModifier.Operation GetModifierOperation(){return operation;}
     public boolean IsPurchasable(){return purchasable;}
     public String GetIcon(){return icon;}
@@ -119,7 +123,7 @@ public class Skill{
         List<Float> values = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readFloat);
 
         SkillType type = buffer.readEnum(SkillType.class);
-        MainGUI.CategoryType category = buffer.readEnum(MainGUI.CategoryType.class);
+        CategoryType category = buffer.readEnum(CategoryType.class);
 
         String modifier = buffer.readUtf();
         AttributeModifier.Operation operation = buffer.readEnum(AttributeModifier.Operation.class);

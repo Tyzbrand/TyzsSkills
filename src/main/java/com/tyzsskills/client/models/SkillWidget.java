@@ -126,13 +126,7 @@ public class SkillWidget {
         //Simple TOOLTIP
         if(skill.IsPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){
 
-            var text = Component.empty()
-                    .append(Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY))
-                    .append(": ")
-                    .append(GetPriceString(skill))
-                    .append(" ")
-                    .append(Component.translatable("gui.tyzs_skills.SP"));
-
+            var text = Component.empty().append(GetPriceString(skill));
             tooltip.add(text);
             return tooltip;
         }
@@ -212,7 +206,7 @@ public class SkillWidget {
             ClientCache.PredictBookmark(skill);
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.GetID().toLowerCase(), 2));
 
-            if (ClientCache.GetCategoryType() == MainGUI.CategoryType.BOOKMARKS) {
+            if (ClientCache.GetCategoryType() == Skill.CategoryType.BOOKMARKS) {
                 if (Minecraft.getInstance().screen instanceof MainGUI gui) {
                     gui.refreshList();
                 }
@@ -264,7 +258,10 @@ public class SkillWidget {
         var prices = skill.GetPrices();
         if(currentLvl >= prices.size()) return Component.translatable("gui.tyzs_skills.error_value");
 
-        return Component.literal(String.valueOf(prices.get(currentLvl)));
+        return Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY)
+                .append(": ")
+                .append(Component.literal(String.valueOf(prices.get(currentLvl)))).append(" ")
+                .append(Component.translatable("gui.tyzs_skills.SP"));
     }
 
 

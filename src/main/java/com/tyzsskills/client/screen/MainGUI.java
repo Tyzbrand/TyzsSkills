@@ -36,9 +36,6 @@ public class MainGUI extends Screen {
 
     public MainGUI(){super(Component.translatable("gui.tyzs_skills.title"));}
 
-    public enum ContainerType {SKILLS, QUESTS}
-    public enum CategoryType {ALL, ABILITIES, FIGHT, MISC, BOOKMARKS}
-
     private CustomScrollView scrollView;
 
     @Override
@@ -58,7 +55,7 @@ public class MainGUI extends Screen {
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         if (this.scrollView != null) {
-            this.scrollView.visible = (ClientCache.GetContainerType() == ContainerType.SKILLS);
+            this.scrollView.visible = (ClientCache.GetContainerType() == Skill.ContainerType.SKILLS);
         }
 
         guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 325, 325);
@@ -101,7 +98,7 @@ public class MainGUI extends Screen {
         int rightLimit2 = leftPos+69;
         gui.drawString(this.font, spValue, rightLimit2 -text2W, topPos+84, color2, false);
 
-        if(ClientCache.GetCategoryType() == CategoryType.BOOKMARKS) return;
+        if(ClientCache.GetCategoryType() == Skill.CategoryType.BOOKMARKS) return;
         String localizationKey = "gui.tyzs_skills.Tab." + ClientCache.GetCategoryType().toString().toLowerCase();
         MutableComponent enumDisplayName = Component.translatable(localizationKey);
         int text3W = this.font.width(enumDisplayName);
@@ -234,9 +231,9 @@ public class MainGUI extends Screen {
                 114, 150,
                 98, 150,
                 325, 325,
-                () -> ClientCache.GetContainerType() == ContainerType.SKILLS,
+                () -> ClientCache.GetContainerType() == Skill.ContainerType.SKILLS,
                 background,
-                (b) -> ClientCache.SetContainerType(ContainerType.SKILLS));
+                (b) -> ClientCache.SetContainerType(Skill.ContainerType.SKILLS));
         this.addRenderableWidget(skillBtn);
 
         CustomTabButton questBtn = new CustomTabButton(
@@ -246,9 +243,9 @@ public class MainGUI extends Screen {
                 114, 167,
                 98, 167,
                 325, 325,
-                () -> ClientCache.GetContainerType() == ContainerType.QUESTS,
+                () -> ClientCache.GetContainerType() == Skill.ContainerType.QUESTS,
                 background,
-                (b) -> ClientCache.SetContainerType(ContainerType.QUESTS));
+                (b) -> ClientCache.SetContainerType(Skill.ContainerType.QUESTS));
         this.addRenderableWidget(questBtn);
 
         CustomTabButton allBtn = new CustomTabButton(
@@ -258,10 +255,10 @@ public class MainGUI extends Screen {
                 82, 227,
                 82, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == CategoryType.ALL,
+                () -> ClientCache.GetCategoryType() == Skill.CategoryType.ALL,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(CategoryType.ALL);
+                    ClientCache.SetCategoryType(Skill.CategoryType.ALL);
                     this.refreshList();
                 });
         this.addRenderableWidget(allBtn);
@@ -273,10 +270,10 @@ public class MainGUI extends Screen {
                 140, 227,
                 140, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == CategoryType.ABILITIES,
+                () -> ClientCache.GetCategoryType() == Skill.CategoryType.ABILITIES,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(CategoryType.ABILITIES);
+                    ClientCache.SetCategoryType(Skill.CategoryType.ABILITIES);
                     this.refreshList();
                 });
         this.addRenderableWidget(abilitiesBtn);
@@ -288,10 +285,10 @@ public class MainGUI extends Screen {
                 111, 227,
                 111, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == CategoryType.FIGHT,
+                () -> ClientCache.GetCategoryType() == Skill.CategoryType.FIGHT,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(CategoryType.FIGHT);
+                    ClientCache.SetCategoryType(Skill.CategoryType.FIGHT);
                     this.refreshList();
                 });
         this.addRenderableWidget(fightBtn);
@@ -303,10 +300,10 @@ public class MainGUI extends Screen {
                 169, 227,
                 169, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == CategoryType.MISC,
+                () -> ClientCache.GetCategoryType() == Skill.CategoryType.MISC,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(CategoryType.MISC);
+                    ClientCache.SetCategoryType(Skill.CategoryType.MISC);
                     this.refreshList();
                 });
         this.addRenderableWidget(miscBtn);
@@ -318,10 +315,10 @@ public class MainGUI extends Screen {
                 198, 227,
                 198, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == CategoryType.BOOKMARKS,
+                () -> ClientCache.GetCategoryType() == Skill.CategoryType.BOOKMARKS,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(CategoryType.BOOKMARKS);
+                    ClientCache.SetCategoryType(Skill.CategoryType.BOOKMARKS);
                     this.refreshList();
                 });
         this.addRenderableWidget(bookmarksBtn);
@@ -355,9 +352,9 @@ public class MainGUI extends Screen {
 
         for(Skill skill : ClientCache.GetAllSkills()){
             if(skill.GetCategory() != categoryToLoad &&
-            categoryToLoad != CategoryType.ALL && categoryToLoad != CategoryType.BOOKMARKS) continue;
+            categoryToLoad != Skill.CategoryType.ALL && categoryToLoad != Skill.CategoryType.BOOKMARKS) continue;
 
-            if(categoryToLoad == CategoryType.BOOKMARKS && !ClientCache.GetBookmarkState(skill.GetID())) continue;
+            if(categoryToLoad == Skill.CategoryType.BOOKMARKS && !ClientCache.GetBookmarkState(skill.GetID())) continue;
 
             if(currentRow == null || countInRow >= maxPerLine){
                 currentRow = new SkillEntry();
