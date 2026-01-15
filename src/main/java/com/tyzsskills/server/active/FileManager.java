@@ -10,6 +10,7 @@ import com.tyzsskills.server.skills.SkillLoader;
 import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
+import com.tyzsskills.server.xp.xpEvents.XpFood;
 import net.minecraft.server.MinecraftServer;
 
 import com.google.gson.Gson;
@@ -72,9 +73,14 @@ public class FileManager {
                 .resolve("tyzs_skills")
                 .resolve("entity-xp-values.json");
 
+        Path foodFile = server.getServerDirectory().resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("food-xp-values.json");
+
 
         if(!Files.exists(blockFile)) Files.writeString(blockFile, BlockXpValuesPreset.GetDefaultXpValues());
         if(!Files.exists(entityFile)) Files.writeString(entityFile, EntityXpValuesPreset.GetDefaultXpValues());
+        if(!Files.exists(foodFile)) Files.writeString(foodFile, FoodValuesPreset.GetDefaultXpValues());
     }
 
     public void LoadDefaulltLevelPool(MinecraftServer server) throws IOException {
@@ -119,6 +125,10 @@ public class FileManager {
                 .resolve("tyzs_skills")
                 .resolve("entity-xp-values.json");
 
+        Path foodFile = server.getServerDirectory().resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("food-xp-values.json");
+
         if(Files.exists(blockFile)){
             var content = Files.readString(blockFile);
             var obj = JsonParser.parseString(content).getAsJsonObject();
@@ -129,6 +139,12 @@ public class FileManager {
             var content = Files.readString(entityFile);
             var obj = JsonParser.parseString(content).getAsJsonObject();
             XpEntity.LoadValues(obj);
+        }
+
+        if (Files.exists(foodFile)) {
+            var content = Files.readString(foodFile);
+            var obj = JsonParser.parseString(content).getAsJsonObject();
+            XpFood.LoadValues(obj);
         }
     }
 

@@ -4,6 +4,7 @@ import com.tyzsskills.server.active.AttributeRegistry;
 import com.tyzsskills.server.attachments.BlockMarker;
 import com.tyzsskills.server.active.FileManager;
 import com.tyzsskills.server.attachments.LegacyData;
+import com.tyzsskills.server.events.XpGainsEvents;
 import com.tyzsskills.server.skills.SkillBehaviourRegistry;
 import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.commands.MainCommand;
@@ -75,6 +76,7 @@ public class Tyzsskills {
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(RuntimeEvents.class);
+        NeoForge.EVENT_BUS.register(XpGainsEvents.class);
 
         //Register network
         modEventBus.addListener(this::RegisterPayloads);

@@ -1,10 +1,10 @@
 package com.tyzsskills.server.active;
 
-import com.tyzsskills.server.payloads.LevelDataUpdatePayload;
 import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
+import com.tyzsskills.server.xp.xpEvents.XpFood;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -15,6 +15,7 @@ public class DebugManager {
         SkillManager.Get().ClearSkills();
         XpBlock.ClearValues();
         XpEntity.ClearValues();
+        XpFood.ClearValues();
         XpManager.ClearPool();
 
         FileManager.Get().ReadJsons(server);

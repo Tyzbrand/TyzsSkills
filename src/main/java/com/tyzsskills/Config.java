@@ -17,6 +17,15 @@ public class Config {
 
     public static final ModConfigSpec.BooleanValue PREVENT_PLACED_BLOCK_XP;
 
+    public static final ModConfigSpec.BooleanValue EARN_XP_BY_EATING;
+
+    public static final ModConfigSpec.DoubleValue FISHING_XP_VALUE;
+    public static final ModConfigSpec.DoubleValue CRAFTING_XP_VALUE;
+    public static final ModConfigSpec.DoubleValue BREEDING_XP_VALUE;
+    public static final ModConfigSpec.DoubleValue ADVANCEMENT_TASK_XP_VALUE;
+    public static final ModConfigSpec.DoubleValue ADVANCEMENT_GOAL_XP_VALUE;
+    public static final ModConfigSpec.DoubleValue ADVANCEMENT_CHALLENGE_XP_VALUE;
+
 
     //==================Client Config==================
     public static final ModConfigSpec CLIENT_SPEC;
@@ -35,15 +44,45 @@ public class Config {
 
         REFUND_SYSTEM = commonBuilder
                 .comment("Play with the refund system")
-                .define("refund System", true);
-
+                .define("refund_system", true);
         REFUND_PERCENTAGE = commonBuilder
                 .comment("Percentage of the initial price refunded")
-                .defineInRange("refund percentage", 30.0, 1.0, 100.0);
+                .defineInRange("refund_percentage", 30.0, 1.0, 100.0);
 
         PREVENT_PLACED_BLOCK_XP = commonBuilder
                 .comment("Prevent manually placed block from providing xp")
-                .define("prevent placed block xp", true);
+                .define("prevent_placed_block_xp", true);
+
+        commonBuilder.pop();
+        commonBuilder.push("xp values");
+
+        EARN_XP_BY_EATING = commonBuilder
+                .comment("Earn xp by eating (based on json values)")
+                .define("eating_xp_earnings", true);
+
+        FISHING_XP_VALUE = commonBuilder
+                .comment("Fishing xp earning value")
+                .defineInRange("fishing_gain", 10.0, .0, Double.MAX_VALUE);
+
+        CRAFTING_XP_VALUE = commonBuilder
+                .comment("Crafting xp earning value")
+                .defineInRange("crafting_gain", .2, .0, Double.MAX_VALUE);
+
+        BREEDING_XP_VALUE = commonBuilder
+                .comment("Breeding xp earning value")
+                .defineInRange("breeding_gain", 15.0, .0, Double.MAX_VALUE);
+
+        ADVANCEMENT_TASK_XP_VALUE = commonBuilder
+                .comment("Xp gains for basic advancements (Tasks)")
+                .defineInRange("task_gain", 25.0, .0, Double.MAX_VALUE);
+
+        ADVANCEMENT_GOAL_XP_VALUE = commonBuilder
+                .comment("Xp gains for rare advancements (Goals)")
+                .defineInRange("goal_gain", 100.0, .0, Double.MAX_VALUE);
+
+        ADVANCEMENT_CHALLENGE_XP_VALUE = commonBuilder
+                .comment("Xp gains for epic advancements (Challenges)")
+                .defineInRange("challenge_gain", 250.0, .0, Double.MAX_VALUE);
 
         commonBuilder.pop();
         COMMON_SPEC = commonBuilder.build();
@@ -70,6 +109,9 @@ public class Config {
         SHOW_OVERLAYS_IN_CREATIVE = clientBuilder
                 .comment("Display overlays in creative")
                 .define("show_overlays_in_creative", false);
+
+        clientBuilder.pop();
+        clientBuilder.push("debug");
 
         SHOW_DEBUG_MESSAGES = clientBuilder
                 .comment("Show debug messages")

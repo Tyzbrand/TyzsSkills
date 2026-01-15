@@ -15,6 +15,8 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.*;
+import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
+import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -65,38 +67,7 @@ public class RuntimeEvents {
         }
     }
 
-    @SubscribeEvent
-    public static void OnBlockBreak(BlockEvent.BreakEvent event){
-        if(event.isCanceled()) return;
-
-        if(event.getPlayer() instanceof ServerPlayer serverPlayer){
-            if(Config.PREVENT_PLACED_BLOCK_XP.get()) {
-                Level level = (net.minecraft.world.level.Level) event.getLevel();
-                var pos = event.getPos();
-
-                if (BlockMarker.IsPlayerPlaced(level, pos)) {
-                    BlockMarker.RemoveBlock(level, pos);
-                    return;
-                }
-            }
-            XpBlock.BlockBreakProfit(event.getState(), serverPlayer);
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnEntityDeath(LivingDeathEvent event){
-
-        if(event.isCanceled()) return;
-
-        if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
-        XpEntity.EntityKillProfit(event.getEntity(), player);
-    }
-
-
-
-
-
-    //EVENTS FOR SKILL EFFETCS
+    //EVENTS FOR SKILL EFFECTS
     @SubscribeEvent
     public static void OnPlayerAttack(LivingIncomingDamageEvent event){
         if(event.isCanceled()) return;

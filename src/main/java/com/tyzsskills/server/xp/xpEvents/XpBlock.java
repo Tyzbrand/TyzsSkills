@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.Map;
 
 public class XpBlock {
-    public static Map<String, Float> Xpvalues = new HashMap<>();
-    public static Map<TagKey<Block>, Float> XpTagValues = new HashMap<>();
+    private final static Map<String, Float> Xpvalues = new HashMap<>();
+    private static final Map<TagKey<Block>, Float> XpTagValues = new HashMap<>();
 
-    public static Map<Block, Float> CACHE = new HashMap<>();
+    private final static Map<Block, Float> CACHE = new HashMap<>();
 
 
     //Setup
