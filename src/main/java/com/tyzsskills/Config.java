@@ -17,14 +17,18 @@ public class Config {
 
     public static final ModConfigSpec.BooleanValue PREVENT_PLACED_BLOCK_XP;
 
-    public static final ModConfigSpec.BooleanValue EARN_XP_BY_EATING;
+    public static final ModConfigSpec.BooleanValue EARN_XP_IN_CREATIVE;
 
+    public static final ModConfigSpec.BooleanValue EARN_XP_BY_EATING;
     public static final ModConfigSpec.DoubleValue FISHING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue CRAFTING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue BREEDING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue ADVANCEMENT_TASK_XP_VALUE;
     public static final ModConfigSpec.DoubleValue ADVANCEMENT_GOAL_XP_VALUE;
     public static final ModConfigSpec.DoubleValue ADVANCEMENT_CHALLENGE_XP_VALUE;
+    public static final ModConfigSpec.DoubleValue NEW_BIOME_XP_VALUE;
+    public static final ModConfigSpec.DoubleValue NEW_DIMENSION_XP_VALUE;
+    public static final ModConfigSpec.DoubleValue NEW_STRUCTURE_XP_VALUE;
 
 
     //==================Client Config==================
@@ -54,7 +58,11 @@ public class Config {
                 .define("prevent_placed_block_xp", true);
 
         commonBuilder.pop();
-        commonBuilder.push("xp values");
+        commonBuilder.push("xp_values");
+
+        EARN_XP_IN_CREATIVE = commonBuilder
+                .comment("Earn xp in creative")
+                .define("earn_xp_in_creative", false);
 
         EARN_XP_BY_EATING = commonBuilder
                 .comment("Earn xp by eating (based on json values)")
@@ -83,6 +91,18 @@ public class Config {
         ADVANCEMENT_CHALLENGE_XP_VALUE = commonBuilder
                 .comment("Xp gains for epic advancements (Challenges)")
                 .defineInRange("challenge_gain", 250.0, .0, Double.MAX_VALUE);
+
+        NEW_BIOME_XP_VALUE = commonBuilder
+                .comment("Xp gains for discovering new biome")
+                .defineInRange("biome_gain", 45.0, .0, Double.MAX_VALUE);
+
+        NEW_STRUCTURE_XP_VALUE = commonBuilder
+                .comment("Xp gains for discovering new structure")
+                .defineInRange("structure_gain", 100.0, .0, Double.MAX_VALUE);
+
+        NEW_DIMENSION_XP_VALUE = commonBuilder
+                .comment("Xp gains for discovering new dimension")
+                .defineInRange("dimension_gain", 500.0, .0, Double.MAX_VALUE);
 
         commonBuilder.pop();
         COMMON_SPEC = commonBuilder.build();
