@@ -29,7 +29,7 @@ public class EntityXpValuesPreset {
                 ]
             },
             "category_C": {
-                "xp" : 3,
+                "xp" : 5,
                 "entities": [
                         "minecraft:bogged",
                         "minecraft:creeper",
@@ -52,7 +52,7 @@ public class EntityXpValuesPreset {
                 ]
             },
             "category_D": {
-                "xp" : 4,
+                "xp" : 7,
                 "entities": [
                         "minecraft:hoglin",
                         "minecraft:piglin",
@@ -62,7 +62,7 @@ public class EntityXpValuesPreset {
                 ]
             },
             "category_E": {
-                "xp" : 5,
+                "xp" : 10,
                 "entities": [
                         "minecraft:blaze",
                         "minecraft:ghast",
@@ -73,7 +73,7 @@ public class EntityXpValuesPreset {
                 ]
             },
             "category_F": {
-                "xp" : 7,
+                "xp" : 15,
                 "entities": [
                         "minecraft:breeze",
                         "minecraft:evoker",
@@ -82,7 +82,7 @@ public class EntityXpValuesPreset {
                 ]
             },
             "category_G": {
-                "xp" : 10,
+                "xp" : 20,
                 "entities": [
                         "minecraft:enderman",
                         "minecraft:phantom",

@@ -29,7 +29,8 @@ public class BlockXpValuesPreset {
                         "minecraft:soul_soil",
                         "minecraft:basalt",
                         "#minecraft:dirt",
-                        "#minecraft:sand"
+                        "#minecraft:sand",
+                        "minecraft:sculk"
                 ]
             },
             "category_C": {
@@ -141,7 +142,6 @@ public class BlockXpValuesPreset {
                         "minecraft:rooted_dirt",
                         "minecraft:muddy_mangrove_roots",
                         "minecraft:nether_quartz_ore",
-                        "minecraft:sculk",
                         "minecraft:end_stone",
                         "#minecraft:base_stone_overworld",
                         "minecraft:blackstone"
@@ -170,13 +170,14 @@ public class BlockXpValuesPreset {
                         "minecraft:dead_brain_coral_fan",
                         "minecraft:dead_bubble_coral_fan",
                         "minecraft:dead_fire_coral_fan",
-                        "minecraft:dead_horn_coral_fan"
+                        "minecraft:dead_horn_coral_fan",
+                        "minecraft:pointed_dripstone",
+                        "minecraft:coal_ore"
                 ]
             },
             "category_G": {
                 "xp": 3,
                 "blocks":[
-                        "minecraft:coal_ore",
                         "minecraft:deepslate_copper_ore",
                         "minecraft:nether_gold_ore",
                         "minecraft:pumpkin",
@@ -203,13 +204,15 @@ public class BlockXpValuesPreset {
                         "#c:logs",
                         "#c:crops",
                         "minecraft:sweet_berries",
-                        "minecraft:glow_berries"
+                        "minecraft:glow_berries",
+                        "minecraft:amethyst_cluster"
                 ]
             },
             "category_H": {
                 "xp": 5,
                 "blocks":[
                         "minecraft:iron_ore",
+                        "minecraft:deepslate_iron_ore",
                         "minecraft:redstone_ore",
                         "minecraft:budding_amethyst",
                         "minecraft:sculk_catalyst",
@@ -232,8 +235,7 @@ public class BlockXpValuesPreset {
                         "minecraft:horn_coral_fan",
                         "#minecraft:corals",
                         "#minecraft:coral_blocks",
-                        "#minecraft:coral_plants",
-                        "minecraft:pointed_dripstone"
+                        "#minecraft:coral_plants"
                 ]
             },
             "category_I": {
@@ -241,7 +243,6 @@ public class BlockXpValuesPreset {
                 "blocks":[
                         "minecraft:gold_ore",
                         "minecraft:deepslate_gold_ore",
-                        "minecraft:deepslate_iron_ore",
                         "minecraft:deepslate_redstone_ore",
                         "minecraft:lapis_ore",
                         "minecraft:deepslate_lapis_ore"
@@ -250,8 +251,7 @@ public class BlockXpValuesPreset {
             "category_J": {
                 "xp": 10,
                 "blocks":[
-                    "minecraft:emerald_ore",
-                    "minecraft:amethyst_cluster"
+                    "minecraft:emerald_ore"
                 ]
             },
             "category_K": {
