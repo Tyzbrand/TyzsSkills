@@ -2,6 +2,7 @@ package com.tyzsskills.server.skills;
 
 import com.google.gson.JsonObject;
 import com.tyzsskills.server.model.Skill;
+import com.tyzsskills.server.model.Trait;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.ArrayList;
@@ -18,15 +19,24 @@ public class SkillLoader {
         if(state == null) state = false;
         if(!state) return; //Les skills désactivés de sont pas chargés
 
+        List<Integer> prices = new ArrayList<>();
+        List<Float> values = new ArrayList<>();
+
         Integer maxLevel = GetSafeInt(source, "maximumLevel");
-        if(maxLevel == null) {LogError(id); return;}
+        if(maxLevel == null) maxLevel = 1;
         maxLevel = Math.min(Math.max(maxLevel, 1), 10);
 
-        List<Integer> prices = GetSafeIntArray(source, "prices");
-        if(prices == null || prices.size() < maxLevel) {LogError(id); return;}
+        if(source.has("prices")){
+            List<Integer> tempPrices = GetSafeIntArray(source, "prices");
+            if(tempPrices == null) {LogError(id); return;}
+            prices = tempPrices;
+        }
 
-        List<Float> values = GetSafeFloatArray(source, "values");
-        if(values == null || values.size() != prices.size()) {LogError(id); return;}
+        if(source.has("values")){
+            List<Float> tempValues = GetSafeFloatArray(source, "values");
+            if(tempValues == null) {LogError(id); return;}
+            values = tempValues;
+        }
 
         Skill.SkillType type = GetSafeType(source, "type");
         if(type == null) {LogError(id); return;}
@@ -38,10 +48,7 @@ public class SkillLoader {
         if(purchasable == null) purchasable = true;
 
         AttributeModifier.Operation operation = GetSafeOperation(source, "operation");
-        if(operation == null){
-            if(type == Skill.SkillType.GENERIC || type == Skill.SkillType.CUSTOM) {LogError(id); return;}
-            else operation = AttributeModifier.Operation.ADD_VALUE;
-        }
+        String modifier = GetSafeString(source, "modifier");
 
 
         String icon = GetSafeString(source, "icon");
@@ -53,8 +60,30 @@ public class SkillLoader {
         String description = GetSafeString(source, "description");
         if(description == null) description = "Missing description";
 
-        String modifier = GetSafeString(source, "modifier");
+
+        Integer powerWeight = GetSafeInt(source, "powerWeight");
+        if(powerWeight == null) powerWeight = 0;
+        powerWeight = Math.max(0, powerWeight);
+
+
+        if(type == Skill.SkillType.TRAIT || powerWeight > 0){
+            int price = prices.isEmpty()? 0 : prices.getFirst();
+
+            SkillManager.Get().RegisterSKill(new Trait(
+                    state, id, powerWeight, price, purchasable, icon, displayName, description)
+            );
+            return;
+        }
+
+        if(prices.size() < maxLevel) return;
+        if(!values.isEmpty() && prices.size() != values.size()) return;
+
+        if(operation == null){
+            if(type == Skill.SkillType.GENERIC || type == Skill.SkillType.CUSTOM) {LogError(id); return;}
+            else operation = AttributeModifier.Operation.ADD_VALUE;
+        }
         if(modifier == null && (type == Skill.SkillType.GENERIC || type == Skill.SkillType.CUSTOM)) {LogError(id); return;}
+
 
         SkillManager.Get().RegisterSKill(
                 new Skill(state, id, maxLevel, prices, values, type,

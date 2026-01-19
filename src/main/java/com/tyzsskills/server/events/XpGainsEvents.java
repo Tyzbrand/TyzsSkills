@@ -9,8 +9,10 @@ import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import com.tyzsskills.server.xp.xpEvents.XpFood;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
@@ -19,6 +21,7 @@ import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
@@ -51,6 +54,27 @@ public class XpGainsEvents {
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
 
         XpEntity.EntityKillProfit(event.getEntity(), player);
+    }
+
+    @SubscribeEvent
+    public static void OnEntityWakeup(PlayerWakeUpEvent event){
+        if (!event.updateLevel()) return;
+
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
+
+        double sleepValue = Config.SLEEPING_XP_VALUE.get();
+        if(sleepValue <= 0) return;
+
+        long currentDay = player.level().getDayTime() / 24000L;
+
+        var data = player.getData(ExplorationProgression.DATA);
+
+        if(!data.hasAlreadySlept(currentDay)){
+            data.setSleepDay(currentDay);
+            sleepValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+            XpManager.AddXP(player, (float)sleepValue);
+        }
     }
 
     @SubscribeEvent
@@ -124,6 +148,29 @@ public class XpGainsEvents {
             XpManager.AddXP(player, finalValue);
         });
     }
+
+//    @SubscribeEvent
+//    public static void OnToolModification(BlockEvent.BlockToolModificationEvent event){
+//        if(event.isCanceled() || event.isSimulated()) return;
+//        if (!(event.getPlayer() instanceof ServerPlayer player)) return;
+//        if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
+//
+//
+//        double strippingValue = Config.CARVING_XP_VALUE.get();
+//        double pathingValue = Config.LANDSCAPING_XP_VALUE.get();
+//
+//        if(event.getHeldItemStack().getItem() instanceof ShovelItem ||
+//                event.getHeldItemStack().getItem() instanceof HoeItem){
+//
+//            pathingValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+//            XpManager.AddXP(player, (float)pathingValue);
+//        }
+//
+//        if(event.getHeldItemStack().getItem() instanceof AxeItem){
+//            strippingValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+//            XpManager.AddXP(player, (float)strippingValue);
+//        }
+//    }
 
     @SubscribeEvent
     public static void OnPlayerTick(PlayerTickEvent.Post event){

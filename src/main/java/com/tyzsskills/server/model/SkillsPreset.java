@@ -13,6 +13,7 @@ public class SkillsPreset {
         finalList.addAll(GetAbilitySkills());
         finalList.addAll(GetFightSkills());
         finalList.addAll(GetMiscSkills());
+        finalList.addAll(GetTraits());
 
         return finalList;
     }
@@ -391,6 +392,32 @@ public class SkillsPreset {
                 "tyzs_skills:textures/gui/skills/magnet.png",
                 "skill.tyzs_skills.magnet.displayName",
                 "skill.tyzs_skills.magnet.description"));
+
+        return finalList;
+    }
+
+    private static List<Skill> GetTraits(){
+        List<Skill> finalList = new ArrayList<>();
+
+        finalList.add(new Trait(
+                true,
+                "fire_resistance",
+                7,
+                50,
+                true,
+                "tyzs_skills:textures/gui/skills/fire_resistance.png",
+                "skill.tyzs_skills.fire_resistance.displayName",
+                "skill.tyzs_skills.fire_resistance.description"));
+
+        finalList.add(new Trait(
+                true,
+                "vein_miner",
+                4,
+                50,
+                true,
+                "tyzs_skills:textures/gui/skills/vein_miner.png",
+                "skill.tyzs_skills.vein_miner.displayName",
+                "skill.tyzs_skills.vein_miner.description"));
 
         return finalList;
     }

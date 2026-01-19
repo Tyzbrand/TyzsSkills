@@ -8,6 +8,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import org.jetbrains.annotations.NotNull;
 
 import java.beans.Transient;
 import java.util.ArrayList;
@@ -17,8 +18,9 @@ import java.util.List;
 
 public class Skill{
 
-    public enum ContainerType {SKILLS, QUESTS}
-    public enum CategoryType {ALL, ABILITIES, FIGHT, MISC, BOOKMARKS}
+    public enum ContainerType {SKILLS, QUESTS, TRAITS}
+    public enum CategoryType {ALL, ABILITIES, FIGHT, MISC, BOOKMARKS, TRAITS}
+    public enum SkillType {GENERIC, CUSTOM, IMMUTABLE, TRAIT}
 
 
     public Skill(boolean active, String id, int maximumLevel,
@@ -44,9 +46,7 @@ public class Skill{
         if(category == CategoryType.ALL || category == CategoryType.BOOKMARKS) category = CategoryType.MISC;
     }
 
-    public enum SkillType {GENERIC, CUSTOM, IMMUTABLE}
-
-    private transient SkillBehaviour behaviour;
+    protected transient SkillBehaviour behaviour;
 
     protected boolean active;
     protected String id;
@@ -91,8 +91,17 @@ public class Skill{
 
     //Network
     public static final StreamCodec<FriendlyByteBuf, Skill> STREAM_CODEC = StreamCodec.ofMember(
-            Skill::WriteToBuffer,
-            Skill::ReadToBuffer);
+            (skill, buffer) -> {
+                boolean isTrait = skill instanceof Trait;
+                buffer.writeBoolean(isTrait);
+                skill.WriteToBuffer(buffer);
+            },
+            (buffer) -> {
+                boolean isTrait = buffer.readBoolean();
+                if(isTrait) return Trait.ReadTraitFromBuffer(buffer);
+                else return Skill.ReadTraitFromBuffer(buffer);
+            });
+
 
     public void WriteToBuffer(FriendlyByteBuf buffer){
         buffer.writeBoolean(active);
@@ -114,7 +123,7 @@ public class Skill{
         buffer.writeUtf(description);
     }
 
-    public static Skill ReadToBuffer(FriendlyByteBuf buffer){
+    public static @NotNull Skill ReadTraitFromBuffer(FriendlyByteBuf buffer){
         boolean active = buffer.readBoolean();
         String id = buffer.readUtf();
         int maxLevel = buffer.readInt();

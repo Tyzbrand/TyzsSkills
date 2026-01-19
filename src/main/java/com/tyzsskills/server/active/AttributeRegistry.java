@@ -15,4 +15,7 @@ public class AttributeRegistry {
 
     public static final DeferredHolder<Attribute, Attribute> SP_MULTIPLIER = ATTRIBUTES.register("sp_multiplier",
             () -> new RangedAttribute("attribute.name.tyzs_skills.sp_multiplier", 1.0D, 0.0D, 1024.0D).setSyncable(true));
+
+    public static final DeferredHolder<Attribute, Attribute> TRAIT_POWER = ATTRIBUTES.register("trait_power",
+            () -> new RangedAttribute("attribute.name.tyzs_skills.trait_power", 10, 0, 999999).setSyncable(true));
 }

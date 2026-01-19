@@ -1,12 +1,14 @@
 package com.tyzsskills.client.screen;
 
+import ca.weblite.objc.Client;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.client.ClientCache;
-import com.tyzsskills.client.models.CustomScrollView;
-import com.tyzsskills.client.models.CustomTabButton;
-import com.tyzsskills.client.models.SkillEntry;
-import com.tyzsskills.client.models.SkillWidget;
+import com.tyzsskills.client.models.*;
+import com.tyzsskills.server.active.AttributeRegistry;
 import com.tyzsskills.server.model.Skill;
+import com.tyzsskills.server.model.Trait;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -34,6 +36,14 @@ public class MainGUI extends Screen {
     private int leftPos;
     private int topPos;
 
+    private CustomTabButton skillBtn;
+    private CustomTabButton traitBtn;
+    private CustomTabButton allBtn;
+    private CustomTabButton abilitiesBtn;
+    private CustomTabButton fightBtn;
+    private CustomTabButton miscBtn;
+    private CustomTabButton bookmarksBtn;
+
     public MainGUI(){super(Component.translatable("gui.tyzs_skills.title"));}
 
     private CustomScrollView scrollView;
@@ -54,23 +64,21 @@ public class MainGUI extends Screen {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick){
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
-        if (this.scrollView != null) {
-            this.scrollView.visible = (ClientCache.GetContainerType() == Skill.ContainerType.SKILLS);
-        }
-
         guiGraphics.blit(background, leftPos, topPos, 0, 0, imageWidth, imageHeight, 325, 325);
 
         this.renderStrings(guiGraphics, mouseX, mouseY);
 
         this.renderXpBar(guiGraphics);
+        if(ClientCache.GetContainerType() == Skill.ContainerType.TRAITS) renderPowerBar(guiGraphics);
 
         this.renderEntity(guiGraphics, 30, mouseX, mouseY );
-
 
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         this.renderIcons(guiGraphics);
+
+        updateButtonsVisibility();
 
         this.renderTooltips(guiGraphics, mouseX, mouseY);
     }
@@ -98,12 +106,21 @@ public class MainGUI extends Screen {
         int rightLimit2 = leftPos+69;
         gui.drawString(this.font, spValue, rightLimit2 -text2W, topPos+84, color2, false);
 
-        if(ClientCache.GetCategoryType() == Skill.CategoryType.BOOKMARKS) return;
-        String localizationKey = "gui.tyzs_skills.Tab." + ClientCache.GetCategoryType().toString().toLowerCase();
-        MutableComponent enumDisplayName = Component.translatable(localizationKey);
-        int text3W = this.font.width(enumDisplayName);
-        int rightLimit3 = leftPos+295;
-        gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+15, 0x000000, false);
+        if(ClientCache.GetContainerType() == Skill.ContainerType.TRAITS){
+            MutableComponent text = Component.translatable("gui.tyzs_skills.traits");
+            int textW = font.width(text); int textH = font.lineHeight; int padding = 3;
+            renderBackdrop(gui, (leftPos+90) - padding, (topPos+12) - padding, textW + (padding*2), textH + (padding*2), 0xAA000000);
+            gui.drawString(this.font, text, leftPos+90 , topPos+13, 0xFFFFFFFF, false);
+        }
+        else{
+            if(ClientCache.GetCategoryType() == Skill.CategoryType.BOOKMARKS) return;
+            String localizationKey = "gui.tyzs_skills.Tab." + ClientCache.GetCategoryType().toString().toLowerCase();
+            MutableComponent enumDisplayName = Component.translatable(localizationKey);
+            int text3W = this.font.width(enumDisplayName);
+            int rightLimit3 = leftPos+295;
+            gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+15, 0x000000, false);
+        }
+
     }
 
     private void renderXpBar(GuiGraphics gui){
@@ -118,6 +135,31 @@ public class MainGUI extends Screen {
 
         if(widthToDraw > 0) {
             gui.blit(background, leftPos + 2, topPos + 98, 82, 142, widthToDraw, 5, 325, 325);
+        }
+    }
+
+    private void renderPowerBar(GuiGraphics gui){
+        var player = Minecraft.getInstance().player;
+        if(player == null) return;
+
+        var attr = player.getAttribute(AttributeRegistry.TRAIT_POWER);
+        if (attr == null) return;
+
+        double maxPower = attr.getValue();
+        if (maxPower <= 0) maxPower = 1;
+
+        int currentPower = ClientCache.GetPower();
+
+        double ratio = Math.min(1.0, currentPower / maxPower);
+
+        gui.blit(background, leftPos+173, topPos+17, 82, 285, 124, 7, 325, 325);
+
+        boolean isFull = ratio >= 1.0;
+        int currentV = isFull ? 297 : 292;
+        int widthToDraw = (int)(ratio * 122);
+
+        if (widthToDraw > 0) {
+            gui.blit(background, leftPos+174, topPos+18, 83, currentV, widthToDraw, 5, 325, 325);
         }
     }
 
@@ -177,13 +219,28 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, Component.literal(xpTooltip), mouseX, mouseY);
         }
 
+
         if(isHovering(mouseX, mouseY, leftPos + 55, topPos + 6, 15, 15)){ //Skills button
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Skills"), mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY, leftPos + 55, topPos + 24, 15, 15)){ //Quests button
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Quests"), mouseX, mouseY);
+        if(isHovering(mouseX, mouseY, leftPos + 55, topPos + 24, 15, 15)){ //Traits button
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.traits"), mouseX, mouseY);
+
         }
+
+        if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)){
+            SkillWidget hoveredWidget = this.scrollView.getHoveredWidget(mouseX, mouseY);
+
+            if(hoveredWidget != null){
+                List<Component> lines = hoveredWidget.getTooltip(mouseX, mouseY);
+                if(!lines.isEmpty()){
+                    gui.renderComponentTooltip(this.font, lines, mouseX, mouseY);
+                }
+            }
+        }
+
+        if(ClientCache.GetContainerType() != Skill.ContainerType.SKILLS) return;
 
         if(isHovering(mouseX, mouseY, leftPos + 92, topPos + 7, 29, 20)){ //All tab
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
@@ -205,16 +262,7 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.bookmarks"), mouseX, mouseY);
         }
 
-        if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)){
-            SkillWidget hoveredWidget = this.scrollView.getHoveredWidget(mouseX, mouseY);
 
-            if(hoveredWidget != null){
-                List<Component> lines = hoveredWidget.getTooltip(mouseX, mouseY);
-                if(!lines.isEmpty()){
-                    gui.renderComponentTooltip(this.font, lines, mouseX, mouseY);
-                }
-            }
-        }
     }
 
     private void renderIcons(GuiGraphics gui){
@@ -224,7 +272,7 @@ public class MainGUI extends Screen {
 
 
     private void addButtons(){
-        CustomTabButton skillBtn = new CustomTabButton(
+         this.skillBtn = new CustomTabButton(
                 leftPos + 55, topPos + 6,
                 16, 16,
                 82, 150,
@@ -233,22 +281,28 @@ public class MainGUI extends Screen {
                 325, 325,
                 () -> ClientCache.GetContainerType() == Skill.ContainerType.SKILLS,
                 background,
-                (b) -> ClientCache.SetContainerType(Skill.ContainerType.SKILLS));
-        this.addRenderableWidget(skillBtn);
+                (b) -> {
+                    ClientCache.SetContainerType(Skill.ContainerType.SKILLS);
+                    refreshList();
+                });
+        this.addRenderableWidget(this.skillBtn);
 
-        CustomTabButton questBtn = new CustomTabButton(
+        this.traitBtn = new CustomTabButton(
                 leftPos + 55, topPos + 24,
                 16, 16,
                 82, 167,
                 114, 167,
                 98, 167,
                 325, 325,
-                () -> ClientCache.GetContainerType() == Skill.ContainerType.QUESTS,
+                () -> ClientCache.GetContainerType() == Skill.ContainerType.TRAITS,
                 background,
-                (b) -> ClientCache.SetContainerType(Skill.ContainerType.QUESTS));
-        this.addRenderableWidget(questBtn);
+                (b) -> {
+                    ClientCache.SetContainerType(Skill.ContainerType.TRAITS);
+                    refreshList();
+                });
+        this.addRenderableWidget(this.traitBtn);
 
-        CustomTabButton allBtn = new CustomTabButton(
+        this.allBtn = new CustomTabButton(
                 leftPos + 92, topPos + 7,
                 29, 20,
                 82, 187,
@@ -261,9 +315,9 @@ public class MainGUI extends Screen {
                     ClientCache.SetCategoryType(Skill.CategoryType.ALL);
                     this.refreshList();
                 });
-        this.addRenderableWidget(allBtn);
+        this.addRenderableWidget(this.allBtn);
 
-        CustomTabButton abilitiesBtn = new CustomTabButton(
+        this.abilitiesBtn = new CustomTabButton(
                 leftPos + 123, topPos + 7,
                 29, 20,
                 140, 187,
@@ -276,9 +330,9 @@ public class MainGUI extends Screen {
                     ClientCache.SetCategoryType(Skill.CategoryType.ABILITIES);
                     this.refreshList();
                 });
-        this.addRenderableWidget(abilitiesBtn);
+        this.addRenderableWidget(this.abilitiesBtn);
 
-        CustomTabButton fightBtn = new CustomTabButton(
+        this.fightBtn = new CustomTabButton(
                 leftPos + 154, topPos + 7,
                 29, 20,
                 111, 187,
@@ -291,9 +345,9 @@ public class MainGUI extends Screen {
                     ClientCache.SetCategoryType(Skill.CategoryType.FIGHT);
                     this.refreshList();
                 });
-        this.addRenderableWidget(fightBtn);
+        this.addRenderableWidget(this.fightBtn);
 
-        CustomTabButton miscBtn = new CustomTabButton(
+        this.miscBtn = new CustomTabButton(
                 leftPos + 185, topPos + 7,
                 29, 20,
                 169, 187,
@@ -306,9 +360,9 @@ public class MainGUI extends Screen {
                     ClientCache.SetCategoryType(Skill.CategoryType.MISC);
                     this.refreshList();
                 });
-        this.addRenderableWidget(miscBtn);
+        this.addRenderableWidget(this.miscBtn);
 
-        CustomTabButton bookmarksBtn = new CustomTabButton(
+        this.bookmarksBtn = new CustomTabButton(
                 leftPos + 216, topPos + 7,
                 29, 20,
                 198, 187,
@@ -321,7 +375,17 @@ public class MainGUI extends Screen {
                     ClientCache.SetCategoryType(Skill.CategoryType.BOOKMARKS);
                     this.refreshList();
                 });
-        this.addRenderableWidget(bookmarksBtn);
+        this.addRenderableWidget(this.bookmarksBtn);
+    }
+
+    private void updateButtonsVisibility() {
+        boolean isSkillMode = ClientCache.GetContainerType() == Skill.ContainerType.SKILLS;
+
+        if (this.allBtn != null) this.allBtn.visible = isSkillMode;
+        if (this.abilitiesBtn != null) this.abilitiesBtn.visible = isSkillMode;
+        if (this.fightBtn != null) this.fightBtn.visible = isSkillMode;
+        if (this.miscBtn != null) this.miscBtn.visible = isSkillMode;
+        if (this.bookmarksBtn != null) this.bookmarksBtn.visible = isSkillMode;
     }
 
     private void addScrollView(){
@@ -341,7 +405,7 @@ public class MainGUI extends Screen {
     public void refreshList(){
         if(this.scrollView == null) return;
 
-        var categoryToLoad = ClientCache.GetCategoryType();
+        var containerType = ClientCache.GetContainerType();
 
         scrollView.clearEntries();
 
@@ -350,22 +414,42 @@ public class MainGUI extends Screen {
         SkillEntry currentRow = null;
         int countInRow = 0;
 
-        for(Skill skill : ClientCache.GetAllSkills()){
-            if(skill.GetCategory() != categoryToLoad &&
-            categoryToLoad != Skill.CategoryType.ALL && categoryToLoad != Skill.CategoryType.BOOKMARKS) continue;
+        if(containerType == Skill.ContainerType.TRAITS){
+            for(Skill skill : ClientCache.GetAllSkills()){
+                if(skill.GetCategory() != Skill.CategoryType.TRAITS) continue;
 
-            if(categoryToLoad == Skill.CategoryType.BOOKMARKS && !ClientCache.GetBookmarkState(skill.GetID())) continue;
+                if(currentRow == null || countInRow >= maxPerLine){
+                    currentRow = new SkillEntry();
+                    this.scrollView.AddEntry(currentRow);
+                    countInRow = 0;
+                }
 
-            if(currentRow == null || countInRow >= maxPerLine){
-                currentRow = new SkillEntry();
-                this.scrollView.AddEntry(currentRow);
-                countInRow = 0;
+                currentRow.addWidget(new TraitWidget(skill));
+                countInRow++;
             }
-
-            currentRow.addWidget(new SkillWidget(skill));
-            countInRow++;
+            this.scrollView.setScrollAmount(0);
         }
-        this.scrollView.setScrollAmount(0);
+        else {
+            var categoryToLoad = ClientCache.GetCategoryType();
+            for(Skill skill : ClientCache.GetAllSkills()){
+                if(skill.GetCategory() == Skill.CategoryType.TRAITS) continue;
+                if(skill.GetCategory() != categoryToLoad &&
+                        categoryToLoad != Skill.CategoryType.ALL && categoryToLoad != Skill.CategoryType.BOOKMARKS) continue;
+
+                if(categoryToLoad == Skill.CategoryType.BOOKMARKS && !ClientCache.GetBookmarkState(skill.GetID())) continue;
+
+                if(currentRow == null || countInRow >= maxPerLine){
+                    currentRow = new SkillEntry();
+                    this.scrollView.AddEntry(currentRow);
+                    countInRow = 0;
+                }
+
+                currentRow.addWidget(new SkillWidget(skill));
+                countInRow++;
+            }
+            this.scrollView.setScrollAmount(0);
+        }
+
     }
 
     //Uilitaires
@@ -400,6 +484,17 @@ public class MainGUI extends Screen {
 
         gui.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         gui.pose().popPose();
+    }
+
+    private void renderBackdrop(GuiGraphics gui, int x, int y, int width, int height, int color) {
+        gui.fill(x, y + 1, x + width, y + height - 1, color);
+        gui.fill(x + 1, y, x + width - 1, y + 1, color);
+        gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
+
+        gui.fill(x + 1, y, x + width - 1, y + 1, 0xFFFFFFFF); // Haut
+        gui.fill(x + 1, y + height - 1, x + width - 1, y + height, 0xFFFFFFFF); // Bas
+        gui.fill(x, y + 1, x + 1, y + height - 1, 0xFFFFFFFF); // Gauche
+        gui.fill(x + width - 1, y + 1, x + width, y + height - 1, 0xFFFFFFFF);
     }
 
 

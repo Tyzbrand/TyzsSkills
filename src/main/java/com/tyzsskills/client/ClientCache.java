@@ -18,6 +18,7 @@ public class ClientCache {
     private static int clientLevel = 1;
     private static int clientSP = 0;
     private static float clientXP = 0f;
+    private static int clientPower = 0;
 
     private static XpManager.LevelData clientLevelData = new XpManager.LevelData(100f, 1);
 
@@ -62,11 +63,11 @@ public class ClientCache {
     }
 
     public static void SetContainerType(Skill.ContainerType type){
-        currentContainerType = Skill.ContainerType.SKILLS; //Temporaire le temps de gérer les quetes
+        currentContainerType = type;
     }
 
     public static void SetCategoryType(Skill.CategoryType category){
-        currentContainerCatgory = category; //Temporaire le temps de gérer les autres categories
+        currentContainerCatgory = category;
     }
 
     public static void UpdateSkills(List<Skill> skills){
@@ -80,6 +81,14 @@ public class ClientCache {
     }
 
     public static void UpdateSkillLevels(String id, int lvl){
+        int oldLvl = GetSkillLevel(id.toLowerCase());
+        if(oldLvl == lvl) return;
+
+        if(GetSkill(id.toLowerCase()) instanceof Trait trait){
+            if(oldLvl == 0 && lvl > 0) clientPower += trait.getPowerWeight();
+            else if(oldLvl >= 1 && lvl <= 0) clientPower -= trait.getPowerWeight();
+        }
+
         clientSkillLevels.put(id.toLowerCase(), lvl);
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
@@ -110,6 +119,7 @@ public class ClientCache {
         clientLevel = 1;
         clientSP = 0;
         clientXP = 0f;
+        clientPower = 0;
         clientLevelData = new XpManager.LevelData(100f, 1);
         clientSkills.clear();
         clientSkillLevels.clear();
@@ -135,7 +145,7 @@ public class ClientCache {
         int price = prices.get(currentLvl);
 
         clientSP -= price;
-        clientSkillLevels.put(id, currentLvl + 1);
+        UpdateSkillLevels(id, currentLvl + 1);
     }
 
     public static void PredictRefund(Skill skill) {
@@ -145,7 +155,7 @@ public class ClientCache {
 
         if (currentLvl <= 0) return;
 
-        clientSkillLevels.put(id, currentLvl - 1);
+        UpdateSkillLevels(id, currentLvl - 1);
 
         double percentage = GetConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
 
@@ -169,6 +179,7 @@ public class ClientCache {
     public static int GetSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
     public static Skill GetSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}
     public static boolean GetBookmarkState(String id){return clientBookmarks.getOrDefault(id.toLowerCase(), false);}
+    public static int GetPower(){return clientPower;}
 
     //getters config
     public static boolean GetConfigBool(String id, boolean fallback){

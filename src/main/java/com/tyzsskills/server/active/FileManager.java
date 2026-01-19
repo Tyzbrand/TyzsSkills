@@ -51,6 +51,9 @@ public class FileManager {
         allPaths.add(globalPath.resolve("skills")
                 .resolve("custom"));
 
+        allPaths.add(globalPath.resolve("skills")
+                .resolve("traits"));
+
         for(var path : allPaths){
             try {Files.createDirectories(path);}
             catch(IOException ex) {throw new RuntimeException(ex);}
@@ -95,8 +98,7 @@ public class FileManager {
     public void ReadJsons(MinecraftServer server) throws IOException{
         Path globalPath = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
-                .resolve("skills")
-                .resolve("default");
+                .resolve("skills");
 
         if(!Files.exists(globalPath)) return;
 
@@ -200,18 +202,21 @@ public class FileManager {
         Path skillPath = server.getServerDirectory()
                 .resolve("config")
                 .resolve("tyzs_skills")
-                .resolve("skills")
-                .resolve("default");
+                .resolve("skills");
+
 
         switch (category){
             case ABILITIES -> {
-                return skillPath.resolve("abilities");
+                return skillPath.resolve("default").resolve("abilities");
             }
             case FIGHT -> {
-                return skillPath.resolve("fight");
+                return skillPath.resolve("default").resolve("fight");
             }
             case MISC, ALL, BOOKMARKS -> {
-                return skillPath.resolve("misc");
+                return skillPath.resolve("default").resolve("misc");
+            }
+            case TRAITS -> {
+                return skillPath.resolve("traits");
             }
         }
         return skillPath;

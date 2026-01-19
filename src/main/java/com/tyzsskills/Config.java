@@ -21,8 +21,11 @@ public class Config {
 
     public static final ModConfigSpec.BooleanValue EARN_XP_BY_EATING;
     public static final ModConfigSpec.DoubleValue FISHING_XP_VALUE;
+    public static final ModConfigSpec.DoubleValue SLEEPING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue CRAFTING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue BREEDING_XP_VALUE;
+    public static final ModConfigSpec.DoubleValue CARVING_XP_VALUE;
+    public static final ModConfigSpec.DoubleValue LANDSCAPING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue ADVANCEMENT_TASK_XP_VALUE;
     public static final ModConfigSpec.DoubleValue ADVANCEMENT_GOAL_XP_VALUE;
     public static final ModConfigSpec.DoubleValue ADVANCEMENT_CHALLENGE_XP_VALUE;
@@ -68,9 +71,13 @@ public class Config {
                 .comment("Earn xp by eating (based on json values)")
                 .define("eating_xp_earnings", true);
 
+        SLEEPING_XP_VALUE = commonBuilder
+                .comment("Earn xp by sleeping")
+                .defineInRange("sleeping_gain", 25.0, .0, Double.MAX_VALUE);
+
         FISHING_XP_VALUE = commonBuilder
                 .comment("Fishing xp earning value")
-                .defineInRange("fishing_gain", 10.0, .0, Double.MAX_VALUE);
+                .defineInRange("fishing_gain", 7.0, .0, Double.MAX_VALUE);
 
         CRAFTING_XP_VALUE = commonBuilder
                 .comment("Crafting xp earning value")
@@ -79,6 +86,14 @@ public class Config {
         BREEDING_XP_VALUE = commonBuilder
                 .comment("Breeding xp earning value")
                 .defineInRange("breeding_gain", 15.0, .0, Double.MAX_VALUE);
+
+        CARVING_XP_VALUE = commonBuilder
+                .comment("Stripping xp earning value")
+                .defineInRange("stripping__gain", 3.5, .0, Double.MAX_VALUE);
+
+        LANDSCAPING_XP_VALUE = commonBuilder
+                .comment("Pathing xp earning value")
+                .defineInRange("pathing_gain", 1.5, .0, Double.MAX_VALUE);
 
         ADVANCEMENT_TASK_XP_VALUE = commonBuilder
                 .comment("Xp gains for basic advancements (Tasks)")

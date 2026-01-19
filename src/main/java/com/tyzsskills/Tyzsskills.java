@@ -116,6 +116,10 @@ public class Tyzsskills {
         if (!event.has(EntityType.PLAYER, AttributeRegistry.SP_MULTIPLIER)) {
             event.add(EntityType.PLAYER, AttributeRegistry.SP_MULTIPLIER);
         }
+
+        if (!event.has(EntityType.PLAYER, AttributeRegistry.TRAIT_POWER)) {
+            event.add(EntityType.PLAYER, AttributeRegistry.TRAIT_POWER);
+        }
     }
 
     private void RegisterPayloads(final RegisterPayloadHandlersEvent event){
