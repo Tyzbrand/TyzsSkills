@@ -44,6 +44,7 @@ public class AutoSyncClient {
         PacketDistributor.sendToPlayer(player, new LevelUpdatePayload(LevelManager.GetLevel(player)));
         PacketDistributor.sendToPlayer(player, new SpUpdatePayload(SpManager.GetSP(player)));
         PacketDistributor.sendToPlayer(player, new LevelDataUpdatePayload(XpManager.GetLevelData(LevelManager.GetLevel(player))));
+        PacketDistributor.sendToPlayer(player, new PowerUpdatePayload(PowerManager.GetPower(player)));
     }
 
 

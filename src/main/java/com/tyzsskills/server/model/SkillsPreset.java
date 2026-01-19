@@ -419,6 +419,47 @@ public class SkillsPreset {
                 "skill.tyzs_skills.vein_miner.displayName",
                 "skill.tyzs_skills.vein_miner.description"));
 
+        finalList.add(new Trait(
+                true,
+                "lumberjack",
+                3,
+                50,
+                true,
+                "tyzs_skills:textures/gui/skills/lumberjack.png",
+                "skill.tyzs_skills.lumberjack.displayName",
+                "skill.tyzs_skills.lumberjack.description"));
+
+        finalList.add(new Trait(
+                true,
+                "edible_rotten_flesh",
+                2,
+                50,
+                true,
+                "tyzs_skills:textures/gui/skills/edible_rotten_flesh.png",
+                "skill.tyzs_skills.edible_rotten_flesh.displayName",
+                "skill.tyzs_skills.edible_rotten_flesh.description"));
+
+        finalList.add(new Trait(
+                true,
+                "friendly_piglins",
+                5,
+                50,
+                true,
+                "tyzs_skills:textures/gui/skills/friendly_piglins.png",
+                "skill.tyzs_skills.friendly_piglins.displayName",
+                "skill.tyzs_skills.friendly_piglins.description"));
+
+        finalList.add(new Trait(
+                true,
+                "villager_bait",
+                2,
+                50,
+                true,
+                "tyzs_skills:textures/gui/skills/villager_bait.png",
+                "skill.tyzs_skills.villager_bait.displayName",
+                "skill.tyzs_skills.villager_bait.description"));
+
+
         return finalList;
     }
 }

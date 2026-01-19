@@ -45,6 +45,13 @@ public class ClientCache {
         }
     }
 
+    public static void UpdateClientCachePower(int power){
+        clientPower = power;
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Power Update: " + power), false);
+        }
+    }
+
     public static void UpdateClientCacheXP(float xp, float gained){
         if(gained > 0) XpTriggerOverlay.AddXp(gained);
         clientXP = xp;
@@ -81,14 +88,6 @@ public class ClientCache {
     }
 
     public static void UpdateSkillLevels(String id, int lvl){
-        int oldLvl = GetSkillLevel(id.toLowerCase());
-        if(oldLvl == lvl) return;
-
-        if(GetSkill(id.toLowerCase()) instanceof Trait trait){
-            if(oldLvl == 0 && lvl > 0) clientPower += trait.getPowerWeight();
-            else if(oldLvl >= 1 && lvl <= 0) clientPower -= trait.getPowerWeight();
-        }
-
         clientSkillLevels.put(id.toLowerCase(), lvl);
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
@@ -146,6 +145,8 @@ public class ClientCache {
 
         clientSP -= price;
         UpdateSkillLevels(id, currentLvl + 1);
+
+        if(skill instanceof Trait trait) clientPower += trait.getPowerWeight();
     }
 
     public static void PredictRefund(Skill skill) {
@@ -164,7 +165,10 @@ public class ClientCache {
             int initialPrice = prices.get(currentLvl - 1);
             int refundAmount = Math.max(1, (int)(initialPrice * (percentage / 100.0)));
             clientSP += refundAmount;
+            if(skill instanceof Trait trait) clientPower -= trait.getPowerWeight();
         }
+
+
     }
 
 

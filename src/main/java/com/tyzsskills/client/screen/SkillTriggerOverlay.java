@@ -19,7 +19,7 @@ import java.util.List;
 public class SkillTriggerOverlay implements LayeredDraw.Layer {
 
 
-    private record Notification(ResourceLocation icon, long startTime){}
+    private record Notification(ResourceLocation icon, long creationTime, long lastUpdate){}
 
     private static final List<Notification> activeNotifications = new ArrayList<>();
 
@@ -46,14 +46,17 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
                 icon = DEFAULT_ICON;
             }
 
+            long now = System.currentTimeMillis();
+
             for(int i = 0; i<activeNotifications.size(); i++){
-                if(activeNotifications.get(i).icon.equals(icon)){
-                    activeNotifications.set(i, new Notification(icon, System.currentTimeMillis()));
+                Notification current = activeNotifications.get(i);
+                if(current.icon.equals(icon)){
+                    activeNotifications.set(i, new Notification(icon, current.creationTime, now));
                     return;
                 }
             }
 
-            activeNotifications.add(new Notification(icon, System.currentTimeMillis()));
+            activeNotifications.add(new Notification(icon, now, now));
         }
     }
 
@@ -68,7 +71,7 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
         int height = mc.getWindow().getGuiScaledHeight();
         long now = System.currentTimeMillis();
 
-        activeNotifications.removeIf(n -> (now - n.startTime) > duration);
+        activeNotifications.removeIf(n -> (now - n.lastUpdate) > duration);
         if (activeNotifications.isEmpty()) return;
 
 
@@ -90,17 +93,20 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
 
 
     private void renderSingleNotification(GuiGraphics guiGraphics, Notification notif, int index, int screenHeight, long now){
-        long timeSinceActivation = now - notif.startTime;
+        long age = now - notif.creationTime;
+        long idleTime = now - notif.lastUpdate;
         float alpha = 1f;
 
-        if(timeSinceActivation < fadeIn) alpha = (float)timeSinceActivation/fadeIn;
-        else if (timeSinceActivation > (duration - fadeOut)) alpha = (float)(duration - timeSinceActivation)/fadeOut;
-        else{
-            float timeInPhase = timeSinceActivation - fadeIn;
+        if(age < fadeIn) alpha = (float)age / fadeIn;
+        else if (idleTime > (duration - fadeOut)) {
+            alpha = (float)(duration - idleTime) / fadeOut;
+        }
+        else {
+            float timeInPhase = age - fadeIn;
             float speed = .01f;
-
             alpha = .8f + .2f * Mth.sin(timeInPhase * speed);
         }
+
         alpha = Mth.clamp(alpha, 0f, 1f);
         if (alpha <= 0.05f) return;
 

@@ -2,12 +2,14 @@ package com.tyzsskills.client.models;
 
 import com.tyzsskills.client.ClientCache;
 import com.tyzsskills.client.screen.MainGUI;
+import com.tyzsskills.server.active.AttributeRegistry;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.Trait;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -143,5 +145,28 @@ public class TraitWidget extends SkillWidget{
             }
         }
         return tooltip;
+    }
+
+    @Override
+    protected boolean CanBuy(Skill skill) {
+        LocalPlayer client = Minecraft.getInstance().player;
+        if(client == null || skill == null) return false;
+
+        if(!skill.IsPurchasable() || !skill.IsSkillActive()) return false;
+
+        var currentLvl = ClientCache.GetSkillLevel(skill.GetID());
+        if(currentLvl >= skill.GetMaximumLevel()) return false;
+
+        var prices = skill.GetPrices();
+        if(currentLvl >= prices.size()) return false;
+        int price = prices.get(currentLvl);
+
+        var attr = client.getAttribute(AttributeRegistry.TRAIT_POWER);
+        if(attr == null) return false;
+
+        int freeSpace = (int)attr.getValue() - ClientCache.GetPower();
+        if(trait.getPowerWeight() > freeSpace) return false;
+
+        return price <= ClientCache.GetSP();
     }
 }

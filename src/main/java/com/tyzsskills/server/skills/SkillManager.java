@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.server.active.AttributeRegistry;
+import com.tyzsskills.server.active.PowerManager;
 import com.tyzsskills.server.active.SpManager;
 import com.tyzsskills.server.effects.GenericEffects;
 import com.tyzsskills.server.model.Skill;
+import com.tyzsskills.server.model.Trait;
 import com.tyzsskills.server.payloads.SkillBookmarksPayload;
 import com.tyzsskills.server.payloads.SkillLevelSyncPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -51,17 +54,39 @@ public class SkillManager {
         int currentLvl = data.getInt(key);
         if(currentLvl >= skill.GetMaximumLevel()) return;
 
-        var prices = skill.GetPrices();
-        if(currentLvl >= prices.size()) return;
-        int price = prices.get(currentLvl);
+        if(skill instanceof Trait trait){
+            var attr = player.getAttribute(AttributeRegistry.TRAIT_POWER);
+            if(attr == null) return;
+
+            int freeSpace = (int)attr.getValue() - PowerManager.GetPower(player);
+            if(trait.getPowerWeight() > freeSpace)return;
+
+            var prices = skill.GetPrices();
+            if(currentLvl >= prices.size()) return;
+            int price = prices.get(currentLvl);
 
 
-        if(SpManager.GetSP(player) >= price){
-            SpManager.RemoveSP(player, price);
-            data.putInt(key, currentLvl+1);
-            PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl+1));
-            if(skill.GetType() == Skill.SkillType.GENERIC) GenericEffects.ApplyEffect(skill, player);
+            if(SpManager.GetSP(player) >= price){
+                SpManager.RemoveSP(player, price);
+                data.putInt(key, currentLvl+1);
+                PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl+1));
+                PowerManager.AddPower(player, trait.getPowerWeight());
+            }
         }
+        else{
+            var prices = skill.GetPrices();
+            if(currentLvl >= prices.size()) return;
+            int price = prices.get(currentLvl);
+
+
+            if(SpManager.GetSP(player) >= price){
+                SpManager.RemoveSP(player, price);
+                data.putInt(key, currentLvl+1);
+                PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl+1));
+                if(skill.GetType() == Skill.SkillType.GENERIC) GenericEffects.ApplyEffect(skill, player);
+            }
+        }
+
     }
 
     public void RefundSkill(ServerPlayer player, String id)
@@ -86,6 +111,8 @@ public class SkillManager {
 
         if(newLvl > 0) data.putInt(key, currentLvl - 1);
         else data.remove(key);
+
+        if(skill instanceof Trait trait) PowerManager.RemovePower(player, trait.getPowerWeight());
 
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl-1));
 
@@ -141,9 +168,19 @@ public class SkillManager {
         var key = id + SKILL_LEVEL_SIGNATURE;
 
         lvl = Math.max(0, Math.min(lvl, skill.GetMaximumLevel()));
+        int oldLvl = GetPlayerSkillLevel(player, id);
 
         if(lvl > 0) data.putInt(key, lvl);
         else data.remove(key);
+
+        if(skill instanceof Trait trait){
+            if(oldLvl == 0 && lvl > 0) {
+                PowerManager.AddPower(player, trait.getPowerWeight());
+            }
+            else if(oldLvl > 0 && lvl == 0) {
+                PowerManager.RemovePower(player, trait.getPowerWeight());
+            }
+        }
 
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(id, lvl));
 

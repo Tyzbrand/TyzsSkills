@@ -190,6 +190,12 @@ public class Tyzsskills {
                 SkillBookmarksPayload.STREAM_CODEC,
                 SkillBookmarksPayload::Handle
         );
+
+        registrar.playToClient(
+                PowerUpdatePayload.TYPE,
+                PowerUpdatePayload.STREAM_CODEC,
+                PowerUpdatePayload::Handle
+        );
     }
 
     @SubscribeEvent
