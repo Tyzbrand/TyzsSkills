@@ -393,6 +393,36 @@ public class SkillsPreset {
                 "skill.tyzs_skills.magnet.displayName",
                 "skill.tyzs_skills.magnet.description"));
 
+        finalList.add(new Skill(
+                true,
+                "trait_surge",
+                5,
+                List.of(10, 15, 20, 30, 45),
+                List.of(1f, 2f, 3f, 4f, 5f),
+                Skill.SkillType.GENERIC,
+                Skill.CategoryType.MISC,
+                "tyzs_skills:trait_power",
+                AttributeModifier.Operation.ADD_VALUE,
+                true,
+                "tyzs_skills:textures/gui/skills/trait_surge.png",
+                "skill.tyzs_skills.trait_surge.displayName",
+                "skill.tyzs_skills.trait_surge.description"));
+
+        finalList.add(new Skill(
+                true,
+                "xp_reclaim",
+                2,
+                List.of(5, 8),
+                List.of(25f, 50f),
+                Skill.SkillType.IMMUTABLE,
+                Skill.CategoryType.MISC,
+                "",
+                null,
+                true,
+                "tyzs_skills:textures/gui/skills/xp_reclaim.png",
+                "skill.tyzs_skills.xp_reclaim.displayName",
+                "skill.tyzs_skills.xp_reclaim.description"));
+
         return finalList;
     }
 
@@ -411,23 +441,23 @@ public class SkillsPreset {
 
         finalList.add(new Trait(
                 true,
-                "vein_miner",
+                "deep_lode",
                 4,
                 50,
                 true,
-                "tyzs_skills:textures/gui/skills/vein_miner.png",
-                "skill.tyzs_skills.vein_miner.displayName",
-                "skill.tyzs_skills.vein_miner.description"));
+                "tyzs_skills:textures/gui/skills/deep_lode.png",
+                "skill.tyzs_skills.deep_lode.displayName",
+                "skill.tyzs_skills.deep_lode.description"));
 
         finalList.add(new Trait(
                 true,
-                "lumberjack",
+                "timber",
                 3,
                 50,
                 true,
-                "tyzs_skills:textures/gui/skills/lumberjack.png",
-                "skill.tyzs_skills.lumberjack.displayName",
-                "skill.tyzs_skills.lumberjack.description"));
+                "tyzs_skills:textures/gui/skills/timber.png",
+                "skill.tyzs_skills.timber.displayName",
+                "skill.tyzs_skills.timber.description"));
 
         finalList.add(new Trait(
                 true,
@@ -451,13 +481,53 @@ public class SkillsPreset {
 
         finalList.add(new Trait(
                 true,
-                "villager_bait",
+                "villager_lure",
                 2,
                 50,
                 true,
-                "tyzs_skills:textures/gui/skills/villager_bait.png",
-                "skill.tyzs_skills.villager_bait.displayName",
-                "skill.tyzs_skills.villager_bait.description"));
+                "tyzs_skills:textures/gui/skills/villager_lure.png",
+                "skill.tyzs_skills.villager_lure.displayName",
+                "skill.tyzs_skills.villager_lure.description"));
+
+        finalList.add(new Trait(
+                true,
+                "item_retention",
+                6,
+                50,
+                true,
+                "tyzs_skills:textures/gui/skills/item_retention.png",
+                "skill.tyzs_skills.item_retention.displayName",
+                "skill.tyzs_skills.item_retention.description"));
+
+        finalList.add(new Trait(
+                true,
+                "noise_suppress",
+                5,
+                50,
+                true,
+                "tyzs_skills:textures/gui/skills/noise_suppress.png",
+                "skill.tyzs_skills.noise_suppress.displayName",
+                "skill.tyzs_skills.noise_suppress.description"));
+
+        finalList.add(new Trait(
+                true,
+                "auto_smelt",
+                5,
+                50,
+                true,
+                "tyzs_skills:textures/gui/skills/auto_smelt.png",
+                "skill.tyzs_skills.auto_smelt.displayName",
+                "skill.tyzs_skills.auto_smelt.description"));
+
+        finalList.add(new Trait(
+                true,
+                "cave_sight",
+                6,
+                50,
+                true,
+                "tyzs_skills:textures/gui/skills/cave_sight.png",
+                "skill.tyzs_skills.cave_sight.displayName",
+                "skill.tyzs_skills.cave_sight.description"));
 
 
         return finalList;
