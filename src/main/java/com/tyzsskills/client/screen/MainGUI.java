@@ -117,8 +117,10 @@ public class MainGUI extends Screen {
             String localizationKey = "gui.tyzs_skills.Tab." + ClientCache.GetCategoryType().toString().toLowerCase();
             MutableComponent enumDisplayName = Component.translatable(localizationKey);
             int text3W = this.font.width(enumDisplayName);
-            int rightLimit3 = leftPos+295;
-            gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+15, 0x000000, false);
+            int rightLimit3 = leftPos+293;
+            int textW = font.width(enumDisplayName); int textH = font.lineHeight; int padding = 3;
+            renderBackdrop(gui, (rightLimit3 -text3W) - padding, (topPos+12) - padding, textW + (padding*2), textH + (padding*2), 0xAA000000);
+            gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+13, 0xFFFFFFFF, false);
         }
 
     }
@@ -217,6 +219,13 @@ public class MainGUI extends Screen {
         if(isHovering(mouseX, mouseY, leftPos, topPos+96, 75, 8)){ //Xp bar
             String xpTooltip = SmartFormat(ClientCache.GetXP()) + "/" + SmartFormat(ClientCache.GetXPGOAL()) ;
             gui.renderTooltip(this.font, Component.literal(xpTooltip), mouseX, mouseY);
+        }
+
+        if(ClientCache.GetContainerType() == Skill.ContainerType.TRAITS
+                && isHovering(mouseX, mouseY, leftPos+173, topPos+17, 123, 6)){ //Power Bar
+            String powerTooltip = SmartFormat(ClientCache.GetPower()) + "/" + SmartFormat(
+                    (float)Minecraft.getInstance().player.getAttribute(AttributeRegistry.TRAIT_POWER).getValue()) ;
+            gui.renderTooltip(this.font, Component.literal(powerTooltip), mouseX, mouseY);
         }
 
 

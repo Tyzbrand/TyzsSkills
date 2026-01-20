@@ -7,6 +7,7 @@ import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.client.screen.SkillTriggerOverlay;
 import com.tyzsskills.client.screen.XpTriggerOverlay;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.EntityBoundSoundInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -18,6 +19,8 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
+import net.neoforged.neoforge.client.event.sound.SoundEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
@@ -77,4 +80,6 @@ public class TyzsskillsClient {
             Minecraft.getInstance().setScreen(new MainGUI());
         }
     }
+
+
 }

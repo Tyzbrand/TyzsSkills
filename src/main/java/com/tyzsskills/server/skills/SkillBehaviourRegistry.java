@@ -31,6 +31,7 @@ public class SkillBehaviourRegistry {
         behaviours.put("friendly_piglins", new FriendlyPiglinsEffect());
         behaviours.put("villager_lure", new VillagerLureEffect());
         behaviours.put("item_retention", new ItemRetentionEffect());
+        behaviours.put("noise_suppress", new NoiseSuppressEffect());
     }
 
     public static SkillBehaviour GetBehaviour(String id){

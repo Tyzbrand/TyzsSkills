@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
@@ -269,6 +270,25 @@ public class RuntimeEvents {
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onPlayerClone(event, player, lvl, skill);
+                }
+
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void OnNoiseAtPlayer(PlayLevelSoundEvent.AtEntity event){
+        if(event.isCanceled()) return;
+        var manager = SkillManager.Get();
+
+        if (event.getEntity() instanceof ServerPlayer player){
+            for (Skill skill : manager.GetAllSkills()){
+                if(skill.HasBehaviour()){
+
+                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    if( lvl<= 0) continue;
+
+                    skill.GetBehaviour().OnNoiseAtPlayer(event, player, lvl, skill);
                 }
 
             }

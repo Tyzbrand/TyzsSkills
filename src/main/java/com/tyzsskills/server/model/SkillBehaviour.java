@@ -3,6 +3,7 @@ package com.tyzsskills.server.model;
 import com.tyzsskills.server.payloads.SkillTriggerPayload;
 import net.minecraft.server.level.ServerPlayer;
 
+import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -20,6 +21,7 @@ public abstract class SkillBehaviour {
     public void onEffectApplicable(MobEffectEvent.Applicable event, ServerPlayer player, int lvl, Skill skill){}
     public void onTargetChange(LivingChangeTargetEvent event, ServerPlayer player, int lvl, Skill skill){}
     public void onPlayerClone(PlayerEvent.Clone event, ServerPlayer player, int lvl, Skill skill){}
+    public void OnNoiseAtPlayer(PlayLevelSoundEvent.AtEntity event, ServerPlayer player, int lvl, Skill skill){}
 
 
 
