@@ -22,6 +22,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+import java.util.List;
+
 public class RuntimeEvents {
 
     @SubscribeEvent
@@ -38,7 +40,7 @@ public class RuntimeEvents {
     }
 
     @SubscribeEvent
-    public static void OnPlayerClone(PlayerEvent.Clone event){
+    public static void onPlayerClone(PlayerEvent.Clone event){
 
         if(!(event.getOriginal() instanceof ServerPlayer oldPlayer) ||
                 !(event.getEntity() instanceof ServerPlayer newPlayer)) return;
@@ -51,6 +53,8 @@ public class RuntimeEvents {
 
             GenericEffects.RestaureEffects(newPlayer);
         }
+
+        OnPlayerClone(event); //SKILL BEHAVIOUR
     }
 
     @SubscribeEvent
@@ -199,34 +203,114 @@ public class RuntimeEvents {
     }
 
     @SubscribeEvent
+    public static void OnEffectApplicable(MobEffectEvent.Applicable event){
+        var manager = SkillManager.Get();
+
+        if (event.getEntity() instanceof ServerPlayer player){
+            for (Skill skill : manager.GetAllSkills()){
+                if(skill.HasBehaviour()){
+
+                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    if( lvl<= 0) continue;
+
+                    skill.GetBehaviour().onEffectApplicable(event, player, lvl, skill);
+                }
+
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void OnTargetChange(LivingChangeTargetEvent event){
+        if(event.isCanceled()) return;
+        var manager = SkillManager.Get();
+
+        if (event.getNewAboutToBeSetTarget() instanceof ServerPlayer player){
+            for (Skill skill : manager.GetAllSkills()){
+                if(skill.HasBehaviour()){
+
+                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    if( lvl<= 0) continue;
+
+                    skill.GetBehaviour().onTargetChange(event, player, lvl, skill);
+                }
+
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void OnPlayerDeath(LivingDeathEvent event){
+        if(event.isCanceled()) return;
+        var manager = SkillManager.Get();
+
+        if (event.getEntity() instanceof ServerPlayer player){
+            for (Skill skill : manager.GetAllSkills()){
+                if(skill.HasBehaviour()){
+
+                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    if( lvl<= 0) continue;
+
+                    skill.GetBehaviour().onPlayerDeath(event, player, lvl, skill);
+                }
+
+            }
+        }
+    }
+
+    private static void OnPlayerClone(PlayerEvent.Clone event){  //DEFERRED ABOVE
+        var manager = SkillManager.Get();
+
+        if (event.getEntity() instanceof ServerPlayer player){
+            for (Skill skill : manager.GetAllSkills()){
+                if(skill.HasBehaviour()){
+
+                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    if( lvl<= 0) continue;
+
+                    skill.GetBehaviour().onPlayerClone(event, player, lvl, skill);
+                }
+
+            }
+        }
+    }
+
+
+    private final static String[] playerTickSkills = {"magnet", "villager_lure"};
+    @SubscribeEvent
     public static void OnPlayerTick(PlayerTickEvent.Post event){
         var manager = SkillManager.Get();
 
         if (event.getEntity() instanceof ServerPlayer player){
-            var skill = manager.GetSkill("magnet");
-            if(skill != null && skill.HasBehaviour()){
 
-                var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                if( lvl<= 0) return;
-                skill.GetBehaviour().onPlayerTick(player, lvl, skill);
+            for(var id : playerTickSkills){
+                var skill = SkillManager.Get().GetSkill(id.toLowerCase());
+
+                if(skill != null && skill.HasBehaviour()){
+                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    if( lvl<= 0) continue;
+                    skill.GetBehaviour().onPlayerTick(player, lvl, skill);
+                }
             }
-
         }
     }
 
+    private final static String[] entityVisibility = {"stealth"};
     @SubscribeEvent
     public static void OnLivingVisibility(LivingEvent.LivingVisibilityEvent event){
         var manager = SkillManager.Get();
 
         if (event.getEntity() instanceof ServerPlayer player){
-            var skill = manager.GetSkill("stealth");
-            if(skill != null && skill.HasBehaviour()){
 
-                var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                if( lvl<= 0) return;
-                skill.GetBehaviour().onLivingVisibility(event, player, lvl, skill);
+            for(var id : entityVisibility){
+                var skill = SkillManager.Get().GetSkill(id.toLowerCase());
+
+                if(skill != null && skill.HasBehaviour()){
+                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    if( lvl<= 0) continue;
+                    skill.GetBehaviour().onLivingVisibility(event, player, lvl, skill);
+                }
             }
-
         }
     }
 

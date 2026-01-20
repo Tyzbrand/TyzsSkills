@@ -4,8 +4,7 @@ import com.tyzsskills.server.payloads.SkillTriggerPayload;
 import net.minecraft.server.level.ServerPlayer;
 
 import net.neoforged.neoforge.event.entity.living.*;
-import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
+import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -18,6 +17,9 @@ public abstract class SkillBehaviour {
     public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, Skill skill){}
     public void onPlayerFinishUsingItem(LivingEntityUseItemEvent.Finish event, ServerPlayer player, int lvl, Skill skill){}
     public void onPickupXp(PlayerXpEvent.PickupXp event, ServerPlayer player, int lvl, Skill skill){}
+    public void onEffectApplicable(MobEffectEvent.Applicable event, ServerPlayer player, int lvl, Skill skill){}
+    public void onTargetChange(LivingChangeTargetEvent event, ServerPlayer player, int lvl, Skill skill){}
+    public void onPlayerClone(PlayerEvent.Clone event, ServerPlayer player, int lvl, Skill skill){}
 
 
 

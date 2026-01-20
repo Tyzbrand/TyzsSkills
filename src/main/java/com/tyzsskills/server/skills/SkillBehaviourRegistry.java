@@ -27,6 +27,10 @@ public class SkillBehaviourRegistry {
         behaviours.put("stealth", new StealthEffect());
 
         behaviours.put("fire_resistance", new FireResistanceEffect());
+        behaviours.put("edible_rotten_flesh", new EdibleRottenFleshEffect());
+        behaviours.put("friendly_piglins", new FriendlyPiglinsEffect());
+        behaviours.put("villager_lure", new VillagerLureEffect());
+        behaviours.put("item_retention", new ItemRetentionEffect());
     }
 
     public static SkillBehaviour GetBehaviour(String id){

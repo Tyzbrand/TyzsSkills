@@ -1,0 +1,29 @@
+package com.tyzsskills.server.effects.skillEffects;
+
+import com.tyzsskills.server.model.Skill;
+import com.tyzsskills.server.model.SkillBehaviour;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.monster.piglin.Piglin;
+import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
+
+import java.util.Optional;
+import java.util.UUID;
+
+public class FriendlyPiglinsEffect extends SkillBehaviour {
+
+    @Override
+    public void onTargetChange(LivingChangeTargetEvent event, ServerPlayer player, int lvl, Skill skill) {
+        if (!(event.getEntity() instanceof Piglin piglin)) return;
+        if (piglin.getLastHurtByMob() == player) return;
+
+        var brain = piglin.getBrain();
+        if(brain.hasMemoryValue(MemoryModuleType.ANGRY_AT)){
+            Optional<UUID> angryAt = brain.getMemory(MemoryModuleType.ANGRY_AT);
+            if (angryAt.isPresent() && angryAt.get().equals(player.getUUID())) return;
+        }
+
+        event.setCanceled(true);
+        NotifyClient(player, skill);
+    }
+}

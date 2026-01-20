@@ -408,21 +408,6 @@ public class SkillsPreset {
                 "skill.tyzs_skills.trait_surge.displayName",
                 "skill.tyzs_skills.trait_surge.description"));
 
-        finalList.add(new Skill(
-                true,
-                "xp_reclaim",
-                2,
-                List.of(5, 8),
-                List.of(25f, 50f),
-                Skill.SkillType.IMMUTABLE,
-                Skill.CategoryType.MISC,
-                "",
-                null,
-                true,
-                "tyzs_skills:textures/gui/skills/xp_reclaim.png",
-                "skill.tyzs_skills.xp_reclaim.displayName",
-                "skill.tyzs_skills.xp_reclaim.description"));
-
         return finalList;
     }
 
