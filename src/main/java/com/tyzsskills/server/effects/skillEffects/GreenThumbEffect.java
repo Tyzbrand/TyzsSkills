@@ -6,10 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.NetherWartBlock;
-import net.minecraft.world.level.block.TallGrassBlock;
+import net.minecraft.world.level.block.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
 public class GreenThumbEffect extends SkillBehaviour {
@@ -22,8 +19,17 @@ public class GreenThumbEffect extends SkillBehaviour {
         boolean flag = false;
 
         if(block instanceof CropBlock crop && crop.isMaxAge(state)) flag = true;
-        else if(state.is(BlockTags.FLOWERS)) flag = true;
-        else if (block instanceof NetherWartBlock && state.getValue(NetherWartBlock.AGE) >= 3) {flag = true;}
+        else if (block instanceof NetherWartBlock && state.getValue(NetherWartBlock.AGE) >= 3) flag = true;
+        else if(block instanceof CocoaBlock && state.getValue(CocoaBlock.AGE) >= 2) flag = true;
+        else if (block instanceof TallGrassBlock || block instanceof DeadBushBlock) flag = true;
+        else if (block instanceof TallSeagrassBlock || block instanceof SeagrassBlock || block instanceof KelpBlock) flag = true;
+        else if(block instanceof PumpkinBlock) flag = true;
+        else if(block instanceof CactusBlock || block instanceof SugarCaneBlock || block instanceof BambooStalkBlock) flag = true;
+        else if(state.is(BlockTags.LEAVES)) flag = true;
+        else if(state.is(Blocks.MELON)) flag = true;
+        else if(state.is(Blocks.FERN) || state.is(Blocks.LARGE_FERN)) flag = true;
+        else if(state.is(Blocks.SHORT_GRASS)) flag = true;
+
 
         if(!flag) return;
 

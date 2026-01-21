@@ -20,10 +20,10 @@ public class NutritionEffect extends SkillBehaviour {
         int index = Math.min(lvl - 1, values.size() - 1);
         float bonusPercentage = values.get(index) / 100f;
 
-        int nutritionBonus = (int) Math.ceil(foodValue.nutrition() * bonusPercentage);
+        int nutritionBonus = Math.round(foodValue.nutrition() * bonusPercentage);
 
         if(nutritionBonus > 0){
-            player.getFoodData().eat(nutritionBonus, foodValue.saturation());
+            player.getFoodData().eat(nutritionBonus, foodValue.saturation() * 0.5f);
             NotifyClient(player, skill);
         }
     }

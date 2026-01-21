@@ -257,7 +257,7 @@ public class SkillsPreset {
                 "adrenaline",
                 1,
                 List.of(2),
-                List.of(20f),
+                List.of(25f),
                 Skill.SkillType.IMMUTABLE,
                 Skill.CategoryType.FIGHT,
                 "",
