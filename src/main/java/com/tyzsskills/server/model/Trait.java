@@ -13,7 +13,7 @@ public class Trait extends Skill{
                  String icon, String displayName, String description){
 
         super(active, id, 1, List.of(price) , List.of(), SkillType.TRAIT,
-                CategoryType.TRAITS, "", AttributeModifier.Operation.ADD_VALUE, purchasable, icon, displayName, description);
+                CategoryType.TRAITS, "", AttributeModifier.Operation.ADD_VALUE, purchasable, icon, displayName, description, "");
 
         this.powerWeight = powerWeight;
     }
@@ -46,6 +46,7 @@ public class Trait extends Skill{
         String icon = buffer.readUtf();
         String displayName = buffer.readUtf();
         String description = buffer.readUtf();
+        String unit = buffer.readUtf();
 
         int powerWeight = buffer.readInt();
 

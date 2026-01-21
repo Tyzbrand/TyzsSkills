@@ -36,7 +36,7 @@ public class AutoSyncClient {
     }
 
     public static void SyncConfig(ServerPlayer player){
-        PacketDistributor.sendToPlayer(player, new ConfigSyncPayload(Config.REFUND_SYSTEM.get(), Config.REFUND_PERCENTAGE.get()));
+        PacketDistributor.sendToPlayer(player, new ConfigSyncPayload(Config.REFUND_SYSTEM.get(), Config.REFUND_PERCENTAGE.get(), Config.TRAIT_UNLOCK_LEVEL.get()));
     }
 
     public static void SyncMainData(ServerPlayer player){

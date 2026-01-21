@@ -14,6 +14,13 @@
   "gui.tyzs_skills.inactive" : "Inactive",
   "gui.tyzs_skills.power" : "power",
 
+  "skill.tyzs_skills.unit.percentage" : "%",
+  "skill.tyzs_skills.unit.blocks" : "blocks",
+  "skill.tyzs_skills.unit.half_hearts" : "half hearts",
+  "skill.tyzs_skills.unit.damage" : "damage",
+  "skill.tyzs_skills.unit.trait_power" : "trait power",
+  "skill.tyzs_skills.unit.block_radius" : "block radius",
+
 
   "overlay.tyzs_skills.level" : "Level",
 

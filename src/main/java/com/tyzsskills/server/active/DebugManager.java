@@ -41,9 +41,11 @@ public class DebugManager {
     }
 
     public static void DebugResetData(ServerPlayer player){
+        //IL FAUT PAS OUBLIER DENVOYER UN PACKET AU CLIENT POUR QUE LUI AUSSI RESET DES CHOSES
         XpManager.SetXP(player, 0f);
         LevelManager.SetLevel(player, 1);
         SpManager.SetSP(player, 0);
+        PowerManager.SetPower(player, 0);
 
         var manager = SkillManager.Get();
 

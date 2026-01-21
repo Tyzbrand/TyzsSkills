@@ -26,7 +26,7 @@ public class Skill{
     public Skill(boolean active, String id, int maximumLevel,
                  List<Integer> prices, List<Float> values, SkillType type, CategoryType category,
                  String modifier, AttributeModifier.Operation operation, boolean purchasable,
-                 String icon, String displayName, String description)
+                 String icon, String displayName, String description, String unit)
     {
         this.active = active;
         this.id = id;
@@ -42,6 +42,7 @@ public class Skill{
         this.icon = icon;
         this.displayName = displayName;
         this.description = description;
+        this.unit = unit;
 
         if(category == CategoryType.ALL || category == CategoryType.BOOKMARKS) category = CategoryType.MISC;
     }
@@ -62,6 +63,7 @@ public class Skill{
     protected String icon;
     protected String displayName;
     protected String description;
+    protected String unit;
 
 
     //Getters
@@ -78,6 +80,7 @@ public class Skill{
     public String GetIcon(){return icon;}
     public String GetDisplayName(){return displayName;}
     public String GetDescription(){return description;}
+    public String GetUnit(){return unit;}
     public SkillBehaviour GetBehaviour(){return behaviour;}
     public boolean HasBehaviour(){return behaviour != null;}
 
@@ -121,6 +124,7 @@ public class Skill{
         buffer.writeUtf(icon);
         buffer.writeUtf(displayName);
         buffer.writeUtf(description);
+        buffer.writeUtf(unit);
     }
 
     public static @NotNull Skill ReadTraitFromBuffer(FriendlyByteBuf buffer){
@@ -141,8 +145,9 @@ public class Skill{
         String icon = buffer.readUtf();
         String displayName = buffer.readUtf();
         String description = buffer.readUtf();
+        String unit = buffer.readUtf();
 
         return new Skill(active, id, maxLevel, prices, values, type, category, modifier, operation, purchasable,
-                            icon, displayName, description);
+                            icon, displayName, description, unit);
     }
 }

@@ -34,7 +34,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/health_boost.png",
                 "skill.tyzs_skills.health_boost.displayName",
-                "skill.tyzs_skills.health_boost.description"));
+                "skill.tyzs_skills.health_boost.description",
+                "skill.tyzs_skills.unit.half_hearts"));
 
         finalList.add(new Skill(
                 true,
@@ -49,7 +50,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/oxygen_boost.png",
                 "skill.tyzs_skills.oxygen_boost.displayName",
-                "skill.tyzs_skills.oxygen_boost.description"));
+                "skill.tyzs_skills.oxygen_boost.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -64,7 +66,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/block_reach.png",
                 "skill.tyzs_skills.block_reach.displayName",
-                "skill.tyzs_skills.block_reach.description"));
+                "skill.tyzs_skills.block_reach.description",
+                "skill.tyzs_skills.unit.blocks"));
 
         finalList.add(new Skill(
                 true,
@@ -79,7 +82,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/attack_damage.png",
                 "skill.tyzs_skills.attack_damage.displayName",
-                "skill.tyzs_skills.attack_damage.description"));
+                "skill.tyzs_skills.attack_damage.description",
+                "skill.tyzs_skills.unit.damage"));
 
         finalList.add(new Skill(
                 true,
@@ -94,7 +98,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/sneak_speed.png",
                 "skill.tyzs_skills.sneak_speed.displayName",
-                "skill.tyzs_skills.sneak_speed.description"));
+                "skill.tyzs_skills.sneak_speed.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -109,7 +114,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/speed.png",
                 "skill.tyzs_skills.speed.displayName",
-                "skill.tyzs_skills.speed.description"));
+                "skill.tyzs_skills.speed.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -124,7 +130,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/step_height.png",
                 "skill.tyzs_skills.step_height.displayName",
-                "skill.tyzs_skills.step_height.description"));
+                "skill.tyzs_skills.step_height.description",
+                "skill.tyzs_skills.unit.blocks"));
 
         finalList.add(new Skill(
                 true,
@@ -139,7 +146,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/swim_speed.png",
                 "skill.tyzs_skills.swim_speed.displayName",
-                "skill.tyzs_skills.swim_speed.description"));
+                "skill.tyzs_skills.swim_speed.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         return finalList;
     }
@@ -160,7 +168,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/venomous_attack.png",
                 "skill.tyzs_skills.venomous_attack.displayName",
-                "skill.tyzs_skills.venomous_attack.description"));
+                "skill.tyzs_skills.venomous_attack.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -175,7 +184,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/critical_hit.png",
                 "skill.tyzs_skills.critical_hit.displayName",
-                "skill.tyzs_skills.critical_hit.description"));
+                "skill.tyzs_skills.critical_hit.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -190,7 +200,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/damage_deal.png",
                 "skill.tyzs_skills.damage_deal.displayName",
-                "skill.tyzs_skills.damage_deal.description"));
+                "skill.tyzs_skills.damage_deal.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -205,7 +216,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/bloodlust.png",
                 "skill.tyzs_skills.bloodlust.displayName",
-                "skill.tyzs_skills.bloodlust.description"));
+                "skill.tyzs_skills.bloodlust.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -220,7 +232,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/resistance.png",
                 "skill.tyzs_skills.resistance.displayName",
-                "skill.tyzs_skills.resistance.description"));
+                "skill.tyzs_skills.resistance.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -235,7 +248,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/backstab.png",
                 "skill.tyzs_skills.backstab.displayName",
-                "skill.tyzs_skills.backstab.description"));
+                "skill.tyzs_skills.backstab.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -250,7 +264,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/rage.png",
                 "skill.tyzs_skills.rage.displayName",
-                "skill.tyzs_skills.rage.description"));
+                "skill.tyzs_skills.rage.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -265,7 +280,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/adrenaline.png",
                 "skill.tyzs_skills.adrenaline.displayName",
-                "skill.tyzs_skills.adrenaline.description"));
+                "skill.tyzs_skills.adrenaline.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -280,7 +296,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/resilience.png",
                 "skill.tyzs_skills.resilience.displayName",
-                "skill.tyzs_skills.resilience.description"));
+                "skill.tyzs_skills.resilience.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         return finalList;
     }
@@ -301,7 +318,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/swift_learn.png",
                 "skill.tyzs_skills.swift_learn.displayName",
-                "skill.tyzs_skills.swift_learn.description"));
+                "skill.tyzs_skills.swift_learn.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -316,7 +334,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/green_thumb.png",
                 "skill.tyzs_skills.green_thumb.displayName",
-                "skill.tyzs_skills.green_thumb.description"));
+                "skill.tyzs_skills.green_thumb.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -331,7 +350,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/nutrition.png",
                 "skill.tyzs_skills.nutrition.displayName",
-                "skill.tyzs_skills.nutrition.description"));
+                "skill.tyzs_skills.nutrition.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -346,7 +366,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/experience_boost.png",
                 "skill.tyzs_skills.experience_boost.displayName",
-                "skill.tyzs_skills.experience_boost.description"));
+                "skill.tyzs_skills.experience_boost.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -361,7 +382,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/excavation.png",
                 "skill.tyzs_skills.excavation.displayName",
-                "skill.tyzs_skills.excavation.description"));
+                "skill.tyzs_skills.excavation.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -376,7 +398,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/stealth.png",
                 "skill.tyzs_skills.stealth.displayName",
-                "skill.tyzs_skills.stealth.description"));
+                "skill.tyzs_skills.stealth.description",
+                "skill.tyzs_skills.unit.percentage"));
 
         finalList.add(new Skill(
                 true,
@@ -391,7 +414,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/magnet.png",
                 "skill.tyzs_skills.magnet.displayName",
-                "skill.tyzs_skills.magnet.description"));
+                "skill.tyzs_skills.magnet.description",
+                "skill.tyzs_skills.unit.block_radius"));
 
         finalList.add(new Skill(
                 true,
@@ -406,7 +430,8 @@ public class SkillsPreset {
                 true,
                 "tyzs_skills:textures/gui/skills/trait_surge.png",
                 "skill.tyzs_skills.trait_surge.displayName",
-                "skill.tyzs_skills.trait_surge.description"));
+                "skill.tyzs_skills.trait_surge.description",
+                "skill.tyzs_skills.unit.trait_power"));
 
         return finalList;
     }

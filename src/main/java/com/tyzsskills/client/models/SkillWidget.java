@@ -128,15 +128,32 @@ public class SkillWidget {
         List<Component> tooltip = new ArrayList<>();
 
         //Simple TOOLTIP
-        if(skill.IsPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){
-
-            var text = Component.empty().append(GetPriceString(skill));
-            tooltip.add(text);
-            return tooltip;
+        if(CanRefund(skill) && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
+            tooltip.add(Component.translatable("gui.tyzs_skills.refund"));
         }
 
-        if(CanRefund(skill) && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)){
-            tooltip.add(Component.translatable("gui.tyzs_skills.refund"));
+        if(skill.IsPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
+
+            int maxLevel = this.skill.GetMaximumLevel();
+            int currentLevel = ClientCache.GetSkillLevel(this.skill.GetID().toLowerCase());
+
+            if(currentLevel < maxLevel){
+                float currentValue = currentLevel <= 0 ? 0f : this.skill.GetValues().get(currentLevel - 1);
+                float nextValue = this.skill.GetValues().get(currentLevel);
+
+                String valueDiff = MainGUI.SmartFormat(nextValue - currentValue);
+
+                var text = Component.empty().append(GetPriceString(skill));
+                tooltip.add(text);
+                tooltip.add(Component.literal(ChatFormatting.GREEN + "+")
+                        .append(Component.literal(valueDiff + " " + ChatFormatting.GREEN))
+                                .append(Component.translatable(this.skill.GetUnit())).withStyle(ChatFormatting.GREEN));
+            }
+            else tooltip.add(Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD));
+
+
+
+
             return tooltip;
         }
 
@@ -264,8 +281,8 @@ public class SkillWidget {
 
         return Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY)
                 .append(": ")
-                .append(Component.literal(String.valueOf(prices.get(currentLvl)))).append(" ")
-                .append(Component.translatable("gui.tyzs_skills.SP"));
+                .append(Component.literal(ChatFormatting.BLUE + String.valueOf(prices.get(currentLvl)))).append(" ")
+                .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.BLUE));
     }
 
 

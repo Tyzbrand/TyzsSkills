@@ -60,6 +60,9 @@ public class SkillLoader {
         String description = GetSafeString(source, "description");
         if(description == null) description = "Missing description";
 
+        String unit = GetSafeString(source, "unit");
+        if(unit == null) unit = "";
+
 
         Integer powerWeight = GetSafeInt(source, "powerWeight");
         if(powerWeight == null) powerWeight = 0;
@@ -87,7 +90,7 @@ public class SkillLoader {
 
         SkillManager.Get().RegisterSKill(
                 new Skill(state, id, maxLevel, prices, values, type,
-                        category, modifier, operation, purchasable, icon, displayName, description));
+                        category, modifier, operation, purchasable, icon, displayName, description, unit));
     }
 
 

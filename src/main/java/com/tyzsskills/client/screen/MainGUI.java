@@ -1,6 +1,7 @@
 package com.tyzsskills.client.screen;
 
 import ca.weblite.objc.Client;
+import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.client.ClientCache;
 import com.tyzsskills.client.models.*;
@@ -233,7 +234,8 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Skills"), mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY, leftPos + 55, topPos + 24, 15, 15)){ //Traits button
+        if( ClientCache.GetLvl() >= ClientCache.GetConfigDouble(Config.TRAIT_UNLOCK_LEVEL_KEY, 20D)
+                && isHovering(mouseX, mouseY, leftPos + 55, topPos + 24, 15, 15)){ //Traits button
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.traits"), mouseX, mouseY);
 
         }
@@ -395,6 +397,8 @@ public class MainGUI extends Screen {
         if (this.fightBtn != null) this.fightBtn.visible = isSkillMode;
         if (this.miscBtn != null) this.miscBtn.visible = isSkillMode;
         if (this.bookmarksBtn != null) this.bookmarksBtn.visible = isSkillMode;
+
+        if(this.traitBtn != null) this.traitBtn.visible = ClientCache.GetLvl() >= ClientCache.GetConfigDouble(Config.TRAIT_UNLOCK_LEVEL_KEY, 20D);
     }
 
     private void addScrollView(){

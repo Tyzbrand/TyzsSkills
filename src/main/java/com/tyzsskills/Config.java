@@ -15,6 +15,9 @@ public class Config {
     public static final String REFUND_PERCENTAGE_KEY = "refund_percentage";
     public static final ModConfigSpec.DoubleValue REFUND_PERCENTAGE;
 
+    public static final String TRAIT_UNLOCK_LEVEL_KEY = "trait_unlock";
+    public static final ModConfigSpec.DoubleValue TRAIT_UNLOCK_LEVEL;
+
     public static final ModConfigSpec.BooleanValue PREVENT_PLACED_BLOCK_XP;
 
     public static final ModConfigSpec.BooleanValue EARN_XP_IN_CREATIVE;
@@ -55,6 +58,10 @@ public class Config {
         REFUND_PERCENTAGE = commonBuilder
                 .comment("Percentage of the initial price refunded")
                 .defineInRange("refund_percentage", 30.0, 1.0, 100.0);
+
+        TRAIT_UNLOCK_LEVEL = commonBuilder
+                .comment("Blocks access and use of traits below a certain level")
+                .defineInRange("trait_unlock_level", 20.0, 1.0, Double.MAX_VALUE);
 
         PREVENT_PLACED_BLOCK_XP = commonBuilder
                 .comment("Prevent manually placed block from providing xp")

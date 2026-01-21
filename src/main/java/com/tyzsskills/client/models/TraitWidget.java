@@ -100,7 +100,7 @@ public class TraitWidget extends SkillWidget{
                     Component.literal("+")
                             .append(Component.literal(String.valueOf(this.trait.getPowerWeight())))
                             .append(Component.literal(" "))
-                            .append(Component.translatable("gui.tyzs_skills.power")));
+                            .append(Component.translatable("gui.tyzs_skills.power")) .withStyle(ChatFormatting.RED));
             return tooltip;
         }
 
@@ -143,6 +143,11 @@ public class TraitWidget extends SkillWidget{
 
                 tooltip.add(lineComponent);
             }
+            MutableComponent powerComponent =
+                    Component.literal("(" + this.trait.getPowerWeight() + " ")
+                            .append(Component.translatable("gui.tyzs_skills.power"))
+                            .append(Component.literal(")")).withStyle(ChatFormatting.RED);
+            tooltip.add(powerComponent);
         }
         return tooltip;
     }
