@@ -91,7 +91,7 @@ public class FoodValuesPreset {
                 ]
             },
             "category_J": {
-                "xp" : 100,
+                "xp" : 75,
                 "food": [
                     "minecraft:enchanted_golden_apple"
                 ]

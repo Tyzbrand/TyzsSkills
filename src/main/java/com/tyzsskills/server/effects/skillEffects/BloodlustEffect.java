@@ -3,6 +3,8 @@ package com.tyzsskills.server.effects.skillEffects;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.SkillBehaviour;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.world.entity.monster.Enemy;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 
 public class BloodlustEffect extends SkillBehaviour {
@@ -14,6 +16,7 @@ public class BloodlustEffect extends SkillBehaviour {
         if (values == null || values.isEmpty()) return;
 
         var target = event.getEntity();
+        if(!(target instanceof Enemy)) return;
         var targetHealth = target.getMaxHealth();
 
         int index = Math.min(lvl - 1, values.size() - 1);

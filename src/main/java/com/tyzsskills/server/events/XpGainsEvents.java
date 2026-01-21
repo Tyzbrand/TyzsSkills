@@ -58,8 +58,6 @@ public class XpGainsEvents {
 
     @SubscribeEvent
     public static void OnEntityWakeup(PlayerWakeUpEvent event){
-        if (!event.updateLevel()) return;
-
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
 
@@ -149,28 +147,6 @@ public class XpGainsEvents {
         });
     }
 
-//    @SubscribeEvent
-//    public static void OnToolModification(BlockEvent.BlockToolModificationEvent event){
-//        if(event.isCanceled() || event.isSimulated()) return;
-//        if (!(event.getPlayer() instanceof ServerPlayer player)) return;
-//        if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
-//
-//
-//        double strippingValue = Config.CARVING_XP_VALUE.get();
-//        double pathingValue = Config.LANDSCAPING_XP_VALUE.get();
-//
-//        if(event.getHeldItemStack().getItem() instanceof ShovelItem ||
-//                event.getHeldItemStack().getItem() instanceof HoeItem){
-//
-//            pathingValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-//            XpManager.AddXP(player, (float)pathingValue);
-//        }
-//
-//        if(event.getHeldItemStack().getItem() instanceof AxeItem){
-//            strippingValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-//            XpManager.AddXP(player, (float)strippingValue);
-//        }
-//    }
 
     @SubscribeEvent
     public static void OnPlayerTick(PlayerTickEvent.Post event){
@@ -181,7 +157,6 @@ public class XpGainsEvents {
         var data = player.getData(ExplorationProgression.DATA);
 
         double biomeValue = Config.NEW_BIOME_XP_VALUE.get();
-        double structureValue = Config.NEW_STRUCTURE_XP_VALUE.get();
         double dimensionValue = Config.NEW_DIMENSION_XP_VALUE.get();
 
 
@@ -206,33 +181,5 @@ public class XpGainsEvents {
                 XpManager.AddXP(player, (float)dimensionValue);
             }
         }
-
-        if(structureValue > 0.0){
-            var structureMap = player.serverLevel().structureManager().getAllStructuresAt(player.blockPosition());
-
-            if(!structureMap.isEmpty()){
-                var structureRegistry = player.serverLevel().registryAccess().registryOrThrow(Registries.STRUCTURE);
-
-                for(var structure : structureMap.keySet()){
-                    var structureKey = structureRegistry.getKey(structure);
-                    if (structureKey == null) continue;
-
-                    String structureId = structureKey.toString();
-
-                    if(!data.hasDiscoveredStructure(structureId)){
-                        data.addStructure(structureId);
-                        double finalValue = structureValue * player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-                        XpManager.AddXP(player, (float)finalValue);
-                    }
-                }
-            }
-        }
-
-
-
-
-
-
-
     }
 }

@@ -5,7 +5,7 @@ public class EntityXpValuesPreset {
         return """
         {
             "category_A": {
-                "xp" : 1,
+                "xp" : 2.5,
                 "entities": [
                         "minecraft:chicken",
                         "minecraft:endermite",
@@ -15,7 +15,7 @@ public class EntityXpValuesPreset {
                 ]
             },
             "category_B": {
-                "xp" : 2,
+                "xp" : 5,
                 "entities": [
                         "minecraft:cod",
                         "minecraft:cow",
@@ -29,7 +29,7 @@ public class EntityXpValuesPreset {
                 ]
             },
             "category_C": {
-                "xp" : 5,
+                "xp" : 12.5,
                 "entities": [
                         "minecraft:bogged",
                         "minecraft:creeper",
@@ -52,7 +52,7 @@ public class EntityXpValuesPreset {
                 ]
             },
             "category_D": {
-                "xp" : 7,
+                "xp" : 17,
                 "entities": [
                         "minecraft:hoglin",
                         "minecraft:piglin",
@@ -62,7 +62,7 @@ public class EntityXpValuesPreset {
                 ]
             },
             "category_E": {
-                "xp" : 10,
+                "xp" : 20,
                 "entities": [
                         "minecraft:blaze",
                         "minecraft:ghast",
@@ -73,7 +73,7 @@ public class EntityXpValuesPreset {
                 ]
             },
             "category_F": {
-                "xp" : 15,
+                "xp" : 25,
                 "entities": [
                         "minecraft:breeze",
                         "minecraft:evoker",
@@ -82,7 +82,7 @@ public class EntityXpValuesPreset {
                 ]
             },
             "category_G": {
-                "xp" : 20,
+                "xp" : 45,
                 "entities": [
                         "minecraft:enderman",
                         "minecraft:phantom",

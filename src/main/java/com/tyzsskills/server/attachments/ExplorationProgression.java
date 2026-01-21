@@ -18,7 +18,6 @@ public class ExplorationProgression implements INBTSerializable<CompoundTag> {
 
     private final Set<String> visitedBiomes = new HashSet<>();
     private final Set<String> visitedDimensions = new HashSet<>();
-    private final Set<String> visitedStructures = new HashSet<>();
     private long lastSleepDay = -1L;
 
     public void addBiome(String biomeID){
@@ -31,18 +30,9 @@ public class ExplorationProgression implements INBTSerializable<CompoundTag> {
 
     public void addDimension(String dimensionID){
         if(!hasDiscoveredDimension(dimensionID)) visitedDimensions.add(dimensionID.toLowerCase());
-        else visitedDimensions.remove(dimensionID.toLowerCase());
     }
     public boolean hasDiscoveredDimension(String dimensionID){
         return visitedDimensions.contains(dimensionID.toLowerCase());
-    }
-
-    public void addStructure(String structureID){
-        if(!hasDiscoveredStructure(structureID)) visitedStructures.add(structureID.toLowerCase());
-        else visitedStructures.remove(structureID.toLowerCase());
-    }
-    public boolean hasDiscoveredStructure(String structureID){
-        return visitedStructures.contains(structureID.toLowerCase());
     }
 
     public boolean hasAlreadySlept(long currentDay){
@@ -66,10 +56,6 @@ public class ExplorationProgression implements INBTSerializable<CompoundTag> {
         visitedDimensions.forEach(b -> dimensionList.add(StringTag.valueOf(b)));
         tag.put("dimensions", dimensionList);
 
-        ListTag structureList = new ListTag();
-        visitedStructures.forEach(b -> structureList.add(StringTag.valueOf(b)));
-        tag.put("structures", structureList);
-
         tag.putLong("last_sleep_day", lastSleepDay);
 
         return tag;
@@ -79,7 +65,6 @@ public class ExplorationProgression implements INBTSerializable<CompoundTag> {
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag compoundTag) {
         visitedBiomes.clear();
         visitedDimensions.clear();
-        visitedStructures.clear();
 
         if(compoundTag.contains("biomes")){
             for(var biome : compoundTag.getList("biomes", Tag.TAG_STRING)){
@@ -90,12 +75,6 @@ public class ExplorationProgression implements INBTSerializable<CompoundTag> {
         if(compoundTag.contains("dimensions")){
             for(var dimension : compoundTag.getList("dimensions", Tag.TAG_STRING)){
                 visitedDimensions.add(dimension.getAsString());
-            }
-        }
-
-        if(compoundTag.contains("structures")){
-            for(var structure : compoundTag.getList("structures", Tag.TAG_STRING)){
-                visitedStructures.add(structure.getAsString());
             }
         }
 
