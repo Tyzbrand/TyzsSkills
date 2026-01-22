@@ -9,6 +9,7 @@ import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import com.tyzsskills.server.xp.xpEvents.XpFood;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.HoeItem;
@@ -59,7 +60,11 @@ public class XpGainsEvents {
     @SubscribeEvent
     public static void OnEntityWakeup(PlayerWakeUpEvent event){
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if(!(player.level() instanceof ServerLevel level)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
+
+        long timeOfDay = level.getDayTime() % 24000L;
+        if (timeOfDay > 1000L) return;
 
         double sleepValue = Config.SLEEPING_XP_VALUE.get();
         if(sleepValue <= 0) return;

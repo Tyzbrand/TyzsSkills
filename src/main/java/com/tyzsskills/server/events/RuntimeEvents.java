@@ -311,7 +311,7 @@ public class RuntimeEvents {
     }
 
 
-    private final static String[] playerTickSkills = {"magnet", "villager_lure"};
+    private final static String[] playerTickSkills = {"magnet", "silver_tongue"};
     @SubscribeEvent
     public static void OnPlayerTick(PlayerTickEvent.Post event){
         var manager = SkillManager.Get();

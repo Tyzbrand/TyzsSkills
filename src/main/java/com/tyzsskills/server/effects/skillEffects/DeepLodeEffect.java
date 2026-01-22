@@ -98,7 +98,7 @@ public class DeepLodeEffect extends SkillBehaviour {
 
                     List<ItemStack> drops = currentState.getDrops(lootParams);
 
-                    if (SkillManager.Get().GetPlayerSkillLevel(player, "auto_smelt") > 0 && !hasSilkTouch) {
+                    if (SkillManager.Get().GetPlayerSkillLevel(player, "refiner") > 0 && !hasSilkTouch) {
                         List<ItemStack> smelted = RefinerEffect.smeltDrops(level, drops);
                         if (smelted != null) {
                             drops = smelted;
