@@ -22,6 +22,7 @@ public abstract class SkillBehaviour {
     public void onTargetChange(LivingChangeTargetEvent event, ServerPlayer player, int lvl, Skill skill){}
     public void onPlayerClone(PlayerEvent.Clone event, ServerPlayer player, int lvl, Skill skill){}
     public void OnNoiseAtPlayer(PlayLevelSoundEvent.AtEntity event, ServerPlayer player, int lvl, Skill skill){}
+    public void OnPlayerWakeUp(PlayerWakeUpEvent event, ServerPlayer player, int lvl, Skill skill){}
 
 
 

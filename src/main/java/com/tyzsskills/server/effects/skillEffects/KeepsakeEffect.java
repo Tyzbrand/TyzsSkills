@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.*;
 
-public class ItemRetentionEffect extends SkillBehaviour {
+public class KeepsakeEffect extends SkillBehaviour {
 
     private static final Map<UUID, Map<Integer, ItemStack>> SAVED_HOTBARS = new HashMap<>();
 

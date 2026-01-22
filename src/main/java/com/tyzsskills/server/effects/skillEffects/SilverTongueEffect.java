@@ -9,7 +9,7 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 
-public class VillagerLureEffect extends SkillBehaviour {
+public class SilverTongueEffect extends SkillBehaviour {
 
     @Override
     public void onPlayerTick(ServerPlayer player, int lvl, Skill skill) {

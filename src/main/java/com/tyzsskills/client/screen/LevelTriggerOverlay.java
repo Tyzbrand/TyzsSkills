@@ -93,7 +93,7 @@ public class LevelTriggerOverlay implements LayeredDraw.Layer {
         String spTextRaw = Component.translatable("gui.tyzs_skills.SP").getString().toUpperCase();
 
         MutableComponent text = Component.translatable("overlay.tyzs_skills.level")
-                .append(Component.literal(String.valueOf(currentLevel)))
+                .append(Component.literal(" " + String.valueOf(currentLevel)))
                 .append(Component.literal(" [+" + accumulatedSp + " " + spTextRaw + "]").withColor(COLOR_TEXT_SP));
 
         int textWidth = font.width(text);

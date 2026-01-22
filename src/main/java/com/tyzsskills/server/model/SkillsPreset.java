@@ -441,13 +441,13 @@ public class SkillsPreset {
 
         finalList.add(new Trait(
                 true,
-                "fire_resistance",
+                "cinder_blood",
                 6,
                 65,
                 true,
-                "tyzs_skills:textures/gui/skills/fire_resistance.png",
-                "skill.tyzs_skills.fire_resistance.displayName",
-                "skill.tyzs_skills.fire_resistance.description"));
+                "tyzs_skills:textures/gui/skills/cinder_blood.png",
+                "skill.tyzs_skills.cinder_blood.displayName",
+                "skill.tyzs_skills.cinder_blood.description"));
 
         finalList.add(new Trait(
                 true,
@@ -461,83 +461,93 @@ public class SkillsPreset {
 
         finalList.add(new Trait(
                 true,
-                "timber",
+                "root_cleaver",
                 3,
                 35,
                 true,
-                "tyzs_skills:textures/gui/skills/timber.png",
-                "skill.tyzs_skills.timber.displayName",
-                "skill.tyzs_skills.timber.description"));
+                "tyzs_skills:textures/gui/skills/root_cleaver.png",
+                "skill.tyzs_skills.root_cleaver.displayName",
+                "skill.tyzs_skills.root_cleaver.description"));
 
         finalList.add(new Trait(
                 true,
-                "edible_rotten_flesh",
+                "iron_gut",
                 1,
                 15,
                 true,
-                "tyzs_skills:textures/gui/skills/edible_rotten_flesh.png",
-                "skill.tyzs_skills.edible_rotten_flesh.displayName",
-                "skill.tyzs_skills.edible_rotten_flesh.description"));
+                "tyzs_skills:textures/gui/skills/iron_gut.png",
+                "skill.tyzs_skills.iron_gut.displayName",
+                "skill.tyzs_skills.iron_gut.description"));
 
         finalList.add(new Trait(
                 true,
-                "friendly_piglins",
+                "gilded_aura",
                 3,
                 30,
                 true,
-                "tyzs_skills:textures/gui/skills/friendly_piglins.png",
-                "skill.tyzs_skills.friendly_piglins.displayName",
-                "skill.tyzs_skills.friendly_piglins.description"));
+                "tyzs_skills:textures/gui/skills/gilded_aura.png",
+                "skill.tyzs_skills.gilded_aura.displayName",
+                "skill.tyzs_skills.gilded_aura.description"));
 
         finalList.add(new Trait(
                 true,
-                "villager_lure",
+                "silver_tongue",
                 2,
                 25,
                 true,
-                "tyzs_skills:textures/gui/skills/villager_lure.png",
-                "skill.tyzs_skills.villager_lure.displayName",
-                "skill.tyzs_skills.villager_lure.description"));
+                "tyzs_skills:textures/gui/skills/silver_tongue.png",
+                "skill.tyzs_skills.silver_tongue.displayName",
+                "skill.tyzs_skills.silver_tongue.description"));
 
         finalList.add(new Trait(
                 true,
-                "item_retention",
+                "keepsake",
                 7,
                 80,
                 true,
-                "tyzs_skills:textures/gui/skills/item_retention.png",
-                "skill.tyzs_skills.item_retention.displayName",
-                "skill.tyzs_skills.item_retention.description"));
+                "tyzs_skills:textures/gui/skills/keepsake.png",
+                "skill.tyzs_skills.keepsake.displayName",
+                "skill.tyzs_skills.keepsake.description"));
 
         finalList.add(new Trait(
                 true,
-                "noise_suppress",
+                "soundless",
                 5,
                 55,
                 true,
-                "tyzs_skills:textures/gui/skills/noise_suppress.png",
-                "skill.tyzs_skills.noise_suppress.displayName",
-                "skill.tyzs_skills.noise_suppress.description"));
+                "tyzs_skills:textures/gui/skills/soundless.png",
+                "skill.tyzs_skills.soundless.displayName",
+                "skill.tyzs_skills.soundless.description"));
 
         finalList.add(new Trait(
                 true,
-                "auto_smelt",
+                "refiner",
                 4,
                 45,
                 true,
-                "tyzs_skills:textures/gui/skills/auto_smelt.png",
-                "skill.tyzs_skills.auto_smelt.displayName",
-                "skill.tyzs_skills.auto_smelt.description"));
+                "tyzs_skills:textures/gui/skills/refiner.png",
+                "skill.tyzs_skills.refiner.displayName",
+                "skill.tyzs_skills.refiner.description"));
 
         finalList.add(new Trait(
                 true,
-                "cave_sight",
+                "deep_sight",
                 4,
                 50,
                 true,
-                "tyzs_skills:textures/gui/skills/cave_sight.png",
-                "skill.tyzs_skills.cave_sight.displayName",
-                "skill.tyzs_skills.cave_sight.description"));
+                "tyzs_skills:textures/gui/skills/deep_sight.png",
+                "skill.tyzs_skills.deep_sight.displayName",
+                "skill.tyzs_skills.deep_sight.description"));
+
+        finalList.add(new Trait(
+                true,
+                "deep_rest",
+                4,
+                40,
+                true,
+                "tyzs_skills:textures/gui/skills/deep_rest.png",
+                "skill.tyzs_skills.deep_rest.displayName",
+                "skill.tyzs_skills.deep_rest.description"));
 
 
         return finalList;

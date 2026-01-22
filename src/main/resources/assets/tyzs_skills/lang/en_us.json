@@ -111,33 +111,36 @@
   "skill.tyzs_skills.trait_surge.displayName" : "Trait surge",
   "skill.tyzs_skills.trait_surge.description" : "Increases the player's trait power by {value}",
 
-  "skill.tyzs_skills.fire_resistance.displayName" : "Fire resistance",
-  "skill.tyzs_skills.fire_resistance.description" : "Prevent fire damage (doesn't allow lava bath)",
+  "skill.tyzs_skills.cinder_blood.displayName" : "Cinder blood",
+  "skill.tyzs_skills.cinder_blood.description" : "Prevent fire damage (doesn't allow lava bath)",
 
   "skill.tyzs_skills.deep_lode.displayName" : "Deep lode",
   "skill.tyzs_skills.deep_lode.description" : "Allows you to break an ore vein in one go",
 
-  "skill.tyzs_skills.timber.displayName" : "Timber",
-  "skill.tyzs_skills.timber.description" : "Allows you to break a tree in one go",
+  "skill.tyzs_skills.root_cleaver.displayName" : "Root cleaver",
+  "skill.tyzs_skills.root_cleaver.description" : "Allows you to break a tree in one go",
 
-  "skill.tyzs_skills.edible_rotten_flesh.displayName" : "Edible rotten flesh",
-  "skill.tyzs_skills.edible_rotten_flesh.description" : "It's all in the title",
+  "skill.tyzs_skills.iron_gut.displayName" : "Iron gut",
+  "skill.tyzs_skills.iron_gut.description" : "",
 
-  "skill.tyzs_skills.friendly_piglins.displayName" : "Friendly piglins",
-  "skill.tyzs_skills.friendly_piglins.description" : "You no longer need golden armor to win the Piglins' sympathy",
+  "skill.tyzs_skills.gilded_aura.displayName" : "Gilded aura",
+  "skill.tyzs_skills.gilded_aura.description" : "You no longer need golden armor to win the Piglins' sympathy",
 
-  "skill.tyzs_skills.villager_lure.displayName" : "Villager lure",
-  "skill.tyzs_skills.villager_lure.description" : "Allows you to attract villagers by holding emeralds",
+  "skill.tyzs_skills.silver_tongue.displayName" : "Silver tongue",
+  "skill.tyzs_skills.silver_tongue.description" : "Allows you to attract villagers by holding emeralds",
 
-  "skill.tyzs_skills.item_retention.displayName" : "Item retention",
-  "skill.tyzs_skills.item_retention.description" : "Prevents the loss of hotbar contents upon death",
+  "skill.tyzs_skills.keepsake.displayName" : "Keepsake",
+  "skill.tyzs_skills.keepsake.description" : "Prevents the loss of hotbar contents upon death",
 
-  "skill.tyzs_skills.noise_suppress.displayName" : "Noise suppress",
-  "skill.tyzs_skills.noise_suppress.description" : "Prevents enemies and entities from hearing you",
+  "skill.tyzs_skills.soundless.displayName" : "Soundless",
+  "skill.tyzs_skills.soundless.description" : "Prevents enemies and entities from hearing you",
 
-  "skill.tyzs_skills.auto_smelt.displayName" : "Auto smelt",
-  "skill.tyzs_skills.auto_smelt.description" : "Automatically smelts raw ore",
+  "skill.tyzs_skills.refiner.displayName" : "Refiner",
+  "skill.tyzs_skills.refiner.description" : "Automatically smelts raw ore",
 
-  "skill.tyzs_skills.cave_sight.displayName" : "Cave sight",
-  "skill.tyzs_skills.cave_sight.description" : "Allows you to obtain a night vision effect in caves"
+  "skill.tyzs_skills.deep_sight.displayName" : "deep_sight",
+  "skill.tyzs_skills.deep_sight.description" : "Allows you to obtain a night vision effect in caves",
+
+  "skill.tyzs_skills.deep_rest.displayName" : "Deep rest",
+  "skill.tyzs_skills.deep_rest.description" : ""
 }

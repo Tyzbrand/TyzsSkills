@@ -26,15 +26,16 @@ public class SkillBehaviourRegistry {
         behaviours.put("magnet", new MagnetEffect());
         behaviours.put("stealth", new StealthEffect());
 
-        behaviours.put("fire_resistance", new FireResistanceEffect());
-        behaviours.put("edible_rotten_flesh", new EdibleRottenFleshEffect());
-        behaviours.put("friendly_piglins", new FriendlyPiglinsEffect());
-        behaviours.put("villager_lure", new VillagerLureEffect());
-        behaviours.put("item_retention", new ItemRetentionEffect());
-        behaviours.put("noise_suppress", new NoiseSuppressEffect());
-        behaviours.put("timber", new TimberEffect());
+        behaviours.put("cinder_blood", new CinderBloodEffect());
+        behaviours.put("iron_gut", new IronGutEffect());
+        behaviours.put("gilded_aura", new GildedAuraEffect());
+        behaviours.put("silver_tongue", new SilverTongueEffect());
+        behaviours.put("keepsake", new KeepsakeEffect());
+        behaviours.put("soundless", new SoundlessEffect());
+        behaviours.put("root_cleaver", new RootCleaverEffect());
         behaviours.put("deep_lode", new DeepLodeEffect());
-        behaviours.put("auto_smelt", new AutoSmeltEffect());
+        behaviours.put("refiner", new RefinerEffect());
+        behaviours.put("deep_rest", new DeepRestEffect());
     }
 
     public static SkillBehaviour GetBehaviour(String id){

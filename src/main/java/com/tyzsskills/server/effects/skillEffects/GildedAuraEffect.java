@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 import java.util.Optional;
 import java.util.UUID;
 
-public class FriendlyPiglinsEffect extends SkillBehaviour {
+public class GildedAuraEffect extends SkillBehaviour {
 
     @Override
     public void onTargetChange(LivingChangeTargetEvent event, ServerPlayer player, int lvl, Skill skill) {

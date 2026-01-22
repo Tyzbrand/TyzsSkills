@@ -1,6 +1,5 @@
 package com.tyzsskills.server.effects.skillEffects;
 
-import com.tyzsskills.client.ClientCache;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.SkillBehaviour;
 import com.tyzsskills.server.skills.SkillManager;
@@ -16,7 +15,6 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.block.Block;
@@ -101,7 +99,7 @@ public class DeepLodeEffect extends SkillBehaviour {
                     List<ItemStack> drops = currentState.getDrops(lootParams);
 
                     if (SkillManager.Get().GetPlayerSkillLevel(player, "auto_smelt") > 0 && !hasSilkTouch) {
-                        List<ItemStack> smelted = AutoSmeltEffect.smeltDrops(level, drops);
+                        List<ItemStack> smelted = RefinerEffect.smeltDrops(level, drops);
                         if (smelted != null) {
                             drops = smelted;
                         }

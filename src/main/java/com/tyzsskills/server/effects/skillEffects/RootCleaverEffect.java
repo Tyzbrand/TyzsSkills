@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-public class TimberEffect extends SkillBehaviour {
+public class RootCleaverEffect extends SkillBehaviour {
 
     private static final int MAX_LOGS = 128;
     private static final int MAX_LEAVES = 256;

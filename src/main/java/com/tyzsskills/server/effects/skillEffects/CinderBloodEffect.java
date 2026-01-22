@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
-public class FireResistanceEffect extends SkillBehaviour {
+public class CinderBloodEffect extends SkillBehaviour {
     @Override
     public void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, Skill skill) {
         if(event.getSource().is(DamageTypes.ON_FIRE) || event.getSource().is(DamageTypes.IN_FIRE)){

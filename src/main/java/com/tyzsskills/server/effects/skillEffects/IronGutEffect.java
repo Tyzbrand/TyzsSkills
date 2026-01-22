@@ -7,7 +7,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 
-public class EdibleRottenFleshEffect extends SkillBehaviour {
+public class IronGutEffect extends SkillBehaviour {
 
     @Override
     public void onEffectApplicable(MobEffectEvent.Applicable event, ServerPlayer player, int lvl, Skill skill) {

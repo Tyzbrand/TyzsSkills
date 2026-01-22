@@ -16,10 +16,7 @@ import net.minecraft.world.level.block.NetherWartBlock;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 import net.neoforged.neoforge.event.entity.living.*;
-import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
-import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
+import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
@@ -289,6 +286,24 @@ public class RuntimeEvents {
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().OnNoiseAtPlayer(event, player, lvl, skill);
+                }
+
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void OnPlayerWakeUp(PlayerWakeUpEvent event){
+        var manager = SkillManager.Get();
+
+        if (event.getEntity() instanceof ServerPlayer player){
+            for (Skill skill : manager.GetAllSkills()){
+                if(skill.HasBehaviour()){
+
+                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    if( lvl<= 0) continue;
+
+                    skill.GetBehaviour().OnPlayerWakeUp(event, player, lvl, skill);
                 }
 
             }
