@@ -33,6 +33,7 @@ public class SkillBehaviourRegistry {
         behaviours.put("item_retention", new ItemRetentionEffect());
         behaviours.put("noise_suppress", new NoiseSuppressEffect());
         behaviours.put("timber", new TimberEffect());
+        behaviours.put("deep_lode", new DeepLodeEffect());
     }
 
     public static SkillBehaviour GetBehaviour(String id){
