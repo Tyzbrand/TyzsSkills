@@ -6,7 +6,7 @@ import com.tyzsskills.server.model.SkillBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.stats.Stats; // AJOUT : Nécessaire pour les stats
+import net.minecraft.stats.Stats;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -41,11 +41,20 @@ public class TimberEffect extends SkillBehaviour {
 
         // 2. Vérifications de base
         if (player.isShiftKeyDown()) return;
-        ItemStack tool = player.getMainHandItem();
-        if (!tool.is(ItemTags.AXES)) return;
 
         BlockState state = event.getState();
         if (!state.is(BlockTags.LOGS)) return;
+
+        // --- VERIFICATION OUTIL MODIFIÉE ---
+        ItemStack tool = player.getMainHandItem();
+
+        // A. Interdire la main vide
+        if (tool.isEmpty()) return;
+
+        // B. Est-ce un outil valide ?
+        // On accepte SI : C'est une hache (Tag) OU SI l'outil mine ce bloc plus vite que la main nue (> 1.0F)
+        // Cela inclut les Chainsaws, Drills, Paxels, etc. mais exclut les fleurs ou les bâtons.
+        if (!tool.is(ItemTags.AXES) && tool.getDestroySpeed(state) <= 1.0F) return;
 
         BlockPos startPos = event.getPos();
         Block targetLogBlock = state.getBlock();
