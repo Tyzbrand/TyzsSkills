@@ -32,6 +32,7 @@ public class SkillBehaviourRegistry {
         behaviours.put("villager_lure", new VillagerLureEffect());
         behaviours.put("item_retention", new ItemRetentionEffect());
         behaviours.put("noise_suppress", new NoiseSuppressEffect());
+        behaviours.put("timber", new TimberEffect());
     }
 
     public static SkillBehaviour GetBehaviour(String id){
