@@ -1,6 +1,5 @@
 package com.tyzsskills.server.effects.skillEffects;
 
-import com.tyzsskills.server.attachments.BlockMarker;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.SkillBehaviour;
 import net.minecraft.core.BlockPos;
@@ -39,27 +38,20 @@ public class TimberEffect extends SkillBehaviour {
         if (IS_TIMBERING.get()) return;
         if(!(event.getLevel() instanceof ServerLevel level)) return;
 
-        // 2. Vérifications de base
         if (player.isShiftKeyDown()) return;
 
         BlockState state = event.getState();
         if (!state.is(BlockTags.LOGS)) return;
 
-        // --- VERIFICATION OUTIL MODIFIÉE ---
         ItemStack tool = player.getMainHandItem();
 
-        // A. Interdire la main vide
         if (tool.isEmpty()) return;
 
-        // B. Est-ce un outil valide ?
-        // On accepte SI : C'est une hache (Tag) OU SI l'outil mine ce bloc plus vite que la main nue (> 1.0F)
-        // Cela inclut les Chainsaws, Drills, Paxels, etc. mais exclut les fleurs ou les bâtons.
         if (!tool.is(ItemTags.AXES) && tool.getDestroySpeed(state) <= 1.0F) return;
 
         BlockPos startPos = event.getPos();
         Block targetLogBlock = state.getBlock();
 
-        // 3. ON PREND LE CONTRÔLE
         event.setCanceled(true);
 
         IS_TIMBERING.set(true);
@@ -68,7 +60,6 @@ public class TimberEffect extends SkillBehaviour {
             Queue<BlockPos> queue = new LinkedList<>();
             Set<BlockPos> visited = new HashSet<>();
 
-            // On ajoute le PREMIER BLOC à la file
             queue.add(startPos);
             visited.add(startPos);
 
@@ -76,7 +67,6 @@ public class TimberEffect extends SkillBehaviour {
             int leavesBroken = 0;
             Block targetLeafBlock = null;
 
-            // 4. POSITION DE DROP FIXE
             Vec3 dropPos = Vec3.atCenterOf(startPos).add(0, 0.5, 0);
 
             while (!queue.isEmpty()) {
@@ -96,13 +86,11 @@ public class TimberEffect extends SkillBehaviour {
                 if (isLog || isLeaf) {
                     if (isLeaf && leavesBroken >= MAX_LEAVES) continue;
 
-                    // 5. Permission & XP (Event check)
                     BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
                     NeoForge.EVENT_BUS.post(checkEvent);
 
                     if (checkEvent.isCanceled()) continue;
 
-                    // 6. Loot
                     LootParams.Builder lootParams = new LootParams.Builder(level)
                             .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(currentPos))
                             .withParameter(LootContextParams.TOOL, tool)
@@ -111,23 +99,17 @@ public class TimberEffect extends SkillBehaviour {
 
                     List<ItemStack> drops = currentState.getDrops(lootParams);
 
-                    // --- 7. DESTRUCTION (MODIFIÉ) ---
                     boolean success;
                     if (currentPos.equals(startPos)) {
-                        // PREMIER BLOC : destroyBlock = Son + Particules + Statistique Vanilla
                         success = level.destroyBlock(currentPos, false, player);
                     } else {
-                        // AUTRES BLOCS : removeBlock = SILENCIEUX (Pas de son, pas de particules, pas de stats)
                         success = level.removeBlock(currentPos, false);
-
-                        // AJOUT : Stats manuelles pour les blocs silencieux
                         if (success) {
                             player.awardStat(Stats.BLOCK_MINED.get(currentState.getBlock()));
                         }
                     }
 
                     if (success) {
-                        // Drop Statique au pied de l'arbre
                         for (ItemStack item : drops) {
                             if(!item.isEmpty()) {
                                 ItemEntity entity = new ItemEntity(level, dropPos.x, dropPos.y, dropPos.z, item.copy());
@@ -139,7 +121,6 @@ public class TimberEffect extends SkillBehaviour {
 
                         player.causeFoodExhaustion(0.005F);
 
-                        // 8. Propagation
                         if (isLog) {
                             logsBroken++;
                             tool.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);

@@ -1,8 +1,12 @@
 package com.tyzsskills.server.effects.skillEffects;
 
+import com.tyzsskills.client.ClientCache;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.SkillBehaviour;
+import com.tyzsskills.server.skills.SkillManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,8 +15,10 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -64,10 +70,14 @@ public class DeepLodeEffect extends SkillBehaviour {
 
             Vec3 dropPos = Vec3.atCenterOf(startPos).add(0, 0.5, 0);
 
-            boolean hasSilkTouch = EnchantmentHelper.getItemEnchantmentLevel(
-                    level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SILK_TOUCH),
-                    tool
-            ) > 0;
+            if (!tool.isCorrectToolForDrops(state)) return;
+
+            Holder<Enchantment> silkTouchHolder = level.registryAccess()
+                    .lookupOrThrow(Registries.ENCHANTMENT)
+                    .getOrThrow(Enchantments.SILK_TOUCH);
+
+            ItemEnchantments enchants = tool.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+             boolean hasSilkTouch = enchants.getLevel(silkTouchHolder) > 0;
 
             while (!queue.isEmpty()) {
                 if (blocksBroken >= MAX_BLOCKS) break;
@@ -89,6 +99,13 @@ public class DeepLodeEffect extends SkillBehaviour {
                             .withParameter(LootContextParams.BLOCK_STATE, currentState);
 
                     List<ItemStack> drops = currentState.getDrops(lootParams);
+
+                    if (SkillManager.Get().GetPlayerSkillLevel(player, "auto_smelt") > 0 && !hasSilkTouch) {
+                        List<ItemStack> smelted = AutoSmeltEffect.smeltDrops(level, drops);
+                        if (smelted != null) {
+                            drops = smelted;
+                        }
+                    }
 
                     int vanillaXp = currentState.getExpDrop(level, currentPos, level.getBlockEntity(currentPos), player, tool);
 

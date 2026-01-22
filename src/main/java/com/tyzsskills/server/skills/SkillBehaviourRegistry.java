@@ -34,6 +34,7 @@ public class SkillBehaviourRegistry {
         behaviours.put("noise_suppress", new NoiseSuppressEffect());
         behaviours.put("timber", new TimberEffect());
         behaviours.put("deep_lode", new DeepLodeEffect());
+        behaviours.put("auto_smelt", new AutoSmeltEffect());
     }
 
     public static SkillBehaviour GetBehaviour(String id){
