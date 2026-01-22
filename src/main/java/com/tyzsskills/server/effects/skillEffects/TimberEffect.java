@@ -6,6 +6,7 @@ import com.tyzsskills.server.model.SkillBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats; // AJOUT : Nécessaire pour les stats
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -49,9 +50,7 @@ public class TimberEffect extends SkillBehaviour {
         BlockPos startPos = event.getPos();
         Block targetLogBlock = state.getBlock();
 
-        // 3. ON PREND LE CONTRÔLE :
-        // On annule le cassage vanilla pour gérer le premier bloc nous-mêmes.
-        // Cela permet d'appliquer la logique de drop unifiée et les vérifs XP sur le 1er bloc.
+        // 3. ON PREND LE CONTRÔLE
         event.setCanceled(true);
 
         IS_TIMBERING.set(true);
@@ -60,7 +59,7 @@ public class TimberEffect extends SkillBehaviour {
             Queue<BlockPos> queue = new LinkedList<>();
             Set<BlockPos> visited = new HashSet<>();
 
-            // On ajoute le PREMIER BLOC à la file pour qu'il soit traité par la boucle
+            // On ajoute le PREMIER BLOC à la file
             queue.add(startPos);
             visited.add(startPos);
 
@@ -68,7 +67,7 @@ public class TimberEffect extends SkillBehaviour {
             int leavesBroken = 0;
             Block targetLeafBlock = null;
 
-            // 4. POSITION DE DROP FIXE : Au centre du bloc de départ (pied de l'arbre) + un peu de hauteur
+            // 4. POSITION DE DROP FIXE
             Vec3 dropPos = Vec3.atCenterOf(startPos).add(0, 0.5, 0);
 
             while (!queue.isEmpty()) {
@@ -80,7 +79,6 @@ public class TimberEffect extends SkillBehaviour {
                 boolean isLog = currentState.is(targetLogBlock);
                 boolean isLeaf = currentState.is(BlockTags.LEAVES);
 
-                // Check Intelligent des Feuilles (Même type uniquement)
                 if (isLeaf) {
                     if (targetLeafBlock == null) targetLeafBlock = currentState.getBlock();
                     else if (currentState.getBlock() != targetLeafBlock) continue;
@@ -90,14 +88,12 @@ public class TimberEffect extends SkillBehaviour {
                     if (isLeaf && leavesBroken >= MAX_LEAVES) continue;
 
                     // 5. Permission & XP (Event check)
-                    // On poste un event pour que les autres mods (et notre XpGainsEvents) réagissent.
-                    // Comme on traite aussi startPos ici, l'XP sera vérifiée correctement même pour le 1er bloc.
                     BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
                     NeoForge.EVENT_BUS.post(checkEvent);
 
-                    if (checkEvent.isCanceled()) continue; // Bloqué par un Claim ou autre
+                    if (checkEvent.isCanceled()) continue;
 
-                    // 6. Loot & Destruction
+                    // 6. Loot
                     LootParams.Builder lootParams = new LootParams.Builder(level)
                             .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(currentPos))
                             .withParameter(LootContextParams.TOOL, tool)
@@ -106,7 +102,20 @@ public class TimberEffect extends SkillBehaviour {
 
                     List<ItemStack> drops = currentState.getDrops(lootParams);
 
-                    boolean success = level.destroyBlock(currentPos, false, player);
+                    // --- 7. DESTRUCTION (MODIFIÉ) ---
+                    boolean success;
+                    if (currentPos.equals(startPos)) {
+                        // PREMIER BLOC : destroyBlock = Son + Particules + Statistique Vanilla
+                        success = level.destroyBlock(currentPos, false, player);
+                    } else {
+                        // AUTRES BLOCS : removeBlock = SILENCIEUX (Pas de son, pas de particules, pas de stats)
+                        success = level.removeBlock(currentPos, false);
+
+                        // AJOUT : Stats manuelles pour les blocs silencieux
+                        if (success) {
+                            player.awardStat(Stats.BLOCK_MINED.get(currentState.getBlock()));
+                        }
+                    }
 
                     if (success) {
                         // Drop Statique au pied de l'arbre
@@ -114,31 +123,28 @@ public class TimberEffect extends SkillBehaviour {
                             if(!item.isEmpty()) {
                                 ItemEntity entity = new ItemEntity(level, dropPos.x, dropPos.y, dropPos.z, item.copy());
                                 entity.setDefaultPickUpDelay();
-                                entity.setDeltaMovement(Vec3.ZERO); // Pas de mouvement, pile au pied
+                                entity.setDeltaMovement(Vec3.ZERO);
                                 level.addFreshEntity(entity);
                             }
                         }
 
                         player.causeFoodExhaustion(0.005F);
 
-                        // 7. Propagation
+                        // 8. Propagation
                         if (isLog) {
                             logsBroken++;
-                            // Unbreaking est géré automatiquement ici par hurtAndBreak
                             tool.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
                             if (tool.isEmpty()) break;
 
                             addNeighbors(currentPos, queue, visited);
                         } else {
                             leavesBroken++;
-                            // Propagation Feuilles -> Feuilles uniquement
                             addLeafNeighbors(currentPos, queue, visited, level);
                         }
                     }
                 }
             }
 
-            // Notification visuelle seulement si on a cassé quelque chose
             if(logsBroken > 0) NotifyClient(player, skill);
 
         } finally {
