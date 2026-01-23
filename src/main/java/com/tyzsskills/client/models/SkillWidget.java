@@ -274,15 +274,21 @@ public class SkillWidget {
 
         var currentLvl = ClientCache.GetSkillLevel(skill.GetID());
         if(currentLvl > skill.GetMaximumLevel()) return Component.translatable("gui.tyzs_skills.error_value");
-        if(currentLvl  == skill.GetMaximumLevel()) return  Component.translatable("gui.tyzs_skills.level_max");
+        if(currentLvl  == skill.GetMaximumLevel()) return  Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD);
 
         var prices = skill.GetPrices();
         if(currentLvl >= prices.size()) return Component.translatable("gui.tyzs_skills.error_value");
 
-        return Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY)
-                .append(": ")
-                .append(Component.literal(ChatFormatting.BLUE + String.valueOf(prices.get(currentLvl)))).append(" ")
-                .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.BLUE));
+        return CanBuy(skill) ?
+                Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY)
+                        .append(": ")
+                        .append(Component.literal(ChatFormatting.BLUE + String.valueOf(prices.get(currentLvl)))).append(" ")
+                        .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.BLUE))
+                :
+                (Component.translatable("gui.tyzs_skills.cost")
+                        .append(": ").append(Component.literal(String.valueOf(prices.get(currentLvl))))
+                        .append(" ").append(Component.translatable("gui.tyzs_skills.SP")).withStyle(ChatFormatting.RED));
+
     }
 
 

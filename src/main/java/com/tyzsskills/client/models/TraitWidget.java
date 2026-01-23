@@ -93,14 +93,12 @@ public class TraitWidget extends SkillWidget{
         //Plusieurs TOOTLIPS
 
         if(skill.IsPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
+//            if(this.CanBuy(this.trait)
+//                    && (ClientCache.GetPower() + this.trait.getPowerWeight()) > Minecraft.getInstance().player.getAttribute(AttributeRegistry.TRAIT_POWER).getValue()){
+//                tooltip.add(Component.translatable("gui.tyzs_skills.power_needed").withStyle(ChatFormatting.RED));
+//            }
+            tooltip.add(Component.empty().append(GetPriceString(skill)));
 
-            var text = Component.empty().append(GetPriceString(skill));
-            tooltip.add(text);
-            tooltip.add(
-                    Component.literal("+")
-                            .append(Component.literal(String.valueOf(this.trait.getPowerWeight())))
-                            .append(Component.literal(" "))
-                            .append(Component.translatable("gui.tyzs_skills.power")) .withStyle(ChatFormatting.RED));
             return tooltip;
         }
 
@@ -146,7 +144,7 @@ public class TraitWidget extends SkillWidget{
             MutableComponent powerComponent =
                     Component.literal("(" + this.trait.getPowerWeight() + " ")
                             .append(Component.translatable("gui.tyzs_skills.power"))
-                            .append(Component.literal(")")).withStyle(ChatFormatting.RED);
+                            .append(Component.literal(")")).withStyle(ChatFormatting.BLUE);
             tooltip.add(powerComponent);
         }
         return tooltip;

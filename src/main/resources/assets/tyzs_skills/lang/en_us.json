@@ -13,6 +13,7 @@
   "gui.tyzs_skills.active" : "Active",
   "gui.tyzs_skills.inactive" : "Inactive",
   "gui.tyzs_skills.power" : "power",
+  "gui.tyzs_skills.power_needed" : "Need power",
 
   "skill.tyzs_skills.unit.percentage" : "%",
   "skill.tyzs_skills.unit.blocks" : "blocks",

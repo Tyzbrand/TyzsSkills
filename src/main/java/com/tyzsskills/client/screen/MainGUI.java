@@ -276,12 +276,6 @@ public class MainGUI extends Screen {
 
     }
 
-    private void renderIcons(GuiGraphics gui){
-
-    }
-
-
-
     private void addButtons(){
          this.skillBtn = new CustomTabButton(
                 leftPos + 55, topPos + 6,
@@ -387,6 +381,10 @@ public class MainGUI extends Screen {
                     this.refreshList();
                 });
         this.addRenderableWidget(this.bookmarksBtn);
+    }
+
+    private void renderIcons(GuiGraphics gui){
+        renderIcon(gui, .65f, 233, 191, 15, 16, leftPos+43, topPos+65, 8);
     }
 
     private void updateButtonsVisibility() {
