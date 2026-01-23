@@ -2,6 +2,7 @@ package com.tyzsskills;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 
+import java.util.List;
 
 
 public class Config {
@@ -34,7 +35,6 @@ public class Config {
     public static final ModConfigSpec.DoubleValue ADVANCEMENT_CHALLENGE_XP_VALUE;
     public static final ModConfigSpec.DoubleValue NEW_BIOME_XP_VALUE;
     public static final ModConfigSpec.DoubleValue NEW_DIMENSION_XP_VALUE;
-    public static final ModConfigSpec.DoubleValue NEW_STRUCTURE_XP_VALUE;
 
 
     //==================Client Config==================
@@ -45,6 +45,8 @@ public class Config {
     public static final ModConfigSpec.BooleanValue SHOW_SKILL_OVERLAY;
     public static final ModConfigSpec.BooleanValue SHOW_OVERLAYS_IN_CREATIVE;
     public static final ModConfigSpec.BooleanValue SHOW_DEBUG_MESSAGES;
+    public static final ModConfigSpec.DoubleValue FOV_REDUCTION;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> FOV_AFFECTED_SKILLS;
 
     static {
         //Construction du COMMON
@@ -68,6 +70,11 @@ public class Config {
                 .define("prevent_placed_block_xp", true);
 
         commonBuilder.pop();
+
+
+
+
+
         commonBuilder.push("xp_values");
 
         EARN_XP_IN_CREATIVE = commonBuilder
@@ -118,10 +125,6 @@ public class Config {
                 .comment("Xp gains for discovering new biome")
                 .defineInRange("biome_gain", 45.0, .0, Double.MAX_VALUE);
 
-        NEW_STRUCTURE_XP_VALUE = commonBuilder
-                .comment("Xp gains for discovering new structure")
-                .defineInRange("structure_gain", 100.0, .0, Double.MAX_VALUE);
-
         NEW_DIMENSION_XP_VALUE = commonBuilder
                 .comment("Xp gains for discovering new dimension")
                 .defineInRange("dimension_gain", 500.0, .0, Double.MAX_VALUE);
@@ -131,10 +134,16 @@ public class Config {
 
 
 
+
+
         //Construction du CLIENT
         ModConfigSpec.Builder clientBuilder = new ModConfigSpec.Builder();
 
-        clientBuilder.comment("Visual Settings").push("overlays");
+        clientBuilder.comment("Client Settings").push("overlays");
+
+        SHOW_OVERLAYS_IN_CREATIVE = clientBuilder
+                .comment("Display overlays in creative")
+                .define("show_overlays_in_creative", false);
 
         SHOW_XP_OVERLAY = clientBuilder
                 .comment("Display xp gain overlay")
@@ -148,16 +157,38 @@ public class Config {
                 .comment("Display skill activation icons")
                 .define("show_skill_overlay", true);
 
-        SHOW_OVERLAYS_IN_CREATIVE = clientBuilder
-                .comment("Display overlays in creative")
-                .define("show_overlays_in_creative", false);
-
         clientBuilder.pop();
+
+
+
+
+
+
         clientBuilder.push("debug");
 
         SHOW_DEBUG_MESSAGES = clientBuilder
                 .comment("Show debug messages")
                 .define("show_debug_messages", false);
+
+        clientBuilder.pop();
+
+
+
+
+
+
+        clientBuilder.push("accessibility");
+
+        FOV_REDUCTION = clientBuilder
+                .comment("Reduces the FOV effect that can be caused by skills (0.0 = Normal Minecraft, 1.0 = No FOV change)")
+                .defineInRange("speed_fov_reduction", 0.95f, 0f, 1f);
+
+        FOV_AFFECTED_SKILLS = clientBuilder
+                .comment("Defines skills that are affected by the fov reduction")
+                .defineListAllowEmpty("fov_affected_skills",
+                        () -> List.of("speed_boost"),
+                        () -> "skill_id",
+                        obj -> obj instanceof String);
 
         clientBuilder.pop();
         CLIENT_SPEC = clientBuilder.build();

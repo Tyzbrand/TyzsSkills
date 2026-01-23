@@ -90,7 +90,7 @@ public class SkillsPreset {
                 "sneak_speed",
                 5,
                 List.of(2, 2, 3, 3, 4),
-                List.of(20f, 40f, 60f, 80f, 100f),
+                List.of(30f, 60f, 90f, 120f, 150f),
                 Skill.SkillType.GENERIC,
                 Skill.CategoryType.ABILITIES,
                 "minecraft:player.sneaking_speed",

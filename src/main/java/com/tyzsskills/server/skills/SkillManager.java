@@ -14,7 +14,11 @@ import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.Trait;
 import com.tyzsskills.server.payloads.SkillBookmarksPayload;
 import com.tyzsskills.server.payloads.SkillLevelSyncPayload;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class SkillManager {
@@ -99,6 +103,33 @@ public class SkillManager {
 
         int currentLvl = data.getInt(key);
         if(currentLvl <= 0 || currentLvl > skill.GetMaximumLevel()) return;
+
+        if(skill.GetType() == Skill.SkillType.GENERIC){
+
+            ResourceLocation attributeID = ResourceLocation.tryParse(skill.GetModifier());
+            if(attributeID == null) return;
+            Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
+
+            if(attribute == AttributeRegistry.TRAIT_POWER.get()){
+                var att = player.getAttribute(AttributeRegistry.TRAIT_POWER);
+                if(att == null) return;
+
+                int max = (int)att.getValue();
+                int current = PowerManager.GetPower(player);
+
+                int index = Math.min(currentLvl - 1, skill.GetValues().size() - 1);
+                float currentValue = skill.GetValues().get(index);
+
+                float powerLoss = currentValue;
+
+                if (currentLvl > 1) {
+                    int prevIndex = Math.min(currentLvl - 2, skill.GetValues().size() - 1);
+                    float prevValue = skill.GetValues().get(prevIndex);
+                    powerLoss = currentValue - prevValue;
+                }
+                if(current > (max - (int)powerLoss)) return;
+            }
+        }
 
         var prices = skill.GetPrices();
         if (currentLvl > prices.size()) return;

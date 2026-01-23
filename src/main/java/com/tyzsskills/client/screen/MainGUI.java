@@ -226,7 +226,11 @@ public class MainGUI extends Screen {
                 && isHovering(mouseX, mouseY, leftPos+173, topPos+17, 123, 6)){ //Power Bar
             String powerTooltip = SmartFormat(ClientCache.GetPower()) + "/" + SmartFormat(
                     (float)Minecraft.getInstance().player.getAttribute(AttributeRegistry.TRAIT_POWER).getValue()) ;
-            gui.renderTooltip(this.font, Component.literal(powerTooltip), mouseX, mouseY);
+
+            MutableComponent finalText =  Component.translatable("gui.tyzs_skills.power")
+                    .append(Component.literal(": "))
+                    .append(Component.literal(powerTooltip));
+            gui.renderTooltip(this.font, finalText, mouseX, mouseY);
         }
 
 

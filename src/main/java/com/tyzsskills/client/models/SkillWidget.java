@@ -1,9 +1,12 @@
 package com.tyzsskills.client.models;
 
+import ca.weblite.objc.Client;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.client.ClientCache;
 import com.tyzsskills.client.screen.MainGUI;
+import com.tyzsskills.server.active.AttributeRegistry;
+import com.tyzsskills.server.active.PowerManager;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.Trait;
 import com.tyzsskills.server.payloads.CActionSkillPayload;
@@ -263,6 +266,29 @@ public class SkillWidget {
 
         var currentLvl = ClientCache.GetSkillLevel(skill.GetID());
         if(currentLvl > skill.GetMaximumLevel() || currentLvl < 1) return false;
+
+        if(this.skill.GetType() == Skill.SkillType.GENERIC){
+            String powerAttrId = AttributeRegistry.TRAIT_POWER.getId().toString();
+
+            if(this.skill.GetModifier().equals(powerAttrId)){
+                var att = client.getAttribute(AttributeRegistry.TRAIT_POWER);
+                if(att == null) return false;
+
+                int max = (int)att.getValue();
+                int current = ClientCache.GetPower();
+
+                int index = Math.min(currentLvl - 1, skill.GetValues().size() - 1);
+                float currentValue = skill.GetValues().get(index);
+                float powerLoss = currentValue;
+
+                if (currentLvl > 1) {
+                    int prevIndex = Math.min(currentLvl - 2, skill.GetValues().size() - 1);
+                    float prevValue = skill.GetValues().get(prevIndex);
+                    powerLoss = currentValue - prevValue;
+                }
+                if(current > (max - (int)powerLoss)) return false;
+            }
+        }
 
         var prices = skill.GetPrices();
         return currentLvl <= prices.size();

@@ -91,14 +91,48 @@ public class TraitWidget extends SkillWidget{
         }
 
         //Plusieurs TOOTLIPS
+        if(skill.IsPurchasable() && skill.IsSkillActive() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
 
-        if(skill.IsPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
-//            if(this.CanBuy(this.trait)
-//                    && (ClientCache.GetPower() + this.trait.getPowerWeight()) > Minecraft.getInstance().player.getAttribute(AttributeRegistry.TRAIT_POWER).getValue()){
-//                tooltip.add(Component.translatable("gui.tyzs_skills.power_needed").withStyle(ChatFormatting.RED));
-//            }
+            int currentLvl = ClientCache.GetSkillLevel(skill.GetID());
+            if(currentLvl >= skill.GetMaximumLevel()) {
+                tooltip.add(Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD));
+                return tooltip;
+            }
+
+            var prices = skill.GetPrices();
+            if(currentLvl >= prices.size()) return tooltip; // Sécurité liste
+            int price = prices.get(currentLvl);
+
+
+            if(ClientCache.GetSP() < price) {
+                tooltip.add(Component.empty().append(GetPriceString(skill)));
+                return tooltip;
+            }
+
+            LocalPlayer player = Minecraft.getInstance().player;
+            if(player != null){
+                var attr = player.getAttribute(AttributeRegistry.TRAIT_POWER);
+                if(attr != null){
+                    int maxPower = (int)attr.getValue();
+                    int futurePower = ClientCache.GetPower() + this.trait.getPowerWeight();
+
+                    if(futurePower > maxPower){
+                        tooltip.add(Component.translatable("gui.tyzs_skills.power_needed").withStyle(ChatFormatting.RED));
+                        return tooltip;
+                    }
+                }
+            }
+
             tooltip.add(Component.empty().append(GetPriceString(skill)));
 
+            MutableComponent powerTrad = Component.translatable("gui.tyzs_skills.power");
+            String powerLow = powerTrad.getString().toLowerCase();
+
+            tooltip.add(
+                    Component.literal("+")
+                            .append(Component.literal(String.valueOf(this.trait.getPowerWeight())))
+                            .append(Component.literal(" "))
+                            .append(Component.literal(powerLow)) .withStyle(ChatFormatting.RED));
             return tooltip;
         }
 
@@ -141,9 +175,13 @@ public class TraitWidget extends SkillWidget{
 
                 tooltip.add(lineComponent);
             }
+
+            MutableComponent powerTrad = Component.translatable("gui.tyzs_skills.power");
+            String powerLow = powerTrad.getString().toLowerCase();
+
             MutableComponent powerComponent =
                     Component.literal("(" + this.trait.getPowerWeight() + " ")
-                            .append(Component.translatable("gui.tyzs_skills.power"))
+                            .append(Component.literal(powerLow))
                             .append(Component.literal(")")).withStyle(ChatFormatting.BLUE);
             tooltip.add(powerComponent);
         }
