@@ -47,6 +47,12 @@ public class ExplorationProgression implements INBTSerializable<CompoundTag> {
         if(currentDay >= 0L) lastSleepDay = currentDay;
     }
 
+    public void resetPlayerData(){
+        visitedBiomes.clear();
+        visitedDimensions.clear();
+        lastSleepDay = -1L;
+    }
+
 
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {

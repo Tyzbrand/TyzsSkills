@@ -3,6 +3,7 @@ package com.tyzsskills.client;
 import com.tyzsskills.Config;
 import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.client.screen.XpTriggerOverlay;
+import com.tyzsskills.server.active.LevelManager;
 import com.tyzsskills.server.model.*;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.client.Minecraft;
@@ -141,6 +142,11 @@ public class ClientCache {
         String id = skill.GetID().toLowerCase();
         int currentLvl = GetSkillLevel(id);
 
+        if(skill instanceof Trait){
+            if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true)) return;
+            if(clientLevel < GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20)) return;
+        }
+
         if (currentLvl >= skill.GetMaximumLevel()) return;
 
         var prices = skill.GetPrices();
@@ -154,9 +160,13 @@ public class ClientCache {
     }
 
     public static void PredictRefund(Skill skill) {
-
         String id = skill.GetID().toLowerCase();
         int currentLvl = GetSkillLevel(id);
+
+        if(skill instanceof Trait){
+            if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true)) return;
+            if(clientLevel < GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20)) return;
+        }
 
         if (currentLvl <= 0) return;
 

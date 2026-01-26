@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.server.active.AttributeRegistry;
+import com.tyzsskills.server.active.LevelManager;
 import com.tyzsskills.server.active.PowerManager;
 import com.tyzsskills.server.active.SpManager;
 import com.tyzsskills.server.effects.GenericEffects;
@@ -51,6 +52,11 @@ public class SkillManager {
     {
         var skill = GetSkill(id);
         if(player == null || skill == null) return;
+
+        if(skill instanceof Trait){
+            if(!Config.TRAIT_SYSTEM.get()) return;
+            if(LevelManager.GetLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
+        }
 
         var data = player.getPersistentData();
         var key = skill.GetID() + SKILL_LEVEL_SIGNATURE;
@@ -97,6 +103,12 @@ public class SkillManager {
     {
         var skill = GetSkill(id);
         if(player == null || skill == null || !Config.REFUND_SYSTEM.get()) return;
+
+        if(skill instanceof Trait){
+            if(!Config.TRAIT_SYSTEM.get()) return;
+            if(LevelManager.GetLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
+        }
+
 
         var data = player.getPersistentData();
         var key = skill.GetID() + SKILL_LEVEL_SIGNATURE;
@@ -194,6 +206,12 @@ public class SkillManager {
 
         var skill = GetSkill(id.toLowerCase());
         if(skill == null) return;
+
+        if(skill instanceof Trait){
+            if(!Config.TRAIT_SYSTEM.get()) return;
+            if(LevelManager.GetLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
+        }
+
 
         var data = player.getPersistentData();
         var key = id + SKILL_LEVEL_SIGNATURE;

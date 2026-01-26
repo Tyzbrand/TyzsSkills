@@ -1,5 +1,6 @@
 package com.tyzsskills.server.active;
 
+import com.tyzsskills.server.attachments.ExplorationProgression;
 import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
@@ -47,6 +48,7 @@ public class DebugManager {
         LevelManager.SetLevel(player, 1);
         SpManager.SetSP(player, 0);
         PowerManager.SetPower(player, 0);
+        player.getData(ExplorationProgression.DATA).resetPlayerData();
 
         var manager = SkillManager.Get();
 
