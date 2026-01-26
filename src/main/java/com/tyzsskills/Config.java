@@ -17,7 +17,7 @@ public class Config {
     public static final ModConfigSpec.DoubleValue REFUND_PERCENTAGE;
 
     public static final String TRAIT_UNLOCK_LEVEL_KEY = "trait_unlock";
-    public static final ModConfigSpec.DoubleValue TRAIT_UNLOCK_LEVEL;
+    public static final ModConfigSpec.IntValue TRAIT_UNLOCK_LEVEL;
 
     public static final ModConfigSpec.BooleanValue PREVENT_PLACED_BLOCK_XP;
 
@@ -40,11 +40,37 @@ public class Config {
     //==================Client Config==================
     public static final ModConfigSpec CLIENT_SPEC;
 
-    public static final ModConfigSpec.BooleanValue SHOW_XP_OVERLAY;
-    public static final ModConfigSpec.BooleanValue SHOW_LEVEL_OVERLAY;
-    public static final ModConfigSpec.BooleanValue SHOW_SKILL_OVERLAY;
+    //Overlays
     public static final ModConfigSpec.BooleanValue SHOW_OVERLAYS_IN_CREATIVE;
+    //===Xp overlay===
+    public static final ModConfigSpec.BooleanValue SHOW_XP_OVERLAY;
+    public static final ModConfigSpec.IntValue XP_OFFSET_X;
+    public static final ModConfigSpec.IntValue XP_OFFSET_Y;
+    public static final ModConfigSpec.DoubleValue XP_DURATION;
+    public static final ModConfigSpec.ConfigValue<String> XP_BG_COLOR;
+    public static final ModConfigSpec.ConfigValue<String> XP_BD_COLOR;
+    public static final ModConfigSpec.ConfigValue<String> XP_TEXT_COLOR;
+    //===Level up overlay===
+    public static final ModConfigSpec.BooleanValue SHOW_LEVEL_OVERLAY;
+    public static final ModConfigSpec.IntValue LEVEL_OFFSET_X;
+    public static final ModConfigSpec.IntValue LEVEL_OFFSET_Y;
+    public static final ModConfigSpec.DoubleValue LEVEL_DURATION;
+    public static final ModConfigSpec.ConfigValue<String> LEVEL_BG_COLOR;
+    public static final ModConfigSpec.ConfigValue<String> LEVEL_BD_COLOR;
+    public static final ModConfigSpec.ConfigValue<String> LEVEL_TEXT_COLOR;
+    public static final ModConfigSpec.ConfigValue<String> LEVEL_SCD_TEXT_COLOR;
+    //===skill overlay===
+    public static final ModConfigSpec.BooleanValue SHOW_SKILL_OVERLAY;
+    public static final ModConfigSpec.IntValue SKILL_OFFSET_X;
+    public static final ModConfigSpec.IntValue SKILL_OFFSET_Y;
+    public static final ModConfigSpec.DoubleValue SKILL_DURATION;
+    public static final ModConfigSpec.ConfigValue<String> SKILL_BG_COLOR;
+    public static final ModConfigSpec.ConfigValue<String> SKILL_BD_COLOR;
+
+    //Debug
     public static final ModConfigSpec.BooleanValue SHOW_DEBUG_MESSAGES;
+
+    //Accessibility
     public static final ModConfigSpec.DoubleValue FOV_REDUCTION;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> FOV_AFFECTED_SKILLS;
 
@@ -63,7 +89,7 @@ public class Config {
 
         TRAIT_UNLOCK_LEVEL = commonBuilder
                 .comment("Blocks access and use of traits below a certain level")
-                .defineInRange("trait_unlock_level", 20.0, 1.0, Double.MAX_VALUE);
+                .defineInRange("trait_unlock_level", 20, 1, Integer.MAX_VALUE);
 
         PREVENT_PLACED_BLOCK_XP = commonBuilder
                 .comment("Prevent manually placed block from providing xp")
@@ -139,25 +165,50 @@ public class Config {
         //Construction du CLIENT
         ModConfigSpec.Builder clientBuilder = new ModConfigSpec.Builder();
 
-        clientBuilder.comment("Client Settings").push("overlays");
+        java.util.function.Predicate<Object> colorValidator = o -> o instanceof String s && s.matches("^#?([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$");
 
+        clientBuilder.comment("Client Settings").push("overlays");
         SHOW_OVERLAYS_IN_CREATIVE = clientBuilder
                 .comment("Display overlays in creative")
                 .define("show_overlays_in_creative", false);
 
-        SHOW_XP_OVERLAY = clientBuilder
-                .comment("Display xp gain overlay")
-                .define("show_xp_overlay", true);
+        clientBuilder.push("xp_overlay");
+        SHOW_XP_OVERLAY = clientBuilder.comment("Display xp gain overlay").define("show_xp_overlay", true);
+        XP_OFFSET_X = clientBuilder.comment("X offset").defineInRange("xp_x_offset", 0, -10000, 10000);
+        XP_OFFSET_Y = clientBuilder.comment("Y offset").defineInRange("xp_y_offset", 0, -10000, 10000);
+        XP_DURATION= clientBuilder.comment("Duration (sec)").defineInRange("xp_duration", 3D, 0.5D, 60D);
+        XP_BG_COLOR = clientBuilder.comment("Background color (Hex)").define("xp_background_color", "#FF000000", colorValidator);
+        XP_BD_COLOR = clientBuilder.comment("Border color (Hex)").define("xp_border_color", "#FFFFFFFF", colorValidator);
+        XP_TEXT_COLOR = clientBuilder.comment("Text color (Hex)").define("xp_text_color", "#FFFFFFFF", colorValidator);
+        clientBuilder.pop();
 
-        SHOW_LEVEL_OVERLAY = clientBuilder
-                .comment("Display Level Up overlay")
-                .define("show_level_overlay", true);
+        clientBuilder.push("level_up_overlay");
+        SHOW_LEVEL_OVERLAY = clientBuilder.comment("Display Level up overlay").define("show_level_overlay", true);
+        LEVEL_OFFSET_X = clientBuilder.comment("X offset").defineInRange("level_x_offset", 0, -10000, 10000);
+        LEVEL_OFFSET_Y = clientBuilder.comment("Y offset").defineInRange("level_y_offset", 0, -10000, 10000);
+        LEVEL_DURATION= clientBuilder.comment("Duration (sec)").defineInRange("level_duration", 4D, 0.5D, 60D);
+        LEVEL_BG_COLOR = clientBuilder.comment("Background color (Hex)").define("level_background_color", "#FF000000", colorValidator);
+        LEVEL_BD_COLOR = clientBuilder.comment("Border color (Hex)").define("level_border_color", "#FFD6AD55", colorValidator);
+        LEVEL_TEXT_COLOR = clientBuilder.comment("Text color (Hex)").define("level_text_color", "#FFFFFFFF", colorValidator);
+        LEVEL_SCD_TEXT_COLOR = clientBuilder.comment("Text color (Hex)").define("level_second_text_color", "#FFD6AD55", colorValidator);
+        clientBuilder.pop();
 
-        SHOW_SKILL_OVERLAY = clientBuilder
-                .comment("Display skill activation icons")
-                .define("show_skill_overlay", true);
+        clientBuilder.push("skill_overlay");
+        SHOW_SKILL_OVERLAY = clientBuilder.comment("Display skill activation icons").define("show_skill_overlay", true);
+        SKILL_OFFSET_X = clientBuilder.comment("X offset").defineInRange("skill_x_offset", 0, -10000, 10000);
+        SKILL_OFFSET_Y = clientBuilder.comment("Y offset").defineInRange("skill_y_offset", 0, -10000, 10000);
+        SKILL_DURATION= clientBuilder.comment("Duration (sec)").defineInRange("skill_duration", 2D, 0.5D, 60D);
+        SKILL_BG_COLOR = clientBuilder.comment("Background color (Hex)").define("skill_background_color", "#FF000000", colorValidator);
+        SKILL_BD_COLOR = clientBuilder.comment("Border color (Hex)").define("skill_border_color", "#FFD6AD55", colorValidator);
+        clientBuilder.pop();
 
         clientBuilder.pop();
+
+
+
+
+
+
 
 
 
@@ -171,17 +222,11 @@ public class Config {
                 .define("show_debug_messages", false);
 
         clientBuilder.pop();
-
-
-
-
-
-
         clientBuilder.push("accessibility");
 
         FOV_REDUCTION = clientBuilder
                 .comment("Reduces the FOV effect that can be caused by skills (0.0 = Normal Minecraft, 1.0 = No FOV change)")
-                .defineInRange("speed_fov_reduction", 0.95f, 0f, 1f);
+                .defineInRange("speed_fov_reduction", 0.95, 0, 1);
 
         FOV_AFFECTED_SKILLS = clientBuilder
                 .comment("Defines skills that are affected by the fov reduction")

@@ -198,4 +198,18 @@ public class ClientCache {
         else if(value instanceof Number nbr) return nbr.doubleValue();
         else return fallback;
     }
+
+
+
+
+    //UTILITARIAN
+    public static int ParseColor(String hexString, int fallback) {
+        if (hexString == null || hexString.isEmpty()) return fallback;
+        try {
+            String clean = hexString.replace("#", "");
+            if (clean.length() == 6) clean = "FF" + clean;
+            return (int) Long.parseLong(clean, 16);
+        }
+        catch (NumberFormatException e) {return fallback;}
+    }
 }

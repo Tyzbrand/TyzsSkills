@@ -1,6 +1,7 @@
 package com.tyzsskills.client.screen;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.client.ClientCache;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -19,17 +20,11 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
 
     private static long appearanceTime = 0L;
 
-    private static final long duration = 3000L;
     private static final long fadeIn = 300L;
     private static final long fadeOut = 500L;
 
     private static final float SCALE = 0.5f;
     private static final int MARGIN = 4;
-
-    private static final int COLOR_BG = 0xAA000000;
-    private static final int COLOR_BORDER = 0xFFFFFF;
-    private static final int COLOR_TEXT = 0xFFFFFF;
-    private static final int COLOR_TEXT_XP = 0xA2E158;
 
     public static void AddXp(float amount){
         if(!Config.SHOW_XP_OVERLAY.get()) return;
@@ -39,6 +34,7 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
         if(mc.player.isCreative() && !Config.SHOW_OVERLAYS_IN_CREATIVE.get()) return;
 
         long now = System.currentTimeMillis();
+        long duration = (long)(Config.XP_DURATION.get() * 1000);
 
         boolean isActive = (now - lastUpdateTime < duration) && (accumulatedXp > 0);
 
@@ -60,6 +56,7 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
     public void render(GuiGraphics gui, DeltaTracker deltaTracker) {
         long now = System.currentTimeMillis();
         long timeSinceUpdate = now - lastUpdateTime;
+        long duration = (long)(Config.XP_DURATION.get() * 1000);
 
         if (timeSinceUpdate > duration || accumulatedXp <= 0) return;
 
@@ -84,6 +81,10 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
         alpha = Mth.clamp(alpha, 0f, 1f);
         if (alpha <= 0.05f) return;
 
+        int cfgBg = ClientCache.ParseColor(Config.XP_BG_COLOR.get(), 0xAA000000);
+        int cfgBorder = ClientCache.ParseColor(Config.XP_BD_COLOR.get(), 0xFFFFFFFF);
+        int cfgText = ClientCache.ParseColor(Config.XP_TEXT_COLOR.get(), 0xFFFFFFFF);
+
         String amountStr = (accumulatedXp == (long) accumulatedXp)
                 ? String.format("%d", (long) accumulatedXp) : String.format(Locale.US, "%.1f", accumulatedXp);
 
@@ -102,17 +103,28 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
         int scaledScreenHeight = (int)(screenHeight / SCALE);
         int y = scaledScreenHeight - height - (int)(MARGIN / SCALE);
 
-        y += (int) yOffset;
+        x += (int)(Config.XP_OFFSET_X.get() / SCALE);
+        y -= (int)(Config.XP_OFFSET_Y.get() / SCALE);
 
-        int alphaInt = (int) (alpha * 255);
-        int bgWithAlpha = (alphaInt << 24) | (COLOR_BG & 0x00FFFFFF);
-        int borderWithAlpha = (alphaInt << 24) | (COLOR_BORDER & 0x00FFFFFF);
-        int textWithAlpha = (alphaInt << 24) | (COLOR_TEXT & 0x00FFFFFF);
+        y += (int)yOffset;
 
-        renderTooltipStyleRect(gui, x, y, width, height, bgWithAlpha);
-        renderTooltipStyleBorder(gui, x, y, width, height, borderWithAlpha);
+        int bgBaseAlpha = (cfgBg >> 24) & 0xFF;
+        int bgFinalAlpha = (int)(bgBaseAlpha * alpha);
+        int bgFinal = (bgFinalAlpha << 24) | (cfgBg & 0x00FFFFFF);
 
-        gui.drawString(font, text, x + padding, y + padding + 2, textWithAlpha, true);
+        int borderBaseAlpha = (cfgBorder >> 24) & 0xFF;
+        int borderFinalAlpha = (int)(borderBaseAlpha * alpha);
+        int borderFinal = (borderFinalAlpha << 24) | (cfgBorder & 0x00FFFFFF);
+
+        int textBaseAlpha = (cfgText >> 24) & 0xFF;
+        int textFinalAlpha = (int)(textBaseAlpha * alpha);
+        int textFinal = (textFinalAlpha << 24) | (cfgText & 0x00FFFFFF);
+
+
+        renderTooltipStyleRect(gui, x, y, width, height, bgFinal);
+        renderTooltipStyleBorder(gui, x, y, width, height, borderFinal);
+
+        gui.drawString(font, text, x + padding, y + padding + 2, textFinal, true);
 
         gui.pose().popPose();
     }

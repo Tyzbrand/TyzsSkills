@@ -1,6 +1,7 @@
 package com.tyzsskills.client.screen;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.client.ClientCache;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -18,18 +19,12 @@ public class LevelTriggerOverlay implements LayeredDraw.Layer {
     private static long lastUpdateTime = 0L;
     private static long appearanceTime = 0L;
 
-    private static final long duration = 4000L;
     private static final long fadeIn = 300L;
     private static final long fadeOut = 500L;
 
     private static final float SCALE = 0.5f;
     private static final int MARGIN = 4;
 
-    // COULEURS
-    private static final int COLOR_BG = 0xAA000000;
-    private static final int COLOR_BORDER = 0xFFD6AD55;
-    private static final int COLOR_TEXT = 0xFFFFFF;
-    private static final int COLOR_TEXT_SP = 0xFFD6AD55;
 
     public static void ShowLevelUp(int level, int spReward){
         if(!Config.SHOW_LEVEL_OVERLAY.get()) return;
@@ -39,6 +34,7 @@ public class LevelTriggerOverlay implements LayeredDraw.Layer {
         if(mc.player.isCreative() && !Config.SHOW_OVERLAYS_IN_CREATIVE.get()) return;
 
         long now = System.currentTimeMillis();
+        long duration = (long)(Config.LEVEL_DURATION.get() * 1000);
 
         boolean isActive = (now - lastUpdateTime < duration);
 
@@ -64,6 +60,7 @@ public class LevelTriggerOverlay implements LayeredDraw.Layer {
     public void render(GuiGraphics gui, DeltaTracker deltaTracker) {
         long now = System.currentTimeMillis();
         long timeSinceUpdate = now - lastUpdateTime;
+        long duration = (long)(Config.LEVEL_DURATION.get() * 1000);
 
         if (timeSinceUpdate > duration || currentLevel <= 0) return;
 
@@ -89,12 +86,20 @@ public class LevelTriggerOverlay implements LayeredDraw.Layer {
         alpha = Mth.clamp(alpha, 0f, 1f);
         if (alpha <= 0.05f) return;
 
+        int cfgBg = ClientCache.ParseColor(Config.LEVEL_BG_COLOR.get(), 0xAA000000);
+        int cfgBorder = ClientCache.ParseColor(Config.LEVEL_BD_COLOR.get(), 0xFFD6AD55);
+        int cfgText = ClientCache.ParseColor(Config.LEVEL_TEXT_COLOR.get(), 0xFFFFFFFF);
+        int spBaseColor = ClientCache.ParseColor(Config.LEVEL_SCD_TEXT_COLOR.get(), 0xFFD6AD55);
+
+        int spBaseAlpha = (spBaseColor >> 24) & 0xFF;
+        int spFinalAlpha = (int)(spBaseAlpha * alpha);
+        int spFinal = (spFinalAlpha << 24) | (spBaseColor & 0x00FFFFFF);
 
         String spTextRaw = Component.translatable("gui.tyzs_skills.SP").getString().toUpperCase();
 
         MutableComponent text = Component.translatable("overlay.tyzs_skills.level")
                 .append(Component.literal(" " + String.valueOf(currentLevel)))
-                .append(Component.literal(" [+" + accumulatedSp + " " + spTextRaw + "]").withColor(COLOR_TEXT_SP));
+                .append(Component.literal(" [+" + accumulatedSp + " " + spTextRaw + "]").withColor(spFinal));
 
         int textWidth = font.width(text);
         int padding = 6;
@@ -109,20 +114,22 @@ public class LevelTriggerOverlay implements LayeredDraw.Layer {
         int baseX = (int)(MARGIN / SCALE);
         int baseY = scaledScreenHeight - height - (int)(MARGIN / SCALE);
 
+        baseX += (int)(Config.LEVEL_OFFSET_X.get() / SCALE);
+        baseY -= (int)(Config.LEVEL_OFFSET_Y.get() / SCALE);
+
         int boxHeightWithMargin = height + 4;
         int y = baseY - boxHeightWithMargin;
 
         y += (int)yOffset;
 
-        int alphaInt = (int) (alpha * 255);
-        int bgWithAlpha = (alphaInt << 24) | (COLOR_BG & 0x00FFFFFF);
-        int borderWithAlpha = (alphaInt << 24) | (COLOR_BORDER & 0x00FFFFFF);
-        int textWithAlpha = (alphaInt << 24) | (COLOR_TEXT & 0x00FFFFFF);
+        int bgFinal = ((int)(((cfgBg >> 24) & 0xFF) * alpha) << 24) | (cfgBg & 0x00FFFFFF);
+        int borderFinal = ((int)(((cfgBorder >> 24) & 0xFF) * alpha) << 24) | (cfgBorder & 0x00FFFFFF);
+        int textFinal = ((int)(((cfgText >> 24) & 0xFF) * alpha) << 24) | (cfgText & 0x00FFFFFF);
 
-        renderTooltipStyleRect(gui, baseX, y, width, height, bgWithAlpha);
-        renderTooltipStyleBorder(gui, baseX, y, width, height, borderWithAlpha);
+        renderTooltipStyleRect(gui, baseX, y, width, height, bgFinal);
+        renderTooltipStyleBorder(gui, baseX, y, width, height, borderFinal);
 
-        gui.drawString(font, text, baseX + padding, y + padding + 2, textWithAlpha, true);
+        gui.drawString(font, text, baseX + padding, y + padding + 2, textFinal, true);
 
         gui.pose().popPose();
     }

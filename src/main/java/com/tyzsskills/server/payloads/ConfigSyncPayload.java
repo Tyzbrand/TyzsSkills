@@ -13,14 +13,14 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.HashMap;
 import java.util.Map;
 
-public record ConfigSyncPayload(boolean refundSys, double refundPer, double traitLevel) implements CustomPacketPayload{
+public record ConfigSyncPayload(boolean refundSys, double refundPer, int traitLevel) implements CustomPacketPayload{
     public static final Type<ConfigSyncPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "config_sync_payload"));
 
 
     public static final StreamCodec<ByteBuf, ConfigSyncPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.BOOL, ConfigSyncPayload::refundSys,
             ByteBufCodecs.DOUBLE, ConfigSyncPayload::refundPer,
-            ByteBufCodecs.DOUBLE, ConfigSyncPayload::traitLevel,
+            ByteBufCodecs.INT, ConfigSyncPayload::traitLevel,
             ConfigSyncPayload::new
     );
 

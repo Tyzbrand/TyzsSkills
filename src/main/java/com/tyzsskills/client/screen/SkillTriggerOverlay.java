@@ -23,7 +23,6 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
 
     private static final List<Notification> activeNotifications = new ArrayList<>();
 
-    private static final long duration = 2000L;
     private static final long fadeIn = 200L;
     private static final long fadeOut = 500L;
 
@@ -33,9 +32,6 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
 
     private static final ResourceLocation DEFAULT_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/default.png");
 
-
-    private static final int COLOR_BG = 0XAA000000;
-    private static final int COLOR_BORDER = 0XFFD6AD55;
 
     public static void ShowSkillIcon(String id){
         if(!Config.SHOW_SKILL_OVERLAY.get()) return;
@@ -70,6 +66,7 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
 
         int height = mc.getWindow().getGuiScaledHeight();
         long now = System.currentTimeMillis();
+        long duration = (long)(Config.SKILL_DURATION.get() * 1000);
 
         activeNotifications.removeIf(n -> (now - n.lastUpdate) > duration);
         if (activeNotifications.isEmpty()) return;
@@ -95,6 +92,7 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
     private void renderSingleNotification(GuiGraphics guiGraphics, Notification notif, int index, int screenHeight, long now){
         long age = now - notif.creationTime;
         long idleTime = now - notif.lastUpdate;
+        long duration = (long)(Config.SKILL_DURATION.get() * 1000);
         float alpha = 1f;
 
         if(age < fadeIn) alpha = (float)age / fadeIn;
@@ -110,6 +108,9 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
         alpha = Mth.clamp(alpha, 0f, 1f);
         if (alpha <= 0.05f) return;
 
+        int cfgBg = ClientCache.ParseColor(Config.SKILL_BG_COLOR.get(), 0xAA000000);
+        int cfgBorder = ClientCache.ParseColor(Config.SKILL_BD_COLOR.get(), 0xFFD6AD55);
+
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(scale, scale, 1f);
 
@@ -121,19 +122,21 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
         int scaledScreenHeight = (int)(screenHeight/scale);
         int startY = (int)(scaledScreenHeight * .25f);
 
-        int drawX = (int)(padding + 2);
-        int drawY = startY + (index * spacing);
+        int offsetX = (int)(Config.SKILL_OFFSET_X.get() / scale);
+        int offsetY = (int)(Config.SKILL_OFFSET_Y.get() / scale);
 
-        int boxY = startY + (index * spacing) - padding;
+        int drawX = (padding + 2) + offsetX;
+
+        int drawY = startY + (index * spacing) - offsetY;
+
+        int boxY = drawY - padding;
         int boxX = drawX - padding;
 
-        int bgAlpha = (int)((COLOR_BG >> 24 & 255) * alpha);
-        int bgColor = (bgAlpha << 24) | (COLOR_BG & 0x00FFFFFF);
-        renderTooltipStyleRect(guiGraphics, boxX, boxY, boxSize, boxSize, bgColor);
+        int bgFinal = ((int)(((cfgBg >> 24) & 0xFF) * alpha) << 24) | (cfgBg & 0x00FFFFFF);
+        int borderFinal = ((int)(((cfgBorder >> 24) & 0xFF) * alpha) << 24) | (cfgBorder & 0x00FFFFFF);
 
-        int borderAlpha = (int)((COLOR_BORDER >> 24 & 255) * alpha);
-        int borderColor = (borderAlpha << 24) | (COLOR_BORDER & 0x00FFFFFF);
-        renderTooltipStyleBorder(guiGraphics, boxX, boxY, boxSize, boxSize, borderColor);
+        renderTooltipStyleRect(guiGraphics, boxX, boxY, boxSize, boxSize, bgFinal);
+        renderTooltipStyleBorder(guiGraphics, boxX, boxY, boxSize, boxSize, borderFinal);
 
         RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
 
