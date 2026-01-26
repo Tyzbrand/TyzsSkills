@@ -36,14 +36,11 @@ public class TyzsskillsClient {
         // Do not forget to add translations for your config options to the en_us.json file.
 
 
-        //container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
 
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
-        // Some client setup code
-        Tyzsskills.LOGGER.info("HELLO FROM CLIENT SETUP");
-        Tyzsskills.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
     }
 
     @SubscribeEvent

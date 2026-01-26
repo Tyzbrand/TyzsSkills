@@ -29,12 +29,6 @@ public class RuntimeEvents {
     public static void OnPlayerLogin(PlayerEvent.PlayerLoggedInEvent event){
         if(!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        AutoSyncClient.SyncMainData(player);
-        AutoSyncClient.SyncSkillList(player);
-        AutoSyncClient.SyncSkillLevels(player);
-        AutoSyncClient.SyncConfig(player);
-        AutoSyncClient.SyncSkillBookmarks(player);
-
         CompatibilityManager.ProcessMigration(player);
 
         var data = player.getData(ExplorationProgression.DATA);
@@ -42,6 +36,12 @@ public class RuntimeEvents {
             String dimensionID = player.level().dimension().location().toString();
             data.addDimension(dimensionID);
         }
+
+        AutoSyncClient.SyncMainData(player);
+        AutoSyncClient.SyncSkillList(player);
+        AutoSyncClient.SyncSkillLevels(player);
+        AutoSyncClient.SyncConfig(player);
+        AutoSyncClient.SyncSkillBookmarks(player);
     }
 
     @SubscribeEvent

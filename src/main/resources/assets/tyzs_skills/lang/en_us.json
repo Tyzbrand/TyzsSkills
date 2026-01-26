@@ -143,5 +143,55 @@
   "skill.tyzs_skills.deep_sight.description" : "Allows you to obtain a night vision effect in caves",
 
   "skill.tyzs_skills.deep_rest.displayName" : "Deep rest",
-  "skill.tyzs_skills.deep_rest.description" : ""
+  "skill.tyzs_skills.deep_rest.description" : "",
+
+
+
+
+  "config.general.tyzs_skills.client_settings" : "Client settings",
+  "config.general.tyzs_skills.overlays" : "Overlays",
+  "config.general.tyzs_skills.xp_overlay" : "Xp gains overlay",
+  "config.general.tyzs_skills.level_up_overlay" : "Level up overlay",
+  "config.general.tyzs_skills.skill_overlay" : "Skill activations overlay",
+  "config.general.tyzs_skills.debug" : "Debug",
+  "config.general.tyzs_skills.general_settings" : "General gameplay settings",
+  "config.general.tyzs_skills.accessibility" : "Accessibility",
+  "config.general.tyzs_skills.general" : "General",
+  "config.general.tyzs_skills.xp_values" : "Xp gain values",
+
+  "config.common.tyzs_skills.refund_system" : "Refund system",
+  "config.common.tyzs_skills.refund_system_per" : "Refund percentage",
+  "config.common.tyzs_skills.trait_unlock_level" : "Trait unlock level",
+  "config.common.tyzs_skills.prevent_placed_blocks_xp" : "Prevent placed blocks xp",
+  "config.common.tyzs_skills.earn_creative_xp" : "Earn xp in creative",
+  "config.common.tyzs_skills.eating_xp_earnings" : "Eating xp earnings",
+  "config.common.tyzs_skills.sleeping_gain" : "Sleeping gain",
+  "config.common.tyzs_skills.fishing_gain" : "Fishing gain",
+  "config.common.tyzs_skills.crafting_gain" : "Crafting gain",
+  "config.common.tyzs_skills.breeding_gain" : "Breeding gain",
+  "config.common.tyzs_skills.advancement_task_gain" : "Advancement task gain",
+  "config.common.tyzs_skills.advancement_goal_gain" : "Advancement goal gain",
+  "config.common.tyzs_skills.advancement_challenge_gain" : "Advancement challenge gain",
+  "config.common.tyzs_skills.biome_gain" : "Biome gain",
+  "config.common.tyzs_skills.dimension_gain" : "Dimension gain",
+
+  "config.client.tyzs_skills.creative_overlays" : "Show overlay in creative",
+  "config.client.tyzs_skills.xp_overlay" : "Show xp gains overlay",
+  "config.client.tyzs_skills.level_overlay" : "Show level up overlay",
+  "config.client.tyzs_skills.skill_overlay" : "Show skill activations overlay",
+  "config.client.tyzs_skills.x_offset" : "X offset",
+  "config.client.tyzs_skills.y_offset" : "Y offset",
+  "config.client.tyzs_skills.duration" : "Duration",
+  "config.client.tyzs_skills.bg_color" : "Background color",
+  "config.client.tyzs_skills.bd_color" : "Border color",
+  "config.client.tyzs_skills.text_color" : "Text color",
+  "config.client.tyzs_skills.scd_text_color" : "Secondary text color",
+  "config.client.tyzs_skills.debug_msg" : "Show debug messages",
+  "config.client.tyzs_skills.speed_fov_reduction" : "Speed fov reduction",
+  "config.client.tyzs_skills.fov_affected_skills" : "Fov reduction affected skills"
+
+
+
+
+
 }
