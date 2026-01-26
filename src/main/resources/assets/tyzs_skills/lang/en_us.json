@@ -163,6 +163,7 @@
   "config.common.tyzs_skills.refund_system" : "Refund system",
   "config.common.tyzs_skills.refund_system_per" : "Refund percentage",
   "config.common.tyzs_skills.trait_unlock_level" : "Trait unlock level",
+  "config.common.tyzs_skills.trait_system" : "Traits",
   "config.common.tyzs_skills.prevent_placed_blocks_xp" : "Prevent placed blocks xp",
   "config.common.tyzs_skills.earn_creative_xp" : "Earn xp in creative",
   "config.common.tyzs_skills.eating_xp_earnings" : "Eating xp earnings",

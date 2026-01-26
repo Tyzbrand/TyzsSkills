@@ -70,10 +70,14 @@ public class ClientCache {
     }
 
     public static void SetContainerType(Skill.ContainerType type){
+        if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true) && type == Skill.ContainerType.TRAITS) return;
+        if(GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20) > clientLevel && type == Skill.ContainerType.TRAITS) return;
         currentContainerType = type;
     }
 
     public static void SetCategoryType(Skill.CategoryType category){
+        if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true) && category == Skill.CategoryType.TRAITS) return;
+        if(GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20) > clientLevel && category == Skill.CategoryType.TRAITS) return;
         currentContainerCatgory = category;
     }
 
@@ -196,6 +200,12 @@ public class ClientCache {
         var value = clientConfigMap.get(id);
         if(value instanceof Double dbl) return dbl;
         else if(value instanceof Number nbr) return nbr.doubleValue();
+        else return fallback;
+    }
+
+    public static int GetConfigInt(String id, int fallback){
+        var value = clientConfigMap.get(id);
+        if(value instanceof Integer nbr) return nbr;
         else return fallback;
     }
 

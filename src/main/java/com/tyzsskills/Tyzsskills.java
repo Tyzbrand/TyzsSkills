@@ -5,6 +5,7 @@ import com.tyzsskills.server.attachments.BlockMarker;
 import com.tyzsskills.server.active.FileManager;
 import com.tyzsskills.server.attachments.ExplorationProgression;
 import com.tyzsskills.server.attachments.LegacyData;
+import com.tyzsskills.server.events.SkillEffectsEvents;
 import com.tyzsskills.server.events.XpGainsEvents;
 import com.tyzsskills.server.skills.SkillBehaviourRegistry;
 import com.tyzsskills.server.skills.SkillManager;
@@ -79,6 +80,7 @@ public class Tyzsskills {
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(RuntimeEvents.class);
         NeoForge.EVENT_BUS.register(XpGainsEvents.class);
+        NeoForge.EVENT_BUS.register(SkillEffectsEvents.class);
 
         //Register network
         modEventBus.addListener(this::RegisterPayloads);

@@ -27,6 +27,7 @@ public class DebugManager {
 
         for(var player : server.getPlayerList().getPlayers()){
             AutoSyncClient.SyncSkillList(player);
+            AutoSyncClient.SyncConfig(player);
             AutoSyncClient.SyncMainData(player);
             XpManager.LevelUpCheck(player);
         }

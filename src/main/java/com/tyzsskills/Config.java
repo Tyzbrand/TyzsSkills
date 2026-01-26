@@ -1,5 +1,6 @@
 package com.tyzsskills;
 
+import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
@@ -18,6 +19,9 @@ public class Config {
 
     public static final String TRAIT_UNLOCK_LEVEL_KEY = "trait_unlock";
     public static final ModConfigSpec.IntValue TRAIT_UNLOCK_LEVEL;
+
+    public static final String TRAIT_SYSTEM_KEY = "trait_system";
+    public static final ModConfigSpec.BooleanValue TRAIT_SYSTEM;
 
     public static final ModConfigSpec.BooleanValue PREVENT_PLACED_BLOCK_XP;
 
@@ -82,6 +86,7 @@ public class Config {
                 .comment("Play with the refund system")
                 .translation("config.common.tyzs_skills.refund_system")
                 .define("refund_system", true);
+
         REFUND_PERCENTAGE = commonBuilder
                 .comment("Percentage of the initial price refunded")
                 .translation("config.common.tyzs_skills.refund_system_per")
@@ -91,6 +96,11 @@ public class Config {
                 .comment("Blocks access and use of traits below a certain level")
                 .translation("config.common.tyzs_skills.trait_unlock_level")
                 .defineInRange("trait_unlock_level", 20, 1, Integer.MAX_VALUE);
+
+        TRAIT_SYSTEM = commonBuilder
+                .comment("Play with traits")
+                .translation("config.common.tyzs_skills.trait_system")
+                .define("trait_system", true);
 
         PREVENT_PLACED_BLOCK_XP = commonBuilder
                 .comment("Prevent manually placed block from providing xp")

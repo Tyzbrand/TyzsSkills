@@ -1,6 +1,7 @@
 package com.tyzsskills.server.skills;
 
 import com.google.gson.JsonObject;
+import com.tyzsskills.Config;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.Trait;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -70,8 +71,10 @@ public class SkillLoader {
 
 
         if(type == Skill.SkillType.TRAIT || powerWeight > 0){
-            int price = prices.isEmpty()? 0 : prices.getFirst();
 
+            if(!Config.TRAIT_SYSTEM.get()) return;
+
+            int price = prices.isEmpty()? 0 : prices.getFirst();
             SkillManager.Get().RegisterSKill(new Trait(
                     state, id, powerWeight, price, purchasable, icon, displayName, description)
             );

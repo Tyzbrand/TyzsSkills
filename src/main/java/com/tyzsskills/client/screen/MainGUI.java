@@ -8,6 +8,7 @@ import com.tyzsskills.client.models.*;
 import com.tyzsskills.server.active.AttributeRegistry;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.Trait;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -238,10 +240,19 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Skills"), mouseX, mouseY);
         }
 
-        if( ClientCache.GetLvl() >= ClientCache.GetConfigDouble(Config.TRAIT_UNLOCK_LEVEL_KEY, 20D)
-                && isHovering(mouseX, mouseY, leftPos + 55, topPos + 24, 15, 15)){ //Traits button
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.traits"), mouseX, mouseY);
 
+        if (isHovering(mouseX, mouseY, leftPos + 55, topPos + 24, 15, 15)
+            && ClientCache.GetConfigBool(Config.TRAIT_SYSTEM_KEY, true)){ //Traits button
+
+            int traitLvl = ClientCache.GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20);
+            List<Component> tooltip = new ArrayList<>();
+            tooltip.add(Component.translatable("gui.tyzs_skills.traits"));
+
+            if(ClientCache.GetLvl() < traitLvl){
+              tooltip.add(Component.translatable("overlay.tyzs_skills.level").append(" " + traitLvl).withStyle(ChatFormatting.RED));
+            }
+
+            gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
         }
 
         if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)){
@@ -400,7 +411,7 @@ public class MainGUI extends Screen {
         if (this.miscBtn != null) this.miscBtn.visible = isSkillMode;
         if (this.bookmarksBtn != null) this.bookmarksBtn.visible = isSkillMode;
 
-        if(this.traitBtn != null) this.traitBtn.visible = ClientCache.GetLvl() >= ClientCache.GetConfigDouble(Config.TRAIT_UNLOCK_LEVEL_KEY, 20D);
+        if(this.traitBtn != null) this.traitBtn.visible = ClientCache.GetConfigBool(Config.TRAIT_SYSTEM_KEY, true);
     }
 
     private void addScrollView(){
