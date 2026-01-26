@@ -13,8 +13,7 @@ import com.tyzsskills.server.active.SpManager;
 import com.tyzsskills.server.effects.GenericEffects;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.Trait;
-import com.tyzsskills.server.payloads.SkillBookmarksPayload;
-import com.tyzsskills.server.payloads.SkillLevelSyncPayload;
+import com.tyzsskills.server.payloads.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -79,7 +78,11 @@ public class SkillManager {
             if(SpManager.GetSP(player) >= price){
                 SpManager.RemoveSP(player, price);
                 data.putInt(key, currentLvl+1);
+
                 PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl+1));
+                PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
+                PacketDistributor.sendToPlayer(player, new StatsSkillsPayload(1));
+
                 PowerManager.AddPower(player, trait.getPowerWeight());
             }
         }
@@ -93,6 +96,8 @@ public class SkillManager {
                 SpManager.RemoveSP(player, price);
                 data.putInt(key, currentLvl+1);
                 PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl+1));
+                PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
+                PacketDistributor.sendToPlayer(player, new StatsSkillsPayload(1));
                 if(skill.GetType() == Skill.SkillType.GENERIC) GenericEffects.ApplyEffect(skill, player);
             }
         }
@@ -158,6 +163,8 @@ public class SkillManager {
         if(skill instanceof Trait trait) PowerManager.RemovePower(player, trait.getPowerWeight());
 
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl-1));
+        PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(finalPrice));
+        PacketDistributor.sendToPlayer(player, new StatsSkillsPayload(-1));
 
         if(skill.GetType() == Skill.SkillType.GENERIC){
             if(currentLvl - 1 <= 0) GenericEffects.RemoveEffect(skill, player);
@@ -231,7 +238,10 @@ public class SkillManager {
             }
         }
 
+        var diff = lvl - oldLvl;
+
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(id, lvl));
+        PacketDistributor.sendToPlayer(player, new StatsSkillsPayload(diff));
 
         if(skill.GetType() == Skill.SkillType.GENERIC){
             if(lvl > 0) GenericEffects.ApplyEffect(skill, player);

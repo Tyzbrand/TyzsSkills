@@ -5,6 +5,7 @@ import com.tyzsskills.server.active.AttributeRegistry;
 import com.tyzsskills.server.active.LevelManager;
 import com.tyzsskills.server.active.SpManager;
 import com.tyzsskills.server.payloads.LevelToastPayload;
+import com.tyzsskills.server.payloads.StatsXpPayload;
 import com.tyzsskills.server.payloads.XpUpdatePayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -51,6 +52,8 @@ public class XpManager {
         LevelUpCheck(player);
 
         UpdateClient(player, gains);
+
+        if(gains > 0) PacketDistributor.sendToPlayer(player, new StatsXpPayload(gains));
     }
 
     public static void SetXP(ServerPlayer player, float amount){

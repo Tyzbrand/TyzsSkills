@@ -198,6 +198,30 @@ public class Tyzsskills {
                 PowerUpdatePayload.STREAM_CODEC,
                 PowerUpdatePayload::Handle
         );
+
+        registrar.playToClient(
+                StatsXpPayload.TYPE,
+                StatsXpPayload.STREAM_CODEC,
+                StatsXpPayload::Handle
+        );
+
+        registrar.playToClient(
+                StatsSpEarnedPayload.TYPE,
+                StatsSpEarnedPayload.STREAM_CODEC,
+                StatsSpEarnedPayload::Handle
+        );
+
+        registrar.playToClient(
+                StatsSpSpentPayload.TYPE,
+                StatsSpSpentPayload.STREAM_CODEC,
+                StatsSpSpentPayload::Handle
+        );
+
+        registrar.playToClient(
+                StatsSkillsPayload.TYPE,
+                StatsSkillsPayload.STREAM_CODEC,
+                StatsSkillsPayload::Handle
+        );
     }
 
     @SubscribeEvent

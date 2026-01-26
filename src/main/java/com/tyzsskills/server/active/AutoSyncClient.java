@@ -1,6 +1,7 @@
 package com.tyzsskills.server.active;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.server.attachments.StatsTracker;
 import com.tyzsskills.server.payloads.*;
 import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.xp.XpManager;
@@ -48,6 +49,15 @@ public class AutoSyncClient {
         PacketDistributor.sendToPlayer(player, new SpUpdatePayload(SpManager.GetSP(player)));
         PacketDistributor.sendToPlayer(player, new LevelDataUpdatePayload(XpManager.GetLevelData(LevelManager.GetLevel(player))));
         PacketDistributor.sendToPlayer(player, new PowerUpdatePayload(PowerManager.GetPower(player)));
+    }
+
+    public static void SyncStats(ServerPlayer player){
+        var data = player.getData(StatsTracker.DATA);
+
+        PacketDistributor.sendToPlayer(player, new StatsXpPayload(data.getAllTimeXp()));
+        PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(data.getTotalSpEarned()));
+        PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(data.getTotalSpSpent()));
+        PacketDistributor.sendToPlayer(player, new StatsSkillsPayload(data.getSkillsUnlocked()));
     }
 
 

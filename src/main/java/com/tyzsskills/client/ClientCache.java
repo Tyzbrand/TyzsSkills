@@ -21,6 +21,12 @@ public class ClientCache {
     private static float clientXP = 0f;
     private static int clientPower = 0;
 
+    private static float clientAllTimeXP = 0f;
+    private static float clientSessionXP = 0f;
+    private static float clientSpEarned = 0;
+    private static float clientSpSpent = 0;
+    private static float clientSkillUnlocked = 0;
+
     private static XpManager.LevelData clientLevelData = new XpManager.LevelData(100f, 1);
 
     private final static Map<String, Skill> clientSkills = new HashMap<>();
@@ -54,11 +60,46 @@ public class ClientCache {
     }
 
     public static void UpdateClientCacheXP(float xp, float gained){
-        if(gained > 0) XpTriggerOverlay.AddXp(gained);
+        if(gained > 0) {
+            XpTriggerOverlay.AddXp(gained);
+            clientSessionXP += gained;
+        }
         clientXP = xp;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
             Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp), false);
+        }
+    }
+
+    public static void UpdateClientStatXP(float amount){
+        if(amount > 0f)clientAllTimeXP += amount;
+
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP stats Update"), false);
+        }
+    }
+
+    public static void UpdateClientStatSpEarned(int amount){
+        if(amount > 0)clientSpEarned += amount;
+
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP e stats Update"), false);
+        }
+    }
+
+    public static void UpdateClientStatSpSpent(int amount){
+        if(amount > 0)clientSpSpent += amount;
+
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP s stats Update"), false);
+        }
+    }
+
+    public static void UpdateClientStatSkills(int amount){
+        clientSkillUnlocked += amount;
+
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skill stats Update"), false);
         }
     }
 
@@ -129,6 +170,11 @@ public class ClientCache {
         clientSkillLevels.clear();
         clientConfigMap.clear();
         clientBookmarks.clear();
+        clientSessionXP = 0f;
+        clientAllTimeXP = 0f;
+        clientSpEarned = 0;
+        clientSpSpent = 0;
+        clientSkillUnlocked = 0;
 
     }
 

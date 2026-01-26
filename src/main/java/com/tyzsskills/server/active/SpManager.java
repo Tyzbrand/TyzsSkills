@@ -15,6 +15,7 @@ public class SpManager {
             playerData.putInt(dataKey, amount);
 
             UpdateClient(player);
+
         }
 
         public static void AddSP(ServerPlayer player, int amount){
