@@ -14,7 +14,7 @@ public class StatsTracker implements INBTSerializable<CompoundTag> {
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Tyzsskills.MODID);
     public static final Supplier<AttachmentType<StatsTracker>> DATA = ATTACHMENT_TYPES.register(
-            "player_stats", () -> AttachmentType.serializable(StatsTracker::new).build());
+            "player_stats", () -> AttachmentType.serializable(StatsTracker::new).copyOnDeath().build());
 
 
     private float allTimeXp = 0f;

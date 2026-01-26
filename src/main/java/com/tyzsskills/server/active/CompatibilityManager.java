@@ -93,6 +93,7 @@ public class CompatibilityManager {
         if(value > 0) SkillManager.Get().SetSkillLevel(player, newId, (int)value);
     }
 
+
     private static int CheckRefund(LegacyData data, String oldKey, int amount){
         double value = data.getOldValue(oldKey);
         if(value > 0) return amount;

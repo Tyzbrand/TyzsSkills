@@ -23,9 +23,9 @@ public class ClientCache {
 
     private static float clientAllTimeXP = 0f;
     private static float clientSessionXP = 0f;
-    private static float clientSpEarned = 0;
-    private static float clientSpSpent = 0;
-    private static float clientSkillUnlocked = 0;
+    private static int clientSpEarned = 0;
+    private static int clientSpSpent = 0;
+    private static int clientSkillUnlocked = 0;
 
     private static XpManager.LevelData clientLevelData = new XpManager.LevelData(100f, 1);
 
@@ -244,6 +244,20 @@ public class ClientCache {
     public static Skill GetSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}
     public static boolean GetBookmarkState(String id){return clientBookmarks.getOrDefault(id.toLowerCase(), false);}
     public static int GetPower(){return clientPower;}
+
+    public static float GetAllTimeXp(){return clientAllTimeXP;}
+    public static float GetSessionXp(){return clientSessionXP;}
+    public static int GetSpEarned(){return clientSpEarned;}
+    public static int GetSpSpent(){return clientSpSpent;}
+    public static int GetUnlockedSkills(){return clientSkillUnlocked;}
+    public static int GetSkillCount(){
+        int count = 0;
+        for(var skill : clientSkills.values()){
+            if(skill instanceof Trait) continue;
+            count += skill.GetMaximumLevel();
+        }
+        return count;
+    }
 
     //getters config
     public static boolean GetConfigBool(String id, boolean fallback){
