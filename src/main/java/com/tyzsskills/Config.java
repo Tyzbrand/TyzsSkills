@@ -28,8 +28,6 @@ public class Config {
     public static final ModConfigSpec.DoubleValue SLEEPING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue CRAFTING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue BREEDING_XP_VALUE;
-    public static final ModConfigSpec.DoubleValue CARVING_XP_VALUE;
-    public static final ModConfigSpec.DoubleValue LANDSCAPING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue ADVANCEMENT_TASK_XP_VALUE;
     public static final ModConfigSpec.DoubleValue ADVANCEMENT_GOAL_XP_VALUE;
     public static final ModConfigSpec.DoubleValue ADVANCEMENT_CHALLENGE_XP_VALUE;
@@ -127,13 +125,6 @@ public class Config {
                 .comment("Breeding xp earning value")
                 .defineInRange("breeding_gain", 15.0, .0, Double.MAX_VALUE);
 
-        CARVING_XP_VALUE = commonBuilder
-                .comment("Stripping xp earning value")
-                .defineInRange("stripping__gain", 3.5, .0, Double.MAX_VALUE);
-
-        LANDSCAPING_XP_VALUE = commonBuilder
-                .comment("Pathing xp earning value")
-                .defineInRange("pathing_gain", 1.5, .0, Double.MAX_VALUE);
 
         ADVANCEMENT_TASK_XP_VALUE = commonBuilder
                 .comment("Xp gains for basic advancements (Tasks)")
@@ -201,43 +192,26 @@ public class Config {
         SKILL_BG_COLOR = clientBuilder.comment("Background color (Hex)").define("skill_background_color", "#FF000000", colorValidator);
         SKILL_BD_COLOR = clientBuilder.comment("Border color (Hex)").define("skill_border_color", "#FFD6AD55", colorValidator);
         clientBuilder.pop();
-
         clientBuilder.pop();
 
-
-
-
-
-
-
-
-
-
-
-
         clientBuilder.push("debug");
-
         SHOW_DEBUG_MESSAGES = clientBuilder
                 .comment("Show debug messages")
                 .define("show_debug_messages", false);
-
         clientBuilder.pop();
-        clientBuilder.push("accessibility");
 
+        clientBuilder.push("accessibility");
         FOV_REDUCTION = clientBuilder
                 .comment("Reduces the FOV effect that can be caused by skills (0.0 = Normal Minecraft, 1.0 = No FOV change)")
                 .defineInRange("speed_fov_reduction", 0.95, 0, 1);
-
         FOV_AFFECTED_SKILLS = clientBuilder
                 .comment("Defines skills that are affected by the fov reduction")
                 .defineListAllowEmpty("fov_affected_skills",
                         () -> List.of("speed_boost"),
                         () -> "skill_id",
                         obj -> obj instanceof String);
-
         clientBuilder.pop();
         CLIENT_SPEC = clientBuilder.build();
-
     }
 
 

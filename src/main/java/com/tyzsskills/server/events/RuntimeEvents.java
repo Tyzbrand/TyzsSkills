@@ -3,6 +3,7 @@ package com.tyzsskills.server.events;
 import com.tyzsskills.Config;
 import com.tyzsskills.server.active.*;
 import com.tyzsskills.server.attachments.BlockMarker;
+import com.tyzsskills.server.attachments.ExplorationProgression;
 import com.tyzsskills.server.effects.GenericEffects;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.skills.SkillManager;
@@ -35,6 +36,12 @@ public class RuntimeEvents {
         AutoSyncClient.SyncSkillBookmarks(player);
 
         CompatibilityManager.ProcessMigration(player);
+
+        var data = player.getData(ExplorationProgression.DATA);
+        if(!data.hasDiscoveredAnyDimension()){
+            String dimensionID = player.level().dimension().location().toString();
+            data.addDimension(dimensionID);
+        }
     }
 
     @SubscribeEvent
@@ -52,7 +59,7 @@ public class RuntimeEvents {
             GenericEffects.RestaureEffects(newPlayer);
         }
 
-        OnPlayerClone(event); //SKILL BEHAVIOUR
+        SkillEffectsEvents.OnPlayerClone(event);
     }
 
     @SubscribeEvent
@@ -66,286 +73,6 @@ public class RuntimeEvents {
 
         if(XpBlock.GetBlockValue(event.getState()) > 0){
             BlockMarker.MarkBlock((net.minecraft.world.level.Level)event.getLevel(), event.getPos());
-        }
-    }
-
-    //EVENTS FOR SKILL EFFECTS
-    @SubscribeEvent
-    public static void OnPlayerAttack(LivingIncomingDamageEvent event){
-        if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
-
-        if (event.getSource().getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().onPlayerAttack(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnIncomingDamage(LivingIncomingDamageEvent event){
-        if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
-
-        if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().onIncomingDamage(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnPlayerKill(LivingDeathEvent event){
-        if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
-
-        if (event.getSource().getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().onPlayerKill(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnStartingEffect(MobEffectEvent.Added event){
-        var manager = SkillManager.Get();
-
-        if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().onStartingEffect(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnPlayerBreakBlock(BlockEvent.BreakEvent event){
-        if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
-
-        if (event.getPlayer() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().onPlayerBreakBlock(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnPlayerFinishUsingItem(LivingEntityUseItemEvent.Finish event){
-        var manager = SkillManager.Get();
-
-        if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().onPlayerFinishUsingItem(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnPickupXp(PlayerXpEvent.PickupXp event){
-        if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
-
-        if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().onPickupXp(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnEffectApplicable(MobEffectEvent.Applicable event){
-        var manager = SkillManager.Get();
-
-        if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().onEffectApplicable(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnTargetChange(LivingChangeTargetEvent event){
-        if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
-
-        if (event.getNewAboutToBeSetTarget() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().onTargetChange(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnPlayerDeath(LivingDeathEvent event){
-        if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
-
-        if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().onPlayerDeath(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-    private static void OnPlayerClone(PlayerEvent.Clone event){  //DEFERRED ABOVE
-        var manager = SkillManager.Get();
-
-        if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().onPlayerClone(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnNoiseAtPlayer(PlayLevelSoundEvent.AtEntity event){
-        if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
-
-        if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().OnNoiseAtPlayer(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnPlayerWakeUp(PlayerWakeUpEvent event){
-        var manager = SkillManager.Get();
-
-        if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
-                if(skill.HasBehaviour()){
-
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-
-                    skill.GetBehaviour().OnPlayerWakeUp(event, player, lvl, skill);
-                }
-
-            }
-        }
-    }
-
-
-    private final static String[] playerTickSkills = {"magnet", "silver_tongue"};
-    @SubscribeEvent
-    public static void OnPlayerTick(PlayerTickEvent.Post event){
-        var manager = SkillManager.Get();
-
-        if (event.getEntity() instanceof ServerPlayer player){
-
-            for(var id : playerTickSkills){
-                var skill = SkillManager.Get().GetSkill(id.toLowerCase());
-
-                if(skill != null && skill.HasBehaviour()){
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-                    skill.GetBehaviour().onPlayerTick(player, lvl, skill);
-                }
-            }
-        }
-    }
-
-    private final static String[] entityVisibility = {"stealth"};
-    @SubscribeEvent
-    public static void OnLivingVisibility(LivingEvent.LivingVisibilityEvent event){
-        var manager = SkillManager.Get();
-
-        if (event.getEntity() instanceof ServerPlayer player){
-
-            for(var id : entityVisibility){
-                var skill = SkillManager.Get().GetSkill(id.toLowerCase());
-
-                if(skill != null && skill.HasBehaviour()){
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
-                    if( lvl<= 0) continue;
-                    skill.GetBehaviour().onLivingVisibility(event, player, lvl, skill);
-                }
-            }
         }
     }
 

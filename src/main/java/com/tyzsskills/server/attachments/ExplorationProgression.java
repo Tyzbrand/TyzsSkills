@@ -35,6 +35,10 @@ public class ExplorationProgression implements INBTSerializable<CompoundTag> {
         return visitedDimensions.contains(dimensionID.toLowerCase());
     }
 
+    public boolean hasDiscoveredAnyDimension(){
+        return !visitedDimensions.isEmpty();
+    }
+
     public boolean hasAlreadySlept(long currentDay){
         return currentDay <= lastSleepDay;
     }
