@@ -148,16 +148,17 @@
 
 
 
-  "config.general.tyzs_skills.client_settings" : "Client settings",
-  "config.general.tyzs_skills.overlays" : "Overlays",
-  "config.general.tyzs_skills.xp_overlay" : "Xp gains overlay",
-  "config.general.tyzs_skills.level_up_overlay" : "Level up overlay",
-  "config.general.tyzs_skills.skill_overlay" : "Skill activations overlay",
-  "config.general.tyzs_skills.debug" : "Debug",
-  "config.general.tyzs_skills.general_settings" : "General gameplay settings",
-  "config.general.tyzs_skills.accessibility" : "Accessibility",
-  "config.general.tyzs_skills.general" : "General",
-  "config.general.tyzs_skills.xp_values" : "Xp gain values",
+  "tyzs_skills.configuration.title": "Tyz's Skills Configuration",
+  "tyzs_skills.configuration.section.tyzs.skills.common.toml": "Common Config (Gameplay)",
+  "tyzs_skills.configuration.section.tyzs.skills.client.toml": "Client Config (Visuals)",
+  "tyzs_skills.configuration.general": "General Settings",
+  "tyzs_skills.configuration.xp_values": "XP Gain Values",
+  "tyzs_skills.configuration.overlays": "Overlays Settings",
+  "tyzs_skills.configuration.xp_overlay": "XP Overlay Details",
+  "tyzs_skills.configuration.level_up_overlay": "Level Up Overlay Details",
+  "tyzs_skills.configuration.skill_overlay": "Skill Overlay Details",
+  "tyzs_skills.configuration.debug": "Debug Options",
+  "tyzs_skills.configuration.accessibility": "Accessibility",
 
   "config.common.tyzs_skills.refund_system" : "Refund system",
   "config.common.tyzs_skills.refund_system_per" : "Refund percentage",

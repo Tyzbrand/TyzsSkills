@@ -76,8 +76,7 @@ public class Config {
         //Construction du COMMON
         ModConfigSpec.Builder commonBuilder = new ModConfigSpec.Builder();
 
-        commonBuilder.comment("General Gameplay Settings").translation("config.general.tyzs_skills.general_settings")
-                .push("general").translation("config.general.tyzs_skills.general");
+        commonBuilder.comment("General Gameplay Settings").push("general");
 
         REFUND_SYSTEM = commonBuilder
                 .comment("Play with the refund system")
@@ -104,7 +103,7 @@ public class Config {
 
 
 
-        commonBuilder.push("xp_values").translation("config.general.tyzs_skills.xp_values");
+        commonBuilder.push("xp_values");
 
         EARN_XP_IN_CREATIVE = commonBuilder
                 .comment("Earn xp in creative")
@@ -174,14 +173,13 @@ public class Config {
 
         java.util.function.Predicate<Object> colorValidator = o -> o instanceof String s && s.matches("^#?([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$");
 
-        clientBuilder.comment("Client Settings").translation("config.general.tyzs_skills.client_settings")
-                .push("overlays").translation("config.general.tyzs_skills.overlays");
+        clientBuilder.comment("Client Settings").push("overlays");
         SHOW_OVERLAYS_IN_CREATIVE = clientBuilder
                 .comment("Display overlays in creative")
                 .translation("config.client.tyzs_skills.creative_overlays")
                 .define("show_overlays_in_creative", false);
 
-        clientBuilder.push("xp_overlay").translation("config.general.tyzs_skills.xp_overlay");
+        clientBuilder.push("xp_overlay");
         SHOW_XP_OVERLAY = clientBuilder.comment("Display xp gain overlay").translation("config.client.tyzs_skills.xp_overlay").define("show_xp_overlay", true);
         XP_OFFSET_X = clientBuilder.comment("X offset").translation("config.client.tyzs_skills.x_offset").defineInRange("xp_x_offset", 0, -10000, 10000);
         XP_OFFSET_Y = clientBuilder.comment("Y offset").translation("config.client.tyzs_skills.y_offset").defineInRange("xp_y_offset", 0, -10000, 10000);
@@ -191,7 +189,7 @@ public class Config {
         XP_TEXT_COLOR = clientBuilder.comment("Text color (Hex)").translation("config.client.tyzs_skills.text_color").define("xp_text_color", "#FFFFFFFF", colorValidator);
         clientBuilder.pop();
 
-        clientBuilder.push("level_up_overlay").translation("config.general.tyzs_skills.level_up_overlay");
+        clientBuilder.push("level_up_overlay");
         SHOW_LEVEL_OVERLAY = clientBuilder.comment("Display Level up overlay").translation("config.client.tyzs_skills.level_overlay").define("show_level_overlay", true);
         LEVEL_OFFSET_X = clientBuilder.comment("X offset").translation("config.client.tyzs_skills.x_offset").defineInRange("level_x_offset", 0, -10000, 10000);
         LEVEL_OFFSET_Y = clientBuilder.comment("Y offset").translation("config.client.tyzs_skills.y_offset").defineInRange("level_y_offset", 0, -10000, 10000);
@@ -202,7 +200,7 @@ public class Config {
         LEVEL_SCD_TEXT_COLOR = clientBuilder.comment("Secondary text color (Hex)").translation("config.client.tyzs_skills.scd_text_color").define("level_second_text_color", "#FFD6AD55", colorValidator);
         clientBuilder.pop();
 
-        clientBuilder.push("skill_overlay").translation("config.general.tyzs_skills.skill_overlay");
+        clientBuilder.push("skill_overlay");
         SHOW_SKILL_OVERLAY = clientBuilder.comment("Display skill activation icons").translation("config.client.tyzs_skills.skill_overlay").define("show_skill_overlay", true);
         SKILL_OFFSET_X = clientBuilder.comment("X offset").translation("config.client.tyzs_skills.x_offset").defineInRange("skill_x_offset", 0, -10000, 10000);
         SKILL_OFFSET_Y = clientBuilder.comment("Y offset").translation("config.client.tyzs_skills.y_offset").defineInRange("skill_y_offset", 0, -10000, 10000);
@@ -212,14 +210,14 @@ public class Config {
         clientBuilder.pop();
         clientBuilder.pop();
 
-        clientBuilder.push("debug").translation("config.general.tyzs_skills.debug");
+        clientBuilder.push("debug");
         SHOW_DEBUG_MESSAGES = clientBuilder
                 .comment("Show debug messages")
                 .translation("config.client.tyzs_skills.debug_msg")
                 .define("show_debug_messages", false);
         clientBuilder.pop();
 
-        clientBuilder.push("accessibility").translation("config.general.tyzs_skills.accessibility");
+        clientBuilder.push("accessibility");
         FOV_REDUCTION = clientBuilder
                 .comment("Reduces the FOV effect that can be caused by skills (0.0 = Normal Minecraft, 1.0 = No FOV change)")
                 .translation("config.client.tyzs_skills.speed_fov_reduction")
