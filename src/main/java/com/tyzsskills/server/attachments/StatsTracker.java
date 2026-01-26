@@ -40,6 +40,13 @@ public class StatsTracker implements INBTSerializable<CompoundTag> {
         this.skillsUnlocked += amount;
     }
 
+    public void resetStats(){
+        this.allTimeXp = 0f;
+        this.totalSpEarned = 0;
+        this.totalSpSpent = 0;
+        this.skillsUnlocked = 0;
+    }
+
     public void copyFrom(StatsTracker old){
         this.allTimeXp = old.allTimeXp;
         this.totalSpEarned = old.totalSpEarned;
@@ -66,8 +73,8 @@ public class StatsTracker implements INBTSerializable<CompoundTag> {
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag compoundTag) {
         if(compoundTag.contains("allTimeXp")) allTimeXp = compoundTag.getFloat("allTimeXp");
-        if(compoundTag.contains("totalSpEarned")) allTimeXp = compoundTag.getInt("totalSpEarned");
-        if(compoundTag.contains("totalSpSpent")) allTimeXp = compoundTag.getInt("totalSpSpent");
-        if(compoundTag.contains("skillUnlocked")) allTimeXp = compoundTag.getInt("skillUnlocked");
+        if(compoundTag.contains("totalSpEarned")) totalSpEarned = compoundTag.getInt("totalSpEarned");
+        if(compoundTag.contains("totalSpSpent")) totalSpSpent = compoundTag.getInt("totalSpSpent");
+        if(compoundTag.contains("skillUnlocked")) skillsUnlocked = compoundTag.getInt("skillUnlocked");
     }
 }
