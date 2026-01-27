@@ -1,6 +1,7 @@
 package com.tyzsskills.server.active;
 
 import com.tyzsskills.server.attachments.ExplorationProgression;
+import com.tyzsskills.server.attachments.LegacyData;
 import com.tyzsskills.server.attachments.StatsTracker;
 import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.xp.XpManager;
@@ -44,11 +45,10 @@ public class DebugManager {
     }
 
     public static void DebugResetData(ServerPlayer player){
-        //IL FAUT PAS OUBLIER DENVOYER UN PACKET AU CLIENT POUR QUE LUI AUSSI RESET DES CHOSES
-        XpManager.SetXP(player, 0f);
         LevelManager.SetLevel(player, 1);
         SpManager.SetSP(player, 0);
         PowerManager.SetPower(player, 0);
+        XpManager.SetXP(player, 0f);
         player.getData(ExplorationProgression.DATA).resetPlayerData();
         player.getData(StatsTracker.DATA).resetStats();
 

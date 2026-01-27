@@ -24,6 +24,7 @@ public class LegacyData implements INBTSerializable<CompoundTag> {
         return !oldVariables.isEmpty();
     }
 
+
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         return new CompoundTag();
