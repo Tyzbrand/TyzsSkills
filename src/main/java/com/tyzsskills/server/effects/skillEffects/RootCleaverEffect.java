@@ -1,5 +1,6 @@
 package com.tyzsskills.server.effects.skillEffects;
 
+import com.tyzsskills.server.attachments.BlockMarker;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.SkillBehaviour;
 import net.minecraft.core.BlockPos;
@@ -65,6 +66,7 @@ public class RootCleaverEffect extends SkillBehaviour {
 
             int logsBroken = 0;
             int leavesBroken = 0;
+            int playerPlacedCount = 0;
             Block targetLeafBlock = null;
 
             Vec3 dropPos = Vec3.atCenterOf(startPos).add(0, 0.5, 0);
@@ -85,6 +87,11 @@ public class RootCleaverEffect extends SkillBehaviour {
 
                 if (isLog || isLeaf) {
                     if (isLeaf && leavesBroken >= MAX_LEAVES) continue;
+
+                    if (BlockMarker.IsPlayerPlaced(level, currentPos)) {
+                        playerPlacedCount++;
+                        if (playerPlacedCount > 2) return;
+                    }
 
                     BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
                     NeoForge.EVENT_BUS.post(checkEvent);

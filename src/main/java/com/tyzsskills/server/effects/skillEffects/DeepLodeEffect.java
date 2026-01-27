@@ -1,5 +1,6 @@
 package com.tyzsskills.server.effects.skillEffects;
 
+import com.tyzsskills.server.attachments.BlockMarker;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.SkillBehaviour;
 import com.tyzsskills.server.skills.SkillManager;
@@ -65,6 +66,7 @@ public class DeepLodeEffect extends SkillBehaviour {
             visited.add(startPos);
 
             int blocksBroken = 0;
+            int playerPlacedCount = 0;
 
             Vec3 dropPos = Vec3.atCenterOf(startPos).add(0, 0.5, 0);
 
@@ -84,6 +86,11 @@ public class DeepLodeEffect extends SkillBehaviour {
                 BlockState currentState = level.getBlockState(currentPos);
 
                 if (currentState.is(targetBlock)) {
+
+                    if (BlockMarker.IsPlayerPlaced(level, currentPos)) {
+                        playerPlacedCount++;
+                        if (playerPlacedCount > 2) return;
+                    }
 
                     BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
                     NeoForge.EVENT_BUS.post(checkEvent);

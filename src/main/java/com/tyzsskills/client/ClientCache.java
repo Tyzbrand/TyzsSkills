@@ -174,6 +174,8 @@ public class ClientCache {
         clientAllTimeXP = 0f;
         clientSpEarned = 0;
         clientSpSpent = 0;
+        currentContainerCatgory = Skill.CategoryType.ALL;
+        currentContainerType = Skill.ContainerType.SKILLS;
     }
 
     public static void PredictBookmark(Skill skill){
