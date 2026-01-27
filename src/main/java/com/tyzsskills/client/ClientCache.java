@@ -25,7 +25,7 @@ public class ClientCache {
     private static float clientSessionXP = 0f;
     private static int clientSpEarned = 0;
     private static int clientSpSpent = 0;
-    private static int clientSkillUnlocked = 0;
+    private static int clienOwnedSkills = 0;
 
     private static XpManager.LevelData clientLevelData = new XpManager.LevelData(100f, 1);
 
@@ -95,14 +95,6 @@ public class ClientCache {
         }
     }
 
-    public static void UpdateClientStatSkills(int amount){
-        clientSkillUnlocked += amount;
-
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skill stats Update"), false);
-        }
-    }
-
     public static void UpdateClientCacheLevelData(XpManager.LevelData data){
         clientLevelData = data;
 
@@ -135,6 +127,14 @@ public class ClientCache {
 
     public static void UpdateSkillLevels(String id, int lvl){
         clientSkillLevels.put(id.toLowerCase(), lvl);
+
+        int owned = 0;
+        for(var skill : clientSkills.values()){
+            if(skill instanceof Trait) continue;
+            if(!clientSkillLevels.containsKey(skill.GetID().toLowerCase())) continue;
+            owned += clientSkillLevels.get(skill.GetID().toLowerCase());
+        }
+        clienOwnedSkills = owned;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
             Minecraft.getInstance().player.displayClientMessage(Component.literal("New skill level: " + id + " level " + lvl ), false);
@@ -174,8 +174,6 @@ public class ClientCache {
         clientAllTimeXP = 0f;
         clientSpEarned = 0;
         clientSpSpent = 0;
-        clientSkillUnlocked = 0;
-
     }
 
     public static void PredictBookmark(Skill skill){
@@ -250,7 +248,7 @@ public class ClientCache {
     public static float GetSessionXp(){return clientSessionXP;}
     public static int GetSpEarned(){return clientSpEarned;}
     public static int GetSpSpent(){return clientSpSpent;}
-    public static int GetUnlockedSkills(){return clientSkillUnlocked;}
+    public static int GetUnlockedSkills(){return clienOwnedSkills;}
     public static int GetSkillCount(){
         int count = 0;
         for(var skill : clientSkills.values()){

@@ -1,6 +1,7 @@
 package com.tyzsskills.server.active;
 
 import com.tyzsskills.server.attachments.LegacyData;
+import com.tyzsskills.server.attachments.StatsTracker;
 import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.core.Holder;
@@ -29,6 +30,8 @@ public class CompatibilityManager {
             return;
         }
 
+
+        //Main data
         double oldLevel = legacy.getOldValue("Level");
         if(oldLevel > 1) LevelManager.SetLevel(player, (int)oldLevel);
 
@@ -37,6 +40,20 @@ public class CompatibilityManager {
 
         double oldSp = legacy.getOldValue("researchpoints");
         if(oldSp > 0) SpManager.SetSP(player, (int)oldSp);
+
+
+        //Stat data
+        var data = player.getData(StatsTracker.DATA);
+
+        double oldLifeTimeXp = legacy.getOldValue("lifetime_xp");
+        if(oldLifeTimeXp > 0) data.addXp((float)oldLifeTimeXp);
+
+        double oldEarns = legacy.getOldValue("earned_points");
+        if(oldEarns > 0) data.addSpEarned((int)oldEarns);
+
+        double oldGains = legacy.getOldValue("spent_points");
+        if(oldGains > 0) data.addSpSpent((int)oldGains);
+
 
         RemoveOldModifier(player, Attributes.MOVEMENT_SPEED, "speedmodifier");
         RemoveOldModifier(player, Attributes.OXYGEN_BONUS, "OxygeneModifier");

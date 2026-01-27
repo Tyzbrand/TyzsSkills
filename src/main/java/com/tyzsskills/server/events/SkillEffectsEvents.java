@@ -255,7 +255,7 @@ public class SkillEffectsEvents {
     }
 
 
-    private final static String[] playerTickSkills = {"magnet", "silver_tongue"};
+    private final static String[] playerTickSkills = {"magnet", "silver_tongue", "deep_sight"};
     @SubscribeEvent
     public static void OnPlayerTick(PlayerTickEvent.Post event){
         var manager = SkillManager.Get();

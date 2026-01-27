@@ -292,29 +292,7 @@ public class MainGUI extends Screen {
             }
         }
 
-        if(ClientCache.GetContainerType() != Skill.ContainerType.SKILLS) return;
-
-        if(isHovering(mouseX, mouseY, leftPos + 92, topPos + 7, 29, 20)){ //All tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 123, topPos + 7, 29, 20)){ //Abilities tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.abilities"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 154, topPos + 7, 29, 20)){ //Fight tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.fight"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 185, topPos + 7, 29, 20)){ //Misc tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.misc"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 216, topPos + 7, 29, 20)){ //Bookmarks tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.bookmarks"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos+43, topPos+65, 8, 8)){
+        if(isHovering(mouseX, mouseY, leftPos+43, topPos+65, 8, 8)){ //Stats
             List<Component> tooltip = new ArrayList<>();
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.all_time_xp").withStyle(ChatFormatting.BLUE)
@@ -341,7 +319,27 @@ public class MainGUI extends Screen {
             gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
         }
 
+        if(ClientCache.GetContainerType() != Skill.ContainerType.SKILLS) return;
 
+        if(isHovering(mouseX, mouseY, leftPos + 92, topPos + 7, 29, 20)){ //All tab
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 123, topPos + 7, 29, 20)){ //Abilities tab
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.abilities"), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 154, topPos + 7, 29, 20)){ //Fight tab
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.fight"), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 185, topPos + 7, 29, 20)){ //Misc tab
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.misc"), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 216, topPos + 7, 29, 20)){ //Bookmarks tab
+            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.bookmarks"), mouseX, mouseY);
+        }
     }
 
     private void addButtons(){

@@ -36,6 +36,7 @@ public class SkillBehaviourRegistry {
         behaviours.put("deep_lode", new DeepLodeEffect());
         behaviours.put("refiner", new RefinerEffect());
         behaviours.put("deep_rest", new DeepRestEffect());
+        behaviours.put("deep_sight", new DeepSightEffect());
     }
 
     public static SkillBehaviour GetBehaviour(String id){

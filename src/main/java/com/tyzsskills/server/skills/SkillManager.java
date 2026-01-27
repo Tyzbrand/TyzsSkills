@@ -82,10 +82,8 @@ public class SkillManager {
 
                 PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl+1));
                 PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
-                PacketDistributor.sendToPlayer(player, new StatsSkillsPayload(1));
 
                 player.getData(StatsTracker.DATA).addSpSpent(price);
-                player.getData(StatsTracker.DATA).addSkillUnlocked(1);
 
                 PowerManager.AddPower(player, trait.getPowerWeight());
             }
@@ -102,10 +100,8 @@ public class SkillManager {
 
                 PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl+1));
                 PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
-                PacketDistributor.sendToPlayer(player, new StatsSkillsPayload(1));
 
                 player.getData(StatsTracker.DATA).addSpSpent(price);
-                player.getData(StatsTracker.DATA).addSkillUnlocked(1);
 
                 if(skill.GetType() == Skill.SkillType.GENERIC) GenericEffects.ApplyEffect(skill, player);
             }
@@ -173,10 +169,8 @@ public class SkillManager {
 
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl-1));
         PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(finalPrice));
-        PacketDistributor.sendToPlayer(player, new StatsSkillsPayload(-1));
 
         player.getData(StatsTracker.DATA).addSpEarned(finalPrice);
-        player.getData(StatsTracker.DATA).addSkillUnlocked(-1);
 
         if(skill.GetType() == Skill.SkillType.GENERIC){
             if(currentLvl - 1 <= 0) GenericEffects.RemoveEffect(skill, player);
@@ -253,9 +247,7 @@ public class SkillManager {
         var diff = lvl - oldLvl;
 
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(id, lvl));
-        PacketDistributor.sendToPlayer(player, new StatsSkillsPayload(diff));
 
-        player.getData(StatsTracker.DATA).addSkillUnlocked(diff);
 
         if(skill.GetType() == Skill.SkillType.GENERIC){
             if(lvl > 0) GenericEffects.ApplyEffect(skill, player);

@@ -20,7 +20,6 @@ public class StatsTracker implements INBTSerializable<CompoundTag> {
     private float allTimeXp = 0f;
     private int totalSpEarned = 0;
     private int totalSpSpent = 0;
-    private int skillsUnlocked = 0;
 
     public StatsTracker(){}
 
@@ -36,29 +35,22 @@ public class StatsTracker implements INBTSerializable<CompoundTag> {
         if(amount > 0) this.totalSpSpent+= amount;
     }
 
-    public void addSkillUnlocked(int amount){
-        this.skillsUnlocked += amount;
-    }
-
     public void resetStats(){
         this.allTimeXp = 0f;
         this.totalSpEarned = 0;
         this.totalSpSpent = 0;
-        this.skillsUnlocked = 0;
     }
 
     public void copyFrom(StatsTracker old){
         this.allTimeXp = old.allTimeXp;
         this.totalSpEarned = old.totalSpEarned;
         this.totalSpSpent = old.totalSpSpent;
-        this.skillsUnlocked = old.skillsUnlocked;
     }
 
     //Getters
     public float getAllTimeXp() {return this.allTimeXp;}
     public int getTotalSpEarned() {return this.totalSpEarned;}
     public int getTotalSpSpent() {return this.totalSpSpent;}
-    public int getSkillsUnlocked() {return this.skillsUnlocked;}
 
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
@@ -66,7 +58,6 @@ public class StatsTracker implements INBTSerializable<CompoundTag> {
         tag.putFloat("allTimeXp", allTimeXp);
         tag.putInt("totalSpEarned", totalSpEarned);
         tag.putInt("totalSpSpent", totalSpSpent);
-        tag.putInt("skillUnlocked", skillsUnlocked);
         return tag;
     }
 
@@ -75,6 +66,5 @@ public class StatsTracker implements INBTSerializable<CompoundTag> {
         if(compoundTag.contains("allTimeXp")) allTimeXp = compoundTag.getFloat("allTimeXp");
         if(compoundTag.contains("totalSpEarned")) totalSpEarned = compoundTag.getInt("totalSpEarned");
         if(compoundTag.contains("totalSpSpent")) totalSpSpent = compoundTag.getInt("totalSpSpent");
-        if(compoundTag.contains("skillUnlocked")) skillsUnlocked = compoundTag.getInt("skillUnlocked");
     }
 }

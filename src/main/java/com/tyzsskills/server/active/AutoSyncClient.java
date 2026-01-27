@@ -57,7 +57,6 @@ public class AutoSyncClient {
         PacketDistributor.sendToPlayer(player, new StatsXpPayload(data.getAllTimeXp()));
         PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(data.getTotalSpEarned()));
         PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(data.getTotalSpSpent()));
-        PacketDistributor.sendToPlayer(player, new StatsSkillsPayload(data.getSkillsUnlocked()));
     }
 
 
