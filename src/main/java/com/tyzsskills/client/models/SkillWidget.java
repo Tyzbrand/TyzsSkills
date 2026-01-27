@@ -323,7 +323,7 @@ public class SkillWidget {
     }
 
     //Utils
-    protected static final int COLOR_BG = 0xAA000000;
+    protected static final int COLOR_BG = 0xD5000000;
     protected static final int COLOR_BORDER = 0xFFD6AD55;
     protected void renderBackdrop(GuiGraphics gui, int x, int y, int width, int height, int color) {
         // Fond

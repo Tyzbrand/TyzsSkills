@@ -20,8 +20,8 @@ import java.util.List;
 
 public class TraitWidget extends SkillWidget{
 
-    private static final int U_INACTIVE = 146, V_INACTIVE = 251;
-    private static final int U_ACTIVE = 82;
+    private static final int U_INACTIVE = 166, V_INACTIVE = 142;
+    private static final int U_ACTIVE = 82, V_ACTIVE = 251;
 
     private Trait trait;
 
@@ -40,7 +40,8 @@ public class TraitWidget extends SkillWidget{
         boolean isOwned = ClientCache.GetSkillLevel(trait.GetID().toLowerCase()) > 0;
 
         int currentU = isOwned? U_ACTIVE : U_INACTIVE;
-        gui.blit(REF_TEXTURE, x, y, currentU, V_INACTIVE, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
+        int currentV = isOwned? V_ACTIVE : V_INACTIVE;
+        gui.blit(REF_TEXTURE, x, y, currentU, currentV, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
 
         gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
 
@@ -48,7 +49,7 @@ public class TraitWidget extends SkillWidget{
         int color;
 
         state = isOwned? Component.translatable("gui.tyzs_skills.active") : Component.translatable("gui.tyzs_skills.inactive");
-        color = isOwned? 0xAA1D7525 : 0xAA8F2626;
+        color = isOwned? 0xFF1D7525 : 0xFF8F2626;
 
 
         float scale = 0.58f;

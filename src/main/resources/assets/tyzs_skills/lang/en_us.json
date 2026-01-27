@@ -32,11 +32,11 @@
   "gui.tyzs_skills.Tab.misc" : "Misc",
   "gui.tyzs_skills.Tab.bookmarks" : "Bookmarks",
 
-  "gui.tyzs_skills.stats.all_time_xp" : "All time xp",
-  "gui.tyzs_skills.stats.session_xp" : "Session xp",
-  "gui.tyzs_skills.stats.sp_earned" : "Sp earned",
-  "gui.tyzs_skills.stats.sp_spent" : "Sp spent",
-  "gui.tyzs_skills.stats.skill_unlocked" : "Owned skills",
+  "gui.tyzs_skills.stats.all_time_xp" : "all time xp",
+  "gui.tyzs_skills.stats.session_xp" : "session xp",
+  "gui.tyzs_skills.stats.sp_earned" : "sp earned",
+  "gui.tyzs_skills.stats.sp_spent" : "sp spent",
+  "gui.tyzs_skills.stats.skill_unlocked" : "owned skills",
 
 
   "key.tyzs_skills.open_menu" : "Open skill UI",
