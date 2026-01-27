@@ -89,25 +89,44 @@ public class MainGUI extends Screen {
 
     //helpers
     private void renderStrings(GuiGraphics gui, int mouseX, int mouseY){
+        float scale = 0.6f;
+        int yOffset = 1;
 
-        int color1 = isHovering(mouseX, mouseY, leftPos, topPos+81, 36, 12 )? 0xD6AD55 : 0x737373;
-        MutableComponent lvlStat = Component.translatable("gui.tyzs_skills.Lvl").withStyle(Style.EMPTY.withFont(mainFont));
-        gui.drawString(this.font, lvlStat, leftPos+7, topPos+84, color1, false);
+        int color1 = isHovering(mouseX, mouseY, leftPos, topPos + 81, 36, 12) ? 0xD6AD55 : 0xFFFFFFFF;
+        MutableComponent lvlStat = Component.translatable("gui.tyzs_skills.Lvl");
+        gui.pose().pushPose();
+        gui.pose().translate(leftPos + 7, topPos + 84 + yOffset, 0);
+        gui.pose().scale(scale, scale, 1.0f);
+        gui.drawString(this.font, lvlStat, 0, 0, color1, false);
+        gui.pose().popPose();
 
-        MutableComponent lvlValue = Component.literal(String.valueOf(ClientCache.GetLvl())).withStyle(Style.EMPTY.withFont(mainFont));
+        MutableComponent lvlValue = Component.literal(String.valueOf(ClientCache.GetLvl()));
         int text1W = this.font.width(lvlValue);
-        int rightLimit1 = leftPos+31;
-        gui.drawString(this.font, lvlValue, rightLimit1 - text1W, topPos+84, color1, false);
+        int rightLimit1 = leftPos + 31;
+        gui.pose().pushPose();
+        gui.pose().translate(rightLimit1, topPos + 84 + yOffset, 0);
+        gui.pose().scale(scale, scale, 1.0f);
+        gui.drawString(this.font, lvlValue, -text1W, 0, color1, false);
+        gui.pose().popPose();
 
 
-        int color2 = isHovering(mouseX, mouseY, leftPos+37, topPos+81, 36, 12 )? 0xD6AD55 : 0x737373;
-        MutableComponent spStat = Component.translatable("gui.tyzs_skills.SP").withStyle(Style.EMPTY.withFont(mainFont));
-        gui.drawString(this.font, spStat, leftPos+46, topPos+84, color2, false);
 
-        MutableComponent spValue = Component.literal(String.valueOf(ClientCache.GetSP())).withStyle(Style.EMPTY.withFont(mainFont));
+        int color2 = isHovering(mouseX, mouseY, leftPos + 37, topPos + 81, 36, 12) ? 0xD6AD55 : 0xFFFFFFFF;
+        MutableComponent spStat = Component.translatable("gui.tyzs_skills.SP");
+        gui.pose().pushPose();
+        gui.pose().translate(leftPos + 46, topPos + 84 + yOffset, 0);
+        gui.pose().scale(scale, scale, 1.0f);
+        gui.drawString(this.font, spStat, 0, 0, color2, false);
+        gui.pose().popPose();
+
+        MutableComponent spValue = Component.literal(String.valueOf(ClientCache.GetSP()));
         int text2W = this.font.width(spValue);
-        int rightLimit2 = leftPos+69;
-        gui.drawString(this.font, spValue, rightLimit2 -text2W, topPos+84, color2, false);
+        int rightLimit2 = leftPos + 69;
+        gui.pose().pushPose();
+        gui.pose().translate(rightLimit2, topPos + 84 + yOffset, 0);
+        gui.pose().scale(scale, scale, 1.0f);
+        gui.drawString(this.font, spValue, -text2W, 0, color2, false);
+        gui.pose().popPose();
 
         if(ClientCache.GetContainerType() == Skill.ContainerType.TRAITS){
             MutableComponent text = Component.translatable("gui.tyzs_skills.traits");
@@ -221,7 +240,14 @@ public class MainGUI extends Screen {
 
         if(isHovering(mouseX, mouseY, leftPos, topPos+96, 75, 8)){ //Xp bar
             String xpTooltip = SmartFormat(ClientCache.GetXP()) + "/" + SmartFormat(ClientCache.GetXPGOAL()) ;
-            gui.renderTooltip(this.font, Component.literal(xpTooltip), mouseX, mouseY);
+
+            MutableComponent finalText = Component.literal(xpTooltip)
+                            .append(Component.literal(" [+" + SmartFormat(ClientCache.GetReward()) + " ").withStyle(ChatFormatting.GREEN))
+                            .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.GREEN))
+                            .append(Component.literal("]").withStyle(ChatFormatting.GREEN));
+
+
+            gui.renderTooltip(this.font, finalText, mouseX, mouseY);
         }
 
         if(ClientCache.GetContainerType() == Skill.ContainerType.TRAITS
@@ -321,10 +347,10 @@ public class MainGUI extends Screen {
     private void addButtons(){
          this.skillBtn = new CustomTabButton(
                 leftPos + 55, topPos + 6,
-                16, 16,
-                82, 150,
-                114, 150,
-                98, 150,
+                14, 14,
+                83, 154,
+                97, 154,
+                111, 154,
                 325, 325,
                 () -> ClientCache.GetContainerType() == Skill.ContainerType.SKILLS,
                 background,
@@ -335,11 +361,11 @@ public class MainGUI extends Screen {
         this.addRenderableWidget(this.skillBtn);
 
         this.traitBtn = new CustomTabButton(
-                leftPos + 55, topPos + 24,
-                16, 16,
-                82, 167,
-                114, 167,
-                98, 167,
+                leftPos + 55, topPos + 21,
+                14, 14,
+                83, 168,
+                97, 168,
+                111, 168,
                 325, 325,
                 () -> ClientCache.GetContainerType() == Skill.ContainerType.TRAITS,
                 background,

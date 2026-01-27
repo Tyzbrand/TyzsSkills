@@ -237,6 +237,7 @@ public class ClientCache {
     public static int GetSP(){return clientSP;}
     public static int GetLvl(){return clientLevel;}
     public static float GetXPGOAL(){return clientLevelData.goal();}
+    public static float GetReward(){return clientLevelData.reward();}
     public static Skill.ContainerType GetContainerType(){return currentContainerType;}
     public static Skill.CategoryType GetCategoryType(){return currentContainerCatgory;}
     public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills.values());}
