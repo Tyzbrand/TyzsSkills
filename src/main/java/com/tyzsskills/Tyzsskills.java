@@ -1,6 +1,7 @@
 package com.tyzsskills;
 
 import com.tyzsskills.server.active.AttributeRegistry;
+import com.tyzsskills.server.active.SoundRegistry;
 import com.tyzsskills.server.attachments.BlockMarker;
 import com.tyzsskills.server.active.FileManager;
 import com.tyzsskills.server.attachments.ExplorationProgression;
@@ -75,6 +76,10 @@ public class Tyzsskills {
         LegacyData.ATTACHMENT_TYPES.register(modEventBus);
         ExplorationProgression.ATTACHMENT_TYPES.register(modEventBus);
         StatsTracker.ATTACHMENT_TYPES.register(modEventBus);
+
+        //Register Sounds
+        SoundRegistry.register(modEventBus);
+
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (Tyzsskills) to respond directly to events.

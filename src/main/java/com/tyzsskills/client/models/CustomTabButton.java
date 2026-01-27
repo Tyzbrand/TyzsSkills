@@ -1,7 +1,12 @@
 package com.tyzsskills.client.models;
 
+import com.tyzsskills.server.active.SoundRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -66,5 +71,11 @@ public class CustomTabButton extends Button {
     @Override
     public void setFocused(boolean focused) {
         super.setFocused(false);
+    }
+
+    @Override
+    public void playDownSound(SoundManager handler) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if(player != null) SoundRegistry.PlayUIClick();
     }
 }

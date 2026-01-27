@@ -1,0 +1,14 @@
+{
+  "ui-click_2": {
+    "category": "player",
+    "sounds": [
+      "tyzs_skills:ui-click_2"
+    ]
+  },
+  "ui-click_3": {
+    "category": "player",
+    "sounds": [
+      "tyzs_skills:ui-click_3"
+    ]
+  }
+}
