@@ -131,7 +131,7 @@ public class MainGUI extends Screen {
         if(ClientCache.GetContainerType() == Skill.ContainerType.TRAITS){
             MutableComponent text = Component.translatable("gui.tyzs_skills.traits");
             int textW = font.width(text); int textH = font.lineHeight; int padding = 3;
-            renderBackdrop(gui, (leftPos+90) - padding, (topPos+12) - padding, textW + (padding*2), textH + (padding*2), 0xAA000000);
+            renderBackdrop(gui, (leftPos+90) - padding, (topPos+12) - padding, textW + (padding*2), textH + (padding*2), 0xD5000000);
             gui.drawString(this.font, text, leftPos+90 , topPos+13, 0xFFFFFFFF, false);
         }
         else{
@@ -141,7 +141,7 @@ public class MainGUI extends Screen {
             int text3W = this.font.width(enumDisplayName);
             int rightLimit3 = leftPos+293;
             int textW = font.width(enumDisplayName); int textH = font.lineHeight; int padding = 3;
-            renderBackdrop(gui, (rightLimit3 -text3W) - padding, (topPos+12) - padding, textW + (padding*2), textH + (padding*2), 0xAA000000);
+            renderBackdrop(gui, (rightLimit3 -text3W) - padding, (topPos+12) - padding, textW + (padding*2), textH + (padding*2), 0xD5000000);
             gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+13, 0xFFFFFFFF, false);
         }
 
