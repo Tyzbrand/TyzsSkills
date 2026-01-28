@@ -2,6 +2,7 @@ package com.tyzsskills.client.screen;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.client.ClientCache;
+import com.tyzsskills.client.SoundPlayer;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -47,6 +48,8 @@ public class LevelTriggerOverlay implements LayeredDraw.Layer {
             accumulatedSp += spReward;
         }
         lastUpdateTime = now;
+
+        SoundPlayer.PlayLevelUpSound();
     }
 
     public static void Clear() {

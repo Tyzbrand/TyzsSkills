@@ -4,6 +4,7 @@ import ca.weblite.objc.Client;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.client.ClientCache;
+import com.tyzsskills.client.SoundPlayer;
 import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.server.active.AttributeRegistry;
 import com.tyzsskills.server.active.PowerManager;
@@ -212,7 +213,7 @@ public class SkillWidget {
     public boolean mouseClicked(double mouseX, double mouseY, int button){
         if(isMouseOver((int)mouseX, (int)mouseY, x+38, y+17, BTN_W, BTN_H)){
             if(!CanBuy(skill)) return false;
-            SoundRegistry.PlayUIClick();
+            SoundPlayer.PlayUIClick();
             ClientCache.PredictBuy(skill);
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.GetID().toLowerCase(), 0));
             return true;
@@ -220,14 +221,14 @@ public class SkillWidget {
 
         if(isMouseOver((int)mouseX, (int)mouseY, x+27, y+17, BTN_W, BTN_H)){
             if(!CanRefund(skill)) return false;
-            SoundRegistry.PlayUIClick();
+            SoundPlayer.PlayUIClick();
             ClientCache.PredictRefund(skill);
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.GetID().toLowerCase(), 1));
             return true;
         }
 
         if(isMouseOver((int)mouseX, (int)mouseY, x+49, y+17, BTN_W, BTN_H)) {
-            SoundRegistry.PlayUIClick();
+            SoundPlayer.PlayUIClick();
             ClientCache.PredictBookmark(skill);
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.GetID().toLowerCase(), 2));
 

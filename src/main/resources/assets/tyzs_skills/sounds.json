@@ -10,5 +10,11 @@
     "sounds": [
       "tyzs_skills:ui-click_3"
     ]
+  },
+  "level_up_sound": {
+    "category": "player",
+    "sounds": [
+      "tyzs_skills:level_up_sound"
+    ]
   }
 }

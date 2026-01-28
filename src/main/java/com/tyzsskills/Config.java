@@ -340,11 +340,11 @@ public class Config {
 
         INVENTORY_BUTTON_X = clientBuilder.comment("X Position of the skill inventory button")
                 .translation("config.client.tyzs_skills.inventory_btn_x")
-                .defineInRange("inventory_btn_x", 10, -10000, 10000);
+                .defineInRange("inventory_btn_x", 3, -10000, 10000);
 
         INVENTORY_BUTTON_Y = clientBuilder.comment("Y Position of the skill inventory button")
                 .translation("config.client.tyzs_skills.inventory_btn_y")
-                .defineInRange("inventory_btn_y", 10, -10000, 10000);
+                .defineInRange("inventory_btn_y", 3, -10000, 10000);
         clientBuilder.pop();
 
         clientBuilder.push("debug");

@@ -42,9 +42,15 @@ public class GenericEffects {
             value /= 100f;
         }
 
+        var operation = skill.GetModifierOperation();
+
+        if(skill.GetModifier().equals("minecraft:generic.oxygen_bonus")){
+            operation = AttributeModifier.Operation.ADD_VALUE;
+            value += .75f;
+        }
+
         AttributeModifier modifier = new AttributeModifier(
-                modifierID, value, skill.GetModifierOperation()
-        );
+                modifierID, value, operation);
 
         if (instance.hasModifier(modifierID)) {instance.removeModifier(modifierID);}
 

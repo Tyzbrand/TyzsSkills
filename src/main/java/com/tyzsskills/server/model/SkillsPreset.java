@@ -510,11 +510,11 @@ public class SkillsPreset {
                 "skill.tyzs_skills.keepsake.description"));
 
         finalList.add(new Trait(
-                true,
+                false,
                 "soundless",
                 5,
                 45,
-                true,
+                false,
                 "tyzs_skills:textures/gui/skills/soundless.png",
                 "skill.tyzs_skills.soundless.displayName",
                 "skill.tyzs_skills.soundless.description"));

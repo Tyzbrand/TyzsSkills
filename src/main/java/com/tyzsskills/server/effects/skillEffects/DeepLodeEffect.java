@@ -112,6 +112,7 @@ public class DeepLodeEffect extends SkillBehaviour {
                         List<ItemStack> smelted = RefinerEffect.smeltDrops(level, drops);
                         if (smelted != null) {
                             drops = smelted;
+                            NotifyClient(player, SkillManager.Get().GetSkill("refiner"));
                         }
                     }
 

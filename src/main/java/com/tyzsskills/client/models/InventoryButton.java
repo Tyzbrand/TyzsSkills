@@ -3,6 +3,7 @@ package com.tyzsskills.client.models;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.client.SoundPlayer;
 import com.tyzsskills.server.active.SoundRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -93,6 +94,6 @@ public class InventoryButton extends AbstractWidget {
     @Override
     public void playDownSound(SoundManager handler) {
         LocalPlayer player = Minecraft.getInstance().player;
-        if(player != null) SoundRegistry.PlayUIClick();
+        if(player != null) SoundPlayer.PlayUIClick();
     }
 }

@@ -87,6 +87,8 @@ public class RefinerEffect extends SkillBehaviour {
                     entity.setDefaultPickUpDelay();
                     level.addFreshEntity(entity);
                 }
+
+                NotifyClient(player, skill);
             }
         }
         finally {IS_SMELTING.set(false);}
