@@ -153,18 +153,18 @@ public class TraitWidget extends SkillWidget{
                         val = values.get(index);
                     }
 
-                    String coloredValue = ChatFormatting.GREEN + MainGUI.SmartFormat(val) + ChatFormatting.WHITE;
+                    String coloredValue = ChatFormatting.GREEN + MainGUI.SmartFormat(val) + ChatFormatting.GRAY;
                     rawDesc = rawDesc.replace("{value}", coloredValue);
 
                 } else {
-                    rawDesc = rawDesc.replace("{value}", ChatFormatting.GREEN + "0" + ChatFormatting.WHITE);
+                    rawDesc = rawDesc.replace("{value}", ChatFormatting.GREEN + "0" + ChatFormatting.GRAY);
                 }
             }
 
             Font font = Minecraft.getInstance().font;
-            MutableComponent fullDesc = Component.literal(rawDesc).withStyle(ChatFormatting.WHITE);
+            MutableComponent fullDesc = Component.literal(rawDesc).withStyle(ChatFormatting.GRAY);
 
-            List<FormattedCharSequence> splitLines = font.split(fullDesc, 145);
+            List<FormattedCharSequence> splitLines = font.split(fullDesc, 152);
 
             for (FormattedCharSequence line : splitLines) {
                 MutableComponent lineComponent = Component.empty();
