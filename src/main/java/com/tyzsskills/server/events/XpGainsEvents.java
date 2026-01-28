@@ -180,6 +180,12 @@ public class XpGainsEvents {
 
         if(dimensionValue > 0.0){
             String dimensionID = player.level().dimension().location().toString();
+
+            if(!data.hasDiscoveredAnyDimension()){
+                data.addDimension(dimensionID);
+                return;
+            }
+
             if(!data.hasDiscoveredDimension(dimensionID)){
                 data.addDimension(dimensionID);
                 dimensionValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);

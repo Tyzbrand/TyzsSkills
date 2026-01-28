@@ -25,6 +25,18 @@ public class Config {
 
     public static final ModConfigSpec.BooleanValue PREVENT_PLACED_BLOCK_XP;
 
+    //Traits
+    //===Deep lode===
+    public static final ModConfigSpec.IntValue MAX_ORES;
+    public static final ModConfigSpec.BooleanValue DEEP_LODE_GRIEF_PROTECTION;
+    //===Root cleaver===
+    public static final ModConfigSpec.IntValue MAX_LOGS;
+    public static final ModConfigSpec.IntValue MAX_LEAVES;
+    public static final ModConfigSpec.BooleanValue MATCH_TYPE;
+    public static final ModConfigSpec.BooleanValue ROOT_CLEAVER_GRIEF_PROTECTION;
+
+
+    //Xp values
     public static final ModConfigSpec.BooleanValue EARN_XP_IN_CREATIVE;
 
     public static final ModConfigSpec.BooleanValue EARN_XP_BY_EATING;
@@ -108,11 +120,45 @@ public class Config {
                 .define("prevent_placed_block_xp", true);
 
         commonBuilder.pop();
+        commonBuilder.push("Trait details");
+
+        commonBuilder.push("Deep lode");
+        MAX_ORES = commonBuilder
+                .comment("Define the max ores contained in a vein")
+                .translation("")
+                .defineInRange("max_ore", 64, 1, Integer.MAX_VALUE);
+
+        DEEP_LODE_GRIEF_PROTECTION = commonBuilder
+                .comment("Prevent custom build to be destroyed by the trait")
+                .translation("")
+                .define("deep_lode_grief_protection", true);
+        commonBuilder.pop();
+
+        commonBuilder.push("Root cleaver");
+        MAX_LOGS = commonBuilder
+                .comment("Define the max logs that can be broken")
+                .translation("")
+                .defineInRange("max_log", 175, 1, Integer.MAX_VALUE);
+
+        MAX_LEAVES = commonBuilder
+                .comment("Define the max leaves that can be broken")
+                .translation("")
+                .defineInRange("max_leaf", 300, 0, Integer.MAX_VALUE);
+
+        MATCH_TYPE = commonBuilder
+                .comment("Limits destruction to the same type of wood and leaf")
+                .translation("")
+                .define("match_type", true);
+
+        ROOT_CLEAVER_GRIEF_PROTECTION = commonBuilder
+                .comment("Prevent custom build to be destroyed by the trait")
+                .translation("")
+                .define("root_cleaver_grief_protection", true);
+        commonBuilder.pop();
 
 
 
-
-
+        commonBuilder.pop();
         commonBuilder.push("xp_values");
 
         EARN_XP_IN_CREATIVE = commonBuilder

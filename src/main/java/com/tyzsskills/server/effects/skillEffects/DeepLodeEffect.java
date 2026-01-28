@@ -1,5 +1,6 @@
 package com.tyzsskills.server.effects.skillEffects;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.server.attachments.BlockMarker;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.SkillBehaviour;
@@ -35,8 +36,6 @@ import java.util.Set;
 
 public class DeepLodeEffect extends SkillBehaviour {
 
-    private static final int MAX_BLOCKS = 128;
-
     private static final ThreadLocal<Boolean> IS_MINING = ThreadLocal.withInitial(() -> false);
 
     @Override
@@ -57,6 +56,9 @@ public class DeepLodeEffect extends SkillBehaviour {
 
         event.setCanceled(true);
         IS_MINING.set(true);
+
+        int MAX_BLOCKS = Config.MAX_ORES.getAsInt();
+        boolean griefProtection = Config.DEEP_LODE_GRIEF_PROTECTION.getAsBoolean();
 
         try {
             Queue<BlockPos> queue = new LinkedList<>();
@@ -89,13 +91,14 @@ public class DeepLodeEffect extends SkillBehaviour {
 
                     if (BlockMarker.IsPlayerPlaced(level, currentPos)) {
                         playerPlacedCount++;
-                        if (playerPlacedCount > 2) return;
+                        if (playerPlacedCount > 2 && griefProtection) return;
                     }
 
-                    BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
-                    NeoForge.EVENT_BUS.post(checkEvent);
-
-                    if (checkEvent.isCanceled()) continue;
+                    if (!currentPos.equals(startPos)) {
+                        BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
+                        NeoForge.EVENT_BUS.post(checkEvent);
+                        if (checkEvent.isCanceled()) continue;
+                    }
 
                     LootParams.Builder lootParams = new LootParams.Builder(level)
                             .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(currentPos))

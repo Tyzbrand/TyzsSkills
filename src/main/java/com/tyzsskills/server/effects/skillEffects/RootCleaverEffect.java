@@ -1,5 +1,6 @@
 package com.tyzsskills.server.effects.skillEffects;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.server.attachments.BlockMarker;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.SkillBehaviour;
@@ -29,8 +30,6 @@ import java.util.Set;
 
 public class RootCleaverEffect extends SkillBehaviour {
 
-    private static final int MAX_LOGS = 128;
-    private static final int MAX_LEAVES = 256;
 
     private static final ThreadLocal<Boolean> IS_TIMBERING = ThreadLocal.withInitial(() -> false);
 
@@ -57,6 +56,9 @@ public class RootCleaverEffect extends SkillBehaviour {
 
         IS_TIMBERING.set(true);
 
+        int MAX_LOGS = Config.MAX_LOGS.getAsInt();
+        int MAX_LEAVES = Config.MAX_LEAVES.getAsInt();
+
         try {
             Queue<BlockPos> queue = new LinkedList<>();
             Set<BlockPos> visited = new HashSet<>();
@@ -69,6 +71,9 @@ public class RootCleaverEffect extends SkillBehaviour {
             int playerPlacedCount = 0;
             Block targetLeafBlock = null;
 
+            boolean griefProtection = Config.ROOT_CLEAVER_GRIEF_PROTECTION.getAsBoolean();
+            boolean matchType = Config.MATCH_TYPE.getAsBoolean();
+
             Vec3 dropPos = Vec3.atCenterOf(startPos).add(0, 0.5, 0);
 
             while (!queue.isEmpty()) {
@@ -77,10 +82,10 @@ public class RootCleaverEffect extends SkillBehaviour {
                 BlockPos currentPos = queue.poll();
                 BlockState currentState = level.getBlockState(currentPos);
 
-                boolean isLog = currentState.is(targetLogBlock);
+                boolean isLog = matchType ? currentState.is(targetLogBlock) : currentState.is(BlockTags.LOGS);
                 boolean isLeaf = currentState.is(BlockTags.LEAVES);
 
-                if (isLeaf) {
+                if (isLeaf && matchType) {
                     if (targetLeafBlock == null) targetLeafBlock = currentState.getBlock();
                     else if (currentState.getBlock() != targetLeafBlock) continue;
                 }
@@ -90,13 +95,14 @@ public class RootCleaverEffect extends SkillBehaviour {
 
                     if (BlockMarker.IsPlayerPlaced(level, currentPos)) {
                         playerPlacedCount++;
-                        if (playerPlacedCount > 2) return;
+                        if (playerPlacedCount > 2 && griefProtection) return;
                     }
 
-                    BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
-                    NeoForge.EVENT_BUS.post(checkEvent);
-
-                    if (checkEvent.isCanceled()) continue;
+                    if (!currentPos.equals(startPos)) {
+                        BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
+                        NeoForge.EVENT_BUS.post(checkEvent);
+                        if (checkEvent.isCanceled()) continue;
+                    }
 
                     LootParams.Builder lootParams = new LootParams.Builder(level)
                             .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(currentPos))
@@ -136,7 +142,7 @@ public class RootCleaverEffect extends SkillBehaviour {
                             addNeighbors(currentPos, queue, visited);
                         } else {
                             leavesBroken++;
-                            addLeafNeighbors(currentPos, queue, visited, level);
+                            addNeighbors(currentPos, queue, visited);
                         }
                     }
                 }
@@ -164,20 +170,4 @@ public class RootCleaverEffect extends SkillBehaviour {
         }
     }
 
-    private void addLeafNeighbors(BlockPos pos, Queue<BlockPos> queue, Set<BlockPos> visited, Level level) {
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                for (int dz = -1; dz <= 1; dz++) {
-                    if (dx == 0 && dy == 0 && dz == 0) continue;
-                    BlockPos neighbor = pos.offset(dx, dy, dz);
-                    if (!visited.contains(neighbor)) {
-                        if (level.getBlockState(neighbor).is(BlockTags.LEAVES)) {
-                            visited.add(neighbor);
-                            queue.add(neighbor);
-                        }
-                    }
-                }
-            }
-        }
-    }
 }

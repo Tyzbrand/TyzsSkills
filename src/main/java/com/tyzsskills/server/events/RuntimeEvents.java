@@ -31,12 +31,6 @@ public class RuntimeEvents {
 
         CompatibilityManager.ProcessMigration(player);
 
-        var data = player.getData(ExplorationProgression.DATA);
-        if(!data.hasDiscoveredAnyDimension()){
-            String dimensionID = player.level().dimension().location().toString();
-            data.addDimension(dimensionID);
-        }
-
         AutoSyncClient.SyncMainData(player);
         AutoSyncClient.SyncSkillList(player);
         AutoSyncClient.SyncSkillLevels(player);
