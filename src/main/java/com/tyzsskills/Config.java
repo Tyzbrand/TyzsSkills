@@ -94,6 +94,11 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<String> SKILL_BG_COLOR;
     public static final ModConfigSpec.ConfigValue<String> SKILL_BD_COLOR;
 
+    //Button
+    public static final ModConfigSpec.BooleanValue SHOW_SKILL_BUTTON;
+    public static final ModConfigSpec.IntValue INVENTORY_BUTTON_X;
+    public static final ModConfigSpec.IntValue INVENTORY_BUTTON_Y;
+
     //Debug
     public static final ModConfigSpec.BooleanValue SHOW_DEBUG_MESSAGES;
 
@@ -325,6 +330,21 @@ public class Config {
         SKILL_BG_COLOR = clientBuilder.comment("Background color (Hex)").translation("config.client.tyzs_skills.bg_color").define("skill_background_color", "#FF000000", colorValidator);
         SKILL_BD_COLOR = clientBuilder.comment("Border color (Hex)").translation("config.client.tyzs_skills.bd_color").define("skill_border_color", "#FFD6AD55", colorValidator);
         clientBuilder.pop();
+        clientBuilder.pop();
+
+        clientBuilder.push("inventory_button");
+        SHOW_SKILL_BUTTON = clientBuilder
+                .comment("Display skill button in the inventory")
+                .translation("config.client.tyzs_skills.inventory_btn_show")
+                .define("skill_btn", true);
+
+        INVENTORY_BUTTON_X = clientBuilder.comment("X Position of the skill inventory button")
+                .translation("config.client.tyzs_skills.inventory_btn_x")
+                .defineInRange("inventory_btn_x", 10, -10000, 10000);
+
+        INVENTORY_BUTTON_Y = clientBuilder.comment("Y Position of the skill inventory button")
+                .translation("config.client.tyzs_skills.inventory_btn_y")
+                .defineInRange("inventory_btn_y", 10, -10000, 10000);
         clientBuilder.pop();
 
         clientBuilder.push("debug");

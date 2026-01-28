@@ -2,6 +2,7 @@ package com.tyzsskills.server.xp.xpEvents;
 
 import com.google.gson.JsonObject;
 import com.tyzsskills.server.active.AttributeRegistry;
+import com.tyzsskills.server.active.ErrorManager;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -29,7 +30,16 @@ public class XpBlock {
         for(String categoryKey : source.keySet()){
 
             JsonObject category = source.getAsJsonObject(categoryKey);
-            if(!category.has("xp") || !category.has("blocks")) continue;
+
+            if(!category.has("xp")){
+                ErrorManager.RegisterLoadError("loading '" + categoryKey + "' in block xp values", "Missing 'xp' value");
+                continue;
+            }
+
+            if(!category.has("blocks")){
+                ErrorManager.RegisterLoadError("loading '" + categoryKey + "' in block xp values", "Missing 'block' list");
+                continue;
+            }
 
             float xpValue = category.get("xp").getAsFloat();
             for (var iteration : category.getAsJsonArray("blocks")){
@@ -42,7 +52,10 @@ public class XpBlock {
                         var tagKey = TagKey.create(Registries.BLOCK, location);
                         XpTagValues.put(tagKey, xpValue);
                     }
-                    catch (Exception ex){System.err.println("TyzSkills: Error when loading tags '" + entry + "' : " + ex.getMessage());}
+                    catch (Exception ex){
+                        System.err.println("TyzSkills: Error when loading tags '" + entry + "' : " + ex.getMessage());
+                        ErrorManager.RegisterLoadError("parsing block/tag '" + entry + "' in block xp values", "Invalid ResourceLocation format");
+                    }
                 }
                 else{Xpvalues.put(entry, xpValue);}
             }

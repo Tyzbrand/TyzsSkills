@@ -2,6 +2,7 @@ package com.tyzsskills.server.skills;
 
 import com.google.gson.JsonObject;
 import com.tyzsskills.Config;
+import com.tyzsskills.server.active.ErrorManager;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.Trait;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -13,7 +14,7 @@ public class SkillLoader {
 
     public static void LoadSKill(JsonObject source){
         String id = GetSafeString(source, "id");
-        if(id == null) {LogError("Unknow"); return;}
+        if(id == null || id.isBlank()) {ErrorManager.RegisterSkillError("Unknow", "invalid id"); return;}
         id = id.toLowerCase();
 
         Boolean state = GetSafeBool(source, "active");
@@ -29,18 +30,18 @@ public class SkillLoader {
 
         if(source.has("prices")){
             List<Integer> tempPrices = GetSafeIntArray(source, "prices");
-            if(tempPrices == null) {LogError(id); return;}
+            if(tempPrices == null) {ErrorManager.RegisterSkillError(id, "invalid price list"); return;}
             prices = tempPrices;
         }
 
         if(source.has("values")){
             List<Float> tempValues = GetSafeFloatArray(source, "values");
-            if(tempValues == null) {LogError(id); return;}
+            if(tempValues == null) {ErrorManager.RegisterSkillError(id, "invalid value list"); return;}
             values = tempValues;
         }
 
         Skill.SkillType type = GetSafeType(source, "type");
-        if(type == null) {LogError(id); return;}
+        if(type == null) {ErrorManager.RegisterSkillError(id, "invalid skill type"); return;}
 
         Skill.CategoryType category = GetSafeCategory(source, "category");
         if(category == null) category = Skill.CategoryType.MISC;
@@ -81,14 +82,21 @@ public class SkillLoader {
             return;
         }
 
-        if(prices.size() < maxLevel) return;
-        if(!values.isEmpty() && prices.size() != values.size()) return;
+        if(prices.size() < maxLevel) {
+            ErrorManager.RegisterSkillError(id, "Not enough prices defined. Expected " + maxLevel + ", got " + prices.size());
+            return;
+        }
+
+        if(!values.isEmpty() && prices.size() != values.size()) {
+            ErrorManager.RegisterSkillError(id, "Array Size Mismatch: 'prices' and 'values' must have the same length.");
+            return;
+        }
 
         if(operation == null){
-            if(type == Skill.SkillType.GENERIC || type == Skill.SkillType.CUSTOM) {LogError(id); return;}
+            if(type == Skill.SkillType.GENERIC || type == Skill.SkillType.CUSTOM) {ErrorManager.RegisterSkillError(id, "Missing 'operation' for GENERIC/CUSTOM skill."); return;}
             else operation = AttributeModifier.Operation.ADD_VALUE;
         }
-        if(modifier == null && (type == Skill.SkillType.GENERIC || type == Skill.SkillType.CUSTOM)) {LogError(id); return;}
+        if(modifier == null && (type == Skill.SkillType.GENERIC || type == Skill.SkillType.CUSTOM)) {ErrorManager.RegisterSkillError(id, "Missing modifier"); return;}
 
 
         SkillManager.Get().RegisterSKill(
@@ -201,10 +209,5 @@ public class SkillLoader {
         catch (IllegalArgumentException e) {return null;}
 
         return operation;
-    }
-
-    //Utilitaire
-    private static void LogError(String id){
-        System.out.println("Unable to load Skill: " + id);
     }
 }

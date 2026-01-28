@@ -2,11 +2,16 @@ package com.tyzsskills;
 
 import com.tyzsskills.client.ClientCache;
 import com.tyzsskills.client.key.MainKeybind;
+import com.tyzsskills.client.models.InventoryButton;
 import com.tyzsskills.client.screen.LevelTriggerOverlay;
 import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.client.screen.SkillTriggerOverlay;
 import com.tyzsskills.client.screen.XpTriggerOverlay;
+import com.tyzsskills.server.model.Skill;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.resources.sounds.EntityBoundSoundInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
@@ -15,10 +20,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
 import net.neoforged.neoforge.client.event.sound.SoundEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
@@ -75,6 +77,41 @@ public class TyzsskillsClient {
     public static void OnClientTick(ClientTickEvent.Post event){
         while (MainKeybind.OPEN_SKILL_KEY.consumeClick()){
             Minecraft.getInstance().setScreen(new MainGUI());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onScreenInit(ScreenEvent.Init.Post event) {
+        if (event.getScreen() instanceof InventoryScreen || event.getScreen() instanceof CreativeModeInventoryScreen) {
+
+            if(!Config.SHOW_SKILL_BUTTON.get()) return;
+
+            AbstractContainerScreen<?> screen = (AbstractContainerScreen<?>) event.getScreen();
+
+            int savedX = Config.INVENTORY_BUTTON_X.get();
+            int savedY = Config.INVENTORY_BUTTON_Y.get();
+
+            InventoryButton myButton = new InventoryButton(
+                    savedX,
+                    savedY,
+                    () -> {
+                        Minecraft.getInstance().setScreen(new MainGUI());
+                    }
+            );
+
+            if (savedX == 10 && savedY == 10) {
+                boolean overlap = event.getListenersList().stream()
+                        .filter(l -> l instanceof net.minecraft.client.gui.components.AbstractWidget)
+                        .map(l -> (net.minecraft.client.gui.components.AbstractWidget) l)
+                        .anyMatch(w -> w.getX() < savedX + 20 && w.getX() + w.getWidth() > savedX &&
+                                w.getY() < savedY + 20 && w.getY() + w.getHeight() > savedY);
+
+                if (overlap) {
+                    myButton.setX(screen.getGuiLeft() + screen.getXSize() + 5);
+                    myButton.setY(screen.getGuiTop() + 5);
+                }
+            }
+            event.addListener(myButton);
         }
     }
 

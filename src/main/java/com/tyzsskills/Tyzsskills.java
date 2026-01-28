@@ -1,6 +1,7 @@
 package com.tyzsskills;
 
 import com.tyzsskills.server.active.AttributeRegistry;
+import com.tyzsskills.server.active.ErrorManager;
 import com.tyzsskills.server.active.SoundRegistry;
 import com.tyzsskills.server.attachments.BlockMarker;
 import com.tyzsskills.server.active.FileManager;
@@ -248,6 +249,8 @@ public class Tyzsskills {
         XpBlock.ClearValues();
         XpEntity.ClearValues();
         XpManager.ClearPool();
+
+        ErrorManager.ClearErrors();
     }
 
 

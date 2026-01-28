@@ -2,6 +2,7 @@ package com.tyzsskills.server.xp.xpEvents;
 
 import com.google.gson.JsonObject;
 import com.tyzsskills.server.active.AttributeRegistry;
+import com.tyzsskills.server.active.ErrorManager;
 import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,7 +22,16 @@ public class XpFood {
         for(String categoryKey : source.keySet()){
 
             JsonObject category = source.getAsJsonObject(categoryKey);
-            if(!category.has("xp") || !category.has("food")) continue;
+
+            if(!category.has("xp")){
+                ErrorManager.RegisterLoadError("loading '" + categoryKey + "' in food xp values", "Missing 'xp' value");
+                continue;
+            }
+
+            if(!category.has("food")){
+                ErrorManager.RegisterLoadError("loading '" + categoryKey + "' in food xp values", "Missing 'food' list");
+                continue;
+            }
 
             float xpValue = category.get("xp").getAsFloat();
 

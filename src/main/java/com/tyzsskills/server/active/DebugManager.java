@@ -15,6 +15,8 @@ import java.io.IOException;
 
 public class DebugManager {
     public static void DebugReload(MinecraftServer server) throws IOException {
+        ErrorManager.ClearErrors();
+
         SkillManager.Get().ClearSkills();
         XpBlock.ClearValues();
         XpEntity.ClearValues();
@@ -33,6 +35,10 @@ public class DebugManager {
             AutoSyncClient.SyncConfig(player);
             AutoSyncClient.SyncMainData(player);
             XpManager.LevelUpCheck(player);
+
+            if (player.hasPermissions(2) && ErrorManager.HasErrors()) {
+                ErrorManager.PrintErrors(player);
+            }
         }
 
         for(var player : server.getPlayerList().getPlayers()){

@@ -24,6 +24,7 @@
 
 
   "overlay.tyzs_skills.level" : "Level",
+  "button.tyzs_skills.inventory_btn" : "Open Skill Menu (right click to move)",
 
 
   "gui.tyzs_skills.Tab.all" : "All",
@@ -172,6 +173,7 @@
   "tyzs_skills.configuration.Deep_lode": "Deep lode",
   "tyzs_skills.configuration.Silver_tongue": "Silver tongue",
   "tyzs_skills.configuration.Trait_details": "Trait details",
+  "tyzs_skills.configuration.inventory_button": "Inventory Button",
 
   "config.common.tyzs_skills.refund_system" : "Enable Refund System",
   "config.common.tyzs_skills.refund_system_per" : "Refund percentage",
@@ -215,6 +217,9 @@
   "config.client.tyzs_skills.bd_color" : "Border color",
   "config.client.tyzs_skills.text_color" : "Text color",
   "config.client.tyzs_skills.scd_text_color" : "Secondary text color",
+  "config.client.tyzs_skills.inventory_btn_x" : "Skill button X",
+  "config.client.tyzs_skills.inventory_btn_y" : "Skill button Y",
+  "config.client.tyzs_skills.inventory_btn_show" : "Show Skill Button",
   "config.client.tyzs_skills.debug_msg" : "Show debug messages",
   "config.client.tyzs_skills.speed_fov_reduction" : "Speed fov reduction",
   "config.client.tyzs_skills.fov_affected_skills" : "Affected skills"

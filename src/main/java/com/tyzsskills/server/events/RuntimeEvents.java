@@ -37,6 +37,10 @@ public class RuntimeEvents {
         AutoSyncClient.SyncConfig(player);
         AutoSyncClient.SyncSkillBookmarks(player);
         AutoSyncClient.SyncStats(player);
+
+        if (player.hasPermissions(2) && ErrorManager.HasErrors()) {
+            ErrorManager.PrintErrors(player);
+        }
     }
 
     @SubscribeEvent
