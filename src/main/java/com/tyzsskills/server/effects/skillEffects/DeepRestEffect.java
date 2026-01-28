@@ -1,5 +1,6 @@
 package com.tyzsskills.server.effects.skillEffects;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.SkillBehaviour;
 import net.minecraft.server.level.ServerLevel;
@@ -16,9 +17,9 @@ public class DeepRestEffect extends SkillBehaviour {
         if (timeOfDay > 1000L) return;
 
 
-        player.setHealth(player.getMaxHealth());
-        player.getFoodData().setFoodLevel(20);
-        player.getFoodData().setSaturation(20f);
+        if(Config.RESTORES_NUTRITION.get()) player.getFoodData().setFoodLevel(20);
+        if(Config.RESTORES_HEALTH.get()) player.setHealth(player.getMaxHealth());
+        if(Config.RESTORES_SATURATION.get())player.getFoodData().setSaturation(20f);
 
         NotifyClient(player, skill);
     }
