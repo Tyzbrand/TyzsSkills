@@ -25,7 +25,7 @@ public class MainCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
         return Commands.literal("skills")
-                .requires(src -> src.hasPermission(4))
+                .requires(src -> src.hasPermission(3))
                 .then(xp())
                 .then(level())
                 .then(sp())

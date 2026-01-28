@@ -299,25 +299,20 @@ public class MainGUI extends Screen {
                     .append(Component.literal(": "))
                     .append(Component.literal(SmartFormat(ClientCache.GetAllTimeXp())).withStyle(ChatFormatting.GRAY)));
 
-            tooltip.add(Component.empty());
-
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.session_xp").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
                     .append(Component.literal(SmartFormat(ClientCache.GetSessionXp())).withStyle(ChatFormatting.GRAY)));
 
-            tooltip.add(Component.empty());
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.sp_earned").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
                     .append(Component.literal(String.valueOf(ClientCache.GetSpEarned())).withStyle(ChatFormatting.GRAY)));
 
-            tooltip.add(Component.empty());
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.sp_spent").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
                     .append(Component.literal(String.valueOf(ClientCache.GetSpSpent())).withStyle(ChatFormatting.GRAY)));
 
-            tooltip.add(Component.empty());
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.skill_unlocked").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
