@@ -13,7 +13,7 @@
   "gui.tyzs_skills.active" : "Active",
   "gui.tyzs_skills.inactive" : "Inactive",
   "gui.tyzs_skills.power" : "Power",
-  "gui.tyzs_skills.power_needed" : "Need power",
+  "gui.tyzs_skills.power_needed" : "Power required",
 
   "skill.tyzs_skills.unit.percentage" : "%",
   "skill.tyzs_skills.unit.blocks" : "blocks",
@@ -28,128 +28,128 @@
 
   "gui.tyzs_skills.Tab.all" : "All",
   "gui.tyzs_skills.Tab.abilities" : "Abilities",
-  "gui.tyzs_skills.Tab.fight" : "Fight",
+  "gui.tyzs_skills.Tab.fight" : "Combat",
   "gui.tyzs_skills.Tab.misc" : "Misc",
   "gui.tyzs_skills.Tab.bookmarks" : "Bookmarks",
 
-  "gui.tyzs_skills.stats.all_time_xp" : "all time xp",
-  "gui.tyzs_skills.stats.session_xp" : "session xp",
-  "gui.tyzs_skills.stats.sp_earned" : "sp earned",
-  "gui.tyzs_skills.stats.sp_spent" : "sp spent",
-  "gui.tyzs_skills.stats.skill_unlocked" : "owned skills",
+  "gui.tyzs_skills.stats.all_time_xp" : "Total xp",
+  "gui.tyzs_skills.stats.session_xp" : "Session xp",
+  "gui.tyzs_skills.stats.sp_earned" : "SP earned",
+  "gui.tyzs_skills.stats.sp_spent" : "SP spent",
+  "gui.tyzs_skills.stats.skill_unlocked" : "Skill unlocked",
 
 
-  "key.tyzs_skills.open_menu" : "Open skill UI",
+  "key.tyzs_skills.open_menu" : "Open skills Menu",
   "key.categories.tyzs_skills" : "Tyz's skills",
 
 
-  "skill.tyzs_skills.health_boost.displayName" : "Health boost",
+  "skill.tyzs_skills.health_boost.displayName" : "Health Boost",
   "skill.tyzs_skills.health_boost.description" : "Increases maximum health by {value} half hearts",
 
-  "skill.tyzs_skills.oxygen_boost.displayName" : "Oxygen boost",
-  "skill.tyzs_skills.oxygen_boost.description" : "Increases underwater breathing capacity by {value}%",
+  "skill.tyzs_skills.oxygen_boost.displayName" : "Oxygen Boost",
+  "skill.tyzs_skills.oxygen_boost.description" : "Increases underwater breathing time by {value}%",
 
-  "skill.tyzs_skills.block_reach.displayName" : "Block reach",
+  "skill.tyzs_skills.block_reach.displayName" : "Block Reach",
   "skill.tyzs_skills.block_reach.description" : "Increases the range at which the player can place and destroy by {value} blocks",
 
-  "skill.tyzs_skills.attack_damage.displayName" : "Attack damage",
-  "skill.tyzs_skills.attack_damage.description" : "Increases damage by {value}",
+  "skill.tyzs_skills.attack_damage.displayName" : "Attack Damage",
+  "skill.tyzs_skills.attack_damage.description" : "Increases melee damage by {value}",
 
-  "skill.tyzs_skills.sneak_speed.displayName" : "Sneaking speed",
-  "skill.tyzs_skills.sneak_speed.description" : "Increases sneak movement speed by {value}%",
+  "skill.tyzs_skills.sneak_speed.displayName" : "Sneaking Speed",
+  "skill.tyzs_skills.sneak_speed.description" : "Increases movement speed while sneaking by {value}%",
 
   "skill.tyzs_skills.speed.displayName" : "Speed",
   "skill.tyzs_skills.speed.description" : "Increases movement speed by {value}%",
 
-  "skill.tyzs_skills.step_height.displayName" : "Step height",
-  "skill.tyzs_skills.step_height.description" : "Increases the height at which the player can climb without jumping by {value} blocks",
+  "skill.tyzs_skills.step_height.displayName" : "Step Height",
+  "skill.tyzs_skills.step_height.description" : "Allows stepping up blocks up to {value} blocks high without jumping",
 
-  "skill.tyzs_skills.swim_speed.displayName" : "Swim speed",
+  "skill.tyzs_skills.swim_speed.displayName" : "Swim Speed",
   "skill.tyzs_skills.swim_speed.description" : "Increases swim speed by {value}%",
 
-  "skill.tyzs_skills.venomous_attack.displayName" : "Venomous attack",
-  "skill.tyzs_skills.venomous_attack.description" : "Increase the chance of poisoning the entity you hit by {value}%",
+  "skill.tyzs_skills.venomous_attack.displayName" : "Venomous Strike",
+  "skill.tyzs_skills.venomous_attack.description" : "Adds a {value}% chance to poison targets on hit",
 
-  "skill.tyzs_skills.critical_hit.displayName" : "Critical hit",
-  "skill.tyzs_skills.critical_hit.description" : "Increase the chance of dealing a critical hit (double damage) by {value}%",
+  "skill.tyzs_skills.critical_hit.displayName" : "Critical Strike",
+  "skill.tyzs_skills.critical_hit.description" : "Adds a {value}% chance to deal a critical hit (double damage)",
 
-  "skill.tyzs_skills.damage_deal.displayName" : "Damage deal",
-  "skill.tyzs_skills.damage_deal.description" : "Increase the chance of canceling and returning an attack by {value}%",
+  "skill.tyzs_skills.damage_deal.displayName" : "Deflection",
+  "skill.tyzs_skills.damage_deal.description" : "Adds a {value}% chance to negate and reflect incoming melee damage",
 
   "skill.tyzs_skills.bloodlust.displayName" : "Bloodlust",
-  "skill.tyzs_skills.bloodlust.description" : "Killing an entity regenerates {value}% of its maximum health",
+  "skill.tyzs_skills.bloodlust.description" : "Killing a hostile mob regenerates {value}% of its max health",
 
   "skill.tyzs_skills.resistance.displayName" : "Resistance",
-  "skill.tyzs_skills.resistance.description" : "Increases damage resistance from any source by {value}%.",
+  "skill.tyzs_skills.resistance.description" : "Reduces all incoming damage by {value}%",
 
   "skill.tyzs_skills.backstab.displayName" : "Backstab",
-  "skill.tyzs_skills.backstab.description" : "Increases damage when a hit is dealt from behind by {value}%",
+  "skill.tyzs_skills.backstab.description" : "Increases damage dealt from behind by {value}%",
 
   "skill.tyzs_skills.rage.displayName" : "Rage",
-  "skill.tyzs_skills.rage.description" : "Increases damage when health falls below 3 hearts by {value}% ",
+  "skill.tyzs_skills.rage.description" : "Increases damage by {value}% when health is below 3 hearts",
 
   "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
-  "skill.tyzs_skills.adrenaline.description" : "Provides absorption and speed III effects when life falls below {value}%",
+  "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III when health drops below {value}%",
 
   "skill.tyzs_skills.resilience.displayName" : "Resilience",
-  "skill.tyzs_skills.resilience.description" : "Reduces the duration of an harmful potion effect by {value}%",
+  "skill.tyzs_skills.resilience.description" : "Reduces the duration of negative status effects by {value}%",
 
-  "skill.tyzs_skills.swift_learn.displayName" : "Swift learn",
-  "skill.tyzs_skills.swift_learn.description" : "Increases skill xp gain by {value}%",
+  "skill.tyzs_skills.swift_learn.displayName" : "Swift Learning",
+  "skill.tyzs_skills.swift_learn.description" : "Increases Skill XP gain by {value}%",
 
-  "skill.tyzs_skills.green_thumb.displayName" : "Green thumb",
-  "skill.tyzs_skills.green_thumb.description" : "Increases the chance of doubling loot when destroying flowers and crops by {value}%",
+  "skill.tyzs_skills.green_thumb.displayName" : "Green Thumb",
+  "skill.tyzs_skills.green_thumb.description" : "Adds a {value}% chance to double drops when harvesting crops and plants",
 
-  "skill.tyzs_skills.nutrition.displayName" : "Nutrition",
-  "skill.tyzs_skills.nutrition.description" : "Adds a {value}% bonus to nutrition and saturation",
+  "skill.tyzs_skills.nutrition.displayName" : "Metabolism",
+  "skill.tyzs_skills.nutrition.description" : "Increases food value (nutrition & saturation) by {value}%",
 
-  "skill.tyzs_skills.experience_boost.displayName" : "Experience boost",
-  "skill.tyzs_skills.experience_boost.description" : "Increases vanilla xp gain from any source by {value}%",
+  "skill.tyzs_skills.experience_boost.displayName" : "Wisdom",
+  "skill.tyzs_skills.experience_boost.description" : "Increases Vanilla XP gain by {value}%",
 
   "skill.tyzs_skills.excavation.displayName" : "Excavation",
   "skill.tyzs_skills.excavation.description" : "Increases mining speed by {value}%",
 
   "skill.tyzs_skills.stealth.displayName" : "Stealth",
-  "skill.tyzs_skills.stealth.description" : "Reduces the detection distance of hostile mobs by {value}%",
+  "skill.tyzs_skills.stealth.description" : "Reduces the detection range of hostile mobs by {value}%",
 
   "skill.tyzs_skills.magnet.displayName" : "Magnet",
-  "skill.tyzs_skills.magnet.description" : "Attracts all dropped items within a radius of {value} blocks",
+  "skill.tyzs_skills.magnet.description" : "Attracts items within a {value} block radius",
 
-  "skill.tyzs_skills.trait_surge.displayName" : "Trait surge",
-  "skill.tyzs_skills.trait_surge.description" : "Increases the player's trait power by {value}",
+  "skill.tyzs_skills.trait_surge.displayName" : "Trait Surge",
+  "skill.tyzs_skills.trait_surge.description" : "Increases Trait Power by {value}",
 
-  "skill.tyzs_skills.cinder_blood.displayName" : "Cinder blood",
-  "skill.tyzs_skills.cinder_blood.description" : "Prevent fire damage (doesn't allow lava bath)",
+  "skill.tyzs_skills.cinder_blood.displayName" : "Cinder Blood",
+  "skill.tyzs_skills.cinder_blood.description" : "Grants immunity to fire damage (I wouldn't recommend a lava bath)",
 
-  "skill.tyzs_skills.deep_lode.displayName" : "Deep lode",
-  "skill.tyzs_skills.deep_lode.description" : "Allows you to break an ore vein in one go",
+  "skill.tyzs_skills.deep_lode.displayName" : "Deep Lode",
+  "skill.tyzs_skills.deep_lode.description" : "Vein-mines ores in a single action (Sneak to avoid)",
 
-  "skill.tyzs_skills.root_cleaver.displayName" : "Root cleaver",
-  "skill.tyzs_skills.root_cleaver.description" : "Allows you to break a tree in one go",
+  "skill.tyzs_skills.root_cleaver.displayName" : "Root Cleaver",
+  "skill.tyzs_skills.root_cleaver.description" : "Fells entire trees in a single action (sneak to avoid)",
 
-  "skill.tyzs_skills.iron_gut.displayName" : "Iron gut",
-  "skill.tyzs_skills.iron_gut.description" : "",
+  "skill.tyzs_skills.iron_gut.displayName" : "Iron Gut",
+  "skill.tyzs_skills.iron_gut.description" : "Prevents Hunger effect when eating Rotten Flesh",
 
-  "skill.tyzs_skills.gilded_aura.displayName" : "Gilded aura",
+  "skill.tyzs_skills.gilded_aura.displayName" : "Gilded Aura",
   "skill.tyzs_skills.gilded_aura.description" : "You no longer need golden armor to win the Piglins' sympathy",
 
-  "skill.tyzs_skills.silver_tongue.displayName" : "Silver tongue",
-  "skill.tyzs_skills.silver_tongue.description" : "Allows you to attract villagers by holding emeralds",
+  "skill.tyzs_skills.silver_tongue.displayName" : "Silver Tongue",
+  "skill.tyzs_skills.silver_tongue.description" : "Villagers follow you when you hold Emeralds",
 
   "skill.tyzs_skills.keepsake.displayName" : "Keepsake",
-  "skill.tyzs_skills.keepsake.description" : "Prevents the loss of hotbar contents upon death",
+  "skill.tyzs_skills.keepsake.description" : "Keeps hotbar items upon death",
 
   "skill.tyzs_skills.soundless.displayName" : "Soundless",
   "skill.tyzs_skills.soundless.description" : "Prevents enemies and entities from hearing you",
 
   "skill.tyzs_skills.refiner.displayName" : "Refiner",
-  "skill.tyzs_skills.refiner.description" : "Automatically smelts raw ore",
+  "skill.tyzs_skills.refiner.description" : "Automatically smelts mined ores (sneak to avoid)",
 
-  "skill.tyzs_skills.deep_sight.displayName" : "Deep sight",
-  "skill.tyzs_skills.deep_sight.description" : "Allows you to obtain a night vision effect in caves",
+  "skill.tyzs_skills.deep_sight.displayName" : "Deep Sight",
+  "skill.tyzs_skills.deep_sight.description" : "Grants Night Vision when in deep caves",
 
-  "skill.tyzs_skills.deep_rest.displayName" : "Deep rest",
-  "skill.tyzs_skills.deep_rest.description" : "",
+  "skill.tyzs_skills.deep_rest.displayName" : "Deep Rest",
+  "skill.tyzs_skills.deep_rest.description" : "Fully restores health and hunger after sleeping",
 
 
 
@@ -163,7 +163,7 @@
   "tyzs_skills.configuration.xp_overlay": "XP Overlay Details",
   "tyzs_skills.configuration.level_up_overlay": "Level Up Overlay Details",
   "tyzs_skills.configuration.skill_overlay": "Skill Overlay Details",
-  "tyzs_skills.configuration.debug": "Debug Options",
+  "tyzs_skills.configuration.debug": "Debug",
   "tyzs_skills.configuration.accessibility": "Accessibility",
   "tyzs_skills.configuration.Cinder_blood": "Cinder blood",
   "tyzs_skills.configuration.Deep_sight": "Deep sight",
@@ -173,41 +173,41 @@
   "tyzs_skills.configuration.Silver_tongue": "Silver tongue",
   "tyzs_skills.configuration.Trait_details": "Trait details",
 
-  "config.common.tyzs_skills.refund_system" : "Refund system",
+  "config.common.tyzs_skills.refund_system" : "Enable Refund System",
   "config.common.tyzs_skills.refund_system_per" : "Refund percentage",
   "config.common.tyzs_skills.trait_unlock_level" : "Trait unlock level",
-  "config.common.tyzs_skills.trait_system" : "Traits",
+  "config.common.tyzs_skills.trait_system" : "Enable Trait System",
   "config.common.tyzs_skills.prevent_placed_blocks_xp" : "Prevent placed blocks xp",
-  "config.common..trait.max_ores" : "Max ores",
+  "config.common..trait.max_ores" : "Max Vein Size",
   "config.common.tyzs_skills.trait.deep_lode_grief" : "Grief protection",
-  "config.common.tyzs_skills.trait.max_logs" : "Max logs",
-  "config.common.tyzs_skills.trait.max_leaves" : "Max leaves",
-  "config.common.tyzs_skills.trait.match_type" : "Match block type",
+  "config.common.tyzs_skills.trait.max_logs" : "Max Logs Broken",
+  "config.common.tyzs_skills.trait.max_leaves" : "Max Leaves Broken",
+  "config.common.tyzs_skills.trait.match_type" : "Strict Block Matching",
   "config.common.tyzs_skills.trait.root_cleaver_grief" : "Grief protection",
   "config.common.tyzs_skills.trait.lava_damage" : "Prevent lava damage",
-  "config.common.tyzs_skills.trait.restores_health" : "Restores health",
-  "config.common.tyzs_skills.trait.restores_nutrition" : "Restores nutrition",
-  "config.common.tyzs_skills.trait.restores_saturation" : "Restores saturation",
-  "config.common.tyzs_skills.trait.ambient_threshold" : "Ambient light threshold",
-  "config.common.tyzs_skills.trait.sky_threshold" : "Sky light threshold",
+  "config.common.tyzs_skills.trait.restores_health" : "Restore health",
+  "config.common.tyzs_skills.trait.restores_nutrition" : "Restore nutrition",
+  "config.common.tyzs_skills.trait.restores_saturation" : "Restore saturation",
+  "config.common.tyzs_skills.trait.ambient_threshold" : "Light Threshold (Block)",
+  "config.common.tyzs_skills.trait.sky_threshold" : "Light Threshold (Sky)",
   "config.common.tyzs_skills.trait.attraction_radius" : "Attraction radius",
-  "config.common.tyzs_skills.trait.villagers_speed" : "Villagers speed",
-  "config.common.tyzs_skills.earn_creative_xp" : "Earn xp in creative",
-  "config.common.tyzs_skills.eating_xp_earnings" : "Eating xp earnings",
-  "config.common.tyzs_skills.sleeping_gain" : "Sleeping gain",
-  "config.common.tyzs_skills.fishing_gain" : "Fishing gain",
-  "config.common.tyzs_skills.crafting_gain" : "Crafting gain",
-  "config.common.tyzs_skills.breeding_gain" : "Breeding gain",
-  "config.common.tyzs_skills.advancement_task_gain" : "Advancement task gain",
-  "config.common.tyzs_skills.advancement_goal_gain" : "Advancement goal gain",
-  "config.common.tyzs_skills.advancement_challenge_gain" : "Advancement challenge gain",
-  "config.common.tyzs_skills.biome_gain" : "Biome gain",
-  "config.common.tyzs_skills.dimension_gain" : "Dimension gain",
+  "config.common.tyzs_skills.trait.villagers_speed" : "Villager speed",
+  "config.common.tyzs_skills.earn_creative_xp" : "XP in Creative Mode",
+  "config.common.tyzs_skills.eating_xp_earnings" : "XP from Eating",
+  "config.common.tyzs_skills.sleeping_gain" : "XP from Sleeping",
+  "config.common.tyzs_skills.fishing_gain" : "XP from Fishing",
+  "config.common.tyzs_skills.crafting_gain" : "XP from Crafting",
+  "config.common.tyzs_skills.breeding_gain" : "XP from Breeding",
+  "config.common.tyzs_skills.advancement_task_gain" : "XP from Tasks",
+  "config.common.tyzs_skills.advancement_goal_gain" : "XP from Goals",
+  "config.common.tyzs_skills.advancement_challenge_gain" : "XP from Challenges",
+  "config.common.tyzs_skills.biome_gain" : "XP from New Biomes",
+  "config.common.tyzs_skills.dimension_gain" : "XP from New Dimensions",
 
-  "config.client.tyzs_skills.creative_overlays" : "Show overlay in creative",
-  "config.client.tyzs_skills.xp_overlay" : "Show xp gains overlay",
-  "config.client.tyzs_skills.level_overlay" : "Show level up overlay",
-  "config.client.tyzs_skills.skill_overlay" : "Show skill activations overlay",
+  "config.client.tyzs_skills.creative_overlays" : "Overlays in Creative",
+  "config.client.tyzs_skills.xp_overlay" : "Show XP Overlay",
+  "config.client.tyzs_skills.level_overlay" : "Show Level Up Overlay",
+  "config.client.tyzs_skills.skill_overlay" : "Show Active Skills Overlay",
   "config.client.tyzs_skills.x_offset" : "X offset",
   "config.client.tyzs_skills.y_offset" : "Y offset",
   "config.client.tyzs_skills.duration" : "Duration",
@@ -217,7 +217,7 @@
   "config.client.tyzs_skills.scd_text_color" : "Secondary text color",
   "config.client.tyzs_skills.debug_msg" : "Show debug messages",
   "config.client.tyzs_skills.speed_fov_reduction" : "Speed fov reduction",
-  "config.client.tyzs_skills.fov_affected_skills" : "Fov reduction affected skills"
+  "config.client.tyzs_skills.fov_affected_skills" : "Affected skills"
 
 
 
