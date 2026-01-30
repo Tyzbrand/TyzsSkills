@@ -12,6 +12,8 @@ Contributions and ideas are always welcome!
 
 **Please note:** To maintain perfect architectural consistency as I build an upcoming API, I wont "merge" Pull Requests directly. If you submit a fix or a feature, I will  reimplement/adapt it into the main branch. This ensures I stay 100% familiar with every line of code for future maintenance. 
 
+This is my first major project, so the code might not be the cleanest or most optimized in some places. I am completely open to **tips, tricks, and advice**! If you see something that could be done better, feel free to let me know—I’m here to learn.
+
 *Thanks!*
 
 ## License
