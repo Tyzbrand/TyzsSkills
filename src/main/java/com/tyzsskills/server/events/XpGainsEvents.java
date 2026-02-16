@@ -15,6 +15,7 @@ import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.Level;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -29,23 +30,20 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 public class XpGainsEvents {
 
     //Xp gains
-    @SubscribeEvent
+    @SubscribeEvent (priority = EventPriority.LOWEST)
     public static void OnBlockBreak(BlockEvent.BreakEvent event){
         if(event.isCanceled()) return;
         if(!(event.getPlayer() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
 
-        if(Config.PREVENT_PLACED_BLOCK_XP.get()) {
-            Level level = (net.minecraft.world.level.Level) event.getLevel();
-            var pos = event.getPos();
+        Level level = (net.minecraft.world.level.Level) event.getLevel();
+        var pos = event.getPos();
+        var playerPlaced = BlockMarker.IsPlayerPlaced(level, pos);
 
-            if (BlockMarker.IsPlayerPlaced(level, pos)) {
-                BlockMarker.RemoveBlock(level, pos);
-                return;
-            }
-        }
+        if(playerPlaced) BlockMarker.RemoveBlock(level, pos);
+
+        if(Config.PREVENT_PLACED_BLOCK_XP.get() && playerPlaced) return;
         XpBlock.BlockBreakProfit(event.getState(), player);
-
     }
 
     @SubscribeEvent

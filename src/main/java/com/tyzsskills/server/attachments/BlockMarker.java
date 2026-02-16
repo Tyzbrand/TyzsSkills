@@ -50,12 +50,14 @@ public class BlockMarker implements INBTSerializable<ListTag> {
         if(level.isClientSide) return;
         LevelChunk chunk = level.getChunkAt(pos);
         chunk.getData(PLACED_BLOCKS).addBlock(pos);
+        chunk.setUnsaved(true);
     }
 
     public static void RemoveBlock(Level level, BlockPos pos){
         if(level.isClientSide) return;
         LevelChunk chunk = level.getChunkAt(pos);
         chunk.getData(PLACED_BLOCKS).removeBlock(pos);
+        chunk.setUnsaved(true);
     }
 
 

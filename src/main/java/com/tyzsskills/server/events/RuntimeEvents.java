@@ -11,10 +11,12 @@ import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.*;
@@ -49,28 +51,27 @@ public class RuntimeEvents {
         if(!(event.getOriginal() instanceof ServerPlayer oldPlayer) ||
                 !(event.getEntity() instanceof ServerPlayer newPlayer)) return;
 
-        if(event.isWasDeath()){
-            XpManager.RestorePlayerXPData(oldPlayer, newPlayer);
-            LevelManager.RestorePlayerLevelData(oldPlayer, newPlayer);
-            SpManager.RestorePlayerSPData(oldPlayer, newPlayer);
-            SkillManager.Get().RestaureSkillData(oldPlayer, newPlayer);
 
-            GenericEffects.RestaureEffects(newPlayer);
-        }
+        XpManager.RestorePlayerXPData(oldPlayer, newPlayer);
+        LevelManager.RestorePlayerLevelData(oldPlayer, newPlayer);
+        SpManager.RestorePlayerSPData(oldPlayer, newPlayer);
+        SkillManager.Get().RestaureSkillData(oldPlayer, newPlayer);
+
+        GenericEffects.RestaureEffects(newPlayer);
 
         SkillEffectsEvents.OnPlayerClone(event);
     }
 
     @SubscribeEvent
     public static void OnBlockPlace(BlockEvent.EntityPlaceEvent event){
-        if(event.isCanceled() || !Config.PREVENT_PLACED_BLOCK_XP.get()) return;
+        if(event.isCanceled()) return;
         if(!(event.getEntity() instanceof ServerPlayer)) return;
 
         if(event.getState().getBlock() instanceof CropBlock ||
                 event.getState().getBlock() instanceof NetherWartBlock) return;
 
-
-        if(XpBlock.GetBlockValue(event.getState()) > 0){
+        if(XpBlock.GetBlockValue(event.getState()) > 0
+        || event.getState().is(BlockTags.LEAVES) || event.getState().is(BlockTags.LOGS) || event.getState().is(Tags.Blocks.ORES)){
             BlockMarker.MarkBlock((net.minecraft.world.level.Level)event.getLevel(), event.getPos());
         }
     }

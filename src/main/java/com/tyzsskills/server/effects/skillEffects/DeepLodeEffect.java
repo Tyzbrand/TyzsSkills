@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -52,13 +53,17 @@ public class DeepLodeEffect extends SkillBehaviour {
         if (!tool.isCorrectToolForDrops(state)) return;
 
         BlockPos startPos = event.getPos();
+
+        boolean griefProtection = Config.DEEP_LODE_GRIEF_PROTECTION.getAsBoolean();
+        if(griefProtection && BlockMarker.IsPlayerPlaced(level, startPos)) return;
+        player.sendSystemMessage(Component.literal("test"));
+
         Block targetBlock = state.getBlock();
 
         event.setCanceled(true);
         IS_MINING.set(true);
 
         int MAX_BLOCKS = Config.MAX_ORES.getAsInt();
-        boolean griefProtection = Config.DEEP_LODE_GRIEF_PROTECTION.getAsBoolean();
 
         try {
             Queue<BlockPos> queue = new LinkedList<>();
@@ -68,11 +73,8 @@ public class DeepLodeEffect extends SkillBehaviour {
             visited.add(startPos);
 
             int blocksBroken = 0;
-            int playerPlacedCount = 0;
 
             Vec3 dropPos = Vec3.atCenterOf(startPos).add(0, 0.5, 0);
-
-            if (!tool.isCorrectToolForDrops(state)) return;
 
             Holder<Enchantment> silkTouchHolder = level.registryAccess()
                     .lookupOrThrow(Registries.ENCHANTMENT)
@@ -89,10 +91,7 @@ public class DeepLodeEffect extends SkillBehaviour {
 
                 if (currentState.is(targetBlock)) {
 
-                    if (BlockMarker.IsPlayerPlaced(level, currentPos)) {
-                        playerPlacedCount++;
-                        if (playerPlacedCount > 2 && griefProtection) return;
-                    }
+                    if (griefProtection && BlockMarker.IsPlayerPlaced(level, currentPos)) continue;
 
                     if (!currentPos.equals(startPos)) {
                         BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
@@ -157,7 +156,7 @@ public class DeepLodeEffect extends SkillBehaviour {
                 }
             }
 
-            if(blocksBroken > 0) NotifyClient(player, skill);
+            if(blocksBroken > 1) NotifyClient(player, skill);
 
         } finally {
             IS_MINING.set(false);

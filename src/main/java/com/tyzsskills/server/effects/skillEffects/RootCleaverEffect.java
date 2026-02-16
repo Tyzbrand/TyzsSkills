@@ -5,6 +5,8 @@ import com.tyzsskills.server.attachments.BlockMarker;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.SkillBehaviour;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -22,16 +24,14 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RootCleaverEffect extends SkillBehaviour {
 
 
     private static final ThreadLocal<Boolean> IS_TIMBERING = ThreadLocal.withInitial(() -> false);
+    private static final Map<Block, Boolean> STRIPPED_CACHE = new ConcurrentHashMap<>();
 
     @Override
     public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, Skill skill) {
@@ -49,11 +49,20 @@ public class RootCleaverEffect extends SkillBehaviour {
 
         if (!tool.is(ItemTags.AXES) && tool.getDestroySpeed(state) <= 1.0F) return;
 
+        if(IsStrippedLog(state.getBlock())){
+            return;
+        }
+
         BlockPos startPos = event.getPos();
+
+        boolean griefProtection = Config.ROOT_CLEAVER_GRIEF_PROTECTION.getAsBoolean();
+        if(griefProtection && BlockMarker.IsPlayerPlaced(level, startPos)) return;
+
+
+
         Block targetLogBlock = state.getBlock();
 
         event.setCanceled(true);
-
         IS_TIMBERING.set(true);
 
         int MAX_LOGS = Config.MAX_LOGS.getAsInt();
@@ -68,10 +77,8 @@ public class RootCleaverEffect extends SkillBehaviour {
 
             int logsBroken = 0;
             int leavesBroken = 0;
-            int playerPlacedCount = 0;
             Block targetLeafBlock = null;
 
-            boolean griefProtection = Config.ROOT_CLEAVER_GRIEF_PROTECTION.getAsBoolean();
             boolean matchType = Config.MATCH_TYPE.getAsBoolean();
 
             Vec3 dropPos = Vec3.atCenterOf(startPos).add(0, 0.5, 0);
@@ -83,6 +90,10 @@ public class RootCleaverEffect extends SkillBehaviour {
                 BlockState currentState = level.getBlockState(currentPos);
 
                 boolean isLog = matchType ? currentState.is(targetLogBlock) : currentState.is(BlockTags.LOGS);
+                if(isLog){
+                    if(IsStrippedLog(currentState.getBlock())) continue;
+                }
+
                 boolean isLeaf = currentState.is(BlockTags.LEAVES);
 
                 if (isLeaf && matchType) {
@@ -93,10 +104,7 @@ public class RootCleaverEffect extends SkillBehaviour {
                 if (isLog || isLeaf) {
                     if (isLeaf && leavesBroken >= MAX_LEAVES) continue;
 
-                    if (BlockMarker.IsPlayerPlaced(level, currentPos)) {
-                        playerPlacedCount++;
-                        if (playerPlacedCount > 2 && griefProtection) return;
-                    }
+                    if (griefProtection && BlockMarker.IsPlayerPlaced(level, currentPos)) continue;
 
                     if (!currentPos.equals(startPos)) {
                         BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
@@ -148,7 +156,7 @@ public class RootCleaverEffect extends SkillBehaviour {
                 }
             }
 
-            if(logsBroken > 0) NotifyClient(player, skill);
+            if(logsBroken > 1) NotifyClient(player, skill);
 
         } finally {
             IS_TIMBERING.set(false);
@@ -168,6 +176,13 @@ public class RootCleaverEffect extends SkillBehaviour {
                 }
             }
         }
+    }
+
+    private static boolean IsStrippedLog(Block block){
+        return STRIPPED_CACHE.computeIfAbsent(block, b -> {
+            String name = BuiltInRegistries.BLOCK.getKey(b).getPath();
+            return name.contains("stripped");
+        });
     }
 
 }
