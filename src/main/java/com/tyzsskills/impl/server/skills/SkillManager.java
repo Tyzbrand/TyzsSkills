@@ -7,8 +7,8 @@ import java.util.Map;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
-import com.tyzsskills.impl.server.active.LevelManager;
-import com.tyzsskills.impl.server.active.PowerManager;
+import com.tyzsskills.impl.server.Level.LevelManager;
+import com.tyzsskills.impl.server.power.PowerManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;

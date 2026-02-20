@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.xp;
 
 import com.google.gson.JsonObject;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
-import com.tyzsskills.impl.server.active.LevelManager;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;

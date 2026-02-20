@@ -1,9 +1,11 @@
 package com.tyzsskills.impl.server.active;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.payloads.*;
+import com.tyzsskills.impl.server.power.PowerManager;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;

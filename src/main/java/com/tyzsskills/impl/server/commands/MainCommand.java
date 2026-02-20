@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.impl.server.active.DebugManager;
-import com.tyzsskills.impl.server.active.LevelManager;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;

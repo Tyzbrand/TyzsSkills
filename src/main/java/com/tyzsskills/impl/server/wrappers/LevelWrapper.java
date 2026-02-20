@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.server.wrappers;
 
 import com.tyzsskills.api.interfaces.ILevelManager;
-import com.tyzsskills.impl.server.active.LevelManager;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import net.minecraft.server.level.ServerPlayer;
 
 public class LevelWrapper implements ILevelManager {

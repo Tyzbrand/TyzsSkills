@@ -103,7 +103,7 @@ public class SkillWidget {
         boolean isHoveringBookBtn = isMouseOver(mouseX, mouseY, x+49, y+17, BTN_W, BTN_H);
         if(isHoveringBookBtn) gui.blit(REF_TEXTURE, x+48, y+16, U_BOOK_BTN_HOVER, V_BOOK_BTN_HOVER, 11, 11, TEXTURE_W, TEXTURE_H);
 
-       if(ClientCache.GetBookmarkState(skill.GetID().toLowerCase())){
+       if(ClientCache.isSkillBookmarked(skill.GetID().toLowerCase())){
             gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_ACTIVE, V_BOOK_ACTIVE, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
         }
 

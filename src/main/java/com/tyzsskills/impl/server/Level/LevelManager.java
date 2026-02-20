@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.active;
+package com.tyzsskills.impl.server.Level;
 
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.payloads.LevelDataUpdatePayload;

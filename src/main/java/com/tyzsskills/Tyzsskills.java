@@ -13,10 +13,7 @@ import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.commands.MainCommand;
 import com.tyzsskills.impl.server.events.RuntimeEvents;
 import com.tyzsskills.impl.server.payloads.*;
-import com.tyzsskills.impl.server.wrappers.LevelWrapper;
-import com.tyzsskills.impl.server.wrappers.SkillWrapper;
-import com.tyzsskills.impl.server.wrappers.SpWrapper;
-import com.tyzsskills.impl.server.wrappers.XpWrapper;
+import com.tyzsskills.impl.server.wrappers.*;
 import com.tyzsskills.impl.server.xp.XpManager;
 import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
@@ -104,6 +101,7 @@ public class Tyzsskills {
         TyzsSkillsAPI.registerLevelManager(new LevelWrapper());
         TyzsSkillsAPI.registerXpManager(new XpWrapper());
         TyzsSkillsAPI.registerSkillManager(new SkillWrapper());
+        TyzsSkillsAPI.registerPowerManager(new PowerWrapper());
     }
 
     private void RegisterAttributes(EntityAttributeModificationEvent event) {

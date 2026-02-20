@@ -7,10 +7,7 @@ import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ClientCache {
 
@@ -23,17 +20,17 @@ public class ClientCache {
     private static float clientSessionXP = 0f;
     private static int clientSpEarned = 0;
     private static int clientSpSpent = 0;
-    private static int clienOwnedSkills = 0;
+    private static int clientOwnedSkills = 0;
 
     private static XpManager.LevelData clientLevelData = new XpManager.LevelData(100f, 1);
 
     private final static Map<String, Skill> clientSkills = new HashMap<>();
     private final static Map<String, Integer> clientSkillLevels = new HashMap<>();
     private final static Map<String, Object> clientConfigMap = new HashMap<>();
-    private final static Map<String, Boolean> clientBookmarks = new HashMap<>();
+    private final static HashSet<String> clientBookmarks = new HashSet<>();
 
     private static Skill.ContainerType currentContainerType = Skill.ContainerType.SKILLS;
-    private static Skill.CategoryType currentContainerCatgory = Skill.CategoryType.ALL;
+    private static Skill.CategoryType currentContainerCategory = Skill.CategoryType.ALL;
 
 
     public static void UpdateClientCacheLevel(int level){
@@ -110,7 +107,7 @@ public class ClientCache {
     public static void SetCategoryType(Skill.CategoryType category){
         if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true) && category == Skill.CategoryType.TRAITS) return;
         if(GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20) > clientLevel && category == Skill.CategoryType.TRAITS) return;
-        currentContainerCatgory = category;
+        currentContainerCategory = category;
     }
 
     public static void UpdateSkills(List<Skill> skills){
@@ -132,7 +129,7 @@ public class ClientCache {
             if(!clientSkillLevels.containsKey(skill.GetID().toLowerCase())) continue;
             owned += clientSkillLevels.get(skill.GetID().toLowerCase());
         }
-        clienOwnedSkills = owned;
+        clientOwnedSkills = owned;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
             Minecraft.getInstance().player.displayClientMessage(Component.literal("New skill level: " + id + " level " + lvl ), false);
@@ -150,7 +147,8 @@ public class ClientCache {
     }
 
     public static void SyncBookmark(String id, boolean state){
-        clientBookmarks.put(id.toLowerCase(), state);
+        if(!state) clientBookmarks.remove(id.toLowerCase());
+        else clientBookmarks.add(id.toLowerCase());
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
             Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced bookmark: " + id + ": " + state), false);
@@ -172,14 +170,14 @@ public class ClientCache {
         clientAllTimeXP = 0f;
         clientSpEarned = 0;
         clientSpSpent = 0;
-        currentContainerCatgory = Skill.CategoryType.ALL;
+        currentContainerCategory = Skill.CategoryType.ALL;
         currentContainerType = Skill.ContainerType.SKILLS;
     }
 
     public static void PredictBookmark(Skill skill){
         String id = skill.GetID();
-        var value = GetBookmarkState(id);
-        clientBookmarks.put(id, !value);
+        if(isSkillBookmarked(id)) clientBookmarks.remove(id);
+        else clientBookmarks.add(id);
     }
 
     public static void PredictBuy(Skill skill) {
@@ -235,20 +233,24 @@ public class ClientCache {
     public static int GetSP(){return clientSP;}
     public static int GetLvl(){return clientLevel;}
     public static float GetXPGOAL(){return clientLevelData.goal();}
-    public static float GetReward(){return clientLevelData.reward();}
+    public static int GetReward(){return clientLevelData.reward();}
     public static Skill.ContainerType GetContainerType(){return currentContainerType;}
-    public static Skill.CategoryType GetCategoryType(){return currentContainerCatgory;}
+    public static Skill.CategoryType GetCategoryType(){return currentContainerCategory;}
+
     public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills.values());}
+    public static List<String> GetAllSkillIDs(){return new ArrayList<>(clientSkills.keySet());}
+    public static List<String> GetAllBookmarkedIDs(){return new ArrayList<>(clientBookmarks);}
+
     public static int GetSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
     public static Skill GetSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}
-    public static boolean GetBookmarkState(String id){return clientBookmarks.getOrDefault(id.toLowerCase(), false);}
+    public static boolean isSkillBookmarked(String id){return clientBookmarks.contains(id.toLowerCase());}
     public static int GetPower(){return clientPower;}
 
     public static float GetAllTimeXp(){return clientAllTimeXP;}
     public static float GetSessionXp(){return clientSessionXP;}
     public static int GetSpEarned(){return clientSpEarned;}
     public static int GetSpSpent(){return clientSpSpent;}
-    public static int GetUnlockedSkills(){return clienOwnedSkills;}
+    public static int GetUnlockedSkills(){return clientOwnedSkills;}
     public static int GetSkillCount(){
         int count = 0;
         for(var skill : clientSkills.values()){
@@ -281,7 +283,7 @@ public class ClientCache {
 
 
 
-    //UTILITARIAN
+    //UTIL
     public static int ParseColor(String hexString, int fallback) {
         if (hexString == null || hexString.isEmpty()) return fallback;
         try {

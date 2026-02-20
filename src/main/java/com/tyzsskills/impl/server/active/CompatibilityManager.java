@@ -1,7 +1,9 @@
 package com.tyzsskills.impl.server.active;
 
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.LegacyData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
+import com.tyzsskills.impl.server.power.PowerManager;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;
@@ -152,6 +154,11 @@ public class CompatibilityManager {
             if(oldData.contains("SKILL_XP")){
                 XpManager.setXP(player, oldData.getFloat("SKILL_XP"));
                 oldData.remove("SKILL_XP");
+            }
+
+            if(oldData.contains("TRAIT_POWER")){
+                PowerManager.SetPower(player, oldData.getInt("TRAIT_POWER"));
+                oldData.remove("TRAIT_POWER");
             }
 
             for (var skill : SkillManager.Get().getAllSkills()){

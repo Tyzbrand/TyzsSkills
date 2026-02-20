@@ -21,32 +21,47 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     private int playerLevel = 1;
     private int playerSP = 0;
     private float playerXP = 0f;
+    private int playerPower = 0;
 
 
+    //-----------------Skill level-----------------
     public void setSkillLevel(String id, int lvl){
         if(id == null || lvl < 0) return;
 
         if(lvl == 0 && playerSkills.containsKey(id)) playerSkills.remove(id);
         else playerSkills.put(id, lvl);
     }
+    public int getSkillLevel(String id){return playerSkills.getOrDefault(id, 0);}
 
+
+    //-----------------Bookmarks-----------------
     public void triggerBookmark(String id){
         if(playerBookmarks.contains(id)) playerBookmarks.remove(id);
         else playerBookmarks.add(id);
     }
-
-    public void setLevel(int lvl){playerLevel = Math.max(1, lvl);}
-    public void setSP(int sp){playerSP = Math.max(0, sp);}
-    public void setXP(float xp){playerXP = Math.max(0f, xp);}
-
-
-    public int getSkillLevel(String id){return playerSkills.getOrDefault(id, 0);}
     public List<String> getBookmarks(){return List.copyOf(playerBookmarks);}
+    public boolean isBookmarked(String id){return playerBookmarks.contains(id);}
+
+
+    //-----------------Level-----------------
+    public void setLevel(int lvl){playerLevel = Math.max(1, lvl);}
     public int getLevel(){return playerLevel;}
+
+
+    //-----------------SP-----------------
+    public void setSP(int sp){playerSP = Math.max(0, sp);}
     public int getSP(){return playerSP;}
+
+
+    //-----------------XP-----------------
+    public void setXP(float xp){playerXP = Math.max(0f, xp);}
     public float getXP(){return playerXP;}
 
-    public boolean isBookmarked(String id){return playerBookmarks.contains(id);}
+
+    //-----------------Power-----------------
+    public void setPower(int power){playerPower = Math.max(0, power);}
+    public int getPower(){return playerPower;}
+
 
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
@@ -63,6 +78,7 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         tag.putInt("skill_level", playerLevel);
         tag.putInt("skill_point", playerSP);
         tag.putFloat("skill_xp", playerXP);
+        tag.putInt("trait_power", playerPower);
 
         return tag;
     }
@@ -86,6 +102,7 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         if(compoundTag.contains("skill_level")) playerLevel = compoundTag.getInt("skill_level");
         if(compoundTag.contains("skill_point")) playerSP = compoundTag.getInt("skill_point");
         if(compoundTag.contains("skill_xp")) playerXP = compoundTag.getFloat("skill_xp");
+        if(compoundTag.contains("trait_power")) playerPower = compoundTag.getInt("trait_power");
     }
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Tyzsskills.MODID);

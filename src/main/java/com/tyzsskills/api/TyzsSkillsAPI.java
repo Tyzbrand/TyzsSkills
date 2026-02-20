@@ -1,9 +1,6 @@
 package com.tyzsskills.api;
 
-import com.tyzsskills.api.interfaces.ILevelManager;
-import com.tyzsskills.api.interfaces.ISkillManager;
-import com.tyzsskills.api.interfaces.ISpManager;
-import com.tyzsskills.api.interfaces.IXpManager;
+import com.tyzsskills.api.interfaces.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +10,9 @@ public class TyzsSkillsAPI {
     private static ILevelManager levelManager;
     private static IXpManager xpManager;
     private static ISkillManager skillManager;
+    private static IPowerManager powerManager;
+
+    private static IClientDataManager clientDataManager;
 
     @ApiStatus.Internal
     public static void  registerSpManager(ISpManager manager){spManager = manager;}
@@ -22,6 +22,11 @@ public class TyzsSkillsAPI {
     public static void registerXpManager(IXpManager manager){xpManager = manager;}
     @ApiStatus.Internal
     public static void registerSkillManager(ISkillManager manager){skillManager = manager;}
+    @ApiStatus.Internal
+    public static void registerPowerManager(IPowerManager manager){powerManager = manager;}
+
+    @ApiStatus.Internal
+    public static void registerPlayerCacheManager(IClientDataManager manager){clientDataManager = manager;}
 
 
     public static ISpManager sp(){
@@ -44,6 +49,17 @@ public class TyzsSkillsAPI {
         return skillManager;
     }
 
+    public static IPowerManager power(){
+        if(powerManager == null) ex("PowerManager");
+        return powerManager;
+    }
+
+    public static IClientDataManager client(){
+        if(clientDataManager == null) ex("ClientDataManager");
+        return clientDataManager;
+    }
+
     //Util
-    private static void ex(@NotNull String id){throw new RuntimeException("TyzsSkillsAPI Error: " + id + " is not registered! Make sure Tyz's Skills mod is properly loaded.");}
+    private static void ex(@NotNull String id){throw new RuntimeException("TyzsSkillsAPI Error: " + id + " is not registered! " +
+            "Make sure Tyz's Skills mod is properly loaded.");}
 }

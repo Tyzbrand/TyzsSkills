@@ -512,7 +512,7 @@ public class MainGUI extends Screen {
                 if(skill.GetCategory() != categoryToLoad &&
                         categoryToLoad != Skill.CategoryType.ALL && categoryToLoad != Skill.CategoryType.BOOKMARKS) continue;
 
-                if(categoryToLoad == Skill.CategoryType.BOOKMARKS && !ClientCache.GetBookmarkState(skill.GetID())) continue;
+                if(categoryToLoad == Skill.CategoryType.BOOKMARKS && !ClientCache.isSkillBookmarked(skill.GetID())) continue;
 
                 if(currentRow == null || countInRow >= maxPerLine){
                     currentRow = new SkillEntry();
