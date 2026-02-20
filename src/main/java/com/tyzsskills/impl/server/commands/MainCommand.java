@@ -8,7 +8,7 @@ import com.tyzsskills.impl.server.active.DebugManager;
 import com.tyzsskills.impl.server.active.LevelManager;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.skills.SkillManager;
-import com.tyzsskills.impl.server.active.SpManager;
+import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

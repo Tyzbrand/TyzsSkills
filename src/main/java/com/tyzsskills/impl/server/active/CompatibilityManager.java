@@ -3,6 +3,7 @@ package com.tyzsskills.impl.server.active;
 import com.tyzsskills.impl.server.attachments.LegacyData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.skills.SkillManager;
+import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;

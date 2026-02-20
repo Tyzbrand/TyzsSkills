@@ -1,5 +1,6 @@
 package com.tyzsskills;
 
+import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.impl.server.active.SoundRegistry;
@@ -12,6 +13,10 @@ import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.commands.MainCommand;
 import com.tyzsskills.impl.server.events.RuntimeEvents;
 import com.tyzsskills.impl.server.payloads.*;
+import com.tyzsskills.impl.server.wrappers.LevelWrapper;
+import com.tyzsskills.impl.server.wrappers.SkillWrapper;
+import com.tyzsskills.impl.server.wrappers.SpWrapper;
+import com.tyzsskills.impl.server.wrappers.XpWrapper;
 import com.tyzsskills.impl.server.xp.XpManager;
 import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
@@ -45,6 +50,10 @@ public class Tyzsskills {
 
 
     public Tyzsskills(IEventBus modEventBus, ModContainer modContainer) {
+
+        //API
+        RegisterWrappers();
+
        //Register attributes
         AttributeRegistry.ATTRIBUTES.register(modEventBus);
         modEventBus.addListener(this::RegisterAttributes);
@@ -58,6 +67,7 @@ public class Tyzsskills {
 
         //Register Sounds
         SoundRegistry.register(modEventBus);
+
 
 
         // Register ourselves for server and other game events we are interested in.
@@ -87,6 +97,13 @@ public class Tyzsskills {
 
     private void RegisterCommands(RegisterCommandsEvent event){
         event.getDispatcher().register(MainCommand.register());
+    }
+
+    private void RegisterWrappers(){
+        TyzsSkillsAPI.registerSpManager(new SpWrapper());
+        TyzsSkillsAPI.registerLevelManager(new LevelWrapper());
+        TyzsSkillsAPI.registerXpManager(new XpWrapper());
+        TyzsSkillsAPI.registerSkillManager(new SkillWrapper());
     }
 
     private void RegisterAttributes(EntityAttributeModificationEvent event) {

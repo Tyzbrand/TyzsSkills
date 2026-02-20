@@ -9,7 +9,7 @@ import com.tyzsskills.Config;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.active.LevelManager;
 import com.tyzsskills.impl.server.active.PowerManager;
-import com.tyzsskills.impl.server.active.SpManager;
+import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.effects.GenericEffects;
@@ -47,30 +47,30 @@ public class SkillManager {
     }
 
 
-    public void buySkill(ServerPlayer player, String id)
+    public boolean buySkill(ServerPlayer player, String id)
     {
         var skill = getSkill(id);
-        if(player == null || skill == null) return;
+        if(player == null || skill == null) return false;
 
         if(skill instanceof Trait){
-            if(!Config.TRAIT_SYSTEM.get()) return;
-            if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
+            if(!Config.TRAIT_SYSTEM.get()) return false;
+            if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return false;
         }
 
         var data = player.getData(PlayerData.DATA);
 
         int currentLvl = data.getSkillLevel(id);
-        if(currentLvl >= skill.GetMaximumLevel()) return;
+        if(currentLvl >= skill.GetMaximumLevel()) return false;
 
         if(skill instanceof Trait trait){
             var attr = player.getAttribute(AttributeRegistry.TRAIT_POWER);
-            if(attr == null) return;
+            if(attr == null) return false;
 
             int freeSpace = (int)attr.getValue() - PowerManager.GetPower(player);
-            if(trait.getPowerWeight() > freeSpace)return;
+            if(trait.getPowerWeight() > freeSpace)return false;
 
             var prices = skill.GetPrices();
-            if(currentLvl >= prices.size()) return;
+            if(currentLvl >= prices.size()) return false;
             int price = prices.get(currentLvl);
 
 
@@ -84,11 +84,12 @@ public class SkillManager {
                 player.getData(StatsTracker.DATA).addSpSpent(price);
 
                 PowerManager.AddPower(player, trait.getPowerWeight());
+                return true;
             }
         }
         else{
             var prices = skill.GetPrices();
-            if(currentLvl >= prices.size()) return;
+            if(currentLvl >= prices.size()) return false;
             int price = prices.get(currentLvl);
 
 
@@ -102,36 +103,38 @@ public class SkillManager {
                 player.getData(StatsTracker.DATA).addSpSpent(price);
 
                 if(skill.GetType() == Skill.SkillType.GENERIC) GenericEffects.ApplyEffect(skill, player);
+                return true;
             }
         }
+        return false;
 
     }
 
-    public void refundSkill(ServerPlayer player, String id)
+    public boolean refundSkill(ServerPlayer player, String id)
     {
         var skill = getSkill(id);
-        if(player == null || skill == null || !Config.REFUND_SYSTEM.get()) return;
+        if(player == null || skill == null || !Config.REFUND_SYSTEM.get()) return false;
 
         if(skill instanceof Trait){
-            if(!Config.TRAIT_SYSTEM.get()) return;
-            if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
+            if(!Config.TRAIT_SYSTEM.get()) return false;
+            if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return false;
         }
 
 
         var data = player.getData(PlayerData.DATA);
 
         int currentLvl = data.getSkillLevel(id);
-        if(currentLvl <= 0 || currentLvl > skill.GetMaximumLevel()) return;
+        if(currentLvl <= 0 || currentLvl > skill.GetMaximumLevel()) return false;
 
         if(skill.GetType() == Skill.SkillType.GENERIC){
 
             ResourceLocation attributeID = ResourceLocation.tryParse(skill.GetModifier());
-            if(attributeID == null) return;
+            if(attributeID == null) return false;
             Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
 
             if(attribute == AttributeRegistry.TRAIT_POWER.get()){
                 var att = player.getAttribute(AttributeRegistry.TRAIT_POWER);
-                if(att == null) return;
+                if(att == null) return false;
 
                 int max = (int)att.getValue();
                 int current = PowerManager.GetPower(player);
@@ -146,12 +149,12 @@ public class SkillManager {
                     float prevValue = skill.GetValues().get(prevIndex);
                     powerLoss = currentValue - prevValue;
                 }
-                if(current > (max - (int)powerLoss)) return;
+                if(current > (max - (int)powerLoss)) return false;
             }
         }
 
         var prices = skill.GetPrices();
-        if (currentLvl > prices.size()) return;
+        if (currentLvl > prices.size()) return false;
         int initialPrice = prices.get(currentLvl - 1);
         int finalPrice = Math.max(1, (int)(initialPrice * (Config.REFUND_PERCENTAGE.get() / 100f)));
 
@@ -172,6 +175,8 @@ public class SkillManager {
             if(currentLvl - 1 <= 0) GenericEffects.RemoveEffect(skill, player);
             else GenericEffects.ApplyEffect(skill, player);
         }
+
+        return true;
     }
 
 
@@ -241,5 +246,10 @@ public class SkillManager {
     //getters
     public Skill getSkill(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}
     public List<Skill> getAllSkills() {return new ArrayList<>(skillCollection.values());}
+    public List<String> getAllSkillIDs(){return new ArrayList<>(skillCollection.keySet());}
     public int getPlayerSkillLevel(ServerPlayer player, String id) {return player.getData(PlayerData.DATA).getSkillLevel(id);}
+    public boolean isSkillLoaded(String id){return skillCollection.containsKey(id);}
+
+    public boolean isSkillBookmarked(ServerPlayer player,String id) {return player.getData(PlayerData.DATA).isBookmarked(id);}
+    public List<String> getAllBookmarkIDs(ServerPlayer player){return player.getData(PlayerData.DATA).getBookmarks();}
 }

@@ -1,5 +1,6 @@
-package com.tyzsskills.impl.server.active;
+package com.tyzsskills.impl.server.sp;
 
+import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.payloads.SpUpdatePayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,6 +31,7 @@ public class SpManager {
         private static void updateClient(ServerPlayer player){
             PacketDistributor.sendToPlayer(player, new SpUpdatePayload(getSP(player)));
         }
+
 
         //Getters
         public static int getSP(ServerPlayer player){

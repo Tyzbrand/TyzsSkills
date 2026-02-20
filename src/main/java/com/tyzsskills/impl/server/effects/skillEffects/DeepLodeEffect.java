@@ -56,7 +56,6 @@ public class DeepLodeEffect extends SkillBehaviour {
 
         boolean griefProtection = Config.DEEP_LODE_GRIEF_PROTECTION.getAsBoolean();
         if(griefProtection && BlockMarker.IsPlayerPlaced(level, startPos)) return;
-        player.sendSystemMessage(Component.literal("test"));
 
         Block targetBlock = state.getBlock();
 
