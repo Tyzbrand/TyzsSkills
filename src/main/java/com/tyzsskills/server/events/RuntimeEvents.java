@@ -1,29 +1,17 @@
 package com.tyzsskills.server.events;
 
-import com.tyzsskills.Config;
 import com.tyzsskills.server.active.*;
 import com.tyzsskills.server.attachments.BlockMarker;
-import com.tyzsskills.server.attachments.ExplorationProgression;
 import com.tyzsskills.server.effects.GenericEffects;
-import com.tyzsskills.server.model.Skill;
-import com.tyzsskills.server.skills.SkillManager;
-import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
-import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.event.PlayLevelSoundEvent;
-import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-
-import java.util.List;
 
 public class RuntimeEvents {
 
@@ -31,7 +19,8 @@ public class RuntimeEvents {
     public static void OnPlayerLogin(PlayerEvent.PlayerLoggedInEvent event){
         if(!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        CompatibilityManager.ProcessMigration(player);
+        CompatibilityManager.processMigration(player);
+        CompatibilityManager.processMigrationV2(player);
 
         AutoSyncClient.SyncMainData(player);
         AutoSyncClient.SyncSkillList(player);
@@ -48,17 +37,10 @@ public class RuntimeEvents {
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event){
 
-        if(!(event.getOriginal() instanceof ServerPlayer oldPlayer) ||
+        if(!(event.getOriginal() instanceof ServerPlayer) ||
                 !(event.getEntity() instanceof ServerPlayer newPlayer)) return;
 
-
-        XpManager.RestorePlayerXPData(oldPlayer, newPlayer);
-        LevelManager.RestorePlayerLevelData(oldPlayer, newPlayer);
-        SpManager.RestorePlayerSPData(oldPlayer, newPlayer);
-        SkillManager.Get().RestaureSkillData(oldPlayer, newPlayer);
-
         GenericEffects.RestaureEffects(newPlayer);
-
         SkillEffectsEvents.OnPlayerClone(event);
     }
 

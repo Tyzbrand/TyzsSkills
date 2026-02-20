@@ -10,13 +10,13 @@ import com.tyzsskills.server.active.AttributeRegistry;
 import com.tyzsskills.server.active.LevelManager;
 import com.tyzsskills.server.active.PowerManager;
 import com.tyzsskills.server.active.SpManager;
+import com.tyzsskills.server.attachments.PlayerData;
 import com.tyzsskills.server.attachments.StatsTracker;
 import com.tyzsskills.server.effects.GenericEffects;
 import com.tyzsskills.server.model.Skill;
 import com.tyzsskills.server.model.Trait;
 import com.tyzsskills.server.payloads.*;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -24,18 +24,15 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 public class SkillManager {
 
-    private static final SkillManager instance = new SkillManager();
-    public static SkillManager Get() {return instance;}
-
-    public static final String BOOKMARK_SIGNATURE = "_bookmark";
-    public static final String SKILL_LEVEL_SIGNATURE = "_lvl";
+    private static final SkillManager INSTANCE = new SkillManager();
+    public static SkillManager Get() {return INSTANCE;}
 
     private final Map<String, Skill> skillCollection = new HashMap<>();
 
 
 
 
-    public void RegisterSKill(Skill skill)
+    public void registerSKill(Skill skill)
     {
         var behaviour = SkillBehaviourRegistry.GetBehaviour(skill.GetID());
         if(behaviour != null){skill.SetBehaviour(behaviour);}
@@ -43,25 +40,24 @@ public class SkillManager {
         if(!skillCollection.containsKey(skill.GetID())) skillCollection.put(skill.GetID(), skill);
     }
 
-    public void ClearSkills(){
+    public void clearSkills(){
         skillCollection.clear();
     }
 
 
-    public void BuySkill(ServerPlayer player, String id)
+    public void buySkill(ServerPlayer player, String id)
     {
-        var skill = GetSkill(id);
+        var skill = getSkill(id);
         if(player == null || skill == null) return;
 
         if(skill instanceof Trait){
             if(!Config.TRAIT_SYSTEM.get()) return;
-            if(LevelManager.GetLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
+            if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
         }
 
-        var data = player.getPersistentData();
-        var key = skill.GetID() + SKILL_LEVEL_SIGNATURE;
+        var data = player.getData(PlayerData.DATA);
 
-        int currentLvl = data.getInt(key);
+        int currentLvl = data.getSkillLevel(id);
         if(currentLvl >= skill.GetMaximumLevel()) return;
 
         if(skill instanceof Trait trait){
@@ -76,9 +72,9 @@ public class SkillManager {
             int price = prices.get(currentLvl);
 
 
-            if(SpManager.GetSP(player) >= price){
-                SpManager.RemoveSP(player, price);
-                data.putInt(key, currentLvl+1);
+            if(SpManager.getSP(player) >= price){
+                SpManager.removeSP(player, price);
+                data.setSkillLevel(id, currentLvl+1);
 
                 PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl+1));
                 PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
@@ -94,9 +90,9 @@ public class SkillManager {
             int price = prices.get(currentLvl);
 
 
-            if(SpManager.GetSP(player) >= price){
-                SpManager.RemoveSP(player, price);
-                data.putInt(key, currentLvl+1);
+            if(SpManager.getSP(player) >= price){
+                SpManager.removeSP(player, price);
+                data.setSkillLevel(id, currentLvl+1);
 
                 PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl+1));
                 PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
@@ -109,21 +105,20 @@ public class SkillManager {
 
     }
 
-    public void RefundSkill(ServerPlayer player, String id)
+    public void refundSkill(ServerPlayer player, String id)
     {
-        var skill = GetSkill(id);
+        var skill = getSkill(id);
         if(player == null || skill == null || !Config.REFUND_SYSTEM.get()) return;
 
         if(skill instanceof Trait){
             if(!Config.TRAIT_SYSTEM.get()) return;
-            if(LevelManager.GetLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
+            if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
         }
 
 
-        var data = player.getPersistentData();
-        var key = skill.GetID() + SKILL_LEVEL_SIGNATURE;
+        var data = player.getData(PlayerData.DATA);
 
-        int currentLvl = data.getInt(key);
+        int currentLvl = data.getSkillLevel(id);
         if(currentLvl <= 0 || currentLvl > skill.GetMaximumLevel()) return;
 
         if(skill.GetType() == Skill.SkillType.GENERIC){
@@ -158,12 +153,11 @@ public class SkillManager {
         int initialPrice = prices.get(currentLvl - 1);
         int finalPrice = Math.max(1, (int)(initialPrice * (Config.REFUND_PERCENTAGE.get() / 100f)));
 
-        SpManager.AddSP(player, finalPrice);
+        SpManager.addSP(player, finalPrice);
 
         int newLvl = currentLvl - 1;
 
-        if(newLvl > 0) data.putInt(key, currentLvl - 1);
-        else data.remove(key);
+        if(newLvl > 0) data.setSkillLevel(id, currentLvl - 1);
 
         if(skill instanceof Trait trait) PowerManager.RemovePower(player, trait.getPowerWeight());
 
@@ -178,62 +172,37 @@ public class SkillManager {
         }
     }
 
-    public void RestaureSkillData(ServerPlayer oldPlayer, ServerPlayer newPlayer)
-    {
-        if(oldPlayer == null || newPlayer == null) return;
-        for(var skill : skillCollection.values()){
-            String key = skill.GetID() + SKILL_LEVEL_SIGNATURE;
 
-            int oldValue = oldPlayer.getPersistentData().getInt(key);
-            if(oldValue > 0){
-                newPlayer.getPersistentData().putInt(key, oldValue);
-                PacketDistributor.sendToPlayer(newPlayer, new SkillLevelSyncPayload(skill.GetID().toLowerCase(), oldValue));
-            }
+    public void bookmarkSkill(ServerPlayer player, String id){
+        if(player == null || getSkill(id.toLowerCase()) == null) return;
 
-            String key2 = skill.GetID() + BOOKMARK_SIGNATURE;
-            boolean oldValue2 = oldPlayer.getPersistentData().getBoolean(key2);
-            if(oldValue2){
-                newPlayer.getPersistentData().putBoolean(key2, true);
-                PacketDistributor.sendToPlayer(newPlayer, new SkillBookmarksPayload(skill.GetID().toLowerCase(), true));
-            }
-        }
-    }
+        var data = player.getData(PlayerData.DATA);
 
-    public void BookmarkSkill(ServerPlayer player, String id){
-        if(player == null || GetSkill(id.toLowerCase()) == null) return;
-
-        var data = player.getPersistentData();
-        var key = id.toLowerCase() + BOOKMARK_SIGNATURE;
-
-        var isCurrentlyBookmarked = data.getBoolean(key);
+        var isCurrentlyBookmarked = data.isBookmarked(id);
         var newValue = !isCurrentlyBookmarked;
 
-        if(newValue) data.putBoolean(key, true);
-        else data.remove(key);
-
+        data.triggerBookmark(id);
         PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(id.toLowerCase(), newValue));
     }
 
-    public void SetSkillLevel(ServerPlayer player, String id, int lvl){
+    public void setSkillLevel(ServerPlayer player, String id, int lvl){
         if(player == null || lvl < 0 || lvl > 10) return;
 
-        var skill = GetSkill(id.toLowerCase());
+        var skill = getSkill(id.toLowerCase());
         if(skill == null) return;
 
         if(skill instanceof Trait){
             if(!Config.TRAIT_SYSTEM.get()) return;
-            if(LevelManager.GetLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
+            if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
         }
 
 
-        var data = player.getPersistentData();
-        var key = id + SKILL_LEVEL_SIGNATURE;
+        var data = player.getData(PlayerData.DATA);
 
         lvl = Math.max(0, Math.min(lvl, skill.GetMaximumLevel()));
-        int oldLvl = GetPlayerSkillLevel(player, id);
+        int oldLvl = getPlayerSkillLevel(player, id);
 
-        if(lvl > 0) data.putInt(key, lvl);
-        else data.remove(key);
+        data.setSkillLevel(id, lvl);
 
         if(skill instanceof Trait trait){
             if(oldLvl == 0 && lvl > 0) {
@@ -244,7 +213,6 @@ public class SkillManager {
             }
         }
 
-        var diff = lvl - oldLvl;
 
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(id, lvl));
 
@@ -255,30 +223,21 @@ public class SkillManager {
         }
     }
 
-    public void AddSKillLevel(ServerPlayer player, String id, int amount){
-        int current = GetPlayerSkillLevel(player, id);
-        SetSkillLevel(player, id, current + amount);
+    public void addSKillLevel(ServerPlayer player, String id, int amount){
+        int current = getPlayerSkillLevel(player, id);
+        setSkillLevel(player, id, current + amount);
     }
 
-    public void RemoveSkillLevel(ServerPlayer player, String id, int amount){
-        int current = GetPlayerSkillLevel(player, id);
-        SetSkillLevel(player, id, current - amount);
+    public void removeSkillLevel(ServerPlayer player, String id, int amount){
+        int current = getPlayerSkillLevel(player, id);
+        setSkillLevel(player, id, current - amount);
     }
 
 
 
 
     //getters
-    public Skill GetSkill(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}
-    public int GetLoadedSkills(){return  skillCollection.size();}
-    public List<Skill> GetAllSkills() {return new ArrayList<>(skillCollection.values());}
-    public int GetPlayerSkillLevel(ServerPlayer player, String id){
-        var data = player.getPersistentData();
-
-        var skill = GetSkill(id);
-        if(skill == null) return 0;
-
-        var key = id.toLowerCase() + SKILL_LEVEL_SIGNATURE;
-        return data.getInt(key);
-    }
+    public Skill getSkill(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}
+    public List<Skill> getAllSkills() {return new ArrayList<>(skillCollection.values());}
+    public int getPlayerSkillLevel(ServerPlayer player, String id) {return player.getData(PlayerData.DATA).getSkillLevel(id);}
 }

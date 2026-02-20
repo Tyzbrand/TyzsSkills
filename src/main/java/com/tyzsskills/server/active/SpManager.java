@@ -1,54 +1,37 @@
 package com.tyzsskills.server.active;
 
+import com.tyzsskills.server.attachments.PlayerData;
 import com.tyzsskills.server.payloads.SpUpdatePayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class SpManager {
 
-        private static final String dataKey = "SKILL_POINT";
-
-        public static void SetSP(ServerPlayer player, int amount){
-            if(amount < 0) return;
-
-            var playerData = player.getPersistentData();
-            playerData.putInt(dataKey, amount);
-
-            UpdateClient(player);
-
+        public static void setSp(ServerPlayer player, int amount){
+            var playerData = player.getData(PlayerData.DATA);
+            playerData.setSP(amount);
+            updateClient(player);
         }
 
-        public static void AddSP(ServerPlayer player, int amount){
+        public static void addSP(ServerPlayer player, int amount){
             if(amount <= 0) return;
-            SetSP(player, GetSP(player) + amount);
+            setSp(player, getSP(player) + amount);
         }
 
-        public static void RemoveSP(ServerPlayer player, int amount){
+        public static void removeSP(ServerPlayer player, int amount){
             if(amount <= 0) return;
-            var result = Math.max(0, GetSP(player) - amount);
-            SetSP(player, result);
+            var result = Math.max(0, getSP(player) - amount);
+            setSp(player, result);
         }
 
-        public static void RestorePlayerSPData(ServerPlayer oldPlayer, ServerPlayer newPlayer){
-
-            var oldData = oldPlayer.getPersistentData();
-            var newData = newPlayer.getPersistentData();
-
-            if(oldData.contains(dataKey)) {
-                newData.putInt(dataKey, oldData.getInt(dataKey));
-                UpdateClient(newPlayer);
-            }
-            else SetSP(newPlayer, 0);
-        }
-
-        //Utilitaire
-        private static void UpdateClient(ServerPlayer player){
-            PacketDistributor.sendToPlayer(player, new SpUpdatePayload(GetSP(player)));
+        //Util
+        private static void updateClient(ServerPlayer player){
+            PacketDistributor.sendToPlayer(player, new SpUpdatePayload(getSP(player)));
         }
 
         //Getters
-        public static int GetSP(ServerPlayer player){
-            return player.getPersistentData().getInt(dataKey);
+        public static int getSP(ServerPlayer player){
+            return player.getData(PlayerData.DATA).getSP();
         }
 
     }

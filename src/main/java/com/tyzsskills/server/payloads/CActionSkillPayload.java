@@ -29,9 +29,9 @@ public record CActionSkillPayload(String id, int actionType) implements CustomPa
     public static void Handle(final CActionSkillPayload payload, final IPayloadContext ctx){
         ctx.enqueueWork(() -> {
             if(ctx.player() instanceof ServerPlayer player){
-                if(payload.actionType() == 0) SkillManager.Get().BuySkill(player, payload.id().toLowerCase());
-                else if (payload.actionType() == 1) SkillManager.Get().RefundSkill(player, payload.id().toLowerCase());
-                else if (payload.actionType() == 2) SkillManager.Get().BookmarkSkill(player, payload.id().toLowerCase());
+                if(payload.actionType() == 0) SkillManager.Get().buySkill(player, payload.id().toLowerCase());
+                else if (payload.actionType() == 1) SkillManager.Get().refundSkill(player, payload.id().toLowerCase());
+                else if (payload.actionType() == 2) SkillManager.Get().bookmarkSkill(player, payload.id().toLowerCase());
             }
 
         });

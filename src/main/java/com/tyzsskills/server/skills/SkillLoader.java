@@ -76,7 +76,7 @@ public class SkillLoader {
             if(!Config.TRAIT_SYSTEM.get()) return;
 
             int price = prices.isEmpty()? 0 : prices.getFirst();
-            SkillManager.Get().RegisterSKill(new Trait(
+            SkillManager.Get().registerSKill(new Trait(
                     state, id, powerWeight, price, purchasable, icon, displayName, description)
             );
             return;
@@ -99,7 +99,7 @@ public class SkillLoader {
         if(modifier == null && (type == Skill.SkillType.GENERIC || type == Skill.SkillType.CUSTOM)) {ErrorManager.RegisterSkillError(id, "Missing modifier"); return;}
 
 
-        SkillManager.Get().RegisterSKill(
+        SkillManager.Get().registerSKill(
                 new Skill(state, id, maxLevel, prices, values, type,
                         category, modifier, operation, purchasable, icon, displayName, description, unit));
     }

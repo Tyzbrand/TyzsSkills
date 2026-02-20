@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.tyzsskills.client.screen.MainGUI;
 import com.tyzsskills.server.model.*;
 import com.tyzsskills.server.skills.SkillLoader;
 import com.tyzsskills.server.xp.XpManager;
@@ -158,7 +157,7 @@ public class FileManager {
         if(Files.exists((poolFile))){
             var content = Files.readString(poolFile);
             var obj = JsonParser.parseString(content).getAsJsonObject();
-            XpManager.LoadPool(obj);
+            XpManager.loadPool(obj);
         }
     }
 

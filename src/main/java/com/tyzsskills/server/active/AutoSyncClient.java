@@ -1,6 +1,7 @@
 package com.tyzsskills.server.active;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.server.attachments.PlayerData;
 import com.tyzsskills.server.attachments.StatsTracker;
 import com.tyzsskills.server.payloads.*;
 import com.tyzsskills.server.skills.SkillManager;
@@ -10,15 +11,13 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 public class AutoSyncClient {
     public static void SyncSkillList(ServerPlayer player){
-        PacketDistributor.sendToPlayer(player, new SkillSyncPayload(SkillManager.Get().GetAllSkills()));
+        PacketDistributor.sendToPlayer(player, new SkillSyncPayload(SkillManager.Get().getAllSkills()));
     }
 
     public static void SyncSkillLevels(ServerPlayer player){
-        for(var skill : SkillManager.Get().GetAllSkills()) {
-            var data = player.getPersistentData();
-            var key = skill.GetID().toLowerCase() + SkillManager.SKILL_LEVEL_SIGNATURE;
-
-            var lvl = data.getInt(key);
+        var data = player.getData(PlayerData.DATA);
+        for(var skill : SkillManager.Get().getAllSkills()) {
+            var lvl = data.getSkillLevel(skill.GetID());
             if (lvl > 0) {
                 PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), lvl));
             }
@@ -26,13 +25,9 @@ public class AutoSyncClient {
     }
 
     public static void SyncSkillBookmarks(ServerPlayer player){
-        for(var skill : SkillManager.Get().GetAllSkills()) {
-            var data = player.getPersistentData();
-            var key = skill.GetID().toLowerCase() + SkillManager.BOOKMARK_SIGNATURE;
-
-            if (data.getBoolean(key)) {
-                PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(skill.GetID().toLowerCase(), true));
-            }
+        var data = player.getData(PlayerData.DATA);
+        for(var entry : data.getBookmarks()) {
+                PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(entry, true));
         }
     }
 
@@ -44,10 +39,10 @@ public class AutoSyncClient {
     }
 
     public static void SyncMainData(ServerPlayer player){
-        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(XpManager.GetXP(player), 0f));
-        PacketDistributor.sendToPlayer(player, new LevelUpdatePayload(LevelManager.GetLevel(player)));
-        PacketDistributor.sendToPlayer(player, new SpUpdatePayload(SpManager.GetSP(player)));
-        PacketDistributor.sendToPlayer(player, new LevelDataUpdatePayload(XpManager.GetLevelData(LevelManager.GetLevel(player))));
+        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(XpManager.getXP(player), 0f));
+        PacketDistributor.sendToPlayer(player, new LevelUpdatePayload(LevelManager.getLevel(player)));
+        PacketDistributor.sendToPlayer(player, new SpUpdatePayload(SpManager.getSP(player)));
+        PacketDistributor.sendToPlayer(player, new LevelDataUpdatePayload(XpManager.getLevelData(LevelManager.getLevel(player))));
         PacketDistributor.sendToPlayer(player, new PowerUpdatePayload(PowerManager.GetPower(player)));
     }
 

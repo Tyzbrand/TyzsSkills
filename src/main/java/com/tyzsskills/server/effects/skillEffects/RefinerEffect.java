@@ -40,7 +40,7 @@ public class RefinerEffect extends SkillBehaviour {
         if(!(event.getLevel() instanceof ServerLevel level)) return;
         if (player.isShiftKeyDown()) return;
 
-        if (SkillManager.Get().GetPlayerSkillLevel(player, "deep_lode") > 0) return;
+        if (SkillManager.Get().getPlayerSkillLevel(player, "deep_lode") > 0) return;
 
         BlockState state = event.getState();
 

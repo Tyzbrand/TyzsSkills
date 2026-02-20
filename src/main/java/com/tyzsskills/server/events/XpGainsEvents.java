@@ -8,12 +8,8 @@ import com.tyzsskills.server.xp.XpManager;
 import com.tyzsskills.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.server.xp.xpEvents.XpEntity;
 import com.tyzsskills.server.xp.xpEvents.XpFood;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -74,7 +70,7 @@ public class XpGainsEvents {
         if(!data.hasAlreadySlept(currentDay)){
             data.setSleepDay(currentDay);
             sleepValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-            XpManager.AddXP(player, (float)sleepValue);
+            XpManager.addXP(player, (float)sleepValue);
         }
     }
 
@@ -88,7 +84,7 @@ public class XpGainsEvents {
         if(value <= 0) return;
 
         value *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-        XpManager.AddXP(player, value);
+        XpManager.addXP(player, value);
     }
 
     @SubscribeEvent
@@ -111,7 +107,7 @@ public class XpGainsEvents {
         if(value <= 0) return;
 
         value *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-        XpManager.AddXP(player, value);
+        XpManager.addXP(player, value);
     }
 
     @SubscribeEvent
@@ -123,7 +119,7 @@ public class XpGainsEvents {
         if(value <= 0) return;
 
         value *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-        XpManager.AddXP(player, value);
+        XpManager.addXP(player, value);
     }
 
     @SubscribeEvent
@@ -146,7 +142,7 @@ public class XpGainsEvents {
             if(finalValue <= 0) return;
 
             finalValue *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-            XpManager.AddXP(player, finalValue);
+            XpManager.addXP(player, finalValue);
         });
     }
 
@@ -171,7 +167,7 @@ public class XpGainsEvents {
                 if(!data.hasDiscoveredBiome(biomeID)){
                     data.addBiome(biomeID);
                     biomeValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-                    XpManager.AddXP(player, (float)biomeValue);
+                    XpManager.addXP(player, (float)biomeValue);
                 }
             }
         }
@@ -187,7 +183,7 @@ public class XpGainsEvents {
             if(!data.hasDiscoveredDimension(dimensionID)){
                 data.addDimension(dimensionID);
                 dimensionValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-                XpManager.AddXP(player, (float)dimensionValue);
+                XpManager.addXP(player, (float)dimensionValue);
             }
         }
     }

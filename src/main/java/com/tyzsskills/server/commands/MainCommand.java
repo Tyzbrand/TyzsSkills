@@ -1,6 +1,5 @@
 package com.tyzsskills.server.commands;
 
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -14,9 +13,7 @@ import com.tyzsskills.server.xp.XpManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.Component;
 
 import java.io.IOException;
 
@@ -43,7 +40,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = FloatArgumentType.getFloat(ctx, "amount");
-                                            XpManager.AddXP(player, amount);
+                                            XpManager.addXP(player, amount);
                                             return 1;})))
 
                         .then(Commands.literal("remove")
@@ -51,7 +48,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = FloatArgumentType.getFloat(ctx, "amount");
-                                            XpManager.RemoveXP(player, amount);
+                                            XpManager.removeXP(player, amount);
                                             return 1;})))
 
                         .then(Commands.literal("set")
@@ -59,7 +56,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = FloatArgumentType.getFloat(ctx, "amount");
-                                            XpManager.SetXP(player, amount);
+                                            XpManager.setXP(player, amount);
                                             return 1;})))
                 );
 
@@ -74,7 +71,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            LevelManager.AddLevel(player, amount);
+                                            LevelManager.addLevel(player, amount);
                                             return 1;})))
 
                         .then(Commands.literal("remove")
@@ -82,7 +79,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            LevelManager.RemoveLevel(player, amount);
+                                            LevelManager.removeLevel(player, amount);
                                             return 1;})))
 
                         .then(Commands.literal("set")
@@ -90,7 +87,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            LevelManager.SetLevel(player, amount);
+                                            LevelManager.setLevel(player, amount);
                                             return 1;})))
                 );
 
@@ -105,7 +102,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            SpManager.AddSP(player, amount);
+                                            SpManager.addSP(player, amount);
                                             return 1;})))
 
                         .then(Commands.literal("remove")
@@ -113,7 +110,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            SpManager.RemoveSP(player, amount);
+                                            SpManager.removeSP(player, amount);
                                             return 1;})))
 
                         .then(Commands.literal("set")
@@ -121,7 +118,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            SpManager.SetSP(player, amount);
+                                            SpManager.setSp(player, amount);
                                             return 1;})))
                 );
 
@@ -133,38 +130,38 @@ public class MainCommand {
                         .then(Commands.literal("set")
                                 .then(Commands.argument("skill_id", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                SkillManager.Get().GetAllSkills().stream().map(Skill::GetID), builder
+                                                SkillManager.Get().getAllSkills().stream().map(Skill::GetID), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(0, 10))
                                             .executes(ctx -> {
                                                 var player = EntityArgument.getPlayer(ctx, "player");
                                                 var id = StringArgumentType.getString(ctx, "skill_id");
                                                 var level = IntegerArgumentType.getInteger(ctx, "level");
-                                                SkillManager.Get().SetSkillLevel(player, id, level);
+                                                SkillManager.Get().setSkillLevel(player, id, level);
                                                 return 1;}))))
                         .then(Commands.literal("add")
                                 .then(Commands.argument("skill_id", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                SkillManager.Get().GetAllSkills().stream().map(Skill::GetID), builder
+                                                SkillManager.Get().getAllSkills().stream().map(Skill::GetID), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, 10))
                                                 .executes(ctx -> {
                                                     var player = EntityArgument.getPlayer(ctx, "player");
                                                     var id = StringArgumentType.getString(ctx, "skill_id");
                                                     var level = IntegerArgumentType.getInteger(ctx, "level");
-                                                    SkillManager.Get().AddSKillLevel(player, id, level);
+                                                    SkillManager.Get().addSKillLevel(player, id, level);
                                                     return 1;}))))
                         .then(Commands.literal("remove")
                                 .then(Commands.argument("skill_id", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                SkillManager.Get().GetAllSkills().stream().map(Skill::GetID), builder
+                                                SkillManager.Get().getAllSkills().stream().map(Skill::GetID), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, 10))
                                                 .executes(ctx -> {
                                                     var player = EntityArgument.getPlayer(ctx, "player");
                                                     var id = StringArgumentType.getString(ctx, "skill_id");
                                                     var level = IntegerArgumentType.getInteger(ctx, "level");
-                                                    SkillManager.Get().RemoveSkillLevel(player, id, level);
+                                                    SkillManager.Get().removeSkillLevel(player, id, level);
                                                     return 1;})))));
     }
 

@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class XpBlock {
@@ -80,7 +79,7 @@ public class XpBlock {
 
 
         var amount = GetBlockValue(state) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-        if(amount > 0) XpManager.AddXP(player, amount);
+        if(amount > 0) XpManager.addXP(player, amount);
     }
 
 

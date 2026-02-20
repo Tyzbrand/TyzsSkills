@@ -50,7 +50,7 @@ public class XpFood {
     //Actifs
     public static void FoodEatProfit(ItemStack itemStack, ServerPlayer player){
         var amount = GetFoodValue(itemStack, player) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-        if(amount > 0) XpManager.AddXP(player, amount);
+        if(amount > 0) XpManager.addXP(player, amount);
     }
 
 

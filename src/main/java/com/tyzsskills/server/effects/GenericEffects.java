@@ -75,7 +75,7 @@ public class GenericEffects {
     }
 
     public static void RestaureEffects(ServerPlayer newPlayer){
-        for(var skill : SkillManager.Get().GetAllSkills()){
+        for(var skill : SkillManager.Get().getAllSkills()){
 
             if(skill.GetType() != Skill.SkillType.GENERIC){continue;}
 

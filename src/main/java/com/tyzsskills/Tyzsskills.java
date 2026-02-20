@@ -3,11 +3,8 @@ package com.tyzsskills;
 import com.tyzsskills.server.active.AttributeRegistry;
 import com.tyzsskills.server.active.ErrorManager;
 import com.tyzsskills.server.active.SoundRegistry;
-import com.tyzsskills.server.attachments.BlockMarker;
+import com.tyzsskills.server.attachments.*;
 import com.tyzsskills.server.active.FileManager;
-import com.tyzsskills.server.attachments.ExplorationProgression;
-import com.tyzsskills.server.attachments.LegacyData;
-import com.tyzsskills.server.attachments.StatsTracker;
 import com.tyzsskills.server.events.SkillEffectsEvents;
 import com.tyzsskills.server.events.XpGainsEvents;
 import com.tyzsskills.server.skills.SkillBehaviourRegistry;
@@ -29,28 +26,12 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.io.IOException;
 
@@ -63,20 +44,17 @@ public class Tyzsskills {
     public static final Logger LOGGER = LogUtils.getLogger();
 
 
-    // The constructor for the mod class is the first code that is run when your mod is loaded.
-    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public Tyzsskills(IEventBus modEventBus, ModContainer modContainer) {
-        // Register the commonSetup method for modloading
-        modEventBus.addListener(this::commonSetup);
-
        //Register attributes
         AttributeRegistry.ATTRIBUTES.register(modEventBus);
         modEventBus.addListener(this::RegisterAttributes);
+
         //Register Attachments
         BlockMarker.ATTACHMENT_TYPES.register(modEventBus);
         LegacyData.ATTACHMENT_TYPES.register(modEventBus);
         ExplorationProgression.ATTACHMENT_TYPES.register(modEventBus);
         StatsTracker.ATTACHMENT_TYPES.register(modEventBus);
+        PlayerData.ATTACHMENT_TYPES.register(modEventBus);
 
         //Register Sounds
         SoundRegistry.register(modEventBus);
@@ -102,15 +80,8 @@ public class Tyzsskills {
         // Register config (Visual)
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
 
-
-
         //Initialize skill behaviours
         SkillBehaviourRegistry.Init();
-    }
-
-    private void commonSetup(FMLCommonSetupEvent event) {
-        // Some common setup code
-
     }
 
 
@@ -245,10 +216,10 @@ public class Tyzsskills {
 
     @SubscribeEvent
     public void OnServerStop(ServerStoppingEvent event){
-        SkillManager.Get().ClearSkills();
+        SkillManager.Get().clearSkills();
         XpBlock.ClearValues();
         XpEntity.ClearValues();
-        XpManager.ClearPool();
+        XpManager.clearPool();
 
         ErrorManager.ClearErrors();
     }

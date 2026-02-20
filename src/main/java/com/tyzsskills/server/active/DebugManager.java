@@ -1,7 +1,6 @@
 package com.tyzsskills.server.active;
 
 import com.tyzsskills.server.attachments.ExplorationProgression;
-import com.tyzsskills.server.attachments.LegacyData;
 import com.tyzsskills.server.attachments.StatsTracker;
 import com.tyzsskills.server.skills.SkillManager;
 import com.tyzsskills.server.xp.XpManager;
@@ -17,11 +16,11 @@ public class DebugManager {
     public static void DebugReload(MinecraftServer server) throws IOException {
         ErrorManager.ClearErrors();
 
-        SkillManager.Get().ClearSkills();
+        SkillManager.Get().clearSkills();
         XpBlock.ClearValues();
         XpEntity.ClearValues();
         XpFood.ClearValues();
-        XpManager.ClearPool();
+        XpManager.clearPool();
 
         FileManager.Get().ReadJsons(server);
         FileManager.Get().ReadLevelPool(server);
@@ -34,7 +33,7 @@ public class DebugManager {
             AutoSyncClient.SyncSkillList(player);
             AutoSyncClient.SyncConfig(player);
             AutoSyncClient.SyncMainData(player);
-            XpManager.LevelUpCheck(player);
+            XpManager.levelUpCheck(player);
 
             if (player.hasPermissions(2) && ErrorManager.HasErrors()) {
                 ErrorManager.PrintErrors(player);
@@ -42,27 +41,27 @@ public class DebugManager {
         }
 
         for(var player : server.getPlayerList().getPlayers()){
-            for (var skill : manager.GetAllSkills()){
-                if(manager.GetPlayerSkillLevel(player, skill.GetID().toLowerCase()) > skill.GetMaximumLevel()){
-                    manager.SetSkillLevel(player, skill.GetID().toLowerCase(), skill.GetMaximumLevel());
+            for (var skill : manager.getAllSkills()){
+                if(manager.getPlayerSkillLevel(player, skill.GetID().toLowerCase()) > skill.GetMaximumLevel()){
+                    manager.setSkillLevel(player, skill.GetID().toLowerCase(), skill.GetMaximumLevel());
                 }
             }
         }
     }
 
     public static void DebugResetData(ServerPlayer player){
-        LevelManager.SetLevel(player, 1);
-        SpManager.SetSP(player, 0);
+        LevelManager.setLevel(player, 1);
+        SpManager.setSp(player, 0);
         PowerManager.SetPower(player, 0);
-        XpManager.SetXP(player, 0f);
+        XpManager.setXP(player, 0f);
         player.getData(ExplorationProgression.DATA).resetPlayerData();
         player.getData(StatsTracker.DATA).resetStats();
 
         var manager = SkillManager.Get();
 
-        for (var skill : manager.GetAllSkills()){
-            if(manager.GetPlayerSkillLevel(player, skill.GetID().toLowerCase()) > 0){
-                manager.SetSkillLevel(player, skill.GetID().toLowerCase(), 0);
+        for (var skill : manager.getAllSkills()){
+            if(manager.getPlayerSkillLevel(player, skill.GetID().toLowerCase()) > 0){
+                manager.setSkillLevel(player, skill.GetID().toLowerCase(), 0);
             }
         }
     }

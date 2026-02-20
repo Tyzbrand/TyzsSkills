@@ -20,9 +20,9 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getSource().getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onPlayerAttack(event, player, lvl, skill);
@@ -38,10 +38,10 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onIncomingDamage(event, player, lvl, skill);
@@ -57,10 +57,10 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getSource().getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onPlayerKill(event, player, lvl, skill);
@@ -75,10 +75,10 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onStartingEffect(event, player, lvl, skill);
@@ -94,10 +94,10 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getPlayer() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onPlayerBreakBlock(event, player, lvl, skill);
@@ -112,10 +112,10 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onPlayerFinishUsingItem(event, player, lvl, skill);
@@ -131,10 +131,10 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onPickupXp(event, player, lvl, skill);
@@ -149,10 +149,10 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onEffectApplicable(event, player, lvl, skill);
@@ -168,10 +168,10 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getNewAboutToBeSetTarget() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onTargetChange(event, player, lvl, skill);
@@ -187,10 +187,10 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onPlayerDeath(event, player, lvl, skill);
@@ -204,10 +204,10 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().onPlayerClone(event, player, lvl, skill);
@@ -223,10 +223,10 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().OnNoiseAtPlayer(event, player, lvl, skill);
@@ -241,10 +241,10 @@ public class SkillEffectsEvents {
         var manager = SkillManager.Get();
 
         if (event.getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.GetAllSkills()){
+            for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
 
                     skill.GetBehaviour().OnPlayerWakeUp(event, player, lvl, skill);
@@ -263,10 +263,10 @@ public class SkillEffectsEvents {
         if (event.getEntity() instanceof ServerPlayer player){
 
             for(var id : playerTickSkills){
-                var skill = SkillManager.Get().GetSkill(id.toLowerCase());
+                var skill = SkillManager.Get().getSkill(id.toLowerCase());
 
                 if(skill != null && skill.HasBehaviour()){
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
                     skill.GetBehaviour().onPlayerTick(player, lvl, skill);
                 }
@@ -282,10 +282,10 @@ public class SkillEffectsEvents {
         if (event.getEntity() instanceof ServerPlayer player){
 
             for(var id : entityVisibility){
-                var skill = SkillManager.Get().GetSkill(id.toLowerCase());
+                var skill = SkillManager.Get().getSkill(id.toLowerCase());
 
                 if(skill != null && skill.HasBehaviour()){
-                    var lvl = manager.GetPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
                     if( lvl<= 0) continue;
                     skill.GetBehaviour().onLivingVisibility(event, player, lvl, skill);
                 }
