@@ -38,7 +38,7 @@ public class SkillManager {
 
     public void registerSKill(Skill skill)
     {
-        var behaviour = SkillBehaviourRegistry.GetBehaviour(skill.getID());
+        var behaviour = SkillBehaviorRegistry.GetBehavior(skill.getID());
         if(behaviour != null){skill.SetBehaviour(behaviour);}
 
         if(!skillCollection.containsKey(skill.getID())) skillCollection.put(skill.getID(), skill);

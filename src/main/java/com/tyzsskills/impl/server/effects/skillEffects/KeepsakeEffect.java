@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
@@ -10,12 +10,12 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.*;
 
-public class KeepsakeEffect extends SkillBehaviour {
+public class KeepsakeEffect extends SkillBehavior {
 
     private static final Map<UUID, Map<Integer, ItemStack>> SAVED_HOTBARS = new HashMap<>();
 
     @Override
-    public void onPlayerDeath(LivingDeathEvent event, ServerPlayer player, int lvl, Skill skill) {
+    public void onPlayerDeath(LivingDeathEvent event, ServerPlayer player, int lvl, ISkill skill) {
         if (player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) return;
 
 
@@ -34,7 +34,7 @@ public class KeepsakeEffect extends SkillBehaviour {
     }
 
     @Override
-    public void onPlayerClone(PlayerEvent.Clone event, ServerPlayer player, int lvl, Skill skill) {
+    public void onPlayerClone(PlayerEvent.Clone event, ServerPlayer player, int lvl, ISkill skill) {
         if (!event.isWasDeath()) return;
 
         UUID uid = player.getUUID();

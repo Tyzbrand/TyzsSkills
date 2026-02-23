@@ -1,17 +1,17 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.Config;
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.LightLayer;
 
-public class DeepSightEffect extends SkillBehaviour {
+public class DeepSightEffect extends SkillBehavior {
 
     @Override
-    public void onPlayerTick(ServerPlayer player, int lvl, Skill skill) {
+    public void onPlayerTick(ServerPlayer player, int lvl, ISkill skill) {
         if(player.tickCount % 20 != 0) return;
 
         var world = player.level();

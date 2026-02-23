@@ -1,8 +1,8 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,9 +10,9 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
-public class GreenThumbEffect extends SkillBehaviour {
+public class GreenThumbEffect extends SkillBehavior {
     @Override
-    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, Skill skill) {
+    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
         if(!(event.getLevel() instanceof ServerLevel serverLevel)) return;
         if (BlockMarker.IsPlayerPlaced(serverLevel, event.getPos())) return;
 

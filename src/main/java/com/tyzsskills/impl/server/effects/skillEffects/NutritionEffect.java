@@ -1,14 +1,14 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 
-public class NutritionEffect extends SkillBehaviour {
+public class NutritionEffect extends SkillBehavior {
 
     @Override
-    public void onPlayerFinishUsingItem(LivingEntityUseItemEvent.Finish event, ServerPlayer player, int lvl, Skill skill) {
+    public void onPlayerFinishUsingItem(LivingEntityUseItemEvent.Finish event, ServerPlayer player, int lvl, ISkill skill) {
 
         var item = event.getItem();
         var foodValue = item.getFoodProperties(player);

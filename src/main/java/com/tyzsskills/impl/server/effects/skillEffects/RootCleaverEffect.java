@@ -1,9 +1,9 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
@@ -25,14 +25,14 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RootCleaverEffect extends SkillBehaviour {
+public class RootCleaverEffect extends SkillBehavior {
 
 
     private static final ThreadLocal<Boolean> IS_TIMBERING = ThreadLocal.withInitial(() -> false);
     private static final Map<Block, Boolean> STRIPPED_CACHE = new ConcurrentHashMap<>();
 
     @Override
-    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, Skill skill) {
+    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
         if (IS_TIMBERING.get()) return;
         if(!(event.getLevel() instanceof ServerLevel level)) return;
 

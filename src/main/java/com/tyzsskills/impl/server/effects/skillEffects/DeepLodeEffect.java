@@ -1,15 +1,14 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -35,12 +34,12 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
-public class DeepLodeEffect extends SkillBehaviour {
+public class DeepLodeEffect extends SkillBehavior {
 
     private static final ThreadLocal<Boolean> IS_MINING = ThreadLocal.withInitial(() -> false);
 
     @Override
-    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, Skill skill) {
+    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
         if (IS_MINING.get()) return;
         if(!(event.getLevel() instanceof ServerLevel level)) return;
 

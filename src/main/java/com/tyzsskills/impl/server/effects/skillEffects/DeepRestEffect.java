@@ -1,16 +1,16 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.Config;
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 
-public class DeepRestEffect extends SkillBehaviour {
+public class DeepRestEffect extends SkillBehavior {
 
     @Override
-    public void OnPlayerWakeUp(PlayerWakeUpEvent event, ServerPlayer player, int lvl, Skill skill) {
+    public void OnPlayerWakeUp(PlayerWakeUpEvent event, ServerPlayer player, int lvl, ISkill skill) {
         if(!(player.level() instanceof ServerLevel level)) return;
 
         long timeOfDay = level.getDayTime() % 24000L;

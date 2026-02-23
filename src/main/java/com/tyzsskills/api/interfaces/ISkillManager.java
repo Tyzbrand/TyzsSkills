@@ -1,5 +1,6 @@
 package com.tyzsskills.api.interfaces;
 
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
@@ -85,5 +86,27 @@ public interface ISkillManager {
      * @return a copy of player's bookmarks (as a list of skill IDs)
      */
     List<String> getBookmarkedSkillIDs(ServerPlayer player);
+
+
+    //Functions below  are used for skill creation
+
+    /**
+     * Registers a custom behavior linked to a skill ID
+     * When the skill JSON is loaded by the server, it will automatically attach this logic
+     * @param id The valid ID of the targeted skill (in lowercase)
+     * @param behavior The behavior logic class to attach
+     * DISCLAIMER: This method must be called BEFORE the server starts (ex: FMLCommonSetupEvent)
+     */
+    void registerSkillBehavior(String id, SkillBehavior behavior);
+
+    /**
+     * Triggers the skill activation overlay on the client side
+     * Useful for custom events handled outside of standard SkillBehaviors
+     * @param id The valid ID of the targeted skill used as ref icon (in lowercase)
+     */
+    void triggerSkillActivationOverlay(ServerPlayer player, String id);
+
+
+
 
 }

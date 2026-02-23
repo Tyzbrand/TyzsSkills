@@ -1,18 +1,18 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 
-public class ResilienceEffect extends SkillBehaviour {
+public class ResilienceEffect extends SkillBehavior {
 
     public static final ThreadLocal<Boolean> IS_MODIFYING = ThreadLocal.withInitial(() ->false);
 
     @Override
-    public void onStartingEffect(MobEffectEvent.Added event, ServerPlayer player, int lvl, Skill skill) {
+    public void onStartingEffect(MobEffectEvent.Added event, ServerPlayer player, int lvl, ISkill skill) {
 
         if(IS_MODIFYING.get()) return;
 

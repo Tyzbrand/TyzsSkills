@@ -8,7 +8,7 @@ import com.tyzsskills.impl.server.attachments.*;
 import com.tyzsskills.impl.server.active.FileManager;
 import com.tyzsskills.impl.server.events.SkillEffectsEvents;
 import com.tyzsskills.impl.server.events.XpGainsEvents;
-import com.tyzsskills.impl.server.skills.SkillBehaviourRegistry;
+import com.tyzsskills.impl.server.skills.SkillBehaviorRegistry;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.commands.MainCommand;
 import com.tyzsskills.impl.server.events.RuntimeEvents;
@@ -88,7 +88,7 @@ public class Tyzsskills {
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
 
         //Initialize skill behaviours
-        SkillBehaviourRegistry.Init();
+        SkillBehaviorRegistry.Init();
     }
 
 

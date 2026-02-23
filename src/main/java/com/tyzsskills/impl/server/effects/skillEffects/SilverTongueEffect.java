@@ -1,8 +1,8 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.Config;
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.Items;
@@ -10,10 +10,10 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 
-public class SilverTongueEffect extends SkillBehaviour {
+public class SilverTongueEffect extends SkillBehavior {
 
     @Override
-    public void onPlayerTick(ServerPlayer player, int lvl, Skill skill) {
+    public void onPlayerTick(ServerPlayer player, int lvl, ISkill skill) {
         if(player.tickCount % 20 != 0) return;
 
         boolean holdsEmerald = player.getMainHandItem().is(Items.EMERALD) ||

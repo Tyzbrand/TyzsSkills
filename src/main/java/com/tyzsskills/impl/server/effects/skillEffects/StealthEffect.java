@@ -1,17 +1,17 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 
-public class StealthEffect extends SkillBehaviour {
+public class StealthEffect extends SkillBehavior {
 
 
     @Override
-    public void onLivingVisibility(LivingEvent.LivingVisibilityEvent event, ServerPlayer player, int lvl, Skill skill) {
+    public void onLivingVisibility(LivingEvent.LivingVisibilityEvent event, ServerPlayer player, int lvl, ISkill skill) {
 
         Entity observer = event.getLookingEntity();
         if (!(observer instanceof Enemy)) return;

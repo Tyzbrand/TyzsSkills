@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.phys.AABB;
@@ -9,10 +9,10 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class MagnetEffect extends SkillBehaviour {
+public class MagnetEffect extends SkillBehavior {
 
     @Override
-    public void onPlayerTick(ServerPlayer player, int lvl, Skill skill) {
+    public void onPlayerTick(ServerPlayer player, int lvl, ISkill skill) {
 
         if(player.isDeadOrDying() || player.isSpectator() || player.isCrouching()) return;
 

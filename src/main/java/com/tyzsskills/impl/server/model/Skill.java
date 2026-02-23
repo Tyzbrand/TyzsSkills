@@ -41,7 +41,7 @@ public class Skill implements ISkill {
         if(category == Enums.CategoryType.ALL || category == Enums.CategoryType.BOOKMARKS) category = Enums.CategoryType.MISC;
     }
 
-    protected transient SkillBehaviour behaviour;
+    protected transient SkillBehavior behaviour;
 
     protected boolean active;
     protected String id;
@@ -75,12 +75,12 @@ public class Skill implements ISkill {
     public String getDisplayName(){return displayName;}
     public String getDescription(){return description;}
     public String getUnit(){return unit;}
-    public SkillBehaviour getBehaviour(){return behaviour;}
+    public SkillBehavior getBehavior(){return behaviour;}
     public boolean HasBehaviour(){return behaviour != null;}
 
 
     //Setters
-    public void SetBehaviour(SkillBehaviour behaviour){
+    public void SetBehaviour(SkillBehavior behaviour){
         if(behaviour != null) this.behaviour = behaviour;
     }
 

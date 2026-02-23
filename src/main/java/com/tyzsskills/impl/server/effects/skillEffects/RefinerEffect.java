@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -30,12 +30,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class RefinerEffect extends SkillBehaviour {
+public class RefinerEffect extends SkillBehavior {
 
     private static final ThreadLocal<Boolean> IS_SMELTING = ThreadLocal.withInitial(() -> false);
 
     @Override
-    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, Skill skill) {
+    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
         if (IS_SMELTING.get()) return;
         if(!(event.getLevel() instanceof ServerLevel level)) return;
         if (player.isShiftKeyDown()) return;

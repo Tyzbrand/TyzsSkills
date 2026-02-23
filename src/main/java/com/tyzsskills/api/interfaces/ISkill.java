@@ -1,6 +1,7 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.List;
@@ -62,5 +63,6 @@ public interface ISkill {
      * @return a localization key
      */
     String getUnit();
+
 
 }

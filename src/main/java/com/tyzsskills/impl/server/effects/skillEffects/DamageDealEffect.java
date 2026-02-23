@@ -1,17 +1,17 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.SkillBehaviour;
+import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
-public class DamageDealEffect extends SkillBehaviour {
+public class DamageDealEffect extends SkillBehavior {
 
     public static final ThreadLocal<Boolean> IS_REFLECTING = ThreadLocal.withInitial(() ->false);
 
     @Override
-    public void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, Skill skill) {
+    public void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill) {
 
         if(IS_REFLECTING.get()) return;
 
