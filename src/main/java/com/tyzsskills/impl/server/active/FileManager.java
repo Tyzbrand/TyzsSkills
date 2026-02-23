@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.impl.server.model.*;
 import com.tyzsskills.impl.server.skills.SkillLoader;
 import com.tyzsskills.impl.server.xp.XpManager;
@@ -29,6 +30,8 @@ public class FileManager {
     public static FileManager Get(){return instance;}
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    private static final List<SkillPrefab> prefabQueue = new ArrayList<>();
 
     //Creer les dossiers
     public void InitPath(MinecraftServer server){
@@ -66,6 +69,36 @@ public class FileManager {
     public void LoadDefaultJson(MinecraftServer server) throws IOException {
         for(var skill : SkillsPreset.GetDefaultSkills()){
             WriteSkill(skill, GetSkillPath(skill.getCategory(), server));
+        }
+
+        var customPath = server.getServerDirectory().resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("skills")
+                .resolve("custom");
+
+        var traitPath = server.getServerDirectory()
+                .resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("skills")
+                .resolve("traits");
+
+        for (var prefab : prefabQueue){
+            Skill skillToSave;
+
+            if(prefab.isTrait()){
+                var firstPrice = prefab.prices().isEmpty()? 0 : prefab.prices().getFirst();
+                skillToSave = new Trait(prefab.active(), prefab.id(), prefab.powerWeight(),
+                        firstPrice, prefab.purchasable(), prefab.icon(), prefab.displayName(), prefab.description());
+            }
+            else{
+                skillToSave = new Skill(prefab.active(), prefab.id(), prefab.maximumLevel(),
+                        prefab.prices(), prefab.values(), prefab.type(), prefab.category(),
+                        prefab.modifier(), prefab.operation(), prefab.purchasable(),
+                        prefab.icon(), prefab.displayName(), prefab.description(), prefab.unit());
+            }
+
+            Path targetPath = prefab.isTrait() ? traitPath : customPath;
+            WriteSkill(skillToSave, targetPath);
         }
     }
 
@@ -185,6 +218,10 @@ public class FileManager {
                     });
         }
         catch (IOException ex){throw new RuntimeException(ex);}
+    }
+
+    public static void registerSkillPrefab(SkillPrefab prefab){
+        if(prefab != null) prefabQueue.add(prefab);
     }
 
 

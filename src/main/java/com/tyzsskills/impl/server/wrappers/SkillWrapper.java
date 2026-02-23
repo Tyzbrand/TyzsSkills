@@ -2,6 +2,8 @@ package com.tyzsskills.impl.server.wrappers;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.interfaces.ISkillManager;
+import com.tyzsskills.api.records.SkillPrefab;
+import com.tyzsskills.impl.server.active.FileManager;
 import com.tyzsskills.impl.server.model.SkillBehavior;
 import com.tyzsskills.impl.server.payloads.SkillTriggerPayload;
 import com.tyzsskills.impl.server.skills.SkillBehaviorRegistry;
@@ -83,5 +85,11 @@ public class SkillWrapper implements ISkillManager {
     public void triggerSkillActivationOverlay(ServerPlayer player, String id) {
         if(player == null || id == null) return;
         PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(id));
+    }
+
+    @Override
+    public void registerSkillPrefab(SkillPrefab prefab) {
+        FileManager.registerSkillPrefab(prefab);
+
     }
 }
