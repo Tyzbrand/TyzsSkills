@@ -36,7 +36,7 @@ public class TraitWidget extends SkillWidget{
         trait = (Trait)skill;
         Font font = Minecraft.getInstance().font;
 
-        boolean isOwned = ClientCache.GetSkillLevel(trait.GetID().toLowerCase()) > 0;
+        boolean isOwned = ClientCache.GetSkillLevel(trait.getID().toLowerCase()) > 0;
 
         int currentU = isOwned? U_ACTIVE : U_INACTIVE;
         int currentV = isOwned? V_ACTIVE : V_INACTIVE;
@@ -91,15 +91,15 @@ public class TraitWidget extends SkillWidget{
         }
 
         //Plusieurs TOOTLIPS
-        if(skill.IsPurchasable() && skill.IsSkillActive() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
+        if(skill.isPurchasable() && skill.isSkillActive() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
 
-            int currentLvl = ClientCache.GetSkillLevel(skill.GetID());
-            if(currentLvl >= skill.GetMaximumLevel()) {
+            int currentLvl = ClientCache.GetSkillLevel(skill.getID());
+            if(currentLvl >= skill.getMaximumLevel()) {
                 tooltip.add(Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD));
                 return tooltip;
             }
 
-            var prices = skill.GetPrices();
+            var prices = skill.getPrices();
             if(currentLvl >= prices.size()) return tooltip; // Sécurité liste
             int price = prices.get(currentLvl);
 
@@ -137,12 +137,12 @@ public class TraitWidget extends SkillWidget{
         }
 
         if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)){ //DESCRTIPTION
-            tooltip.add(Component.translatable(skill.GetDisplayName()).withStyle(ChatFormatting.DARK_PURPLE));
-            String rawDesc = Component.translatable(skill.GetDescription()).getString();
+            tooltip.add(Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE));
+            String rawDesc = Component.translatable(skill.getDescription()).getString();
 
             if (rawDesc.contains("{value}")) {
-                int currentLvl = ClientCache.GetSkillLevel(skill.GetID().toLowerCase());
-                var values = skill.GetValues();
+                int currentLvl = ClientCache.GetSkillLevel(skill.getID().toLowerCase());
+                var values = skill.getValues();
 
                 float val = 0f;
 
@@ -193,12 +193,12 @@ public class TraitWidget extends SkillWidget{
         LocalPlayer client = Minecraft.getInstance().player;
         if(client == null || skill == null) return false;
 
-        if(!skill.IsPurchasable() || !skill.IsSkillActive()) return false;
+        if(!skill.isPurchasable() || !skill.isSkillActive()) return false;
 
-        var currentLvl = ClientCache.GetSkillLevel(skill.GetID());
-        if(currentLvl >= skill.GetMaximumLevel()) return false;
+        var currentLvl = ClientCache.GetSkillLevel(skill.getID());
+        if(currentLvl >= skill.getMaximumLevel()) return false;
 
-        var prices = skill.GetPrices();
+        var prices = skill.getPrices();
         if(currentLvl >= prices.size()) return false;
         int price = prices.get(currentLvl);
 

@@ -2,6 +2,7 @@ package com.tyzsskills.impl.client.models;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.SoundPlayer;
 import com.tyzsskills.impl.client.screen.MainGUI;
@@ -57,7 +58,7 @@ public class SkillWidget {
     public SkillWidget(Skill skill){
         this.skill = skill;
 
-        var candidate = ResourceLocation.tryParse(skill.GetIcon());
+        var candidate = ResourceLocation.tryParse(skill.getIcon());
         if(candidate != null && Minecraft.getInstance().getResourceManager().getResource(candidate).isPresent()){
             this.icon = candidate;
         }
@@ -71,7 +72,7 @@ public class SkillWidget {
         Font font = Minecraft.getInstance().font;
 
         int currentU = U_BACKGROUND;
-        if(ClientCache.GetSkillLevel(skill.GetID().toLowerCase()) >= skill.GetMaximumLevel()){currentU = U_BACKGROUND_FINAL;}
+        if(ClientCache.GetSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel()){currentU = U_BACKGROUND_FINAL;}
         gui.blit(REF_TEXTURE, x, y, currentU, V_BACKGROUND, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
 
         gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_NEUTRAL, V_BOOK_ACTIVE, 9, 9, TEXTURE_W, TEXTURE_H);
@@ -79,7 +80,7 @@ public class SkillWidget {
         gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
 
         MutableComponent count =  Component.translatable("gui.tyzs_skills.Lvl")
-                .append(": " + ClientCache.GetSkillLevel(skill.GetID()) + "/" + skill.GetMaximumLevel());
+                .append(": " + ClientCache.GetSkillLevel(skill.getID()) + "/" + skill.getMaximumLevel());
 
 
 
@@ -103,7 +104,7 @@ public class SkillWidget {
         boolean isHoveringBookBtn = isMouseOver(mouseX, mouseY, x+49, y+17, BTN_W, BTN_H);
         if(isHoveringBookBtn) gui.blit(REF_TEXTURE, x+48, y+16, U_BOOK_BTN_HOVER, V_BOOK_BTN_HOVER, 11, 11, TEXTURE_W, TEXTURE_H);
 
-       if(ClientCache.isSkillBookmarked(skill.GetID().toLowerCase())){
+       if(ClientCache.isSkillBookmarked(skill.getID().toLowerCase())){
             gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_ACTIVE, V_BOOK_ACTIVE, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
         }
 
@@ -130,14 +131,14 @@ public class SkillWidget {
             tooltip.add(Component.translatable("gui.tyzs_skills.refund"));
         }
 
-        if(skill.IsPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
+        if(skill.isPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
 
-            int maxLevel = this.skill.GetMaximumLevel();
-            int currentLevel = ClientCache.GetSkillLevel(this.skill.GetID().toLowerCase());
+            int maxLevel = this.skill.getMaximumLevel();
+            int currentLevel = ClientCache.GetSkillLevel(this.skill.getID().toLowerCase());
 
             if(currentLevel < maxLevel){
-                float currentValue = currentLevel <= 0 ? 0f : this.skill.GetValues().get(currentLevel - 1);
-                float nextValue = this.skill.GetValues().get(currentLevel);
+                float currentValue = currentLevel <= 0 ? 0f : this.skill.getValues().get(currentLevel - 1);
+                float nextValue = this.skill.getValues().get(currentLevel);
 
                 String valueDiff = MainGUI.SmartFormat(nextValue - currentValue);
 
@@ -145,7 +146,7 @@ public class SkillWidget {
                 tooltip.add(text);
                 tooltip.add(Component.literal(ChatFormatting.GREEN + "+")
                         .append(Component.literal(valueDiff + " " + ChatFormatting.GREEN))
-                                .append(Component.translatable(this.skill.GetUnit())).withStyle(ChatFormatting.GREEN));
+                                .append(Component.translatable(this.skill.getUnit())).withStyle(ChatFormatting.GREEN));
             }
             else tooltip.add(Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD));
 
@@ -157,12 +158,12 @@ public class SkillWidget {
 
         //Plusieurs TOOTLIPS
         if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)){
-            tooltip.add(Component.translatable(skill.GetDisplayName()).withStyle(ChatFormatting.DARK_PURPLE));
-            String rawDesc = Component.translatable(skill.GetDescription()).getString();
+            tooltip.add(Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE));
+            String rawDesc = Component.translatable(skill.getDescription()).getString();
 
             if (rawDesc.contains("{value}")) {
-                int currentLvl = ClientCache.GetSkillLevel(skill.GetID().toLowerCase());
-                var values = skill.GetValues();
+                int currentLvl = ClientCache.GetSkillLevel(skill.getID().toLowerCase());
+                var values = skill.getValues();
 
                 float val = 0f;
 
@@ -208,7 +209,7 @@ public class SkillWidget {
             if(!CanBuy(skill)) return false;
             SoundPlayer.PlayUIClick();
             ClientCache.PredictBuy(skill);
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.GetID().toLowerCase(), 0));
+            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 0));
             return true;
         }
 
@@ -216,16 +217,16 @@ public class SkillWidget {
             if(!CanRefund(skill)) return false;
             SoundPlayer.PlayUIClick();
             ClientCache.PredictRefund(skill);
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.GetID().toLowerCase(), 1));
+            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 1));
             return true;
         }
 
         if(isMouseOver((int)mouseX, (int)mouseY, x+49, y+17, BTN_W, BTN_H)) {
             SoundPlayer.PlayUIClick();
             ClientCache.PredictBookmark(skill);
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.GetID().toLowerCase(), 2));
+            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 2));
 
-            if (ClientCache.GetCategoryType() == Skill.CategoryType.BOOKMARKS) {
+            if (ClientCache.GetCategoryType() == Enums.CategoryType.BOOKMARKS) {
                 if (Minecraft.getInstance().screen instanceof MainGUI gui) {
                     gui.refreshList();
                 }
@@ -241,12 +242,12 @@ public class SkillWidget {
         LocalPlayer client = Minecraft.getInstance().player;
         if(client == null || skill == null) return false;
 
-        if(!skill.IsPurchasable() || !skill.IsSkillActive()) return false;
+        if(!skill.isPurchasable() || !skill.isSkillActive()) return false;
 
-        var currentLvl = ClientCache.GetSkillLevel(skill.GetID());
-        if(currentLvl >= skill.GetMaximumLevel()) return false;
+        var currentLvl = ClientCache.GetSkillLevel(skill.getID());
+        if(currentLvl >= skill.getMaximumLevel()) return false;
 
-        var prices = skill.GetPrices();
+        var prices = skill.getPrices();
         if(currentLvl >= prices.size()) return false;
         int price = prices.get(currentLvl);
 
@@ -257,47 +258,47 @@ public class SkillWidget {
         LocalPlayer client = Minecraft.getInstance().player;
         if(client == null || skill == null) return false;
 
-        if(!ClientCache.GetConfigBool(Config.REFUND_SYSTEM_KEY, false) || !skill.IsSkillActive()) return false;
+        if(!ClientCache.GetConfigBool(Config.REFUND_SYSTEM_KEY, false) || !skill.isSkillActive()) return false;
 
-        var currentLvl = ClientCache.GetSkillLevel(skill.GetID());
-        if(currentLvl > skill.GetMaximumLevel() || currentLvl < 1) return false;
+        var currentLvl = ClientCache.GetSkillLevel(skill.getID());
+        if(currentLvl > skill.getMaximumLevel() || currentLvl < 1) return false;
 
-        if(this.skill.GetType() == Skill.SkillType.GENERIC){
+        if(this.skill.getType() == Enums.SkillType.GENERIC){
             String powerAttrId = AttributeRegistry.TRAIT_POWER.getId().toString();
 
-            if(this.skill.GetModifier().equals(powerAttrId)){
+            if(this.skill.getModifier().equals(powerAttrId)){
                 var att = client.getAttribute(AttributeRegistry.TRAIT_POWER);
                 if(att == null) return false;
 
                 int max = (int)att.getValue();
                 int current = ClientCache.GetPower();
 
-                int index = Math.min(currentLvl - 1, skill.GetValues().size() - 1);
-                float currentValue = skill.GetValues().get(index);
+                int index = Math.min(currentLvl - 1, skill.getValues().size() - 1);
+                float currentValue = skill.getValues().get(index);
                 float powerLoss = currentValue;
 
                 if (currentLvl > 1) {
-                    int prevIndex = Math.min(currentLvl - 2, skill.GetValues().size() - 1);
-                    float prevValue = skill.GetValues().get(prevIndex);
+                    int prevIndex = Math.min(currentLvl - 2, skill.getValues().size() - 1);
+                    float prevValue = skill.getValues().get(prevIndex);
                     powerLoss = currentValue - prevValue;
                 }
                 if(current > (max - (int)powerLoss)) return false;
             }
         }
 
-        var prices = skill.GetPrices();
+        var prices = skill.getPrices();
         return currentLvl <= prices.size();
     }
 
     protected MutableComponent GetPriceString(Skill skill){
         LocalPlayer client = Minecraft.getInstance().player;
-        if(skill == null || !skill.IsPurchasable() || client == null) return Component.translatable("gui.tyzs_skills.error_value");
+        if(skill == null || !skill.isPurchasable() || client == null) return Component.translatable("gui.tyzs_skills.error_value");
 
-        var currentLvl = ClientCache.GetSkillLevel(skill.GetID());
-        if(currentLvl > skill.GetMaximumLevel()) return Component.translatable("gui.tyzs_skills.error_value");
-        if(currentLvl  == skill.GetMaximumLevel()) return  Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD);
+        var currentLvl = ClientCache.GetSkillLevel(skill.getID());
+        if(currentLvl > skill.getMaximumLevel()) return Component.translatable("gui.tyzs_skills.error_value");
+        if(currentLvl  == skill.getMaximumLevel()) return  Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD);
 
-        var prices = skill.GetPrices();
+        var prices = skill.getPrices();
         if(currentLvl >= prices.size()) return Component.translatable("gui.tyzs_skills.error_value");
 
         return CanBuy(skill) ?
@@ -328,7 +329,7 @@ public class SkillWidget {
 
         // Bordure
         if(skill instanceof Trait) return;
-        if(ClientCache.GetSkillLevel(skill.GetID().toLowerCase()) < skill.GetMaximumLevel()) return;
+        if(ClientCache.GetSkillLevel(skill.getID().toLowerCase()) < skill.getMaximumLevel()) return;
         gui.fill(x + 1, y, x + width - 1, y + 1, COLOR_BORDER); // Haut
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, COLOR_BORDER); // Bas
         gui.fill(x, y + 1, x + 1, y + height - 1, COLOR_BORDER); // Gauche

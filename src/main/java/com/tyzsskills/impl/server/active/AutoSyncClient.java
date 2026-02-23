@@ -22,9 +22,9 @@ public class AutoSyncClient {
     public static void SyncSkillLevels(ServerPlayer player){
         var data = player.getData(PlayerData.DATA);
         for(var skill : SkillManager.Get().getAllSkills()) {
-            var lvl = data.getSkillLevel(skill.GetID());
+            var lvl = data.getSkillLevel(skill.getID());
             if (lvl > 0) {
-                PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), lvl));
+                PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.getID(), lvl));
             }
         }
     }

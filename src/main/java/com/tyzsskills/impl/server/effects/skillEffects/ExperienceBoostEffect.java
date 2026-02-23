@@ -12,7 +12,7 @@ public class ExperienceBoostEffect extends SkillBehaviour {
         float orbValue = event.getOrb().getValue();
         if(orbValue <= 0)return;
 
-        var values = skill.GetValues();
+        var values = skill.getValues();
         if (values == null || values.isEmpty()) return;
 
         int index = Math.min(lvl - 1, values.size() - 1);

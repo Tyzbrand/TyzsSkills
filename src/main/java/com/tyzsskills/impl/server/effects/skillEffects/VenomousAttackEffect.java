@@ -12,7 +12,7 @@ public class VenomousAttackEffect extends SkillBehaviour {
 
     @Override
     public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, Skill skill) {
-        var values = skill.GetValues();
+        var values = skill.getValues();
         if(values == null || values.isEmpty()) return;
 
         LivingEntity target = event.getEntity();

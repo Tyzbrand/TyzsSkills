@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.server.model.*;
 import com.tyzsskills.impl.server.skills.SkillLoader;
 import com.tyzsskills.impl.server.xp.XpManager;
@@ -64,7 +65,7 @@ public class FileManager {
     //Ecrit les jsons par defaut
     public void LoadDefaultJson(MinecraftServer server) throws IOException {
         for(var skill : SkillsPreset.GetDefaultSkills()){
-            WriteSkill(skill, GetSkillPath(skill.GetCategory(), server));
+            WriteSkill(skill, GetSkillPath(skill.getCategory(), server));
         }
     }
 
@@ -190,7 +191,7 @@ public class FileManager {
     //Utilitaire
     private void WriteSkill(Skill skill, Path path) throws IOException{
 
-        Path skillFile = path.resolve(skill.GetID() + ".json");
+        Path skillFile = path.resolve(skill.getID() + ".json");
         if(Files.exists(skillFile)) {return;}
 
         String skillJson = gson.toJson(skill);
@@ -198,7 +199,7 @@ public class FileManager {
         Files.writeString(skillFile, skillJson);
     }
 
-    private Path GetSkillPath(Skill.CategoryType category, MinecraftServer server){
+    private Path GetSkillPath(Enums.CategoryType category, MinecraftServer server){
 
         Path skillPath = server.getServerDirectory()
                 .resolve("config")

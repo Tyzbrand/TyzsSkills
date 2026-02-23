@@ -37,7 +37,7 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
         if(!Config.SHOW_SKILL_OVERLAY.get()) return;
         Skill skill = ClientCache.GetSkill(id.toLowerCase());
         if(skill != null){
-            var icon = ResourceLocation.tryParse(skill.GetIcon());
+            var icon = ResourceLocation.tryParse(skill.getIcon());
             if(icon == null || Minecraft.getInstance().getResourceManager().getResource(icon).isEmpty()){
                 icon = DEFAULT_ICON;
             }

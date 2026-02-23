@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.wrappers;
 
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.interfaces.ISkillManager;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.server.level.ServerPlayer;
@@ -44,8 +45,13 @@ public class SkillWrapper implements ISkillManager {
     }
 
     @Override
-    public List<String> getSkillList(){
-        return SkillManager.Get().getAllSkillIDs();
+    public List<ISkill> getSkillList(){
+        return SkillManager.Get().getAllSkillsInfos();
+    }
+
+    @Override
+    public ISkill getSkill(String id) {
+        return SkillManager.Get().getSkillInfos(id);
     }
 
     @Override

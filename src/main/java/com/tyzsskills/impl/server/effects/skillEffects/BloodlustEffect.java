@@ -11,7 +11,7 @@ public class BloodlustEffect extends SkillBehaviour {
     @Override
     public void onPlayerKill(LivingDeathEvent event, ServerPlayer player, int lvl, Skill skill) {
 
-        var values = skill.GetValues();
+        var values = skill.getValues();
         if (values == null || values.isEmpty()) return;
 
         var target = event.getEntity();

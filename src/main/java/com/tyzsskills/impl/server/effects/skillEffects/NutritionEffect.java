@@ -14,7 +14,7 @@ public class NutritionEffect extends SkillBehaviour {
         var foodValue = item.getFoodProperties(player);
         if(foodValue == null) return;
 
-        var values = skill.GetValues();
+        var values = skill.getValues();
         if (values == null || values.isEmpty()) return;
 
         int index = Math.min(lvl - 1, values.size() - 1);

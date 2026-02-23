@@ -12,6 +12,11 @@ public class XpWrapper implements IXpManager {
     }
 
     @Override
+    public void addXP(ServerPlayer player, float amount, boolean showOverlay) {
+        XpManager.addXP(player, amount, showOverlay);
+    }
+
+    @Override
     public void removeXP(ServerPlayer player, float amount) {
         XpManager.removeXP(player, amount);
     }

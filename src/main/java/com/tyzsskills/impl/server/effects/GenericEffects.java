@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.effects;
 
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.core.Holder;
@@ -19,7 +20,7 @@ import java.util.Optional;
 public class GenericEffects {
     public static void ApplyEffect(Skill skill, ServerPlayer player){
 
-        ResourceLocation attributeID = ResourceLocation.tryParse(skill.GetModifier());
+        ResourceLocation attributeID = ResourceLocation.tryParse(skill.getModifier());
         if(attributeID == null) return;
 
         Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
@@ -32,21 +33,21 @@ public class GenericEffects {
         AttributeInstance instance = player.getAttribute(attributeHolderOpt.get());
         if(instance == null) return;
 
-        ResourceLocation modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.GetID());
+        ResourceLocation modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
 
-        int currentLvl = player.getPersistentData().getInt(skill.GetID() + "_lvl");
+        int currentLvl = player.getPersistentData().getInt(skill.getID() + "_lvl");
         if(currentLvl <= 0) return;
 
-        int index = Math.min(currentLvl - 1, skill.GetValues().size() - 1);
-        float value = skill.GetValues().get(index);
-        if(skill.GetModifierOperation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE ||
-                skill.GetModifierOperation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL){
+        int index = Math.min(currentLvl - 1, skill.getValues().size() - 1);
+        float value = skill.getValues().get(index);
+        if(skill.getModifierOperation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE ||
+                skill.getModifierOperation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL){
             value /= 100f;
         }
 
-        var operation = skill.GetModifierOperation();
+        var operation = skill.getModifierOperation();
 
-        if(skill.GetModifier().equals("minecraft:generic.oxygen_bonus")){
+        if(skill.getModifier().equals("minecraft:generic.oxygen_bonus")){
             operation = AttributeModifier.Operation.ADD_VALUE;
             value += .75f;
         }
@@ -60,7 +61,7 @@ public class GenericEffects {
     }
 
     public static void RemoveEffect(Skill skill, ServerPlayer player){
-        ResourceLocation attributeID = ResourceLocation.parse(skill.GetModifier());
+        ResourceLocation attributeID = ResourceLocation.parse(skill.getModifier());
         Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
 
         if(attribute == null) {return;}
@@ -71,7 +72,7 @@ public class GenericEffects {
         AttributeInstance instance = player.getAttribute(attributeHolderOpt.get());
         if(instance == null) return;
 
-        ResourceLocation modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.GetID());
+        ResourceLocation modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
 
         instance.removeModifier(modifierID);
     }
@@ -79,9 +80,9 @@ public class GenericEffects {
     public static void RestaureEffects(ServerPlayer newPlayer){
         for(var skill : SkillManager.Get().getAllSkills()){
 
-            if(skill.GetType() != Skill.SkillType.GENERIC){continue;}
+            if(skill.getType() != Enums.SkillType.GENERIC){continue;}
 
-            String key = skill.GetID() + "_lvl";
+            String key = skill.getID() + "_lvl";
 
             int value = newPlayer.getPersistentData().getInt(key);
             if(value <= 0) continue;

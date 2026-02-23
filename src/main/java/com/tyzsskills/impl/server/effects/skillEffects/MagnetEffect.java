@@ -16,7 +16,7 @@ public class MagnetEffect extends SkillBehaviour {
 
         if(player.isDeadOrDying() || player.isSpectator() || player.isCrouching()) return;
 
-        var values = skill.GetValues();
+        var values = skill.getValues();
         if (values == null || values.isEmpty()) return;
 
         int index = Math.min(lvl - 1, values.size() - 1);

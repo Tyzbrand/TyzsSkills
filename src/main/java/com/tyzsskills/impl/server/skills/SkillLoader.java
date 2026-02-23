@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.skills;
 
 import com.google.gson.JsonObject;
 import com.tyzsskills.Config;
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.model.Trait;
@@ -42,11 +43,11 @@ public class SkillLoader {
             values = tempValues;
         }
 
-        Skill.SkillType type = GetSafeType(source, "type");
+        Enums.SkillType type = GetSafeType(source, "type");
         if(type == null) {ErrorManager.RegisterSkillError(id, "invalid skill type"); return;}
 
-        Skill.CategoryType category = GetSafeCategory(source, "category");
-        if(category == null) category = Skill.CategoryType.MISC;
+        Enums.CategoryType category = GetSafeCategory(source, "category");
+        if(category == null) category = Enums.CategoryType.MISC;
 
         Boolean purchasable = GetSafeBool(source,"purchasable");
         if(purchasable == null) purchasable = true;
@@ -73,7 +74,7 @@ public class SkillLoader {
         powerWeight = Math.max(0, powerWeight);
 
 
-        if(type == Skill.SkillType.TRAIT || powerWeight > 0){
+        if(type == Enums.SkillType.TRAIT || powerWeight > 0){
 
             if(!Config.TRAIT_SYSTEM.get()) return;
 
@@ -95,10 +96,10 @@ public class SkillLoader {
         }
 
         if(operation == null){
-            if(type == Skill.SkillType.GENERIC || type == Skill.SkillType.CUSTOM) {ErrorManager.RegisterSkillError(id, "Missing 'operation' for GENERIC/CUSTOM skill."); return;}
+            if(type == Enums.SkillType.GENERIC || type == Enums.SkillType.CUSTOM) {ErrorManager.RegisterSkillError(id, "Missing 'operation' for GENERIC/CUSTOM skill."); return;}
             else operation = AttributeModifier.Operation.ADD_VALUE;
         }
-        if(modifier == null && (type == Skill.SkillType.GENERIC || type == Skill.SkillType.CUSTOM)) {ErrorManager.RegisterSkillError(id, "Missing modifier"); return;}
+        if(modifier == null && (type == Enums.SkillType.GENERIC || type == Enums.SkillType.CUSTOM)) {ErrorManager.RegisterSkillError(id, "Missing modifier"); return;}
 
 
         SkillManager.Get().registerSKill(
@@ -164,7 +165,7 @@ public class SkillLoader {
         return values;
     }
 
-    private static Skill.SkillType GetSafeType(JsonObject obj, String key){
+    private static Enums.SkillType GetSafeType(JsonObject obj, String key){
         if (obj == null || key == null) return null;
 
         var typeValue = obj.get(key);
@@ -173,14 +174,14 @@ public class SkillLoader {
         var typeValueString = typeValue.getAsString();
         if(typeValueString == null) return null;
 
-        Skill.SkillType type;
-        try {type = Skill.SkillType.valueOf(typeValueString.toUpperCase());}
+        Enums.SkillType type;
+        try {type = Enums.SkillType.valueOf(typeValueString.toUpperCase());}
         catch (IllegalArgumentException e) {return null;}
 
         return type;
     }
 
-    private static Skill.CategoryType GetSafeCategory(JsonObject obj, String key){
+    private static Enums.CategoryType GetSafeCategory(JsonObject obj, String key){
         if (obj == null || key == null) return null;
 
         var typeValue = obj.get(key);
@@ -189,8 +190,8 @@ public class SkillLoader {
         var typeValueString = typeValue.getAsString();
         if(typeValueString == null) return null;
 
-        Skill.CategoryType category;
-        try {category = Skill.CategoryType.valueOf(typeValueString.toUpperCase());}
+        Enums.CategoryType category;
+        try {category = Enums.CategoryType.valueOf(typeValueString.toUpperCase());}
         catch (IllegalArgumentException e) {return null;}
 
         return category;

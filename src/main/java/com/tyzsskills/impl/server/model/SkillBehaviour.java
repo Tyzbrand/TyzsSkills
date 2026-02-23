@@ -34,7 +34,7 @@ public abstract class SkillBehaviour {
 
 
     protected void NotifyClient(ServerPlayer player, Skill skill ){
-        PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(skill.GetID()));
+        PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(skill.getID()));
     }
 
 }

@@ -12,7 +12,7 @@ public class CriticalHitEffect extends SkillBehaviour {
 
     @Override
     public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, Skill skill){
-        var values = skill.GetValues();
+        var values = skill.getValues();
         if(values == null || values.isEmpty()) return;
 
         int index = Math.min(lvl - 1, values.size() - 1);

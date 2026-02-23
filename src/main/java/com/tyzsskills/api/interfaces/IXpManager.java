@@ -15,8 +15,15 @@ public interface IXpManager {
 
     /**
      * @param amount amount to add (must be > 0f)
+     * NOTE: This will trigger client overlay
      */
     void addXP(ServerPlayer player, float amount);
+
+    /**
+     * @param amount amount to add (must be > 0f)
+     * @param showOverlay if true, the visual xp gain overlay will be triggered on client
+     */
+    void addXP(ServerPlayer player, float amount, boolean showOverlay);
 
     /**
      * @param amount amount to remove (works if the player can afford, must be > 0f)

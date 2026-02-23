@@ -40,7 +40,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = FloatArgumentType.getFloat(ctx, "amount");
-                                            XpManager.addXP(player, amount);
+                                            XpManager.addXP(player, amount, true);
                                             return 1;})))
 
                         .then(Commands.literal("remove")
@@ -130,7 +130,7 @@ public class MainCommand {
                         .then(Commands.literal("set")
                                 .then(Commands.argument("skill_id", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                SkillManager.Get().getAllSkills().stream().map(Skill::GetID), builder
+                                                SkillManager.Get().getAllSkills().stream().map(Skill::getID), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(0, 10))
                                             .executes(ctx -> {
@@ -142,7 +142,7 @@ public class MainCommand {
                         .then(Commands.literal("add")
                                 .then(Commands.argument("skill_id", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                SkillManager.Get().getAllSkills().stream().map(Skill::GetID), builder
+                                                SkillManager.Get().getAllSkills().stream().map(Skill::getID), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, 10))
                                                 .executes(ctx -> {
@@ -154,7 +154,7 @@ public class MainCommand {
                         .then(Commands.literal("remove")
                                 .then(Commands.argument("skill_id", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                SkillManager.Get().getAllSkills().stream().map(Skill::GetID), builder
+                                                SkillManager.Get().getAllSkills().stream().map(Skill::getID), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, 10))
                                                 .executes(ctx -> {

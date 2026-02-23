@@ -47,8 +47,8 @@ public class DebugManager {
 
         for(var player : server.getPlayerList().getPlayers()){
             for (var skill : manager.getAllSkills()){
-                if(manager.getPlayerSkillLevel(player, skill.GetID().toLowerCase()) > skill.GetMaximumLevel()){
-                    manager.setSkillLevel(player, skill.GetID().toLowerCase(), skill.GetMaximumLevel());
+                if(manager.getPlayerSkillLevel(player, skill.getID().toLowerCase()) > skill.getMaximumLevel()){
+                    manager.setSkillLevel(player, skill.getID().toLowerCase(), skill.getMaximumLevel());
                 }
             }
         }
@@ -65,8 +65,8 @@ public class DebugManager {
         var manager = SkillManager.Get();
 
         for (var skill : manager.getAllSkills()){
-            if(manager.getPlayerSkillLevel(player, skill.GetID().toLowerCase()) > 0){
-                manager.setSkillLevel(player, skill.GetID().toLowerCase(), 0);
+            if(manager.getPlayerSkillLevel(player, skill.getID().toLowerCase()) > 0){
+                manager.setSkillLevel(player, skill.getID().toLowerCase(), 0);
             }
         }
     }

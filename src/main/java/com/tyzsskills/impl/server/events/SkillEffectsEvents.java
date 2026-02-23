@@ -24,10 +24,10 @@ public class SkillEffectsEvents {
         if (event.getSource().getEntity() instanceof ServerPlayer player){
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().onPlayerAttack(event, player, lvl, skill);
+                    skill.getBehaviour().onPlayerAttack(event, player, lvl, skill);
                 }
 
             }
@@ -43,10 +43,10 @@ public class SkillEffectsEvents {
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().onIncomingDamage(event, player, lvl, skill);
+                    skill.getBehaviour().onIncomingDamage(event, player, lvl, skill);
                 }
 
             }
@@ -62,10 +62,10 @@ public class SkillEffectsEvents {
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().onPlayerKill(event, player, lvl, skill);
+                    skill.getBehaviour().onPlayerKill(event, player, lvl, skill);
                 }
 
             }
@@ -80,10 +80,10 @@ public class SkillEffectsEvents {
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().onStartingEffect(event, player, lvl, skill);
+                    skill.getBehaviour().onStartingEffect(event, player, lvl, skill);
                 }
 
             }
@@ -99,10 +99,10 @@ public class SkillEffectsEvents {
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().onPlayerBreakBlock(event, player, lvl, skill);
+                    skill.getBehaviour().onPlayerBreakBlock(event, player, lvl, skill);
                 }
 
             }
@@ -117,10 +117,10 @@ public class SkillEffectsEvents {
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().onPlayerFinishUsingItem(event, player, lvl, skill);
+                    skill.getBehaviour().onPlayerFinishUsingItem(event, player, lvl, skill);
                 }
 
             }
@@ -136,10 +136,10 @@ public class SkillEffectsEvents {
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().onPickupXp(event, player, lvl, skill);
+                    skill.getBehaviour().onPickupXp(event, player, lvl, skill);
                 }
 
             }
@@ -154,10 +154,10 @@ public class SkillEffectsEvents {
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().onEffectApplicable(event, player, lvl, skill);
+                    skill.getBehaviour().onEffectApplicable(event, player, lvl, skill);
                 }
 
             }
@@ -173,10 +173,10 @@ public class SkillEffectsEvents {
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().onTargetChange(event, player, lvl, skill);
+                    skill.getBehaviour().onTargetChange(event, player, lvl, skill);
                 }
 
             }
@@ -192,10 +192,10 @@ public class SkillEffectsEvents {
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().onPlayerDeath(event, player, lvl, skill);
+                    skill.getBehaviour().onPlayerDeath(event, player, lvl, skill);
                 }
 
             }
@@ -209,10 +209,10 @@ public class SkillEffectsEvents {
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().onPlayerClone(event, player, lvl, skill);
+                    skill.getBehaviour().onPlayerClone(event, player, lvl, skill);
                 }
 
             }
@@ -228,10 +228,10 @@ public class SkillEffectsEvents {
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().OnNoiseAtPlayer(event, player, lvl, skill);
+                    skill.getBehaviour().OnNoiseAtPlayer(event, player, lvl, skill);
                 }
 
             }
@@ -246,10 +246,10 @@ public class SkillEffectsEvents {
             for (Skill skill : manager.getAllSkills()){
                 if(skill.HasBehaviour()){
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
 
-                    skill.GetBehaviour().OnPlayerWakeUp(event, player, lvl, skill);
+                    skill.getBehaviour().OnPlayerWakeUp(event, player, lvl, skill);
                 }
 
             }
@@ -268,9 +268,9 @@ public class SkillEffectsEvents {
                 var skill = SkillManager.Get().getSkill(id.toLowerCase());
 
                 if(skill != null && skill.HasBehaviour()){
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
-                    skill.GetBehaviour().onPlayerTick(player, lvl, skill);
+                    skill.getBehaviour().onPlayerTick(player, lvl, skill);
                 }
             }
         }
@@ -287,9 +287,9 @@ public class SkillEffectsEvents {
                 var skill = SkillManager.Get().getSkill(id.toLowerCase());
 
                 if(skill != null && skill.HasBehaviour()){
-                    var lvl = manager.getPlayerSkillLevel(player, skill.GetID());
+                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
                     if( lvl<= 0) continue;
-                    skill.GetBehaviour().onLivingVisibility(event, player, lvl, skill);
+                    skill.getBehaviour().onLivingVisibility(event, player, lvl, skill);
                 }
             }
         }

@@ -64,10 +64,17 @@ public class XpManager {
         setXPInternal(player, amount, 0f);
     }
 
-    public static void addXP(ServerPlayer player, float amount) {
+    public static void addXP(ServerPlayer player, float amount, boolean triggerOverlay) {
         if (amount <= 0) return;
-        setXPInternal(player, getXP(player) + amount, amount);
+        var gains = triggerOverlay ? amount : 0f;
+
+        setXPInternal(player, getXP(player) + amount, gains);
     }
+
+    public static void addXP(ServerPlayer player, float amount){
+        addXP(player, amount, true);
+    }
+
 
     public static void removeXP(ServerPlayer player, float amount) {
         if (amount <= 0) return;

@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.client;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
 import com.tyzsskills.impl.server.model.*;
 import com.tyzsskills.impl.server.xp.XpManager;
@@ -29,8 +30,8 @@ public class ClientCache {
     private final static Map<String, Object> clientConfigMap = new HashMap<>();
     private final static HashSet<String> clientBookmarks = new HashSet<>();
 
-    private static Skill.ContainerType currentContainerType = Skill.ContainerType.SKILLS;
-    private static Skill.CategoryType currentContainerCategory = Skill.CategoryType.ALL;
+    private static Enums.ContainerType currentContainerType = Enums.ContainerType.SKILLS;
+    private static Enums.CategoryType currentContainerCategory = Enums.CategoryType.ALL;
 
 
     public static void UpdateClientCacheLevel(int level){
@@ -98,21 +99,21 @@ public class ClientCache {
         }
     }
 
-    public static void SetContainerType(Skill.ContainerType type){
-        if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true) && type == Skill.ContainerType.TRAITS) return;
-        if(GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20) > clientLevel && type == Skill.ContainerType.TRAITS) return;
+    public static void SetContainerType(Enums.ContainerType type){
+        if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true) && type == Enums.ContainerType.TRAITS) return;
+        if(GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20) > clientLevel && type == Enums.ContainerType.TRAITS) return;
         currentContainerType = type;
     }
 
-    public static void SetCategoryType(Skill.CategoryType category){
-        if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true) && category == Skill.CategoryType.TRAITS) return;
-        if(GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20) > clientLevel && category == Skill.CategoryType.TRAITS) return;
+    public static void SetCategoryType(Enums.CategoryType category){
+        if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true) && category == Enums.CategoryType.TRAITS) return;
+        if(GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20) > clientLevel && category == Enums.CategoryType.TRAITS) return;
         currentContainerCategory = category;
     }
 
     public static void UpdateSkills(List<Skill> skills){
         clientSkills.clear();
-        for(var skill : skills){clientSkills.put(skill.GetID(), skill);}
+        for(var skill : skills){clientSkills.put(skill.getID(), skill);}
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
             Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skills sync: " + clientSkills.size() + " skills cached" ), false);
@@ -126,8 +127,8 @@ public class ClientCache {
         int owned = 0;
         for(var skill : clientSkills.values()){
             if(skill instanceof Trait) continue;
-            if(!clientSkillLevels.containsKey(skill.GetID().toLowerCase())) continue;
-            owned += clientSkillLevels.get(skill.GetID().toLowerCase());
+            if(!clientSkillLevels.containsKey(skill.getID().toLowerCase())) continue;
+            owned += clientSkillLevels.get(skill.getID().toLowerCase());
         }
         clientOwnedSkills = owned;
 
@@ -170,18 +171,18 @@ public class ClientCache {
         clientAllTimeXP = 0f;
         clientSpEarned = 0;
         clientSpSpent = 0;
-        currentContainerCategory = Skill.CategoryType.ALL;
-        currentContainerType = Skill.ContainerType.SKILLS;
+        currentContainerCategory = Enums.CategoryType.ALL;
+        currentContainerType = Enums.ContainerType.SKILLS;
     }
 
     public static void PredictBookmark(Skill skill){
-        String id = skill.GetID();
+        String id = skill.getID();
         if(isSkillBookmarked(id)) clientBookmarks.remove(id);
         else clientBookmarks.add(id);
     }
 
     public static void PredictBuy(Skill skill) {
-        String id = skill.GetID().toLowerCase();
+        String id = skill.getID().toLowerCase();
         int currentLvl = GetSkillLevel(id);
 
         if(skill instanceof Trait){
@@ -189,9 +190,9 @@ public class ClientCache {
             if(clientLevel < GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20)) return;
         }
 
-        if (currentLvl >= skill.GetMaximumLevel()) return;
+        if (currentLvl >= skill.getMaximumLevel()) return;
 
-        var prices = skill.GetPrices();
+        var prices = skill.getPrices();
         if (currentLvl >= prices.size()) return;
         int price = prices.get(currentLvl);
 
@@ -202,7 +203,7 @@ public class ClientCache {
     }
 
     public static void PredictRefund(Skill skill) {
-        String id = skill.GetID().toLowerCase();
+        String id = skill.getID().toLowerCase();
         int currentLvl = GetSkillLevel(id);
 
         if(skill instanceof Trait){
@@ -216,7 +217,7 @@ public class ClientCache {
 
         double percentage = GetConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
 
-        List<Integer> prices = skill.GetPrices();
+        List<Integer> prices = skill.getPrices();
         if (currentLvl - 1 < prices.size()) {
             int initialPrice = prices.get(currentLvl - 1);
             int refundAmount = Math.max(1, (int)(initialPrice * (percentage / 100.0)));
@@ -234,8 +235,8 @@ public class ClientCache {
     public static int GetLvl(){return clientLevel;}
     public static float GetXPGOAL(){return clientLevelData.goal();}
     public static int GetReward(){return clientLevelData.reward();}
-    public static Skill.ContainerType GetContainerType(){return currentContainerType;}
-    public static Skill.CategoryType GetCategoryType(){return currentContainerCategory;}
+    public static Enums.ContainerType GetContainerType(){return currentContainerType;}
+    public static Enums.CategoryType GetCategoryType(){return currentContainerCategory;}
 
     public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills.values());}
     public static List<String> GetAllSkillIDs(){return new ArrayList<>(clientSkills.keySet());}
@@ -255,7 +256,7 @@ public class ClientCache {
         int count = 0;
         for(var skill : clientSkills.values()){
             if(skill instanceof Trait) continue;
-            count += skill.GetMaximumLevel();
+            count += skill.getMaximumLevel();
         }
         return count;
     }

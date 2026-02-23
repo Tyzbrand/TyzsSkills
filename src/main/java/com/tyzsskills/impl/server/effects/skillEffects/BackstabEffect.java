@@ -10,7 +10,7 @@ public class BackstabEffect extends SkillBehaviour {
 
     @Override
     public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, Skill skill) {
-        var values = skill.GetValues();
+        var values = skill.getValues();
         if(values == null || values.isEmpty()) return;
 
         if(event.getEntity() instanceof LivingEntity target){

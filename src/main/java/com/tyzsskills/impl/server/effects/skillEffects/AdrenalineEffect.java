@@ -12,7 +12,7 @@ public class AdrenalineEffect extends SkillBehaviour {
     @Override
     public void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, Skill skill) {
 
-        var values = skill.GetValues();
+        var values = skill.getValues();
         if(values == null || values.isEmpty()) return;
 
         float currentHealth = player.getHealth();

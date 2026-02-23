@@ -15,7 +15,7 @@ public class DamageDealEffect extends SkillBehaviour {
 
         if(IS_REFLECTING.get()) return;
 
-        var values = skill.GetValues();
+        var values = skill.getValues();
         if (values == null || values.isEmpty()) return;
 
         int index = Math.min(lvl - 1, values.size() - 1);

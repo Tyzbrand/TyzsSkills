@@ -1,5 +1,7 @@
 package com.tyzsskills.impl.server.model;
 
+import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.interfaces.ISkill;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -10,15 +12,13 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class Skill{
+public class Skill implements ISkill {
 
-    public enum ContainerType {SKILLS, QUESTS, TRAITS}
-    public enum CategoryType {ALL, ABILITIES, FIGHT, MISC, BOOKMARKS, TRAITS}
-    public enum SkillType {GENERIC, CUSTOM, IMMUTABLE, TRAIT}
+
 
 
     public Skill(boolean active, String id, int maximumLevel,
-                 List<Integer> prices, List<Float> values, SkillType type, CategoryType category,
+                 List<Integer> prices, List<Float> values, Enums.SkillType type, Enums.CategoryType category,
                  String modifier, AttributeModifier.Operation operation, boolean purchasable,
                  String icon, String displayName, String description, String unit)
     {
@@ -38,7 +38,7 @@ public class Skill{
         this.description = description;
         this.unit = unit;
 
-        if(category == CategoryType.ALL || category == CategoryType.BOOKMARKS) category = CategoryType.MISC;
+        if(category == Enums.CategoryType.ALL || category == Enums.CategoryType.BOOKMARKS) category = Enums.CategoryType.MISC;
     }
 
     protected transient SkillBehaviour behaviour;
@@ -48,8 +48,8 @@ public class Skill{
     protected int maximumLevel;
     protected List<Integer> prices;
     protected List<Float> values;
-    protected SkillType type;
-    protected CategoryType category;
+    protected Enums.SkillType type;
+    protected Enums.CategoryType category;
     protected String modifier;
     protected AttributeModifier.Operation operation;
     protected boolean purchasable;
@@ -61,21 +61,21 @@ public class Skill{
 
 
     //Getters
-    public boolean IsSkillActive(){return active;}
-    public String GetID() {return id;}
-    public int GetMaximumLevel() {return maximumLevel;}
-    public List<Integer> GetPrices() {return Collections.unmodifiableList(prices);}
-    public String GetModifier() {return modifier;}
-    public List<Float> GetValues() {return Collections.unmodifiableList(values);}
-    public SkillType GetType(){return type;}
-    public CategoryType GetCategory(){return category;}
-    public AttributeModifier.Operation GetModifierOperation(){return operation;}
-    public boolean IsPurchasable(){return purchasable;}
-    public String GetIcon(){return icon;}
-    public String GetDisplayName(){return displayName;}
-    public String GetDescription(){return description;}
-    public String GetUnit(){return unit;}
-    public SkillBehaviour GetBehaviour(){return behaviour;}
+    public boolean isSkillActive(){return active;}
+    public String getID() {return id;}
+    public int getMaximumLevel() {return maximumLevel;}
+    public List<Integer> getPrices() {return Collections.unmodifiableList(prices);}
+    public String getModifier() {return modifier;}
+    public List<Float> getValues() {return Collections.unmodifiableList(values);}
+    public Enums.SkillType getType(){return type;}
+    public Enums.CategoryType getCategory(){return category;}
+    public AttributeModifier.Operation getModifierOperation(){return operation;}
+    public boolean isPurchasable(){return purchasable;}
+    public String getIcon(){return icon;}
+    public String getDisplayName(){return displayName;}
+    public String getDescription(){return description;}
+    public String getUnit(){return unit;}
+    public SkillBehaviour getBehaviour(){return behaviour;}
     public boolean HasBehaviour(){return behaviour != null;}
 
 
@@ -96,7 +96,7 @@ public class Skill{
             (buffer) -> {
                 boolean isTrait = buffer.readBoolean();
                 if(isTrait) return Trait.ReadTraitFromBuffer(buffer);
-                else return Skill.ReadTraitFromBuffer(buffer);
+                else return Skill.ReadSkillFromBuffer(buffer);
             });
 
 
@@ -121,7 +121,7 @@ public class Skill{
         buffer.writeUtf(unit);
     }
 
-    public static @NotNull Skill ReadTraitFromBuffer(FriendlyByteBuf buffer){
+    public static @NotNull Skill ReadSkillFromBuffer(FriendlyByteBuf buffer){
         boolean active = buffer.readBoolean();
         String id = buffer.readUtf();
         int maxLevel = buffer.readInt();
@@ -129,8 +129,8 @@ public class Skill{
         List<Integer> prices = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readInt);
         List<Float> values = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readFloat);
 
-        SkillType type = buffer.readEnum(SkillType.class);
-        CategoryType category = buffer.readEnum(CategoryType.class);
+        Enums.SkillType type = buffer.readEnum(Enums.SkillType.class);
+        Enums.CategoryType category = buffer.readEnum(Enums.CategoryType.class);
 
         String modifier = buffer.readUtf();
         AttributeModifier.Operation operation = buffer.readEnum(AttributeModifier.Operation.class);

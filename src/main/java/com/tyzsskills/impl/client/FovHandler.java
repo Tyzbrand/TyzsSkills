@@ -27,10 +27,10 @@ public class FovHandler {
             if(level <= 0) continue;
 
             var skill = ClientCache.GetSkill(id);
-            if(skill == null || skill.GetValues().isEmpty()) continue;
+            if(skill == null || skill.getValues().isEmpty()) continue;
 
-            int index = Math.min(level - 1, skill.GetValues().size() - 1);
-            float rawValue = skill.GetValues().get(index);
+            int index = Math.min(level - 1, skill.getValues().size() - 1);
+            float rawValue = skill.getValues().get(index);
 
             float realFactor = rawValue / 100f;
             totalDampening += (float)(realFactor * reduction * 0.5f);

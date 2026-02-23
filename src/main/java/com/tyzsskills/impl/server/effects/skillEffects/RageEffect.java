@@ -8,7 +8,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 public class RageEffect extends SkillBehaviour {
     @Override
     public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, Skill skill) {
-        var values = skill.GetValues();
+        var values = skill.getValues();
         if(values == null || values.isEmpty()) return;
 
         float currentHp = player.getHealth();

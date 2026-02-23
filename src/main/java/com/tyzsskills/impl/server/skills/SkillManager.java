@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.power.PowerManager;
@@ -36,10 +38,10 @@ public class SkillManager {
 
     public void registerSKill(Skill skill)
     {
-        var behaviour = SkillBehaviourRegistry.GetBehaviour(skill.GetID());
+        var behaviour = SkillBehaviourRegistry.GetBehaviour(skill.getID());
         if(behaviour != null){skill.SetBehaviour(behaviour);}
 
-        if(!skillCollection.containsKey(skill.GetID())) skillCollection.put(skill.GetID(), skill);
+        if(!skillCollection.containsKey(skill.getID())) skillCollection.put(skill.getID(), skill);
     }
 
     public void clearSkills(){
@@ -60,7 +62,7 @@ public class SkillManager {
         var data = player.getData(PlayerData.DATA);
 
         int currentLvl = data.getSkillLevel(id);
-        if(currentLvl >= skill.GetMaximumLevel()) return false;
+        if(currentLvl >= skill.getMaximumLevel()) return false;
 
         if(skill instanceof Trait trait){
             var attr = player.getAttribute(AttributeRegistry.TRAIT_POWER);
@@ -69,7 +71,7 @@ public class SkillManager {
             int freeSpace = (int)attr.getValue() - PowerManager.GetPower(player);
             if(trait.getPowerWeight() > freeSpace)return false;
 
-            var prices = skill.GetPrices();
+            var prices = skill.getPrices();
             if(currentLvl >= prices.size()) return false;
             int price = prices.get(currentLvl);
 
@@ -78,7 +80,7 @@ public class SkillManager {
                 SpManager.removeSP(player, price);
                 data.setSkillLevel(id, currentLvl+1);
 
-                PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl+1));
+                PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.getID(), currentLvl+1));
                 PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
 
                 player.getData(StatsTracker.DATA).addSpSpent(price);
@@ -88,7 +90,7 @@ public class SkillManager {
             }
         }
         else{
-            var prices = skill.GetPrices();
+            var prices = skill.getPrices();
             if(currentLvl >= prices.size()) return false;
             int price = prices.get(currentLvl);
 
@@ -97,12 +99,12 @@ public class SkillManager {
                 SpManager.removeSP(player, price);
                 data.setSkillLevel(id, currentLvl+1);
 
-                PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl+1));
+                PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.getID(), currentLvl+1));
                 PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
 
                 player.getData(StatsTracker.DATA).addSpSpent(price);
 
-                if(skill.GetType() == Skill.SkillType.GENERIC) GenericEffects.ApplyEffect(skill, player);
+                if(skill.getType() == Enums.SkillType.GENERIC) GenericEffects.ApplyEffect(skill, player);
                 return true;
             }
         }
@@ -124,11 +126,11 @@ public class SkillManager {
         var data = player.getData(PlayerData.DATA);
 
         int currentLvl = data.getSkillLevel(id);
-        if(currentLvl <= 0 || currentLvl > skill.GetMaximumLevel()) return false;
+        if(currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
-        if(skill.GetType() == Skill.SkillType.GENERIC){
+        if(skill.getType() == Enums.SkillType.GENERIC){
 
-            ResourceLocation attributeID = ResourceLocation.tryParse(skill.GetModifier());
+            ResourceLocation attributeID = ResourceLocation.tryParse(skill.getModifier());
             if(attributeID == null) return false;
             Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
 
@@ -139,21 +141,21 @@ public class SkillManager {
                 int max = (int)att.getValue();
                 int current = PowerManager.GetPower(player);
 
-                int index = Math.min(currentLvl - 1, skill.GetValues().size() - 1);
-                float currentValue = skill.GetValues().get(index);
+                int index = Math.min(currentLvl - 1, skill.getValues().size() - 1);
+                float currentValue = skill.getValues().get(index);
 
                 float powerLoss = currentValue;
 
                 if (currentLvl > 1) {
-                    int prevIndex = Math.min(currentLvl - 2, skill.GetValues().size() - 1);
-                    float prevValue = skill.GetValues().get(prevIndex);
+                    int prevIndex = Math.min(currentLvl - 2, skill.getValues().size() - 1);
+                    float prevValue = skill.getValues().get(prevIndex);
                     powerLoss = currentValue - prevValue;
                 }
                 if(current > (max - (int)powerLoss)) return false;
             }
         }
 
-        var prices = skill.GetPrices();
+        var prices = skill.getPrices();
         if (currentLvl > prices.size()) return false;
         int initialPrice = prices.get(currentLvl - 1);
         int finalPrice = Math.max(1, (int)(initialPrice * (Config.REFUND_PERCENTAGE.get() / 100f)));
@@ -166,12 +168,12 @@ public class SkillManager {
 
         if(skill instanceof Trait trait) PowerManager.RemovePower(player, trait.getPowerWeight());
 
-        PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.GetID(), currentLvl-1));
+        PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.getID(), currentLvl-1));
         PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(finalPrice));
 
         player.getData(StatsTracker.DATA).addSpEarned(finalPrice);
 
-        if(skill.GetType() == Skill.SkillType.GENERIC){
+        if(skill.getType() == Enums.SkillType.GENERIC){
             if(currentLvl - 1 <= 0) GenericEffects.RemoveEffect(skill, player);
             else GenericEffects.ApplyEffect(skill, player);
         }
@@ -206,7 +208,7 @@ public class SkillManager {
 
         var data = player.getData(PlayerData.DATA);
 
-        lvl = Math.max(0, Math.min(lvl, skill.GetMaximumLevel()));
+        lvl = Math.max(0, Math.min(lvl, skill.getMaximumLevel()));
         int oldLvl = getPlayerSkillLevel(player, id);
 
         data.setSkillLevel(id, lvl);
@@ -224,7 +226,7 @@ public class SkillManager {
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(id, lvl));
 
 
-        if(skill.GetType() == Skill.SkillType.GENERIC){
+        if(skill.getType() == Enums.SkillType.GENERIC){
             if(lvl > 0) GenericEffects.ApplyEffect(skill, player);
             else GenericEffects.RemoveEffect(skill, player);
         }
@@ -246,9 +248,12 @@ public class SkillManager {
     //getters
     public Skill getSkill(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}
     public List<Skill> getAllSkills() {return new ArrayList<>(skillCollection.values());}
-    public List<String> getAllSkillIDs(){return new ArrayList<>(skillCollection.keySet());}
     public int getPlayerSkillLevel(ServerPlayer player, String id) {return player.getData(PlayerData.DATA).getSkillLevel(id);}
     public boolean isSkillLoaded(String id){return skillCollection.containsKey(id);}
+
+    //API LINKS
+    public ISkill getSkillInfos(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}
+    public List<ISkill> getAllSkillsInfos(){return new ArrayList<>(skillCollection.values());}
 
     public boolean isSkillBookmarked(ServerPlayer player,String id) {return player.getData(PlayerData.DATA).isBookmarked(id);}
     public List<String> getAllBookmarkIDs(ServerPlayer player){return player.getData(PlayerData.DATA).getBookmarks();}

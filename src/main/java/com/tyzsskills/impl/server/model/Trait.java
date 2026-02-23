@@ -1,5 +1,7 @@
 package com.tyzsskills.impl.server.model;
 
+import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.interfaces.ITrait;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.NotNull;
@@ -7,13 +9,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Trait extends Skill{
+public class Trait extends Skill implements ITrait {
 
     public Trait(boolean active, String id, int powerWeight,int price, boolean purchasable,
                  String icon, String displayName, String description){
 
-        super(active, id, 1, List.of(price) , List.of(), SkillType.TRAIT,
-                CategoryType.TRAITS, "", AttributeModifier.Operation.ADD_VALUE, purchasable, icon, displayName, description, "");
+        super(active, id, 1, List.of(price) , List.of(), Enums.SkillType.TRAIT,
+                Enums.CategoryType.TRAITS, "", AttributeModifier.Operation.ADD_VALUE, purchasable, icon, displayName, description, "");
 
         this.powerWeight = powerWeight;
     }
@@ -36,8 +38,8 @@ public class Trait extends Skill{
         List<Integer> prices = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readInt);
         List<Float> values = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readFloat);
 
-        SkillType type = buffer.readEnum(SkillType.class);
-        CategoryType category = buffer.readEnum(CategoryType.class);
+        Enums.SkillType type = buffer.readEnum(Enums.SkillType.class);
+        Enums.CategoryType category = buffer.readEnum(Enums.CategoryType.class);
 
         String modifier = buffer.readUtf();
         AttributeModifier.Operation operation = buffer.readEnum(AttributeModifier.Operation.class);

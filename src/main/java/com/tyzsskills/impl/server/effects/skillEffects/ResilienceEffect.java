@@ -24,7 +24,7 @@ public class ResilienceEffect extends SkillBehaviour {
         if(originalDuration >= 1728000) return; // > 24h
 
 
-        var values = skill.GetValues();
+        var values = skill.getValues();
         if (values == null || values.isEmpty()) return;
 
         int index = Math.min(lvl - 1, values.size() - 1);

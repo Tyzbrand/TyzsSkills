@@ -2,6 +2,7 @@ package com.tyzsskills.impl.client.screen;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.models.*;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
@@ -68,7 +69,7 @@ public class MainGUI extends Screen {
         this.renderStrings(guiGraphics, mouseX, mouseY);
 
         this.renderXpBar(guiGraphics);
-        if(ClientCache.GetContainerType() == Skill.ContainerType.TRAITS) renderPowerBar(guiGraphics);
+        if(ClientCache.GetContainerType() == Enums.ContainerType.TRAITS) renderPowerBar(guiGraphics);
 
         this.renderEntity(guiGraphics, 30, mouseX, mouseY );
 
@@ -124,14 +125,14 @@ public class MainGUI extends Screen {
         gui.drawString(this.font, spValue, -text2W, 0, color2, false);
         gui.pose().popPose();
 
-        if(ClientCache.GetContainerType() == Skill.ContainerType.TRAITS){
+        if(ClientCache.GetContainerType() == Enums.ContainerType.TRAITS){
             MutableComponent text = Component.translatable("gui.tyzs_skills.traits");
             int textW = font.width(text); int textH = font.lineHeight; int padding = 3;
             renderBackdrop(gui, (leftPos+90) - padding, (topPos+12) - padding, textW + (padding*2), textH + (padding*2), 0xD5000000);
             gui.drawString(this.font, text, leftPos+90 , topPos+13, 0xFFFFFFFF, false);
         }
         else{
-            if(ClientCache.GetCategoryType() == Skill.CategoryType.BOOKMARKS) return;
+            if(ClientCache.GetCategoryType() == Enums.CategoryType.BOOKMARKS) return;
             String localizationKey = "gui.tyzs_skills.Tab." + ClientCache.GetCategoryType().toString().toLowerCase();
             MutableComponent enumDisplayName = Component.translatable(localizationKey);
             int text3W = this.font.width(enumDisplayName);
@@ -246,7 +247,7 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, finalText, mouseX, mouseY);
         }
 
-        if(ClientCache.GetContainerType() == Skill.ContainerType.TRAITS
+        if(ClientCache.GetContainerType() == Enums.ContainerType.TRAITS
                 && isHovering(mouseX, mouseY, leftPos+173, topPos+17, 123, 6)){ //Power Bar
             String powerTooltip = SmartFormat(ClientCache.GetPower()) + "/" + SmartFormat(
                     (float)Minecraft.getInstance().player.getAttribute(AttributeRegistry.TRAIT_POWER).getValue()) ;
@@ -318,7 +319,7 @@ public class MainGUI extends Screen {
             gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
         }
 
-        if(ClientCache.GetContainerType() != Skill.ContainerType.SKILLS) return;
+        if(ClientCache.GetContainerType() != Enums.ContainerType.SKILLS) return;
 
         if(isHovering(mouseX, mouseY, leftPos + 92, topPos + 7, 29, 20)){ //All tab
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
@@ -349,10 +350,10 @@ public class MainGUI extends Screen {
                 97, 154,
                 111, 154,
                 325, 325,
-                () -> ClientCache.GetContainerType() == Skill.ContainerType.SKILLS,
+                () -> ClientCache.GetContainerType() == Enums.ContainerType.SKILLS,
                 background,
                 (b) -> {
-                    ClientCache.SetContainerType(Skill.ContainerType.SKILLS);
+                    ClientCache.SetContainerType(Enums.ContainerType.SKILLS);
                     refreshList();
                 });
         this.addRenderableWidget(this.skillBtn);
@@ -364,10 +365,10 @@ public class MainGUI extends Screen {
                 97, 168,
                 111, 168,
                 325, 325,
-                () -> ClientCache.GetContainerType() == Skill.ContainerType.TRAITS,
+                () -> ClientCache.GetContainerType() == Enums.ContainerType.TRAITS,
                 background,
                 (b) -> {
-                    ClientCache.SetContainerType(Skill.ContainerType.TRAITS);
+                    ClientCache.SetContainerType(Enums.ContainerType.TRAITS);
                     refreshList();
                 });
         this.addRenderableWidget(this.traitBtn);
@@ -379,10 +380,10 @@ public class MainGUI extends Screen {
                 82, 227,
                 82, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == Skill.CategoryType.ALL,
+                () -> ClientCache.GetCategoryType() == Enums.CategoryType.ALL,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(Skill.CategoryType.ALL);
+                    ClientCache.SetCategoryType(Enums.CategoryType.ALL);
                     this.refreshList();
                 });
         this.addRenderableWidget(this.allBtn);
@@ -394,10 +395,10 @@ public class MainGUI extends Screen {
                 140, 227,
                 140, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == Skill.CategoryType.ABILITIES,
+                () -> ClientCache.GetCategoryType() == Enums.CategoryType.ABILITIES,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(Skill.CategoryType.ABILITIES);
+                    ClientCache.SetCategoryType(Enums.CategoryType.ABILITIES);
                     this.refreshList();
                 });
         this.addRenderableWidget(this.abilitiesBtn);
@@ -409,10 +410,10 @@ public class MainGUI extends Screen {
                 111, 227,
                 111, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == Skill.CategoryType.FIGHT,
+                () -> ClientCache.GetCategoryType() == Enums.CategoryType.FIGHT,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(Skill.CategoryType.FIGHT);
+                    ClientCache.SetCategoryType(Enums.CategoryType.FIGHT);
                     this.refreshList();
                 });
         this.addRenderableWidget(this.fightBtn);
@@ -424,10 +425,10 @@ public class MainGUI extends Screen {
                 169, 227,
                 169, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == Skill.CategoryType.MISC,
+                () -> ClientCache.GetCategoryType() == Enums.CategoryType.MISC,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(Skill.CategoryType.MISC);
+                    ClientCache.SetCategoryType(Enums.CategoryType.MISC);
                     this.refreshList();
                 });
         this.addRenderableWidget(this.miscBtn);
@@ -439,10 +440,10 @@ public class MainGUI extends Screen {
                 198, 227,
                 198, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == Skill.CategoryType.BOOKMARKS,
+                () -> ClientCache.GetCategoryType() == Enums.CategoryType.BOOKMARKS,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(Skill.CategoryType.BOOKMARKS);
+                    ClientCache.SetCategoryType(Enums.CategoryType.BOOKMARKS);
                     this.refreshList();
                 });
         this.addRenderableWidget(this.bookmarksBtn);
@@ -453,7 +454,7 @@ public class MainGUI extends Screen {
     }
 
     private void updateButtonsVisibility() {
-        boolean isSkillMode = ClientCache.GetContainerType() == Skill.ContainerType.SKILLS;
+        boolean isSkillMode = ClientCache.GetContainerType() == Enums.ContainerType.SKILLS;
 
         if (this.allBtn != null) this.allBtn.visible = isSkillMode;
         if (this.abilitiesBtn != null) this.abilitiesBtn.visible = isSkillMode;
@@ -490,9 +491,9 @@ public class MainGUI extends Screen {
         SkillEntry currentRow = null;
         int countInRow = 0;
 
-        if(containerType == Skill.ContainerType.TRAITS){
+        if(containerType == Enums.ContainerType.TRAITS){
             for(Skill skill : ClientCache.GetAllSkills()){
-                if(skill.GetCategory() != Skill.CategoryType.TRAITS) continue;
+                if(skill.getCategory() != Enums.CategoryType.TRAITS) continue;
 
                 if(currentRow == null || countInRow >= maxPerLine){
                     currentRow = new SkillEntry();
@@ -508,11 +509,11 @@ public class MainGUI extends Screen {
         else {
             var categoryToLoad = ClientCache.GetCategoryType();
             for(Skill skill : ClientCache.GetAllSkills()){
-                if(skill.GetCategory() == Skill.CategoryType.TRAITS) continue;
-                if(skill.GetCategory() != categoryToLoad &&
-                        categoryToLoad != Skill.CategoryType.ALL && categoryToLoad != Skill.CategoryType.BOOKMARKS) continue;
+                if(skill.getCategory() == Enums.CategoryType.TRAITS) continue;
+                if(skill.getCategory() != categoryToLoad &&
+                        categoryToLoad != Enums.CategoryType.ALL && categoryToLoad != Enums.CategoryType.BOOKMARKS) continue;
 
-                if(categoryToLoad == Skill.CategoryType.BOOKMARKS && !ClientCache.isSkillBookmarked(skill.GetID())) continue;
+                if(categoryToLoad == Enums.CategoryType.BOOKMARKS && !ClientCache.isSkillBookmarked(skill.getID())) continue;
 
                 if(currentRow == null || countInRow >= maxPerLine){
                     currentRow = new SkillEntry();

@@ -162,7 +162,7 @@ public class CompatibilityManager {
             }
 
             for (var skill : SkillManager.Get().getAllSkills()){
-                var id = skill.GetID().toLowerCase();
+                var id = skill.getID().toLowerCase();
                 var lvlKey = id + "_lvl";
                 var bkKey = id + "_bookmark";
 
