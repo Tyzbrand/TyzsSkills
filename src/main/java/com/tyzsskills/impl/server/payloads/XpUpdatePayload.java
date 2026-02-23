@@ -9,13 +9,14 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public record XpUpdatePayload(float xp, float gained) implements CustomPacketPayload{
+public record XpUpdatePayload(float xp, float gained, boolean triggersOverlay) implements CustomPacketPayload{
     public static final Type<XpUpdatePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "xp_update_payload"));
 
 
     public static final StreamCodec<ByteBuf, XpUpdatePayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.FLOAT, XpUpdatePayload::xp,
             ByteBufCodecs.FLOAT, XpUpdatePayload::gained,
+            ByteBufCodecs.BOOL, XpUpdatePayload::triggersOverlay,
             XpUpdatePayload::new
     );
 
@@ -25,7 +26,7 @@ public record XpUpdatePayload(float xp, float gained) implements CustomPacketPay
     }
 
     public static void Handle(final XpUpdatePayload payload, final IPayloadContext ctx){
-        ctx.enqueueWork(() -> {ClientCache.UpdateClientCacheXP(payload.xp(), payload.gained);} );
+        ctx.enqueueWork(() -> {ClientCache.UpdateClientCacheXP(payload.xp(), payload.gained(), payload.triggersOverlay());} );
     }
 
 }

@@ -1,8 +1,10 @@
 package com.tyzsskills.impl.server.power;
 
+import com.tyzsskills.api.events.SkillPowerChangeEvent;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.payloads.PowerUpdatePayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -12,8 +14,18 @@ public class PowerManager {
     public static void SetPower(ServerPlayer player, int amount){
         if(amount < 0) return;
 
+        int oldPower = GetPower(player);
+
+        var event = new SkillPowerChangeEvent(player, oldPower, amount);
+        NeoForge.EVENT_BUS.post(event);
+
+        if(event.isCanceled()) return;
+
+        int finalPower = event.getNewPower();
+        if(finalPower == oldPower) return;
+
         var playerData = player.getData(PlayerData.DATA);
-        playerData.setPower(amount);
+        playerData.setPower(finalPower);
 
         UpdateClient(player);
     }

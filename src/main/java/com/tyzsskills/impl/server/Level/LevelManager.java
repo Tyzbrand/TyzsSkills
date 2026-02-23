@@ -1,10 +1,12 @@
 package com.tyzsskills.impl.server.Level;
 
+import com.tyzsskills.api.events.SkillLevelChangeEvent;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.payloads.LevelDataUpdatePayload;
 import com.tyzsskills.impl.server.payloads.LevelUpdatePayload;
 import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -12,8 +14,18 @@ import org.jetbrains.annotations.ApiStatus;
 public class LevelManager {
 
     public static void setLevel(ServerPlayer player, int level){
+        int oldLevel = getLevel(player);
+
+        var event = new SkillLevelChangeEvent(player, oldLevel, level);
+        NeoForge.EVENT_BUS.post(event);
+
+        if(event.isCanceled()) return;
+
+        int finalLevel = event.getNewLevel();
+        if(finalLevel == oldLevel) return;
+
         var playerData = player.getData(PlayerData.DATA);
-        playerData.setLevel(level);
+        playerData.setLevel(finalLevel);
 
         updateClient(player);
     }

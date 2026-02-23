@@ -1,5 +1,7 @@
 package com.tyzsskills.impl.server.active;
 
+import com.tyzsskills.api.events.PlayerResetEvent;
+import com.tyzsskills.api.events.SkillReloadEvent;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.ExplorationProgression;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
@@ -12,6 +14,7 @@ import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
 import com.tyzsskills.impl.server.xp.xpEvents.XpFood;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.io.IOException;
@@ -52,6 +55,8 @@ public class DebugManager {
                 }
             }
         }
+
+        NeoForge.EVENT_BUS.post(new SkillReloadEvent());
     }
 
     public static void DebugResetData(ServerPlayer player){
@@ -69,5 +74,7 @@ public class DebugManager {
                 manager.setSkillLevel(player, skill.getID().toLowerCase(), 0);
             }
         }
+
+        NeoForge.EVENT_BUS.post(new PlayerResetEvent(player));
     }
 }

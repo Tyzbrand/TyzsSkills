@@ -26,8 +26,9 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
     private static final float SCALE = 0.5f;
     private static final int MARGIN = 4;
 
-    public static void AddXp(float amount){
+    public static void AddXp(float amount, boolean triggersOverlay){
         if(!Config.SHOW_XP_OVERLAY.get()) return;
+        if(!triggersOverlay) return;
 
         var mc = Minecraft.getInstance();
         if(mc.player == null) return;

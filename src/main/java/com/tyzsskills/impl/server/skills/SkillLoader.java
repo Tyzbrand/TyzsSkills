@@ -3,10 +3,12 @@ package com.tyzsskills.impl.server.skills;
 import com.google.gson.JsonObject;
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.events.SkillLoadEvent;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.model.Trait;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import java.util.List;
 public class SkillLoader {
 
     public static void LoadSKill(JsonObject source){
+
         String id = GetSafeString(source, "id");
         if(id == null || id.isBlank()) {ErrorManager.RegisterSkillError("Unknow", "invalid id"); return;}
         id = id.toLowerCase();
@@ -79,6 +82,7 @@ public class SkillLoader {
             if(!Config.TRAIT_SYSTEM.get()) return;
 
             int price = prices.isEmpty()? 0 : prices.getFirst();
+
             SkillManager.Get().registerSKill(new Trait(
                     state, id, powerWeight, price, purchasable, icon, displayName, description)
             );

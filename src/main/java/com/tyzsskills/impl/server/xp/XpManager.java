@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.xp;
 
 import com.google.gson.JsonObject;
+import com.tyzsskills.api.events.SkillXPChangeEvent;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.sp.SpManager;
@@ -11,6 +12,7 @@ import com.tyzsskills.impl.server.payloads.StatsSpEarnedPayload;
 import com.tyzsskills.impl.server.payloads.StatsXpPayload;
 import com.tyzsskills.impl.server.payloads.XpUpdatePayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -46,29 +48,41 @@ public class XpManager {
 
 
     //Actifs
-    private static void setXPInternal(ServerPlayer player, float amount, float gains) {
+    private static void setXPInternal(ServerPlayer player, float amount, boolean triggersOverlay) {
+        float oldAmount = getXP(player);
+
+        var event = new SkillXPChangeEvent(player, oldAmount, amount);
+        NeoForge.EVENT_BUS.post(event);
+
+        if(event.isCanceled()) return;
+
+        float finalAmount = event.getNewAmount();
+        if (oldAmount == finalAmount) return;
+
         var data = player.getData(PlayerData.DATA);
-        data.setXP(amount);
+        data.setXP(finalAmount);
 
         levelUpCheck(player);
 
-        updateClient(player, gains);
+        float gains = finalAmount - oldAmount;
+        if(gains < 0) gains = 0;
 
-        if (gains > 0) {
+        updateClient(player, gains, triggersOverlay);
+
+        if (triggersOverlay && gains > 0) {
             player.getData(StatsTracker.DATA).addXp(gains);
             PacketDistributor.sendToPlayer(player, new StatsXpPayload(gains));
         }
     }
 
     public static void setXP(ServerPlayer player, float amount) {
-        setXPInternal(player, amount, 0f);
+        setXPInternal(player, amount, false);
     }
 
     public static void addXP(ServerPlayer player, float amount, boolean triggerOverlay) {
         if (amount <= 0) return;
-        var gains = triggerOverlay ? amount : 0f;
 
-        setXPInternal(player, getXP(player) + amount, gains);
+        setXPInternal(player, getXP(player) + amount, triggerOverlay);
     }
 
     public static void addXP(ServerPlayer player, float amount){
@@ -79,14 +93,14 @@ public class XpManager {
     public static void removeXP(ServerPlayer player, float amount) {
         if (amount <= 0) return;
         var result = Math.max(0f, getXP(player) - amount);
-        setXPInternal(player, result, 0f);
+        setXPInternal(player, result, false);
     }
 
     public static void clearPool() {POOL.clear();}
 
     //Util
-    private static void updateClient(ServerPlayer player, float gains) {
-        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(getXP(player), gains));
+    private static void updateClient(ServerPlayer player, float gains, boolean triggersOverlay) {
+        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(getXP(player), gains, triggersOverlay));
     }
 
     public static void levelUpCheck(ServerPlayer player) {

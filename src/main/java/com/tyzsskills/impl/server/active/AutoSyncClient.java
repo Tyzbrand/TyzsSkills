@@ -44,7 +44,7 @@ public class AutoSyncClient {
     }
 
     public static void SyncMainData(ServerPlayer player){
-        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(XpManager.getXP(player), 0f));
+        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(XpManager.getXP(player), 0f, false));
         PacketDistributor.sendToPlayer(player, new LevelUpdatePayload(LevelManager.getLevel(player)));
         PacketDistributor.sendToPlayer(player, new SpUpdatePayload(SpManager.getSP(player)));
         PacketDistributor.sendToPlayer(player, new LevelDataUpdatePayload(XpManager.getLevelData(LevelManager.getLevel(player))));

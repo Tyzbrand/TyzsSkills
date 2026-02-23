@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.events.SkillActionEvent;
+import com.tyzsskills.api.events.SkillLoadEvent;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.Level.LevelManager;
@@ -22,6 +24,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -38,10 +41,18 @@ public class SkillManager {
 
     public void registerSKill(Skill skill)
     {
+        var preEvent = new SkillLoadEvent.Pre(skill);
+        NeoForge.EVENT_BUS.post(preEvent);
+
+        if(preEvent.isCanceled()) return;
+
         var behaviour = SkillBehaviorRegistry.GetBehavior(skill.getID());
         if(behaviour != null){skill.SetBehaviour(behaviour);}
 
-        if(!skillCollection.containsKey(skill.getID())) skillCollection.put(skill.getID(), skill);
+        if(!skillCollection.containsKey(skill.getID())) {
+            skillCollection.put(skill.getID(), skill);
+            NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
+        }
     }
 
     public void clearSkills(){
@@ -53,6 +64,10 @@ public class SkillManager {
     {
         var skill = getSkill(id);
         if(player == null || skill == null) return false;
+
+        var event = new SkillActionEvent.PurchasePre(skill, player);
+        NeoForge.EVENT_BUS.post(event);
+        if(event.isCanceled()) return false;
 
         if(skill instanceof Trait){
             if(!Config.TRAIT_SYSTEM.get()) return false;
@@ -86,6 +101,10 @@ public class SkillManager {
                 player.getData(StatsTracker.DATA).addSpSpent(price);
 
                 PowerManager.AddPower(player, trait.getPowerWeight());
+
+                NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
+                NeoForge.EVENT_BUS.post(new SkillActionEvent.LevelChange(skill, player, currentLvl, currentLvl+1));
+
                 return true;
             }
         }
@@ -105,6 +124,10 @@ public class SkillManager {
                 player.getData(StatsTracker.DATA).addSpSpent(price);
 
                 if(skill.getType() == Enums.SkillType.GENERIC) GenericEffects.ApplyEffect(skill, player);
+
+                NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
+                NeoForge.EVENT_BUS.post(new SkillActionEvent.LevelChange(skill, player, currentLvl, currentLvl+1));
+
                 return true;
             }
         }
@@ -116,6 +139,10 @@ public class SkillManager {
     {
         var skill = getSkill(id);
         if(player == null || skill == null || !Config.REFUND_SYSTEM.get()) return false;
+
+        var event = new SkillActionEvent.RefundPre(skill, player);
+        NeoForge.EVENT_BUS.post(event);
+        if(event.isCanceled()) return false;
 
         if(skill instanceof Trait){
             if(!Config.TRAIT_SYSTEM.get()) return false;
@@ -178,6 +205,9 @@ public class SkillManager {
             else GenericEffects.ApplyEffect(skill, player);
         }
 
+        NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
+        NeoForge.EVENT_BUS.post(new SkillActionEvent.LevelChange(skill, player, currentLvl, currentLvl-1));
+
         return true;
     }
 
@@ -191,6 +221,7 @@ public class SkillManager {
         var newValue = !isCurrentlyBookmarked;
 
         data.triggerBookmark(id);
+        NeoForge.EVENT_BUS.post(new SkillActionEvent.Bookmark(getSkill(id), player));
         PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(id.toLowerCase(), newValue));
     }
 
@@ -212,6 +243,7 @@ public class SkillManager {
         int oldLvl = getPlayerSkillLevel(player, id);
 
         data.setSkillLevel(id, lvl);
+        NeoForge.EVENT_BUS.post(new SkillActionEvent.LevelChange(skill, player, oldLvl, lvl));
 
         if(skill instanceof Trait trait){
             if(oldLvl == 0 && lvl > 0) {

@@ -55,9 +55,9 @@ public class ClientCache {
         }
     }
 
-    public static void UpdateClientCacheXP(float xp, float gained){
+    public static void UpdateClientCacheXP(float xp, float gained, boolean triggersOverlay){
         if(gained > 0) {
-            XpTriggerOverlay.AddXp(gained);
+            XpTriggerOverlay.AddXp(gained, triggersOverlay);
             clientSessionXP += gained;
         }
         clientXP = xp;
