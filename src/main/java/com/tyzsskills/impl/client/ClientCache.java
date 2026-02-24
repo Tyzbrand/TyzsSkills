@@ -160,24 +160,7 @@ public class ClientCache {
     }
 
 
-    public static void ClearCache(){
-        clientLevel = 1;
-        clientSP = 0;
-        clientXP = 0f;
-        clientXpLimit = 0f;
-        clientPower = 0;
-        clientLevelData = new XpManager.LevelData(100f, 1);
-        clientSkills.clear();
-        clientSkillLevels.clear();
-        clientConfigMap.clear();
-        clientBookmarks.clear();
-        clientSessionXP = 0f;
-        clientAllTimeXP = 0f;
-        clientSpEarned = 0;
-        clientSpSpent = 0;
-        currentContainerCategory = Enums.CategoryType.ALL;
-        currentContainerType = Enums.ContainerType.SKILLS;
-    }
+
 
     public static void PredictBookmark(Skill skill){
         String id = skill.getID();
@@ -230,6 +213,28 @@ public class ClientCache {
         }
 
 
+    }
+
+    public static void ClearCache(Enums.ResetType type){
+        switch (type){
+            case ALL -> {
+                resetMetadata();
+                resetSkills();
+                resetStats();
+                resetLimits();
+            }
+            case METADATA -> resetMetadata();
+            case SKILLS -> resetSkills();
+            case STATS -> resetStats();
+            case LIMITS -> resetLimits();
+            case SHUTDOWN -> {
+                resetMetadata();
+                resetSkills();
+                resetStats();
+                resetLimits();
+                shutDownReset();
+            }
+        }
     }
 
 
@@ -289,7 +294,6 @@ public class ClientCache {
 
 
 
-
     //UTIL
     public static int ParseColor(String hexString, int fallback) {
         if (hexString == null || hexString.isEmpty()) return fallback;
@@ -299,5 +303,36 @@ public class ClientCache {
             return (int) Long.parseLong(clean, 16);
         }
         catch (NumberFormatException e) {return fallback;}
+    }
+
+    private static void resetMetadata(){
+        clientLevel = 1;
+        clientSP = 0;
+        clientXP = 0f;
+        clientPower = 0;
+        clientLevelData = new XpManager.LevelData(100f, 1);
+    }
+
+    private static void resetSkills(){
+        clientSkillLevels.clear();
+    }
+
+    private static void resetStats(){
+        clientSessionXP = 0f;
+        clientAllTimeXP = 0f;
+        clientSpEarned = 0;
+        clientSpSpent = 0;
+    }
+
+    private static void resetLimits(){
+        clientXpLimit = 0f;
+    }
+
+    private static void shutDownReset(){
+        clientConfigMap.clear();
+        clientBookmarks.clear();
+        currentContainerCategory = Enums.CategoryType.ALL;
+        currentContainerType = Enums.ContainerType.SKILLS;
+        clientSkills.clear();
     }
 }

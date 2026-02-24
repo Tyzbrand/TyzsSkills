@@ -1,5 +1,6 @@
 package com.tyzsskills;
 
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.key.MainKeybind;
@@ -60,7 +61,7 @@ public class TyzsskillsClient {
 
     @SubscribeEvent
     public static void onClientLogOut(ClientPlayerNetworkEvent.LoggingOut event){
-        ClientCache.ClearCache();
+        ClientCache.ClearCache(Enums.ResetType.SHUTDOWN);
         SkillTriggerOverlay.Clear();
         XpTriggerOverlay.Clear();
         Tyzsskills.LOGGER.info("CACHE CLEARED");

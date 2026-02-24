@@ -215,6 +215,12 @@ public class Tyzsskills {
                 StatsSpSpentPayload::Handle
         );
 
+        registrar.playToClient(
+                ResetPayload.TYPE,
+                ResetPayload.STREAM_CODEC,
+                ResetPayload::Handle
+        );
+
     }
 
     @SubscribeEvent

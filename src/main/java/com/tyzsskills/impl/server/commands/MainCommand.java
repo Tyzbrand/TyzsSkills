@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.Constants;
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.server.active.DebugManager;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.Skill;
@@ -180,11 +181,36 @@ public class MainCommand {
 
     private static LiteralArgumentBuilder<CommandSourceStack> reset(){
         return Commands.literal("reset")
+                .then(Commands.literal("all")
                     .then(Commands.argument("player", EntityArgument.player())
                             .executes(ctx -> {
-                                DebugManager.DebugResetData(EntityArgument.getPlayer(ctx, "player"));
+                                DebugManager.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.ALL);
                                 return 1;
-                            }));
+                            })))
+                .then(Commands.literal("skills")
+                    .then(Commands.argument("player", EntityArgument.player())
+                        .executes(ctx -> {
+                            DebugManager.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.SKILLS);
+                            return 1;
+                        })))
+                .then(Commands.literal("metadata")
+                .then(Commands.argument("player", EntityArgument.player())
+                        .executes(ctx -> {
+                            DebugManager.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.METADATA);
+                            return 1;
+                        })))
+                .then(Commands.literal("stats")
+                .then(Commands.argument("player", EntityArgument.player())
+                        .executes(ctx -> {
+                            DebugManager.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.STATS);
+                            return 1;
+                        })))
+                .then(Commands.literal("limits")
+                .then(Commands.argument("player", EntityArgument.player())
+                        .executes(ctx -> {
+                            DebugManager.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.LIMITS);
+                            return 1;
+                        })));
 
 
     }
