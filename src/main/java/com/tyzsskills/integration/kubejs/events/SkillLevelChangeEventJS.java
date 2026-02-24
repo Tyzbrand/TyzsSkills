@@ -1,15 +1,16 @@
-package com.tyzsskills.api.events;
+package com.tyzsskills.integration.kubejs.events;
 
+import dev.latvian.mods.kubejs.event.KubeEvent;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
 
-public class SkillLevelChangeEvent extends Event implements ICancellableEvent{
+public class SkillLevelChangeEventJS implements KubeEvent {
     private final int oldLevel;
     private int newLevel;
     private final ServerPlayer player;
 
-    public SkillLevelChangeEvent(ServerPlayer player, int oldLevel, int newLevel){
+    private boolean canceled = false;
+
+    public SkillLevelChangeEventJS(ServerPlayer player, int oldLevel, int newLevel){
         this.player = player;
         this.oldLevel = oldLevel;
         this.newLevel = newLevel;
@@ -21,4 +22,6 @@ public class SkillLevelChangeEvent extends Event implements ICancellableEvent{
 
     public void setNewLevel(int level){if(level >= 1) this.newLevel = level;}
 
+    public void cancel(){this.canceled = true;}
+    public boolean isCanceled(){return canceled;}
 }

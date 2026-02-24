@@ -18,7 +18,22 @@ version = mod_version
 group = mod_group_id
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+    // Le dépôt officiel KubeJS selon la doc GitHub
+    maven {
+        url = "https://maven.latvian.dev/releases"
+        content {
+            includeGroup "dev.latvian.mods"
+            includeGroup "dev.latvian.apps"
+        }
+    }
+
+    // Le dépôt Jitpack pour la librairie d'images GIF
+    maven {
+        url = 'https://jitpack.io'
+        content {
+            includeGroup "com.github.rtyley"
+        }
+    }
 }
 
 base {
@@ -112,6 +127,8 @@ configurations {
 }
 
 dependencies {
+    compileOnly "dev.latvian.mods:kubejs-neoforge:2101.7.2-build.353"
+    localRuntime "dev.latvian.mods:kubejs-neoforge:2101.7.2-build.353"
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

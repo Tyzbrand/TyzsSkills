@@ -17,6 +17,7 @@ import com.tyzsskills.impl.server.wrappers.*;
 import com.tyzsskills.impl.server.xp.XpManager;
 import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
+import com.tyzsskills.integration.kubejs.JsEventsDelegate;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
@@ -27,6 +28,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
+
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -74,6 +76,7 @@ public class Tyzsskills {
         NeoForge.EVENT_BUS.register(RuntimeEvents.class);
         NeoForge.EVENT_BUS.register(XpGainsEvents.class);
         NeoForge.EVENT_BUS.register(SkillEffectsEvents.class);
+        NeoForge.EVENT_BUS.register(JsEventsDelegate.class);
 
         //Register network
         modEventBus.addListener(this::RegisterPayloads);

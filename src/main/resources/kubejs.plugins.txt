@@ -1,0 +1,1 @@
+com.tyzsskills.integration.kubejs.TyzsKubePlugin tyzs_skills
