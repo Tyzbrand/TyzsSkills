@@ -44,7 +44,7 @@ public class CompatibilityManager {
         if(oldXp > 0) XpManager.setXP(player, (float)oldXp);
 
         double oldSp = legacy.getOldValue("researchpoints");
-        if(oldSp > 0) SpManager.setSp(player, (int)oldSp);
+        if(oldSp > 0) SpManager.setSP(player, (int)oldSp);
 
 
         //Stat data
@@ -147,7 +147,7 @@ public class CompatibilityManager {
             }
 
             if(oldData.contains("SKILL_POINT")){
-                SpManager.setSp(player, oldData.getInt("SKILL_POINT"));
+                SpManager.setSP(player, oldData.getInt("SKILL_POINT"));
                 oldData.remove("SKILL_POINT");
             }
 

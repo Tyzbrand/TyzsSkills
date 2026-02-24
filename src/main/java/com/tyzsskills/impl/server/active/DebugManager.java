@@ -61,7 +61,7 @@ public class DebugManager {
 
     public static void DebugResetData(ServerPlayer player){
         LevelManager.setLevel(player, 1);
-        SpManager.setSp(player, 0);
+        SpManager.setSP(player, 0);
         PowerManager.SetPower(player, 0);
         XpManager.setXP(player, 0f);
         player.getData(ExplorationProgression.DATA).resetPlayerData();

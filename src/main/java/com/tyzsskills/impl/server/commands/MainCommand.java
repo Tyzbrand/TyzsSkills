@@ -41,7 +41,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = FloatArgumentType.getFloat(ctx, "amount");
-                                            XpManager.addXP(player, amount, true);
+                                            XpManager.addXP(player, amount, true, true);
                                             return 1;})))
 
                         .then(Commands.literal("remove")
@@ -119,7 +119,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            SpManager.setSp(player, amount);
+                                            SpManager.setSP(player, amount);
                                             return 1;})))
                 );
 

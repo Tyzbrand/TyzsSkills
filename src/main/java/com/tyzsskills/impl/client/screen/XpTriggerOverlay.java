@@ -92,6 +92,10 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
         MutableComponent text = Component.literal("+ " + amountStr + " ")
                 .append(Component.translatable("gui.tyzs_skills.xp"));
 
+        if(ClientCache.GetConfigDouble(Config.MAX_XP_KEY, -1) != -1){
+            text = text.append(Component.literal(" (" + ClientCache.getLimitPercentage() + "%)"));
+        }
+
         int textWidth = font.width(text);
         int padding = 6;
         int height = 12 + (padding * 2);

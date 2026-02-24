@@ -40,11 +40,11 @@ public class AutoSyncClient {
         PacketDistributor.sendToPlayer(player, new ConfigSyncPayload(Config.REFUND_SYSTEM.get(),
                 Config.REFUND_PERCENTAGE.get(),
                 Config.TRAIT_UNLOCK_LEVEL.get(),
-                Config.TRAIT_SYSTEM.get()));
+                Config.TRAIT_SYSTEM.get(), -1));
     }
 
     public static void SyncMainData(ServerPlayer player){
-        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(XpManager.getXP(player), 0f, false));
+        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(XpManager.getXP(player), 0f, false, XpManager.getLimitPercentage(player)));
         PacketDistributor.sendToPlayer(player, new LevelUpdatePayload(LevelManager.getLevel(player)));
         PacketDistributor.sendToPlayer(player, new SpUpdatePayload(SpManager.getSP(player)));
         PacketDistributor.sendToPlayer(player, new LevelDataUpdatePayload(XpManager.getLevelData(LevelManager.getLevel(player))));

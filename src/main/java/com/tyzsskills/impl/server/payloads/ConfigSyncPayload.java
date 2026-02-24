@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.HashMap;
 import java.util.Map;
 
-public record ConfigSyncPayload(boolean refundSys, double refundPer, int traitLevel, boolean traitSys) implements CustomPacketPayload{
+public record ConfigSyncPayload(boolean refundSys, double refundPer, int traitLevel, boolean traitSys, double maxXP) implements CustomPacketPayload{
     public static final Type<ConfigSyncPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "config_sync_payload"));
 
 
@@ -22,6 +22,7 @@ public record ConfigSyncPayload(boolean refundSys, double refundPer, int traitLe
             ByteBufCodecs.DOUBLE, ConfigSyncPayload::refundPer,
             ByteBufCodecs.INT, ConfigSyncPayload::traitLevel,
             ByteBufCodecs.BOOL, ConfigSyncPayload::traitSys,
+            ByteBufCodecs.DOUBLE, ConfigSyncPayload::maxXP,
             ConfigSyncPayload::new
     );
 
@@ -38,6 +39,7 @@ public record ConfigSyncPayload(boolean refundSys, double refundPer, int traitLe
             configMap.put(Config.REFUND_PERCENTAGE_KEY, payload.refundPer());
             configMap.put(Config.TRAIT_UNLOCK_LEVEL_KEY, payload.traitLevel());
             configMap.put(Config.TRAIT_SYSTEM_KEY, payload.traitSys());
+            configMap.put(Config.MAX_XP_KEY, payload.maxXP());
 
             ClientCache.SyncConfig(configMap);
         });

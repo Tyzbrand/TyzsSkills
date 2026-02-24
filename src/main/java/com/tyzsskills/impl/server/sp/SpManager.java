@@ -3,6 +3,7 @@ package com.tyzsskills.impl.server.sp;
 import com.tyzsskills.Config;
 import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.events.SkillPointChangeEvent;
+import com.tyzsskills.impl.server.attachments.LimitsTracker;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.payloads.SpUpdatePayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,7 +14,8 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public class SpManager {
 
-        public static void setSp(ServerPlayer player, int amount){
+        //CORE
+        private static void setSpInternal(ServerPlayer player, int amount, boolean applyLimits){
             int oldAmount = getSP(player);
 
 
@@ -21,38 +23,68 @@ public class SpManager {
             NeoForge.EVENT_BUS.post(event);
 
             if(event.isCanceled()) return;
-            int finalAmount = event.getNewAmount();
+            int targetedAmount = event.getNewAmount();
+            if(targetedAmount == oldAmount) return;
 
-            if(finalAmount == oldAmount) return;
+            int gain = targetedAmount - oldAmount;
+
+            if(gain > 0 && applyLimits){
+                var allowedGain = checkLimit(player, gain);
+                if(allowedGain <= 0) return;
+                targetedAmount = oldAmount + allowedGain;
+                player.getData(LimitsTracker.DATA).incrSp(allowedGain);
+            }
 
             var playerData = player.getData(PlayerData.DATA);
-            playerData.setSP(finalAmount);
+            playerData.setSP(targetedAmount);
             updateClient(player);
         }
 
-        public static void addSP(ServerPlayer player, int amount){
+        //PUBLIC
+        public static void setSP(ServerPlayer player, int amount, boolean applyLimits){
+                setSpInternal(player, amount, applyLimits);
+        }
+        public static void setSP(ServerPlayer player, int amount){
+            setSP(player, amount, false);
+        }
+
+        public static void addSP(ServerPlayer player, int amount, boolean applyLimits){
             if(amount <= 0) return;
-
-            int current = getSP(player);
-            int limit = Config.MAX_SP.get();
-            int finalAmount = amount;
-
-            if(limit != -1){
-                var remaining = limit - current;
-                finalAmount = Math.min(amount, Math.max(0, remaining));
-            }
-            setSp(player, getSP(player) + finalAmount);
+            setSpInternal(player, amount + getSP(player), applyLimits);
+        }
+        public static void addSP(ServerPlayer player, int amount){
+            addSP(player, amount, true);
         }
 
         public static void removeSP(ServerPlayer player, int amount){
             if(amount <= 0) return;
             var result = Math.max(0, getSP(player) - amount);
-            setSp(player, result);
+            setSpInternal(player, result, false);
         }
 
         //Util
         private static void updateClient(ServerPlayer player){
             PacketDistributor.sendToPlayer(player, new SpUpdatePayload(getSP(player)));
+        }
+
+        private static int checkLimit(ServerPlayer player, int amount){
+            int currentSP = getSP(player);
+            int finalAmount = amount;
+
+            int possessionLimit = Config.MAX_SP.get();
+            if(possessionLimit != -1){
+                var remaining = possessionLimit - currentSP;
+                finalAmount = Math.min(finalAmount, Math.max(0, remaining));
+            }
+
+            int gainLimit = Config.MAX_SP_GAIN.get();
+            if(gainLimit != -1){
+                var data = player.getData(LimitsTracker.DATA);
+                var remaining = gainLimit - data.getSpLifetime();
+                finalAmount = Math.min(finalAmount, Math.max(0, remaining));
+            }
+
+            return finalAmount;
         }
 
 

@@ -12,8 +12,8 @@ public class XpWrapper implements IXpManager {
     }
 
     @Override
-    public void addXP(ServerPlayer player, float amount, boolean showOverlay) {
-        XpManager.addXP(player, amount, showOverlay);
+    public void addXP(ServerPlayer player, float amount, boolean showOverlay, boolean applyLimits) {
+        XpManager.addXP(player, amount, showOverlay,applyLimits);
     }
 
     @Override
@@ -24,6 +24,11 @@ public class XpWrapper implements IXpManager {
     @Override
     public void setXP(ServerPlayer player, float amount) {
         XpManager.setXP(player, amount);
+    }
+
+    @Override
+    public void setXP(ServerPlayer player, float amount, boolean applyLimits) {
+        XpManager.setXP(player, amount, applyLimits);
     }
 
     @Override

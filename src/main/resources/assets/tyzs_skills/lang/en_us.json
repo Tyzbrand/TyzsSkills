@@ -208,6 +208,10 @@
   "config.common.tyzs_skills.dimension_gain" : "XP from New Dimensions",
   "config.common.tyzs_skills.max_sp" : "Max SP",
   "config.common.tyzs_skills.max_lvl" : "Max Level",
+  "config.common.tyzs_skills.max_sp_gain" : "Max SP gain",
+  "config.common.tyzs_skills.xp_daily" : "XP daily limit",
+  "config.common.tyzs_skills.cycle_duration" : "Cycle duration",
+  "config.common.tyzs_skills.limit_type" : "Limit type",
 
   "config.client.tyzs_skills.creative_overlays" : "Overlays in Creative",
   "config.client.tyzs_skills.xp_overlay" : "Show XP Overlay",

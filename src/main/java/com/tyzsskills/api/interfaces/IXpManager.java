@@ -22,8 +22,11 @@ public interface IXpManager {
     /**
      * @param amount amount to add (must be > 0f)
      * @param showOverlay if true, the visual xp gain overlay will be triggered on client
+     * @param applyLimits if true, the addition will be affected by limits
      */
-    void addXP(ServerPlayer player, float amount, boolean showOverlay);
+    void addXP(ServerPlayer player, float amount, boolean showOverlay, boolean applyLimits);
+
+
 
     /**
      * @param amount amount to remove (works if the player can afford, must be > 0f)
@@ -35,4 +38,10 @@ public interface IXpManager {
      * @param amount amount to set (must be >= 0)
      */
     void setXP(ServerPlayer player, float amount);
+
+    /**
+     * @param amount amount to set (must be >= 0)
+     * @param applyLimits if true, the change will be affected by limits
+     */
+    void setXP(ServerPlayer player, float amount, boolean applyLimits);
 }

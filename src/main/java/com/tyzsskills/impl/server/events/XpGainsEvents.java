@@ -72,7 +72,7 @@ public class XpGainsEvents {
         if(!data.hasAlreadySlept(currentDay)){
             data.setSleepDay(currentDay);
             sleepValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-            XpManager.addXP(player, (float)sleepValue, true);
+            XpManager.addXP(player, (float)sleepValue, true, true);
         }
     }
 
@@ -86,7 +86,7 @@ public class XpGainsEvents {
         if(value <= 0) return;
 
         value *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-        XpManager.addXP(player, value, true);
+        XpManager.addXP(player, value, true, true);
     }
 
     @SubscribeEvent
@@ -109,7 +109,7 @@ public class XpGainsEvents {
         if(value <= 0) return;
 
         value *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-        XpManager.addXP(player, value, true);
+        XpManager.addXP(player, value, true, true);
     }
 
     @SubscribeEvent
@@ -121,7 +121,7 @@ public class XpGainsEvents {
         if(value <= 0) return;
 
         value *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-        XpManager.addXP(player, value, true);
+        XpManager.addXP(player, value, true, true);
     }
 
     @SubscribeEvent
@@ -144,7 +144,7 @@ public class XpGainsEvents {
             if(finalValue <= 0) return;
 
             finalValue *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-            XpManager.addXP(player, finalValue, true);
+            XpManager.addXP(player, finalValue, true, true);
         });
     }
 
@@ -169,7 +169,7 @@ public class XpGainsEvents {
                 if(!data.hasDiscoveredBiome(biomeID)){
                     data.addBiome(biomeID);
                     biomeValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-                    XpManager.addXP(player, (float)biomeValue, true);
+                    XpManager.addXP(player, (float)biomeValue, true, true);
                 }
             }
         }
@@ -185,7 +185,7 @@ public class XpGainsEvents {
             if(!data.hasDiscoveredDimension(dimensionID)){
                 data.addDimension(dimensionID);
                 dimensionValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-                XpManager.addXP(player, (float)dimensionValue, true);
+                XpManager.addXP(player, (float)dimensionValue, true, true);
             }
         }
     }

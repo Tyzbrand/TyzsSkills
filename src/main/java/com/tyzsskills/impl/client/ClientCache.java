@@ -17,6 +17,8 @@ public class ClientCache {
     private static float clientXP = 0f;
     private static int clientPower = 0;
 
+    private static float clientXpLimit = 0f;
+
     private static float clientAllTimeXP = 0f;
     private static float clientSessionXP = 0f;
     private static int clientSpEarned = 0;
@@ -55,12 +57,13 @@ public class ClientCache {
         }
     }
 
-    public static void UpdateClientCacheXP(float xp, float gained, boolean triggersOverlay){
+    public static void UpdateClientCacheXP(float xp, float gained, boolean triggersOverlay, float limit){
         if(gained > 0) {
             XpTriggerOverlay.AddXp(gained, triggersOverlay);
             clientSessionXP += gained;
         }
         clientXP = xp;
+        clientXpLimit = limit;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
             Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp), false);
@@ -161,6 +164,7 @@ public class ClientCache {
         clientLevel = 1;
         clientSP = 0;
         clientXP = 0f;
+        clientXpLimit = 0f;
         clientPower = 0;
         clientLevelData = new XpManager.LevelData(100f, 1);
         clientSkills.clear();
@@ -237,6 +241,7 @@ public class ClientCache {
     public static int GetReward(){return clientLevelData.reward();}
     public static Enums.ContainerType GetContainerType(){return currentContainerType;}
     public static Enums.CategoryType GetCategoryType(){return currentContainerCategory;}
+    public static int getLimitPercentage(){return (int)(clientXpLimit * 100);}
 
     public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills.values());}
     public static List<String> GetAllSkillIDs(){return new ArrayList<>(clientSkills.keySet());}
@@ -280,6 +285,7 @@ public class ClientCache {
         if(value instanceof Integer nbr) return nbr;
         else return fallback;
     }
+
 
 
 

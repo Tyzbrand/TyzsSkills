@@ -14,7 +14,8 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public class LevelManager {
 
-    public static void setLevel(ServerPlayer player, int level){
+    //CORE
+    private static void setLevelInternal(ServerPlayer player, int level, boolean applyLimits){
         int oldLevel = getLevel(player);
 
         var event = new SkillLevelChangeEvent(player, oldLevel, level);
@@ -22,42 +23,62 @@ public class LevelManager {
 
         if(event.isCanceled()) return;
 
-        int finalLevel = event.getNewLevel();
-        if(finalLevel == oldLevel) return;
+        int targetedLvl = event.getNewLevel();
+        if(targetedLvl == oldLevel) return;
+
+        int gain = targetedLvl - oldLevel;
+
+        if(gain > 0 && applyLimits){
+            var allowedGain = checkLimit(player, gain);
+            if(allowedGain <= 0) return;
+            targetedLvl = oldLevel + allowedGain;
+        }
 
         var playerData = player.getData(PlayerData.DATA);
-        playerData.setLevel(finalLevel);
+        playerData.setLevel(targetedLvl);
 
         updateClient(player);
     }
 
-    public static void addLevel(ServerPlayer player, int level){
+    //PUBLIC
+    public static void setLevel(ServerPlayer player, int level, boolean applyLimits){
+        setLevelInternal(player, level, applyLimits);
+    }
+    public static void setLevel(ServerPlayer player, int level){
+        setLevel(player, level, false);
+    }
+
+    public static void addLevel(ServerPlayer player, int level, boolean applyLimits){
         if(level <= 0) return;
-
-        int current = getLevel(player);
-        int limit = Config.MAX_LEVEL.get();
-        int amountToAdd = level;
-
-        if(limit != -1) {
-            int remainingSpace = limit - current;
-            amountToAdd = Math.min(level, Math.max(0, remainingSpace));
-        }
-
-        if(amountToAdd == 0) return;
-
-        setLevel(player, current + amountToAdd);
+        setLevelInternal(player, level + getLevel(player), applyLimits);
+    }
+    public static void addLevel(ServerPlayer player, int level){
+        addLevel(player, level, true);
     }
 
     public static void removeLevel(ServerPlayer player, int level){
         if(level <= 0) return;
         var result = Math.max(1, getLevel(player) - level);
-        setLevel(player, result);
+        setLevelInternal(player, result, false);
     }
 
     //Util
     private static void updateClient(ServerPlayer player){
         PacketDistributor.sendToPlayer(player, new LevelUpdatePayload(getLevel(player)));
         PacketDistributor.sendToPlayer(player, new LevelDataUpdatePayload(XpManager.getLevelData(getLevel(player))));
+    }
+
+    private static int checkLimit(ServerPlayer player, int amount){
+        int currentLvl = getLevel(player);
+        int finalAmount = amount;
+        int limit = Config.MAX_LEVEL.get();
+
+        if(limit != -1){
+            var remaining = limit - currentLvl;
+            finalAmount = Math.min(finalAmount, Math.max(0, remaining));
+        }
+
+        return finalAmount;
     }
 
     //Getter

@@ -19,6 +19,12 @@ public interface ILevelManager {
     void addLevel(ServerPlayer player, int amount);
 
     /**
+     * @param amount amount to add (must be > 0)
+     * @param applyLimits if true, the addition will be affected by limits
+     */
+    void addLevel(ServerPlayer player, int amount, boolean applyLimits);
+
+    /**
      * @param amount amount to withdraw (works if the player can afford, must be > 0)
      * NOTE: the player skill level can't go below 1
      */
@@ -28,4 +34,10 @@ public interface ILevelManager {
      * @param amount amount to set (must be >= 1)
      */
     void setLevel(ServerPlayer player, int amount);
+
+    /**
+     * @param amount amount to set (must be >= 1)
+     * @param applyLimits if true, the change will be affected by limits
+     */
+    void setLevel(ServerPlayer player, int amount, boolean applyLimits);
 }
