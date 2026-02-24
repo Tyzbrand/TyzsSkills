@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.xp;
 
 import com.google.gson.JsonObject;
+import com.tyzsskills.Config;
 import com.tyzsskills.api.events.SkillXPChangeEvent;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.Level.LevelManager;
@@ -82,6 +83,8 @@ public class XpManager {
     public static void addXP(ServerPlayer player, float amount, boolean triggerOverlay) {
         if (amount <= 0) return;
 
+        if(LevelManager.isLevelMax(player)) return;
+
         setXPInternal(player, getXP(player) + amount, triggerOverlay);
     }
 
@@ -107,6 +110,7 @@ public class XpManager {
 
         int currentLevel = LevelManager.getLevel(player);
         float currentXp = getXP(player);
+        int levelLimit = Config.MAX_LEVEL.get();
 
         int spBuffer = 0;
         int levelBuffer = 0;
@@ -115,6 +119,8 @@ public class XpManager {
         var multiplierAttribute = player.getAttributeValue(AttributeRegistry.SP_MULTIPLIER);
 
         while (true) {
+            if (levelLimit != -1 && currentLevel >= levelLimit) break;
+
             LevelData data = getLevelData(currentLevel);
 
             if (currentXp >= data.goal()) {

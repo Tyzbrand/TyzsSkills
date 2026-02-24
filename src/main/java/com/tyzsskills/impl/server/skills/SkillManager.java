@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.SkillActionEvent;
 import com.tyzsskills.api.events.SkillLoadEvent;
@@ -226,7 +227,7 @@ public class SkillManager {
     }
 
     public void setSkillLevel(ServerPlayer player, String id, int lvl){
-        if(player == null || lvl < 0 || lvl > 10) return;
+        if(player == null || lvl < 0 || lvl > Constants.SKILL_MAX_LEVEL) return;
 
         var skill = getSkill(id.toLowerCase());
         if(skill == null) return;

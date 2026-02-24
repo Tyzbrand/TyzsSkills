@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.effects;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.core.Holder;
@@ -35,7 +36,7 @@ public class GenericEffects {
 
         ResourceLocation modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
 
-        int currentLvl = player.getPersistentData().getInt(skill.getID() + "_lvl");
+        int currentLvl = player.getData(PlayerData.DATA).getSkillLevel(skill.getID());
         if(currentLvl <= 0) return;
 
         int index = Math.min(currentLvl - 1, skill.getValues().size() - 1);
@@ -61,10 +62,10 @@ public class GenericEffects {
     }
 
     public static void RemoveEffect(Skill skill, ServerPlayer player){
-        ResourceLocation attributeID = ResourceLocation.parse(skill.getModifier());
+        ResourceLocation attributeID = ResourceLocation.tryParse(skill.getModifier());
         Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
 
-        if(attribute == null) {return;}
+        if(attribute == null || attributeID == null) {return;}
 
         Optional<Holder.Reference<Attribute>> attributeHolderOpt = BuiltInRegistries.ATTRIBUTE.getHolder(attributeID);
         if(attributeHolderOpt.isEmpty()) return;
@@ -82,12 +83,7 @@ public class GenericEffects {
 
             if(skill.getType() != Enums.SkillType.GENERIC){continue;}
 
-            String key = skill.getID() + "_lvl";
-
-            int value = newPlayer.getPersistentData().getInt(key);
-            if(value <= 0) continue;
-
-            ApplyEffect(skill, newPlayer);
+            if(newPlayer.getData(PlayerData.DATA).getSkillLevel(skill.getID()) > 0) ApplyEffect(skill, newPlayer);
         }
     }
 }

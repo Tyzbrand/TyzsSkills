@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.Level;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.api.events.SkillLevelChangeEvent;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.payloads.LevelDataUpdatePayload;
@@ -32,7 +33,19 @@ public class LevelManager {
 
     public static void addLevel(ServerPlayer player, int level){
         if(level <= 0) return;
-        setLevel(player, getLevel(player) + level);
+
+        int current = getLevel(player);
+        int limit = Config.MAX_LEVEL.get();
+        int amountToAdd = level;
+
+        if(limit != -1) {
+            int remainingSpace = limit - current;
+            amountToAdd = Math.min(level, Math.max(0, remainingSpace));
+        }
+
+        if(amountToAdd == 0) return;
+
+        setLevel(player, current + amountToAdd);
     }
 
     public static void removeLevel(ServerPlayer player, int level){
@@ -49,5 +62,9 @@ public class LevelManager {
 
     //Getter
     public static int getLevel(ServerPlayer player){return Math.max(1, player.getData(PlayerData.DATA).getLevel());}
+    public static boolean isLevelMax(ServerPlayer player){
+        int limit = Config.MAX_LEVEL.get();
+        return limit != -1 && getLevel(player) >= limit;
+    }
 
 }

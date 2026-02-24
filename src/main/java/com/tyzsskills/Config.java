@@ -47,6 +47,9 @@ public class Config {
     public static final ModConfigSpec.DoubleValue ATTRACTION_RADIUS;
     public static final ModConfigSpec.DoubleValue VILLAGERS_SPEED;
 
+    //Limits
+    public static final ModConfigSpec.IntValue MAX_SP;
+    public static final ModConfigSpec.IntValue MAX_LEVEL;
 
 
     //Xp values
@@ -136,6 +139,21 @@ public class Config {
                 .comment("Prevent manually placed block from providing xp")
                 .translation("config.common.tyzs_skills.prevent_placed_blocks_xp")
                 .define("prevent_placed_block_xp", true);
+
+        commonBuilder.pop();
+        commonBuilder.push("Limits");
+
+        MAX_SP = commonBuilder
+                .comment("Maximum SP a player can hold (-1 to disable limit)")
+                .translation("config.common.tyzs_skills.max_sp")
+                .defineInRange("max_sp", -1, -1, Integer.MAX_VALUE);
+
+        MAX_LEVEL = commonBuilder
+                .comment("Maximum level a player can reach (-1 to disable limit)")
+                .translation("config.common.tyzs_skills.max_lvl")
+                .defineInRange("max_lvl", -1, -1, Integer.MAX_VALUE);
+
+
 
         commonBuilder.pop();
         commonBuilder.push("Trait_details");

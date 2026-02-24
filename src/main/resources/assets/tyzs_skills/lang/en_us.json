@@ -174,6 +174,7 @@
   "tyzs_skills.configuration.Silver_tongue": "Silver tongue",
   "tyzs_skills.configuration.Trait_details": "Trait details",
   "tyzs_skills.configuration.inventory_button": "Inventory Button",
+  "tyzs_skills.configuration.Limits": "Limits",
 
   "config.common.tyzs_skills.refund_system" : "Enable Refund System",
   "config.common.tyzs_skills.refund_system_per" : "Refund percentage",
@@ -205,6 +206,8 @@
   "config.common.tyzs_skills.advancement_challenge_gain" : "XP from Challenges",
   "config.common.tyzs_skills.biome_gain" : "XP from New Biomes",
   "config.common.tyzs_skills.dimension_gain" : "XP from New Dimensions",
+  "config.common.tyzs_skills.max_sp" : "Max SP",
+  "config.common.tyzs_skills.max_lvl" : "Max Level",
 
   "config.client.tyzs_skills.creative_overlays" : "Overlays in Creative",
   "config.client.tyzs_skills.xp_overlay" : "Show XP Overlay",

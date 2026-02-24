@@ -2,13 +2,12 @@ package com.tyzsskills.impl.server.skills;
 
 import com.google.gson.JsonObject;
 import com.tyzsskills.Config;
+import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.events.SkillLoadEvent;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.model.Trait;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class SkillLoader {
 
         Integer maxLevel = GetSafeInt(source, "maximumLevel");
         if(maxLevel == null) maxLevel = 1;
-        maxLevel = Math.min(Math.max(maxLevel, 1), 10);
+        maxLevel = Math.min(Math.max(maxLevel, 1), Constants.SKILL_MAX_LEVEL);
 
         if(source.has("prices")){
             List<Integer> tempPrices = GetSafeIntArray(source, "prices");

@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.tyzsskills.Constants;
 import com.tyzsskills.impl.server.active.DebugManager;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.Skill;
@@ -132,7 +133,7 @@ public class MainCommand {
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
                                                 SkillManager.Get().getAllSkills().stream().map(Skill::getID), builder
                                         ))
-                                        .then(Commands.argument("level", IntegerArgumentType.integer(0, 10))
+                                        .then(Commands.argument("level", IntegerArgumentType.integer(0, Constants.SKILL_MAX_LEVEL))
                                             .executes(ctx -> {
                                                 var player = EntityArgument.getPlayer(ctx, "player");
                                                 var id = StringArgumentType.getString(ctx, "skill_id");
@@ -144,7 +145,7 @@ public class MainCommand {
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
                                                 SkillManager.Get().getAllSkills().stream().map(Skill::getID), builder
                                         ))
-                                        .then(Commands.argument("level", IntegerArgumentType.integer(1, 10))
+                                        .then(Commands.argument("level", IntegerArgumentType.integer(1, Constants.SKILL_MAX_LEVEL))
                                                 .executes(ctx -> {
                                                     var player = EntityArgument.getPlayer(ctx, "player");
                                                     var id = StringArgumentType.getString(ctx, "skill_id");
@@ -156,7 +157,7 @@ public class MainCommand {
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
                                                 SkillManager.Get().getAllSkills().stream().map(Skill::getID), builder
                                         ))
-                                        .then(Commands.argument("level", IntegerArgumentType.integer(1, 10))
+                                        .then(Commands.argument("level", IntegerArgumentType.integer(1, Constants.SKILL_MAX_LEVEL))
                                                 .executes(ctx -> {
                                                     var player = EntityArgument.getPlayer(ctx, "player");
                                                     var id = StringArgumentType.getString(ctx, "skill_id");
