@@ -1,6 +1,8 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
@@ -15,9 +17,11 @@ public class IronGutEffect extends SkillBehavior {
             return;
         }
 
+        if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
+
         if (player.isUsingItem() && player.getUseItem().is(Items.ROTTEN_FLESH)) {
             event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
-            NotifyClient(player, skill);
+            notifyClient(player, skill);
         }
     }
 }

@@ -23,7 +23,7 @@ public class VenomousAttackEffect extends SkillBehavior {
 
         if(player.getRandom().nextFloat() < (chancePercentage/100f)){
             target.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 1));
-            NotifyClient(player, skill);
+            notifyClient(player, skill);
         }
 
     }

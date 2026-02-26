@@ -66,7 +66,7 @@ public class ClientCache {
         clientXpLimit = limit;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp), false);
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp + ", limit: " + limit), false);
         }
     }
 
@@ -146,6 +146,7 @@ public class ClientCache {
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
             Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced config: " + clientConfigMap.size() + " entries"), false);
+            for (var entry : clientConfigMap.entrySet()) Minecraft.getInstance().player.displayClientMessage(Component.literal(entry.getKey() + "->" + entry.getValue()), false);
         }
 
     }

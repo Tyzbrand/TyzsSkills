@@ -26,18 +26,18 @@ public class XpEntity {
 
 
     //Setup
-    public static void LoadValues(JsonObject source){
+    public static void loadValues(JsonObject source){
         for(String categoryKey : source.keySet()){
 
             JsonObject category = source.getAsJsonObject(categoryKey);
 
             if(!category.has("xp")){
-                ErrorManager.RegisterLoadError("loading '" + categoryKey + "' in entity xp values", "Missing 'xp' value");
+                ErrorManager.registerLoadError("loading '" + categoryKey + "' in entity xp values", "Missing 'xp' value");
                 continue;
             }
 
             if(!category.has("entities")){
-                ErrorManager.RegisterLoadError("loading '" + categoryKey + "' in entity xp values", "Missing 'entity' list");
+                ErrorManager.registerLoadError("loading '" + categoryKey + "' in entity xp values", "Missing 'entity' list");
                 continue;
             }
 
@@ -54,7 +54,7 @@ public class XpEntity {
                     }
                     catch (Exception ex){
                         System.err.println("TyzSkills: Error when loading tags '" + entry + "' : " + ex.getMessage());
-                        ErrorManager.RegisterLoadError("parsing entity/tag '" + entry + "' in entity xp values", "Invalid ResourceLocation format");
+                        ErrorManager.registerLoadError("parsing entity/tag '" + entry + "' in entity xp values", "Invalid ResourceLocation format");
                     }
                 }
                 else{Xpvalues.put(entry, xpValue);}
@@ -62,23 +62,21 @@ public class XpEntity {
         }
     }
 
-    public static void ClearValues(){
+    public static void clearValues(){
         Xpvalues.clear();
         XpTagValues.clear();
         CACHE.clear();
     }
 
     //Actifs
-    public static void EntityKillProfit(Entity entity, ServerPlayer player){
-        var amount = GetEntityValue(entity) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+    public static void entityKillProfit(Entity entity, ServerPlayer player){
+        var amount = getEntityValue(entity) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
         if(amount > 0) XpManager.addXP(player, amount);
     }
 
 
     //Getters
-    public static boolean AreValuesLoaded() {return !Xpvalues.isEmpty() || !XpTagValues.isEmpty();}
-
-    public static float GetEntityValue(Entity entity) {
+    public static float getEntityValue(Entity entity) {
 
         var type = entity.getType();
 

@@ -20,18 +20,18 @@ public class XpFood {
 
     private static final Map<Item, Float> CACHE = new HashMap<>();
 
-    public static void LoadValues(JsonObject source){
+    public static void loadValues(JsonObject source){
         for(String categoryKey : source.keySet()){
 
             JsonObject category = source.getAsJsonObject(categoryKey);
 
             if(!category.has("xp")){
-                ErrorManager.RegisterLoadError("loading '" + categoryKey + "' in food xp values", "Missing 'xp' value");
+                ErrorManager.registerLoadError("loading '" + categoryKey + "' in food xp values", "Missing 'xp' value");
                 continue;
             }
 
             if(!category.has("food")){
-                ErrorManager.RegisterLoadError("loading '" + categoryKey + "' in food xp values", "Missing 'food' list");
+                ErrorManager.registerLoadError("loading '" + categoryKey + "' in food xp values", "Missing 'food' list");
                 continue;
             }
 
@@ -44,21 +44,21 @@ public class XpFood {
         }
     }
 
-    public static void ClearValues(){
+    public static void clearValues(){
         xpValues.clear();
         CACHE.clear();
     }
 
     //Actifs
-    public static void FoodEatProfit(ItemStack itemStack, ServerPlayer player){
-        var amount = GetFoodValue(itemStack, player) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+    public static void foodEatProfit(ItemStack itemStack, ServerPlayer player){
+        var amount = getFoodValue(itemStack, player) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
         if(amount > 0) XpManager.addXP(player, amount);
     }
 
 
 
     //Getters
-    public static float GetFoodValue(ItemStack itemStack, ServerPlayer player) {
+    public static float getFoodValue(ItemStack itemStack, ServerPlayer player) {
 
         var item = itemStack.getItem();
 

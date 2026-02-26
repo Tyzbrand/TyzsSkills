@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.model;
 
 public class FoodValuesPreset {
 
-    public static String GetDefaultXpValues(){
+    public static String getDefaultXpValues(){
             return """
         {
             "category_A": {

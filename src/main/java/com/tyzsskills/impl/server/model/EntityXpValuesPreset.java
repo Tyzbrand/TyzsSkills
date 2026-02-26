@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.server.model;
 
 public class EntityXpValuesPreset {
-    public static String GetDefaultXpValues(){
+    public static String getDefaultXpValues(){
         return """
         {
             "category_A": {

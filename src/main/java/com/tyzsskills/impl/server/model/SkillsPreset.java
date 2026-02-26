@@ -8,18 +8,18 @@ import java.util.List;
 
 public class SkillsPreset {
 
-    public static List<Skill> GetDefaultSkills(){
+    public static List<Skill> getDefaultSkills(){
         List<Skill> finalList = new ArrayList<>();
 
-        finalList.addAll(GetAbilitySkills());
-        finalList.addAll(GetFightSkills());
-        finalList.addAll(GetMiscSkills());
-        finalList.addAll(GetTraits());
+        finalList.addAll(getAbilitySkills());
+        finalList.addAll(getFightSkills());
+        finalList.addAll(getMiscSkills());
+        finalList.addAll(getTraits());
 
         return finalList;
     }
 
-    private static List<Skill> GetAbilitySkills(){
+    private static List<Skill> getAbilitySkills(){
         List<Skill> finalList = new ArrayList<>();
 
         finalList.add(new Skill(
@@ -153,7 +153,7 @@ public class SkillsPreset {
         return finalList;
     }
 
-    private static List<Skill> GetFightSkills(){
+    private static List<Skill> getFightSkills(){
         List<Skill> finalList = new ArrayList<>();
 
         finalList.add(new Skill(
@@ -303,7 +303,7 @@ public class SkillsPreset {
         return finalList;
     }
 
-    private static List<Skill> GetMiscSkills(){
+    private static List<Skill> getMiscSkills(){
         List<Skill> finalList = new ArrayList<>();
 
         finalList.add(new Skill(
@@ -437,7 +437,7 @@ public class SkillsPreset {
         return finalList;
     }
 
-    private static List<Skill> GetTraits(){
+    private static List<Skill> getTraits(){
         List<Skill> finalList = new ArrayList<>();
 
         finalList.add(new Trait(

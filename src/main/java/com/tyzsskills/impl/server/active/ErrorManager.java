@@ -12,7 +12,7 @@ public class ErrorManager {
 
     private static final List<MutableComponent> ERROR_PRINTS = new ArrayList<>();
 
-    public static void RegisterLoadError(String context, String detail){
+    public static void registerLoadError(String context, String detail){
         if(context == null || detail == null) return;
 
         var message = Component.literal("[TyzSkills] ")
@@ -23,7 +23,7 @@ public class ErrorManager {
         ERROR_PRINTS.add(message);
     }
 
-    public static void RegisterSkillError(String source, String error){
+    public static void registerSkillError(String source, String error){
         if(source == null || error == null) return;
 
         var message = Component.literal("[TyzSkills] ")
@@ -35,15 +35,15 @@ public class ErrorManager {
         ERROR_PRINTS.add(message);
     }
 
-    public static void ClearErrors(){
+    public static void clearErrors(){
         ERROR_PRINTS.clear();
     }
 
-    public static boolean HasErrors(){
+    public static boolean hasErrors(){
         return !ERROR_PRINTS.isEmpty();
     }
 
-    public static void PrintErrors(ServerPlayer player){
+    public static void printErrors(ServerPlayer player){
         if (ERROR_PRINTS.isEmpty()) return;
 
         player.sendSystemMessage(Component.literal("§c⚠ Tyz's Skills loaded with " + ERROR_PRINTS.size() + " error(s):"));

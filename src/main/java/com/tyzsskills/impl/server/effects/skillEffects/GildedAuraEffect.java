@@ -1,6 +1,8 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -17,6 +19,8 @@ public class GildedAuraEffect extends SkillBehavior {
         if (!(event.getEntity() instanceof Piglin piglin)) return;
         if (piglin.getLastHurtByMob() == player) return;
 
+        if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
+
         var brain = piglin.getBrain();
         if(brain.hasMemoryValue(MemoryModuleType.ANGRY_AT)){
             Optional<UUID> angryAt = brain.getMemory(MemoryModuleType.ANGRY_AT);
@@ -24,6 +28,6 @@ public class GildedAuraEffect extends SkillBehavior {
         }
 
         event.setCanceled(true);
-        NotifyClient(player, skill);
+        notifyClient(player, skill);
     }
 }

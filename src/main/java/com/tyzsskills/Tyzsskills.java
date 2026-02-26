@@ -1,11 +1,8 @@
 package com.tyzsskills;
 
 import com.tyzsskills.api.TyzsSkillsAPI;
-import com.tyzsskills.impl.server.active.AttributeRegistry;
-import com.tyzsskills.impl.server.active.ErrorManager;
-import com.tyzsskills.impl.server.active.SoundRegistry;
+import com.tyzsskills.impl.server.active.*;
 import com.tyzsskills.impl.server.attachments.*;
-import com.tyzsskills.impl.server.active.FileManager;
 import com.tyzsskills.impl.server.events.SkillEffectsEvents;
 import com.tyzsskills.impl.server.events.XpGainsEvents;
 import com.tyzsskills.impl.server.skills.SkillBehaviorRegistry;
@@ -17,14 +14,18 @@ import com.tyzsskills.impl.server.wrappers.*;
 import com.tyzsskills.impl.server.xp.XpManager;
 import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
+import com.tyzsskills.impl.server.xp.xpEvents.XpFood;
 import com.tyzsskills.integration.kubejs.JsEventsDelegate;
 import net.minecraft.world.entity.EntityType;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.event.server.ServerLifecycleEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -51,11 +52,12 @@ public class Tyzsskills {
     public Tyzsskills(IEventBus modEventBus, ModContainer modContainer) {
 
         //API
-        RegisterWrappers();
+        registerWrappers();
 
        //Register attributes
         AttributeRegistry.ATTRIBUTES.register(modEventBus);
-        modEventBus.addListener(this::RegisterAttributes);
+        modEventBus.addListener(this::registerAttributes);
+        modEventBus.addListener(this::reloadConfig);
 
         //Register Attachments
         BlockMarker.ATTACHMENT_TYPES.register(modEventBus);
@@ -80,10 +82,10 @@ public class Tyzsskills {
         NeoForge.EVENT_BUS.register(JsEventsDelegate.class);
 
         //Register network
-        modEventBus.addListener(this::RegisterPayloads);
+        modEventBus.addListener(this::registerPayloads);
 
         //Register commands
-        NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, this::RegisterCommands);
+        NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, this::registerCommands);
 
         // Register config (Gameplay)
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.COMMON_SPEC);
@@ -92,15 +94,15 @@ public class Tyzsskills {
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
 
         //Initialize skill behaviours
-        SkillBehaviorRegistry.Init();
+        SkillBehaviorRegistry.init();
     }
 
 
-    private void RegisterCommands(RegisterCommandsEvent event){
+    private void registerCommands(RegisterCommandsEvent event){
         event.getDispatcher().register(MainCommand.register());
     }
 
-    private void RegisterWrappers(){
+    private void registerWrappers(){
         TyzsSkillsAPI.registerSpManager(new SpWrapper());
         TyzsSkillsAPI.registerLevelManager(new LevelWrapper());
         TyzsSkillsAPI.registerXpManager(new XpWrapper());
@@ -108,7 +110,7 @@ public class Tyzsskills {
         TyzsSkillsAPI.registerPowerManager(new PowerWrapper());
     }
 
-    private void RegisterAttributes(EntityAttributeModificationEvent event) {
+    private void registerAttributes(EntityAttributeModificationEvent event) {
         if (!event.has(EntityType.PLAYER, AttributeRegistry.SKILL_XP_MULTIPLIER)) {
             event.add(EntityType.PLAYER, AttributeRegistry.SKILL_XP_MULTIPLIER);
         }
@@ -122,7 +124,18 @@ public class Tyzsskills {
         }
     }
 
-    private void RegisterPayloads(final RegisterPayloadHandlersEvent event){
+    private void reloadConfig(ModConfigEvent.Reloading event){
+        if(!event.getConfig().getModId().equals(MODID)) return;
+
+        if(event.getConfig().getType() != ModConfig.Type.COMMON) return;
+
+        var server = ServerLifecycleHooks.getCurrentServer();
+        if(server == null) return;
+
+        for(var player : server.getPlayerList().getPlayers()) AutoSyncClient.syncConfig(player);
+    }
+
+    private void registerPayloads(final RegisterPayloadHandlersEvent event){
         final PayloadRegistrar registrar = event.registrar("1");
 
         registrar.playToClient(
@@ -224,30 +237,33 @@ public class Tyzsskills {
     }
 
     @SubscribeEvent
-    public void OnServerBeforeStart(ServerAboutToStartEvent event) throws IOException {
-        var fileManager = FileManager.Get();
+    public void onServerBeforeStart(ServerAboutToStartEvent event) throws IOException {
+        var fileManager = FileManager.get();
         var server = event.getServer();
 
-        fileManager.InitPath(server);
-        fileManager.LoadDefaultJson(server);
-        fileManager.LoadDefaultXpValues(server);
-        fileManager.LoadDefaulltLevelPool(server);
+        fileManager.initPath(server);
+        fileManager.loadDefaultJson(server);
+        fileManager.loadDefaultXpValues(server);
+        fileManager.LoadDefaultLevelPool(server);
 
-        fileManager.ReadJsons(server);
-        fileManager.ReadXpValues(server);
-        fileManager.ReadLevelPool(server);
-        fileManager.ReadCustomSkills(server);
+        fileManager.readJsons(server);
+        fileManager.readXpValues(server);
+        fileManager.readLevelPool(server);
+        fileManager.readCustomSkills(server);
     }
 
     @SubscribeEvent
-    public void OnServerStop(ServerStoppingEvent event){
-        SkillManager.Get().clearSkills();
-        XpBlock.ClearValues();
-        XpEntity.ClearValues();
+    public void onServerStop(ServerStoppingEvent event){
+        SkillManager.get().clearSkills();
+        XpBlock.clearValues();
+        XpEntity.clearValues();
+        XpFood.clearValues();
         XpManager.clearPool();
 
-        ErrorManager.ClearErrors();
+        ErrorManager.clearErrors();
     }
+
+
 
 
 

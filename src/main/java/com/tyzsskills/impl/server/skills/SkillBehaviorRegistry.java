@@ -11,7 +11,7 @@ import java.util.Map;
 public class SkillBehaviorRegistry {
     private static final Map<String, SkillBehavior> behaviors = new HashMap<>();
 
-    public static void Init(){
+    public static void init(){
         behaviors.put("venomous_attack", new VenomousAttackEffect());
         behaviors.put("critical_hit", new CriticalHitEffect());
         behaviors.put("damage_deal", new DamageDealEffect());
@@ -48,7 +48,7 @@ public class SkillBehaviorRegistry {
         behaviors.put(id.toLowerCase(), behavior);
     }
 
-    public static SkillBehavior GetBehavior(String id){
+    public static SkillBehavior getBehavior(String id){
         return behaviors.getOrDefault(id.toLowerCase(), null);
     }
 }

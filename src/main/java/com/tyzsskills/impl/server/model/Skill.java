@@ -80,7 +80,7 @@ public class Skill implements ISkill {
 
 
     //Setters
-    public void SetBehaviour(SkillBehavior behaviour){
+    public void setBehaviour(SkillBehavior behaviour){
         if(behaviour != null) this.behaviour = behaviour;
     }
 
@@ -91,16 +91,16 @@ public class Skill implements ISkill {
             (skill, buffer) -> {
                 boolean isTrait = skill instanceof Trait;
                 buffer.writeBoolean(isTrait);
-                skill.WriteToBuffer(buffer);
+                skill.writeToBuffer(buffer);
             },
             (buffer) -> {
                 boolean isTrait = buffer.readBoolean();
-                if(isTrait) return Trait.ReadTraitFromBuffer(buffer);
-                else return Skill.ReadSkillFromBuffer(buffer);
+                if(isTrait) return Trait.readTraitFromBuffer(buffer);
+                else return Skill.readSkillFromBuffer(buffer);
             });
 
 
-    public void WriteToBuffer(FriendlyByteBuf buffer){
+    public void writeToBuffer(FriendlyByteBuf buffer){
         buffer.writeBoolean(active);
         buffer.writeUtf(id);
         buffer.writeInt(maximumLevel);
@@ -121,7 +121,7 @@ public class Skill implements ISkill {
         buffer.writeUtf(unit);
     }
 
-    public static @NotNull Skill ReadSkillFromBuffer(FriendlyByteBuf buffer){
+    public static @NotNull Skill readSkillFromBuffer(FriendlyByteBuf buffer){
         boolean active = buffer.readBoolean();
         String id = buffer.readUtf();
         int maxLevel = buffer.readInt();

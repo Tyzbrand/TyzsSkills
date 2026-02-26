@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.core.BlockPos;
@@ -35,6 +36,8 @@ public class RootCleaverEffect extends SkillBehavior {
     public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
         if (IS_TIMBERING.get()) return;
         if(!(event.getLevel() instanceof ServerLevel level)) return;
+
+        if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
 
         if (player.isShiftKeyDown()) return;
 
@@ -154,7 +157,7 @@ public class RootCleaverEffect extends SkillBehavior {
                 }
             }
 
-            if(logsBroken > 1) NotifyClient(player, skill);
+            if(logsBroken > 1) notifyClient(player, skill);
 
         } finally {
             IS_TIMBERING.set(false);

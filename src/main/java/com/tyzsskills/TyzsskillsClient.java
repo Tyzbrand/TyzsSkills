@@ -68,12 +68,12 @@ public class TyzsskillsClient {
     }
 
     @SubscribeEvent
-    public static void RegisterKeys(RegisterKeyMappingsEvent event){
+    public static void registerKeys(RegisterKeyMappingsEvent event){
         event.register(MainKeybind.OPEN_SKILL_KEY);
     }
 
     @SubscribeEvent
-    public static void OnClientTick(ClientTickEvent.Post event){
+    public static void onClientTick(ClientTickEvent.Post event){
         while (MainKeybind.OPEN_SKILL_KEY.consumeClick()){
             Minecraft.getInstance().setScreen(new MainGUI());
         }

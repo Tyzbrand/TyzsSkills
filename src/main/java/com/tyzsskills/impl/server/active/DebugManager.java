@@ -27,21 +27,21 @@ import java.io.IOException;
 public class DebugManager {
 
     //------------RELOAD------------
-    public static void DebugReload(MinecraftServer server) throws IOException {
-        ErrorManager.ClearErrors();
+    public static void reload(MinecraftServer server) throws IOException {
+        ErrorManager.clearErrors();
 
-        SkillManager.Get().clearSkills();
-        XpBlock.ClearValues();
-        XpEntity.ClearValues();
-        XpFood.ClearValues();
+        SkillManager.get().clearSkills();
+        XpBlock.clearValues();
+        XpEntity.clearValues();
+        XpFood.clearValues();
         XpManager.clearPool();
 
-        FileManager.Get().ReadJsons(server);
-        FileManager.Get().ReadLevelPool(server);
-        FileManager.Get().ReadXpValues(server);
-        FileManager.Get().ReadCustomSkills(server);
+        FileManager.get().readJsons(server);
+        FileManager.get().readLevelPool(server);
+        FileManager.get().readXpValues(server);
+        FileManager.get().readCustomSkills(server);
 
-        var manager = SkillManager.Get();
+        var manager = SkillManager.get();
 
         for(var player : server.getPlayerList().getPlayers()){
             XpManager.levelUpCheck(player);
@@ -57,15 +57,15 @@ public class DebugManager {
 
             PacketDistributor.sendToPlayer(player, new ResetPayload(Enums.ResetType.ALL));
 
-            AutoSyncClient.SyncSkillList(player);
-            AutoSyncClient.SyncConfig(player);
-            AutoSyncClient.SyncMainData(player);
-            AutoSyncClient.SyncStats(player);
-            AutoSyncClient.SyncSkillBookmarks(player);
-            AutoSyncClient.SyncSkillLevels(player);
+            AutoSyncClient.syncSkillList(player);
+            AutoSyncClient.syncConfig(player);
+            AutoSyncClient.syncMainData(player);
+            AutoSyncClient.syncStats(player);
+            AutoSyncClient.syncSkillBookmarks(player);
+            AutoSyncClient.syncSkillLevels(player);
 
-            if (player.hasPermissions(2) && ErrorManager.HasErrors()) {
-                ErrorManager.PrintErrors(player);
+            if (player.hasPermissions(2) && ErrorManager.hasErrors()) {
+                ErrorManager.printErrors(player);
             }
         }
 
@@ -96,7 +96,7 @@ public class DebugManager {
     private static void resetMetaData(ServerPlayer player){
         LevelManager.setLevel(player, 1);
         SpManager.setSP(player, 0);
-        PowerManager.SetPower(player, 0);
+        PowerManager.setPower(player, 0);
         XpManager.setXP(player, 0f);
         player.getData(ExplorationProgression.DATA).resetPlayerData();
     }
@@ -110,7 +110,7 @@ public class DebugManager {
     }
 
     private static void resetSkills(ServerPlayer player){
-        var manager = SkillManager.Get();
+        var manager = SkillManager.get();
 
         for (var skill : manager.getAllSkills()){
             if(manager.getPlayerSkillLevel(player, skill.getID().toLowerCase()) > 0){

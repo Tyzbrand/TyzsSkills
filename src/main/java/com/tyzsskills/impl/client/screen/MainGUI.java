@@ -19,6 +19,8 @@ import net.minecraft.world.entity.LivingEntity;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +45,15 @@ public class MainGUI extends Screen {
     private CustomTabButton fightBtn;
     private CustomTabButton miscBtn;
     private CustomTabButton bookmarksBtn;
+
+    private static final DecimalFormat SMART_FORMATTER;
+
+    static {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator(' ');
+        symbols.setDecimalSeparator('.');
+        SMART_FORMATTER = new DecimalFormat("#,##0.#", symbols);
+    }
 
     public MainGUI(){super(Component.translatable("gui.tyzs_skills.title"));}
 
@@ -531,10 +542,7 @@ public class MainGUI extends Screen {
 
     //Uilitaires
     public static String SmartFormat(float value){
-        if(value == (long)value){
-            return String.format("%d", (long)value);
-        }
-        else return String.format(Locale.US, "%.1f", value);
+        return SMART_FORMATTER.format(value);
     }
     private boolean isHovering(int mouseX, int mouseY, int x, int y, int width, int height){
         return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;

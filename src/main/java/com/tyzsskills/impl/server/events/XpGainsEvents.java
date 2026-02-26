@@ -29,7 +29,7 @@ public class XpGainsEvents {
 
     //Xp gains
     @SubscribeEvent (priority = EventPriority.LOWEST)
-    public static void OnBlockBreak(BlockEvent.BreakEvent event){
+    public static void onBlockBreak(BlockEvent.BreakEvent event){
         if(event.isCanceled()) return;
         if(!(event.getPlayer() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
@@ -41,20 +41,20 @@ public class XpGainsEvents {
         if(playerPlaced) BlockMarker.RemoveBlock(level, pos);
 
         if(Config.PREVENT_PLACED_BLOCK_XP.get() && playerPlaced) return;
-        XpBlock.BlockBreakProfit(event.getState(), player);
+        XpBlock.blockBreakProfit(event.getState(), player);
     }
 
     @SubscribeEvent
-    public static void OnEntityDeath(LivingDeathEvent event){
+    public static void onEntityDeath(LivingDeathEvent event){
         if(event.isCanceled()) return;
         if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
 
-        XpEntity.EntityKillProfit(event.getEntity(), player);
+        XpEntity.entityKillProfit(event.getEntity(), player);
     }
 
     @SubscribeEvent
-    public static void OnEntityWakeup(PlayerWakeUpEvent event){
+    public static void onEntityWakeup(PlayerWakeUpEvent event){
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if(!(player.level() instanceof ServerLevel level)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
@@ -77,7 +77,7 @@ public class XpGainsEvents {
     }
 
     @SubscribeEvent
-    public static void OnEntityFish(ItemFishedEvent event){
+    public static void onEntityFish(ItemFishedEvent event){
         if(event.isCanceled()) return;
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
@@ -90,18 +90,18 @@ public class XpGainsEvents {
     }
 
     @SubscribeEvent
-    public static void OnEntityEat(LivingEntityUseItemEvent.Finish event){
+    public static void onEntityEat(LivingEntityUseItemEvent.Finish event){
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
         if(!Config.EARN_XP_BY_EATING.get()) return;
         if(event.getItem().getFoodProperties(player) == null) return;
 
 
-        XpFood.FoodEatProfit(event.getItem(), player);
+        XpFood.foodEatProfit(event.getItem(), player);
     }
 
     @SubscribeEvent
-    public static void OnItemCrafted(PlayerEvent.ItemCraftedEvent event){
+    public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event){
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
 
@@ -113,7 +113,7 @@ public class XpGainsEvents {
     }
 
     @SubscribeEvent
-    public static void OnBabySpawn(BabyEntitySpawnEvent event){
+    public static void onBabySpawn(BabyEntitySpawnEvent event){
         if (!(event.getCausedByPlayer() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
 
@@ -125,7 +125,7 @@ public class XpGainsEvents {
     }
 
     @SubscribeEvent
-    public static void OnAdvancement(AdvancementEvent.AdvancementEarnEvent event) {
+    public static void onAdvancement(AdvancementEvent.AdvancementEarnEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
         if (event.getAdvancement().id().toString().startsWith("minecraft:recipes/")) return;
@@ -150,7 +150,7 @@ public class XpGainsEvents {
 
 
     @SubscribeEvent
-    public static void OnPlayerTick(PlayerTickEvent.Post event){
+    public static void onPlayerTick(PlayerTickEvent.Post event){
         if (event.getEntity().tickCount % 100 != 0) return;
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;

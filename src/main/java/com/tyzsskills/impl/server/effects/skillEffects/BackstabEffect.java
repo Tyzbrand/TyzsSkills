@@ -21,7 +21,7 @@ public class BackstabEffect extends SkillBehavior {
                 int index = Math.min(lvl - 1, values.size() - 1);
                 float bonusPercentage = 1 + (values.get(index) / 100f);
                 event.setAmount(event.getAmount() * bonusPercentage);
-                NotifyClient(player, skill);
+                notifyClient(player, skill);
             }
         }
 

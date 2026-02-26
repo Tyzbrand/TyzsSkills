@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @ApiStatus.Internal
 public class GenericEffects {
-    public static void ApplyEffect(Skill skill, ServerPlayer player){
+    public static void applyEffect(Skill skill, ServerPlayer player){
 
         ResourceLocation attributeID = ResourceLocation.tryParse(skill.getModifier());
         if(attributeID == null) return;
@@ -61,7 +61,7 @@ public class GenericEffects {
         instance.addPermanentModifier(modifier);
     }
 
-    public static void RemoveEffect(Skill skill, ServerPlayer player){
+    public static void removeEffect(Skill skill, ServerPlayer player){
         ResourceLocation attributeID = ResourceLocation.tryParse(skill.getModifier());
         Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
 
@@ -78,12 +78,12 @@ public class GenericEffects {
         instance.removeModifier(modifierID);
     }
 
-    public static void RestaureEffects(ServerPlayer newPlayer){
-        for(var skill : SkillManager.Get().getAllSkills()){
+    public static void restoreEffects(ServerPlayer newPlayer){
+        for(var skill : SkillManager.get().getAllSkills()){
 
             if(skill.getType() != Enums.SkillType.GENERIC){continue;}
 
-            if(newPlayer.getData(PlayerData.DATA).getSkillLevel(skill.getID()) > 0) ApplyEffect(skill, newPlayer);
+            if(newPlayer.getData(PlayerData.DATA).getSkillLevel(skill.getID()) > 0) applyEffect(skill, newPlayer);
         }
     }
 }

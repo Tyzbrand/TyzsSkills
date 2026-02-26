@@ -22,7 +22,7 @@ public class ExperienceBoostEffect extends SkillBehavior {
 
         if(bonusValue > 0) {
             player.giveExperiencePoints(bonusValue);
-            NotifyClient(player, skill);
+            notifyClient(player, skill);
         }
 
     }

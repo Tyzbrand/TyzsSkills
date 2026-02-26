@@ -44,7 +44,7 @@ public class GreenThumbEffect extends SkillBehavior {
         if(player.getRandom().nextFloat() < (chancePercentage / 100f)){
             BlockPos position = event.getPos();
             Block.dropResources(state, serverLevel, position, serverLevel.getBlockEntity(position), player, player.getMainHandItem());
-            NotifyClient(player, skill);
+            notifyClient(player, skill);
         }
 
     }

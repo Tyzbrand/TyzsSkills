@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -13,6 +14,8 @@ public class DeepSightEffect extends SkillBehavior {
     @Override
     public void onPlayerTick(ServerPlayer player, int lvl, ISkill skill) {
         if(player.tickCount % 20 != 0) return;
+
+        if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
 
         var world = player.level();
         var pos = player.blockPosition();

@@ -112,7 +112,7 @@ public class CompatibilityManager {
 
     private static void migrateSkill(ServerPlayer player, LegacyData data, String oldKey, String newId){
         double value = data.getOldValue(oldKey);
-        if(value > 0) SkillManager.Get().setSkillLevel(player, newId, (int)value);
+        if(value > 0) SkillManager.get().setSkillLevel(player, newId, (int)value);
     }
 
 
@@ -157,22 +157,22 @@ public class CompatibilityManager {
             }
 
             if(oldData.contains("TRAIT_POWER")){
-                PowerManager.SetPower(player, oldData.getInt("TRAIT_POWER"));
+                PowerManager.setPower(player, oldData.getInt("TRAIT_POWER"));
                 oldData.remove("TRAIT_POWER");
             }
 
-            for (var skill : SkillManager.Get().getAllSkills()){
+            for (var skill : SkillManager.get().getAllSkills()){
                 var id = skill.getID().toLowerCase();
                 var lvlKey = id + "_lvl";
                 var bkKey = id + "_bookmark";
 
                 if(oldData.contains(lvlKey)){
-                    SkillManager.Get().setSkillLevel(player, id, oldData.getInt(lvlKey));
+                    SkillManager.get().setSkillLevel(player, id, oldData.getInt(lvlKey));
                     oldData.remove(lvlKey);
                 }
 
                 if(oldData.contains(bkKey)){
-                    SkillManager.Get().bookmarkSkill(player, id);
+                    SkillManager.get().bookmarkSkill(player, id);
                     oldData.remove(bkKey);
                 }
             }

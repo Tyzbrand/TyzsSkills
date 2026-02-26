@@ -16,103 +16,101 @@ import java.util.List;
 @ApiStatus.Internal
 public class SkillLoader {
 
-    public static void LoadSKill(JsonObject source){
+    public static void loadSkill(JsonObject source){
 
-        String id = GetSafeString(source, "id");
-        if(id == null || id.isBlank()) {ErrorManager.RegisterSkillError("Unknow", "invalid id"); return;}
+        String id = getSafeString(source, "id");
+        if(id == null || id.isBlank()) {ErrorManager.registerSkillError("Unknow", "invalid id"); return;}
         id = id.toLowerCase();
 
-        Boolean state = GetSafeBool(source, "active");
+        Boolean state = getSafeBool(source, "active");
         if(state == null) state = false;
         if(!state) return; //Les skills désactivés de sont pas chargés
 
         List<Integer> prices = new ArrayList<>();
         List<Float> values = new ArrayList<>();
 
-        Integer maxLevel = GetSafeInt(source, "maximumLevel");
+        Integer maxLevel = getSafeInt(source, "maximumLevel");
         if(maxLevel == null) maxLevel = 1;
         maxLevel = Math.min(Math.max(maxLevel, 1), Constants.SKILL_MAX_LEVEL);
 
         if(source.has("prices")){
-            List<Integer> tempPrices = GetSafeIntArray(source, "prices");
-            if(tempPrices == null) {ErrorManager.RegisterSkillError(id, "invalid price list"); return;}
+            List<Integer> tempPrices = getSafeIntArray(source, "prices");
+            if(tempPrices == null) {ErrorManager.registerSkillError(id, "invalid price list"); return;}
             prices = tempPrices;
         }
 
         if(source.has("values")){
-            List<Float> tempValues = GetSafeFloatArray(source, "values");
-            if(tempValues == null) {ErrorManager.RegisterSkillError(id, "invalid value list"); return;}
+            List<Float> tempValues = getSafeFloatArray(source, "values");
+            if(tempValues == null) {ErrorManager.registerSkillError(id, "invalid value list"); return;}
             values = tempValues;
         }
 
-        Enums.SkillType type = GetSafeType(source, "type");
-        if(type == null) {ErrorManager.RegisterSkillError(id, "invalid skill type"); return;}
+        Enums.SkillType type = getSafeType(source, "type");
+        if(type == null) {ErrorManager.registerSkillError(id, "invalid skill type"); return;}
 
-        Enums.CategoryType category = GetSafeCategory(source, "category");
+        Enums.CategoryType category = getSafeCategory(source, "category");
         if(category == null) category = Enums.CategoryType.MISC;
 
-        Boolean purchasable = GetSafeBool(source,"purchasable");
+        Boolean purchasable = getSafeBool(source,"purchasable");
         if(purchasable == null) purchasable = true;
 
-        AttributeModifier.Operation operation = GetSafeOperation(source, "operation");
-        String modifier = GetSafeString(source, "modifier");
+        AttributeModifier.Operation operation = getSafeOperation(source, "operation");
+        String modifier = getSafeString(source, "modifier");
 
 
-        String icon = GetSafeString(source, "icon");
+        String icon = getSafeString(source, "icon");
         if(icon == null) icon = "tyzs_skills:textures/gui/skills/default.png";
 
-        String displayName = GetSafeString(source, "displayName");
+        String displayName = getSafeString(source, "displayName");
         if(displayName == null) displayName = "Unknown skill";
 
-        String description = GetSafeString(source, "description");
+        String description = getSafeString(source, "description");
         if(description == null) description = "Missing description";
 
-        String unit = GetSafeString(source, "unit");
+        String unit = getSafeString(source, "unit");
         if(unit == null) unit = "";
 
 
-        Integer powerWeight = GetSafeInt(source, "powerWeight");
+        Integer powerWeight = getSafeInt(source, "powerWeight");
         if(powerWeight == null) powerWeight = 0;
         powerWeight = Math.max(0, powerWeight);
 
 
         if(type == Enums.SkillType.TRAIT || powerWeight > 0){
 
-            if(!Config.TRAIT_SYSTEM.get()) return;
-
             int price = prices.isEmpty()? 0 : prices.getFirst();
 
-            SkillManager.Get().registerSKill(new Trait(
+            SkillManager.get().registerSKill(new Trait(
                     state, id, powerWeight, price, purchasable, icon, displayName, description)
             );
             return;
         }
 
         if(prices.size() < maxLevel) {
-            ErrorManager.RegisterSkillError(id, "Not enough prices defined. Expected " + maxLevel + ", got " + prices.size());
+            ErrorManager.registerSkillError(id, "Not enough prices defined. Expected " + maxLevel + ", got " + prices.size());
             return;
         }
 
         if(!values.isEmpty() && prices.size() != values.size()) {
-            ErrorManager.RegisterSkillError(id, "Array Size Mismatch: 'prices' and 'values' must have the same length.");
+            ErrorManager.registerSkillError(id, "Array Size Mismatch: 'prices' and 'values' must have the same length.");
             return;
         }
 
         if(operation == null){
-            if(type == Enums.SkillType.GENERIC || type == Enums.SkillType.CUSTOM) {ErrorManager.RegisterSkillError(id, "Missing 'operation' for GENERIC/CUSTOM skill."); return;}
+            if(type == Enums.SkillType.GENERIC || type == Enums.SkillType.CUSTOM) {ErrorManager.registerSkillError(id, "Missing 'operation' for GENERIC/CUSTOM skill."); return;}
             else operation = AttributeModifier.Operation.ADD_VALUE;
         }
-        if(modifier == null && (type == Enums.SkillType.GENERIC || type == Enums.SkillType.CUSTOM)) {ErrorManager.RegisterSkillError(id, "Missing modifier"); return;}
+        if(modifier == null && (type == Enums.SkillType.GENERIC || type == Enums.SkillType.CUSTOM)) {ErrorManager.registerSkillError(id, "Missing modifier"); return;}
 
 
-        SkillManager.Get().registerSKill(
+        SkillManager.get().registerSKill(
                 new Skill(state, id, maxLevel, prices, values, type,
                         category, modifier, operation, purchasable, icon, displayName, description, unit));
     }
 
 
     //Verifications
-    private static String GetSafeString(JsonObject obj, String key){
+    private static String getSafeString(JsonObject obj, String key){
         if(obj == null || key == null) return null;
 
         var value = obj.get(key);
@@ -122,7 +120,7 @@ public class SkillLoader {
     }
 
 
-    private static Integer GetSafeInt(JsonObject obj, String key){
+    private static Integer getSafeInt(JsonObject obj, String key){
         if(obj == null || key == null) return null;
 
         var value = obj.get(key);
@@ -131,7 +129,7 @@ public class SkillLoader {
         return value.getAsInt();
     }
 
-    private static Boolean GetSafeBool(JsonObject obj, String key){
+    private static Boolean getSafeBool(JsonObject obj, String key){
         if(obj == null || key == null) return null;
 
         var value = obj.get(key);
@@ -140,7 +138,7 @@ public class SkillLoader {
         return value.getAsBoolean();
     }
 
-    private static List<Integer> GetSafeIntArray(JsonObject obj, String key){
+    private static List<Integer> getSafeIntArray(JsonObject obj, String key){
         if(obj == null || key == null) return null;
 
         var arrayValue = obj.get(key);
@@ -154,7 +152,7 @@ public class SkillLoader {
         return prices;
     }
 
-    private static List<Float> GetSafeFloatArray(JsonObject obj, String key){
+    private static List<Float> getSafeFloatArray(JsonObject obj, String key){
         if(obj == null || key == null) return null;
 
         var arrayValue = obj.get(key);
@@ -168,7 +166,7 @@ public class SkillLoader {
         return values;
     }
 
-    private static Enums.SkillType GetSafeType(JsonObject obj, String key){
+    private static Enums.SkillType getSafeType(JsonObject obj, String key){
         if (obj == null || key == null) return null;
 
         var typeValue = obj.get(key);
@@ -184,7 +182,7 @@ public class SkillLoader {
         return type;
     }
 
-    private static Enums.CategoryType GetSafeCategory(JsonObject obj, String key){
+    private static Enums.CategoryType getSafeCategory(JsonObject obj, String key){
         if (obj == null || key == null) return null;
 
         var typeValue = obj.get(key);
@@ -200,7 +198,7 @@ public class SkillLoader {
         return category;
     }
 
-    private static AttributeModifier.Operation GetSafeOperation(JsonObject obj, String key){
+    private static AttributeModifier.Operation getSafeOperation(JsonObject obj, String key){
         if (obj == null || key == null) return null;
 
         var typeValue = obj.get(key);

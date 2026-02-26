@@ -1,6 +1,9 @@
 package com.tyzsskills.impl.server.events;
 
+import com.tyzsskills.Config;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.Skill;
+import com.tyzsskills.impl.server.model.Trait;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -17,281 +20,294 @@ import org.jetbrains.annotations.ApiStatus;
 public class SkillEffectsEvents {
 
     @SubscribeEvent
-    public static void OnPlayerAttack(LivingIncomingDamageEvent event){
+    public static void onPlayerAttack(LivingIncomingDamageEvent event){
         if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
+        if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
+        var manager = SkillManager.get();
 
-        if (event.getSource().getEntity() instanceof ServerPlayer player){
-            for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+        boolean canUseTrait = canUseTraits(player);
 
-                    skill.getBehavior().onPlayerAttack(event, player, lvl, skill);
-                }
+        for (Skill skill : manager.getAllSkills()){
+            if(!skill.HasBehaviour()) continue;
+            if(skill instanceof Trait && !canUseTrait) continue;
 
-            }
+            var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+            if( lvl<= 0) continue;
+
+            skill.getBehavior().onPlayerAttack(event, player, lvl, skill);
+
         }
     }
 
     @SubscribeEvent
-    public static void OnIncomingDamage(LivingIncomingDamageEvent event){
+    public static void onIncomingDamage(LivingIncomingDamageEvent event){
         if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        var manager = SkillManager.get();
 
-        if (event.getEntity() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
+
             for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
+                if(!skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
 
-                    skill.getBehavior().onIncomingDamage(event, player, lvl, skill);
-                }
-
+                skill.getBehavior().onIncomingDamage(event, player, lvl, skill);
             }
-        }
     }
 
     @SubscribeEvent
-    public static void OnPlayerKill(LivingDeathEvent event){
+    public static void onPlayerKill(LivingDeathEvent event){
         if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
+        if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
+        var manager = SkillManager.get();
 
-        if (event.getSource().getEntity() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
+
             for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
+                if(!skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
 
-                    skill.getBehavior().onPlayerKill(event, player, lvl, skill);
-                }
-
+                skill.getBehavior().onPlayerKill(event, player, lvl, skill);
             }
-        }
     }
 
     @SubscribeEvent
-    public static void OnStartingEffect(MobEffectEvent.Added event){
-        var manager = SkillManager.Get();
+    public static void onStartingEffect(MobEffectEvent.Added event){
+        var manager = SkillManager.get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        if (event.getEntity() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
+
             for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
+                if(!skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
 
-                    skill.getBehavior().onStartingEffect(event, player, lvl, skill);
-                }
-
+                skill.getBehavior().onStartingEffect(event, player, lvl, skill);
             }
-        }
     }
 
     @SubscribeEvent
-    public static void OnPlayerBreakBlock(BlockEvent.BreakEvent event){
+    public static void onPlayerBreakBlock(BlockEvent.BreakEvent event){
         if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
+        if (!(event.getPlayer() instanceof ServerPlayer player)) return;
+        var manager = SkillManager.get();
 
-        if (event.getPlayer() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
+
             for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
+                if(!skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
 
-                    skill.getBehavior().onPlayerBreakBlock(event, player, lvl, skill);
-                }
+                skill.getBehavior().onPlayerBreakBlock(event, player, lvl, skill);
 
             }
-        }
     }
 
     @SubscribeEvent
-    public static void OnPlayerFinishUsingItem(LivingEntityUseItemEvent.Finish event){
-        var manager = SkillManager.Get();
+    public static void onPlayerFinishUsingItem(LivingEntityUseItemEvent.Finish event){
+        var manager = SkillManager.get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        if (event.getEntity() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
+
             for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
+                if(!skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
 
-                    skill.getBehavior().onPlayerFinishUsingItem(event, player, lvl, skill);
-                }
-
+                skill.getBehavior().onPlayerFinishUsingItem(event, player, lvl, skill);
             }
-        }
     }
 
     @SubscribeEvent
-    public static void OnPickupXp(PlayerXpEvent.PickupXp event){
+    public static void onPickupXp(PlayerXpEvent.PickupXp event){
         if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        var manager = SkillManager.get();
 
-        if (event.getEntity() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
+
             for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
+                if(!skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
 
-                    skill.getBehavior().onPickupXp(event, player, lvl, skill);
-                }
-
+                skill.getBehavior().onPickupXp(event, player, lvl, skill);
             }
-        }
     }
 
     @SubscribeEvent
-    public static void OnEffectApplicable(MobEffectEvent.Applicable event){
-        var manager = SkillManager.Get();
+    public static void onEffectApplicable(MobEffectEvent.Applicable event){
+        var manager = SkillManager.get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        if (event.getEntity() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
+
             for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
+                if(!skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
 
-                    skill.getBehavior().onEffectApplicable(event, player, lvl, skill);
-                }
-
+                skill.getBehavior().onEffectApplicable(event, player, lvl, skill);
             }
-        }
     }
 
     @SubscribeEvent
-    public static void OnTargetChange(LivingChangeTargetEvent event){
+    public static void onTargetChange(LivingChangeTargetEvent event){
         if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        var manager = SkillManager.get();
 
-        if (event.getNewAboutToBeSetTarget() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
+
             for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
+                if(!skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
 
-                    skill.getBehavior().onTargetChange(event, player, lvl, skill);
-                }
-
+                skill.getBehavior().onTargetChange(event, player, lvl, skill);
             }
-        }
     }
 
     @SubscribeEvent
-    public static void OnPlayerDeath(LivingDeathEvent event){
+    public static void onPlayerDeath(LivingDeathEvent event){
         if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        var manager = SkillManager.get();
 
-        if (event.getEntity() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
+
             for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
+                if(!skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
 
-                    skill.getBehavior().onPlayerDeath(event, player, lvl, skill);
-                }
-
+                skill.getBehavior().onPlayerDeath(event, player, lvl, skill);
             }
-        }
     }
 
-    public static void OnPlayerClone(PlayerEvent.Clone event){  //DEFERRED ABOVE
-        var manager = SkillManager.Get();
+    public static void onPlayerClone(PlayerEvent.Clone event){  //DEFERRED ABOVE
+        var manager = SkillManager.get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        if (event.getEntity() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
+
             for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
+                if(!skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
 
-                    skill.getBehavior().onPlayerClone(event, player, lvl, skill);
-                }
-
+                skill.getBehavior().onPlayerClone(event, player, lvl, skill);
             }
-        }
     }
 
     @SubscribeEvent
-    public static void OnNoiseAtPlayer(PlayLevelSoundEvent.AtEntity event){
+    public static void onNoiseAtPlayer(PlayLevelSoundEvent.AtEntity event){
         if(event.isCanceled()) return;
-        var manager = SkillManager.Get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        var manager = SkillManager.get();
 
-        if (event.getEntity() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
+
             for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
+                if(!skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
 
-                    skill.getBehavior().OnNoiseAtPlayer(event, player, lvl, skill);
-                }
-
+                skill.getBehavior().OnNoiseAtPlayer(event, player, lvl, skill);
             }
-        }
     }
 
     @SubscribeEvent
-    public static void OnPlayerWakeUp(PlayerWakeUpEvent event){
-        var manager = SkillManager.Get();
+    public static void onPlayerWakeUp(PlayerWakeUpEvent event){
+        var manager = SkillManager.get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        if (event.getEntity() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
+
             for (Skill skill : manager.getAllSkills()){
-                if(skill.HasBehaviour()){
+                if(!skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
 
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
 
-                    skill.getBehavior().OnPlayerWakeUp(event, player, lvl, skill);
-                }
-
+                skill.getBehavior().OnPlayerWakeUp(event, player, lvl, skill);
             }
-        }
     }
 
 
     private final static String[] playerTickSkills = {"magnet", "silver_tongue", "deep_sight"};
     @SubscribeEvent
-    public static void OnPlayerTick(PlayerTickEvent.Post event){
-        var manager = SkillManager.Get();
+    public static void onPlayerTick(PlayerTickEvent.Post event){
+        var manager = SkillManager.get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        if (event.getEntity() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
 
             for(var id : playerTickSkills){
-                var skill = SkillManager.Get().getSkill(id.toLowerCase());
+                var skill = SkillManager.get().getSkill(id.toLowerCase());
 
-                if(skill != null && skill.HasBehaviour()){
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
-                    skill.getBehavior().onPlayerTick(player, lvl, skill);
-                }
+                if(skill == null || !skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
+
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
+
+                skill.getBehavior().onPlayerTick(player, lvl, skill);
             }
-        }
     }
 
     private final static String[] entityVisibility = {"stealth"};
     @SubscribeEvent
-    public static void OnLivingVisibility(LivingEvent.LivingVisibilityEvent event){
-        var manager = SkillManager.Get();
+    public static void onLivingVisibility(LivingEvent.LivingVisibilityEvent event){
+        var manager = SkillManager.get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        if (event.getEntity() instanceof ServerPlayer player){
+        boolean canUseTrait = canUseTraits(player);
 
             for(var id : entityVisibility){
-                var skill = SkillManager.Get().getSkill(id.toLowerCase());
+                var skill = SkillManager.get().getSkill(id.toLowerCase());
 
-                if(skill != null && skill.HasBehaviour()){
-                    var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                    if( lvl<= 0) continue;
-                    skill.getBehavior().onLivingVisibility(event, player, lvl, skill);
-                }
+                if(skill == null || !skill.HasBehaviour()) continue;
+                if(skill instanceof Trait && !canUseTrait) continue;
+
+                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+                if( lvl<= 0) continue;
+
+                skill.getBehavior().onLivingVisibility(event, player, lvl, skill);
             }
-        }
+    }
+
+    //Util
+    private static boolean canUseTraits(ServerPlayer player){
+        return Config.TRAIT_SYSTEM.get() && LevelManager.getLevel(player) >= Config.TRAIT_UNLOCK_LEVEL.get();
     }
 }
+

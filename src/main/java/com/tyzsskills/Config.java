@@ -54,7 +54,8 @@ public class Config {
     public static final ModConfigSpec.IntValue MAX_SP_GAIN;
 
     public static final String MAX_XP_KEY = "max_xp";
-    public static final ModConfigSpec.DoubleValue XP_DAILY_LIMIT;
+    public static final ModConfigSpec.DoubleValue XP_LIMIT;
+
 
     public static final ModConfigSpec.LongValue CYCLE_DURATION;
     public static final ModConfigSpec.EnumValue<Enums.LimitType> LIMIT_TYPE;
@@ -167,7 +168,7 @@ public class Config {
                 .translation("config.common.tyzs_skills.max_sp_gain")
                 .defineInRange("max_sp_gain", -1, -1, Integer.MAX_VALUE);
 
-        XP_DAILY_LIMIT = commonBuilder
+        XP_LIMIT = commonBuilder
                 .comment("Maximum XP a player can earn within a defined period of time (-1 to disable limit)")
                 .translation("config.common.tyzs_skills.xp_daily")
                 .defineInRange("xp_daily", -1, -1, Double.MAX_VALUE);

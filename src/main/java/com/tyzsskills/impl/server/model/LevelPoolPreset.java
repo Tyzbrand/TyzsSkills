@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.model;
 
 public class LevelPoolPreset {
 
-    public static String GetDefaultRewardValues(){
+    public static String getDefaultRewardValues(){
         return """
         {
             "1" : {"goal" : 350,"reward" : 5},

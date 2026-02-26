@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.impl.server.model.SkillBehavior;
 import com.tyzsskills.impl.server.skills.SkillManager;
@@ -42,6 +43,8 @@ public class DeepLodeEffect extends SkillBehavior {
     public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
         if (IS_MINING.get()) return;
         if(!(event.getLevel() instanceof ServerLevel level)) return;
+
+        if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
 
         if (player.isShiftKeyDown()) return;
 
@@ -105,11 +108,11 @@ public class DeepLodeEffect extends SkillBehavior {
 
                     List<ItemStack> drops = currentState.getDrops(lootParams);
 
-                    if (SkillManager.Get().getPlayerSkillLevel(player, "refiner") > 0 && !hasSilkTouch) {
+                    if (SkillManager.get().getPlayerSkillLevel(player, "refiner") > 0 && !hasSilkTouch) {
                         List<ItemStack> smelted = RefinerEffect.smeltDrops(level, drops);
                         if (smelted != null) {
                             drops = smelted;
-                            NotifyClient(player, SkillManager.Get().getSkill("refiner"));
+                            notifyClient(player, SkillManager.get().getSkill("refiner"));
                         }
                     }
 
@@ -154,7 +157,7 @@ public class DeepLodeEffect extends SkillBehavior {
                 }
             }
 
-            if(blocksBroken > 1) NotifyClient(player, skill);
+            if(blocksBroken > 1) notifyClient(player, skill);
 
         } finally {
             IS_MINING.set(false);

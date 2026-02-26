@@ -33,7 +33,7 @@ import org.jetbrains.annotations.ApiStatus;
 public class SkillManager {
 
     private static final SkillManager INSTANCE = new SkillManager();
-    public static SkillManager Get() {return INSTANCE;}
+    public static SkillManager get() {return INSTANCE;}
 
     private final Map<String, Skill> skillCollection = new HashMap<>();
 
@@ -47,8 +47,8 @@ public class SkillManager {
 
         if(preEvent.isCanceled()) return;
 
-        var behaviour = SkillBehaviorRegistry.GetBehavior(skill.getID());
-        if(behaviour != null){skill.SetBehaviour(behaviour);}
+        var behaviour = SkillBehaviorRegistry.getBehavior(skill.getID());
+        if(behaviour != null){skill.setBehaviour(behaviour);}
 
         if(!skillCollection.containsKey(skill.getID())) {
             skillCollection.put(skill.getID(), skill);
@@ -80,12 +80,15 @@ public class SkillManager {
         int currentLvl = data.getSkillLevel(id);
         if(currentLvl >= skill.getMaximumLevel()) return false;
 
-        if(skill instanceof Trait trait){
-            var attr = player.getAttribute(AttributeRegistry.TRAIT_POWER);
-            if(attr == null) return false;
+        if(skill instanceof Trait trait) {
+            if (currentLvl == 0) {
+                var attr = player.getAttribute(AttributeRegistry.TRAIT_POWER);
+                if (attr == null) return false;
 
-            int freeSpace = (int)attr.getValue() - PowerManager.GetPower(player);
-            if(trait.getPowerWeight() > freeSpace)return false;
+                int freeSpace = (int) attr.getValue() - PowerManager.getPower(player);
+                if (trait.getPowerWeight() > freeSpace) return false;
+            }
+        }
 
             var prices = skill.getPrices();
             if(currentLvl >= prices.size()) return false;
@@ -94,46 +97,15 @@ public class SkillManager {
 
             if(SpManager.getSP(player) >= price){
                 SpManager.removeSP(player, price);
-                data.setSkillLevel(id, currentLvl+1);
-
-                PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.getID(), currentLvl+1));
                 PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
-
                 player.getData(StatsTracker.DATA).addSpSpent(price);
 
-                PowerManager.AddPower(player, trait.getPowerWeight());
+                setSkillLevel(player, id, currentLvl + 1);
 
                 NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
-                NeoForge.EVENT_BUS.post(new SkillActionEvent.LevelChange(skill, player, currentLvl, currentLvl+1));
-
                 return true;
             }
-        }
-        else{
-            var prices = skill.getPrices();
-            if(currentLvl >= prices.size()) return false;
-            int price = prices.get(currentLvl);
-
-
-            if(SpManager.getSP(player) >= price){
-                SpManager.removeSP(player, price);
-                data.setSkillLevel(id, currentLvl+1);
-
-                PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.getID(), currentLvl+1));
-                PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
-
-                player.getData(StatsTracker.DATA).addSpSpent(price);
-
-                if(skill.getType() == Enums.SkillType.GENERIC) GenericEffects.ApplyEffect(skill, player);
-
-                NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
-                NeoForge.EVENT_BUS.post(new SkillActionEvent.LevelChange(skill, player, currentLvl, currentLvl+1));
-
-                return true;
-            }
-        }
-        return false;
-
+            return false;
     }
 
     public boolean refundSkill(ServerPlayer player, String id)
@@ -167,7 +139,7 @@ public class SkillManager {
                 if(att == null) return false;
 
                 int max = (int)att.getValue();
-                int current = PowerManager.GetPower(player);
+                int current = PowerManager.getPower(player);
 
                 int index = Math.min(currentLvl - 1, skill.getValues().size() - 1);
                 float currentValue = skill.getValues().get(index);
@@ -185,29 +157,17 @@ public class SkillManager {
 
         var prices = skill.getPrices();
         if (currentLvl > prices.size()) return false;
+
         int initialPrice = prices.get(currentLvl - 1);
         int finalPrice = Math.max(1, (int)(initialPrice * (Config.REFUND_PERCENTAGE.get() / 100f)));
 
         SpManager.addSP(player, finalPrice);
-
-        int newLvl = currentLvl - 1;
-
-        if(newLvl > 0) data.setSkillLevel(id, currentLvl - 1);
-
-        if(skill instanceof Trait trait) PowerManager.RemovePower(player, trait.getPowerWeight());
-
-        PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.getID(), currentLvl-1));
         PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(finalPrice));
-
         player.getData(StatsTracker.DATA).addSpEarned(finalPrice);
 
-        if(skill.getType() == Enums.SkillType.GENERIC){
-            if(currentLvl - 1 <= 0) GenericEffects.RemoveEffect(skill, player);
-            else GenericEffects.ApplyEffect(skill, player);
-        }
+        setSkillLevel(player, id, currentLvl - 1);
 
         NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
-        NeoForge.EVENT_BUS.post(new SkillActionEvent.LevelChange(skill, player, currentLvl, currentLvl-1));
 
         return true;
     }
@@ -248,10 +208,10 @@ public class SkillManager {
 
         if(skill instanceof Trait trait){
             if(oldLvl == 0 && lvl > 0) {
-                PowerManager.AddPower(player, trait.getPowerWeight());
+                PowerManager.addPower(player, trait.getPowerWeight());
             }
             else if(oldLvl > 0 && lvl == 0) {
-                PowerManager.RemovePower(player, trait.getPowerWeight());
+                PowerManager.removePower(player, trait.getPowerWeight());
             }
         }
 
@@ -260,8 +220,8 @@ public class SkillManager {
 
 
         if(skill.getType() == Enums.SkillType.GENERIC){
-            if(lvl > 0) GenericEffects.ApplyEffect(skill, player);
-            else GenericEffects.RemoveEffect(skill, player);
+            if(lvl > 0) GenericEffects.applyEffect(skill, player);
+            else GenericEffects.removeEffect(skill, player);
         }
     }
 

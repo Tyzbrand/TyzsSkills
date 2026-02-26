@@ -8,21 +8,21 @@ public class PowerWrapper implements IPowerManager {
 
     @Override
     public void addPower(ServerPlayer player, int amount) {
-        PowerManager.AddPower(player, amount);
+        PowerManager.addPower(player, amount);
     }
 
     @Override
     public void removePower(ServerPlayer player, int amount) {
-        PowerManager.RemovePower(player, amount);
+        PowerManager.removePower(player, amount);
     }
 
     @Override
     public void setPower(ServerPlayer player, int amount) {
-        PowerManager.SetPower(player, amount);
+        PowerManager.setPower(player, amount);
     }
 
     @Override
     public int getPower(ServerPlayer player) {
-        return PowerManager.GetPower(player);
+        return PowerManager.getPower(player);
     }
 }

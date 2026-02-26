@@ -27,14 +27,14 @@ import java.nio.file.Files;
 public class FileManager {
 
     private static final FileManager instance = new FileManager();
-    public static FileManager Get(){return instance;}
+    public static FileManager get(){return instance;}
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private static final List<SkillPrefab> prefabQueue = new ArrayList<>();
 
     //Creer les dossiers
-    public void InitPath(MinecraftServer server){
+    public void initPath(MinecraftServer server){
         Path globalPath = server.getServerDirectory()
                 .resolve("config")
                 .resolve("tyzs_skills");
@@ -66,9 +66,9 @@ public class FileManager {
     }
 
     //Ecrit les jsons par defaut
-    public void LoadDefaultJson(MinecraftServer server) throws IOException {
-        for(var skill : SkillsPreset.GetDefaultSkills()){
-            WriteSkill(skill, GetSkillPath(skill.getCategory(), server));
+    public void loadDefaultJson(MinecraftServer server) throws IOException {
+        for(var skill : SkillsPreset.getDefaultSkills()){
+            writeSkill(skill, getSkillPath(skill.getCategory(), server));
         }
 
         var customPath = server.getServerDirectory().resolve("config")
@@ -98,11 +98,11 @@ public class FileManager {
             }
 
             Path targetPath = prefab.isTrait() ? traitPath : customPath;
-            WriteSkill(skillToSave, targetPath);
+            writeSkill(skillToSave, targetPath);
         }
     }
 
-    public void LoadDefaultXpValues(MinecraftServer server) throws IOException {
+    public void loadDefaultXpValues(MinecraftServer server) throws IOException {
         Path blockFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("block-xp-values.json");
@@ -116,21 +116,21 @@ public class FileManager {
                 .resolve("food-xp-values.json");
 
 
-        if(!Files.exists(blockFile)) Files.writeString(blockFile, BlockXpValuesPreset.GetDefaultXpValues());
-        if(!Files.exists(entityFile)) Files.writeString(entityFile, EntityXpValuesPreset.GetDefaultXpValues());
-        if(!Files.exists(foodFile)) Files.writeString(foodFile, FoodValuesPreset.GetDefaultXpValues());
+        if(!Files.exists(blockFile)) Files.writeString(blockFile, BlockXpValuesPreset.getDefaultXpValues());
+        if(!Files.exists(entityFile)) Files.writeString(entityFile, EntityXpValuesPreset.getDefaultXpValues());
+        if(!Files.exists(foodFile)) Files.writeString(foodFile, FoodValuesPreset.getDefaultXpValues());
     }
 
-    public void LoadDefaulltLevelPool(MinecraftServer server) throws IOException {
+    public void LoadDefaultLevelPool(MinecraftServer server) throws IOException {
         Path poolFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("level-pool.json");
 
-        if(!Files.exists(poolFile)) Files.writeString(poolFile, LevelPoolPreset.GetDefaultRewardValues());
+        if(!Files.exists(poolFile)) Files.writeString(poolFile, LevelPoolPreset.getDefaultRewardValues());
     }
 
     //Lit les jsons par defaut
-    public void ReadJsons(MinecraftServer server) throws IOException{
+    public void readJsons(MinecraftServer server) throws IOException{
         Path globalPath = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("skills");
@@ -144,7 +144,7 @@ public class FileManager {
                         try{
                             var jsonString = Files.readString(path);
                             var jsonObj = gson.fromJson(jsonString, JsonObject.class);
-                            SkillLoader.LoadSKill(jsonObj);
+                            SkillLoader.loadSkill(jsonObj);
                         }
                         catch (IOException ex){throw new RuntimeException(ex);}
                     });
@@ -153,7 +153,7 @@ public class FileManager {
 
     }
 
-    public void ReadXpValues(MinecraftServer server) throws IOException {
+    public void readXpValues(MinecraftServer server) throws IOException {
         Path blockFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("block-xp-values.json");
@@ -169,23 +169,23 @@ public class FileManager {
         if(Files.exists(blockFile)){
             var content = Files.readString(blockFile);
             var obj = JsonParser.parseString(content).getAsJsonObject();
-            XpBlock.LoadValues(obj);
+            XpBlock.loadValues(obj);
         }
 
         if (Files.exists(entityFile)) {
             var content = Files.readString(entityFile);
             var obj = JsonParser.parseString(content).getAsJsonObject();
-            XpEntity.LoadValues(obj);
+            XpEntity.loadValues(obj);
         }
 
         if (Files.exists(foodFile)) {
             var content = Files.readString(foodFile);
             var obj = JsonParser.parseString(content).getAsJsonObject();
-            XpFood.LoadValues(obj);
+            XpFood.loadValues(obj);
         }
     }
 
-    public void ReadLevelPool(MinecraftServer server) throws IOException {
+    public void readLevelPool(MinecraftServer server) throws IOException {
         Path poolFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("level-pool.json");
@@ -197,7 +197,7 @@ public class FileManager {
         }
     }
 
-    public void ReadCustomSkills(MinecraftServer server){
+    public void readCustomSkills(MinecraftServer server){
         Path skillPath = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("skills")
@@ -212,7 +212,7 @@ public class FileManager {
                         try{
                             var jsonString = Files.readString(path);
                             var jsonObj = gson.fromJson(jsonString, JsonObject.class);
-                            SkillLoader.LoadSKill(jsonObj);
+                            SkillLoader.loadSkill(jsonObj);
                         }
                         catch (IOException ex){throw new RuntimeException(ex);}
                     });
@@ -226,7 +226,7 @@ public class FileManager {
 
 
     //Utilitaire
-    private void WriteSkill(Skill skill, Path path) throws IOException{
+    private void writeSkill(Skill skill, Path path) throws IOException{
 
         Path skillFile = path.resolve(skill.getID() + ".json");
         if(Files.exists(skillFile)) {return;}
@@ -236,7 +236,7 @@ public class FileManager {
         Files.writeString(skillFile, skillJson);
     }
 
-    private Path GetSkillPath(Enums.CategoryType category, MinecraftServer server){
+    private Path getSkillPath(Enums.CategoryType category, MinecraftServer server){
 
         Path skillPath = server.getServerDirectory()
                 .resolve("config")

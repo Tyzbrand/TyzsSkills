@@ -51,7 +51,7 @@ public class ResilienceEffect extends SkillBehavior {
                 );
 
                 player.addEffect(newEffect);
-                NotifyClient(player, skill);
+                notifyClient(player, skill);
             }
             finally {
                 IS_MODIFYING.set(false);

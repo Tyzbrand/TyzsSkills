@@ -23,7 +23,7 @@ public class CriticalHitEffect extends SkillBehavior {
         if(player.getRandom().nextFloat() < (chancePercentage/100f)){
 
             event.setAmount(event.getAmount() * 2f);
-            NotifyClient(player, skill);
+            notifyClient(player, skill);
 
             if (player.level() instanceof ServerLevel serverLevel) {
                 serverLevel.sendParticles(ParticleTypes.CRIT,

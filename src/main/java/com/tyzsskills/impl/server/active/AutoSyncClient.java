@@ -15,13 +15,13 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public class AutoSyncClient {
-    public static void SyncSkillList(ServerPlayer player){
-        PacketDistributor.sendToPlayer(player, new SkillSyncPayload(SkillManager.Get().getAllSkills()));
+    public static void syncSkillList(ServerPlayer player){
+        PacketDistributor.sendToPlayer(player, new SkillSyncPayload(SkillManager.get().getAllSkills()));
     }
 
-    public static void SyncSkillLevels(ServerPlayer player){
+    public static void syncSkillLevels(ServerPlayer player){
         var data = player.getData(PlayerData.DATA);
-        for(var skill : SkillManager.Get().getAllSkills()) {
+        for(var skill : SkillManager.get().getAllSkills()) {
             var lvl = data.getSkillLevel(skill.getID());
             if (lvl > 0) {
                 PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(skill.getID(), lvl));
@@ -29,29 +29,29 @@ public class AutoSyncClient {
         }
     }
 
-    public static void SyncSkillBookmarks(ServerPlayer player){
+    public static void syncSkillBookmarks(ServerPlayer player){
         var data = player.getData(PlayerData.DATA);
         for(var entry : data.getBookmarks()) {
                 PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(entry, true));
         }
     }
 
-    public static void SyncConfig(ServerPlayer player){
+    public static void syncConfig(ServerPlayer player){
         PacketDistributor.sendToPlayer(player, new ConfigSyncPayload(Config.REFUND_SYSTEM.get(),
                 Config.REFUND_PERCENTAGE.get(),
                 Config.TRAIT_UNLOCK_LEVEL.get(),
-                Config.TRAIT_SYSTEM.get(), -1));
+                Config.TRAIT_SYSTEM.get(), Config.XP_LIMIT.get()));
     }
 
-    public static void SyncMainData(ServerPlayer player){
+    public static void syncMainData(ServerPlayer player){
         PacketDistributor.sendToPlayer(player, new XpUpdatePayload(XpManager.getXP(player), 0f, false, XpManager.getLimitPercentage(player)));
         PacketDistributor.sendToPlayer(player, new LevelUpdatePayload(LevelManager.getLevel(player)));
         PacketDistributor.sendToPlayer(player, new SpUpdatePayload(SpManager.getSP(player)));
         PacketDistributor.sendToPlayer(player, new LevelDataUpdatePayload(XpManager.getLevelData(LevelManager.getLevel(player))));
-        PacketDistributor.sendToPlayer(player, new PowerUpdatePayload(PowerManager.GetPower(player)));
+        PacketDistributor.sendToPlayer(player, new PowerUpdatePayload(PowerManager.getPower(player)));
     }
 
-    public static void SyncStats(ServerPlayer player){
+    public static void syncStats(ServerPlayer player){
         var data = player.getData(StatsTracker.DATA);
 
         PacketDistributor.sendToPlayer(player, new StatsXpPayload(data.getAllTimeXp()));

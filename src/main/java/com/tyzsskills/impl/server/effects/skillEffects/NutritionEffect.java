@@ -24,7 +24,7 @@ public class NutritionEffect extends SkillBehavior {
 
         if(nutritionBonus > 0){
             player.getFoodData().eat(nutritionBonus, foodValue.saturation() * 0.5f);
-            NotifyClient(player, skill);
+            notifyClient(player, skill);
         }
     }
 }

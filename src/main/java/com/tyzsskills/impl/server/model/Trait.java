@@ -25,12 +25,12 @@ public class Trait extends Skill implements ITrait {
     public int getPowerWeight(){return powerWeight;}
 
     @Override
-    public void WriteToBuffer(FriendlyByteBuf buffer) {
-        super.WriteToBuffer(buffer);
+    public void writeToBuffer(FriendlyByteBuf buffer) {
+        super.writeToBuffer(buffer);
         buffer.writeInt(powerWeight);
     }
 
-    public static @NotNull Trait ReadTraitFromBuffer(FriendlyByteBuf buffer) {
+    public static @NotNull Trait readTraitFromBuffer(FriendlyByteBuf buffer) {
         boolean active = buffer.readBoolean();
         String id = buffer.readUtf();
         int maxLevel = buffer.readInt();

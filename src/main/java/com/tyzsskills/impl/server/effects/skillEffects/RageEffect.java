@@ -23,6 +23,6 @@ public class RageEffect extends SkillBehavior {
         float finalDamage = event.getAmount() * (1f + (damageBonus/100f));
 
         event.setAmount(finalDamage);
-        NotifyClient(player, skill);
+        notifyClient(player, skill);
     }
     }

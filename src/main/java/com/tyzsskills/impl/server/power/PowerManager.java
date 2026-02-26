@@ -11,10 +11,10 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public class PowerManager {
 
-    public static void SetPower(ServerPlayer player, int amount){
+    public static void setPower(ServerPlayer player, int amount){
         if(amount < 0) return;
 
-        int oldPower = GetPower(player);
+        int oldPower = getPower(player);
 
         var event = new SkillPowerChangeEvent(player, oldPower, amount);
         NeoForge.EVENT_BUS.post(event);
@@ -27,27 +27,27 @@ public class PowerManager {
         var playerData = player.getData(PlayerData.DATA);
         playerData.setPower(finalPower);
 
-        UpdateClient(player);
+        updateClient(player);
     }
 
-    public static void AddPower(ServerPlayer player, int amount){
+    public static void addPower(ServerPlayer player, int amount){
         if(amount <= 0) return;
-        SetPower(player, GetPower(player) + amount);
+        setPower(player, getPower(player) + amount);
     }
 
-    public static void RemovePower(ServerPlayer player, int amount){
+    public static void removePower(ServerPlayer player, int amount){
         if(amount <= 0) return;
-        var result = Math.max(0, GetPower(player) - amount);
-        SetPower(player, result);
+        var result = Math.max(0, getPower(player) - amount);
+        setPower(player, result);
     }
 
     //Util
-    private static void UpdateClient(ServerPlayer player){
-        PacketDistributor.sendToPlayer(player, new PowerUpdatePayload(GetPower(player)));
+    private static void updateClient(ServerPlayer player){
+        PacketDistributor.sendToPlayer(player, new PowerUpdatePayload(getPower(player)));
     }
 
     //Getters
-    public static int GetPower(ServerPlayer player){
+    public static int getPower(ServerPlayer player){
         return player.getData(PlayerData.DATA).getPower();
     }
 

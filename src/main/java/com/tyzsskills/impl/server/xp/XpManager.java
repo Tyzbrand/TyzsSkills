@@ -167,7 +167,7 @@ public class XpManager {
     private static float checkLimit(ServerPlayer player, float amount){
         if(LevelManager.isLevelMax(player)) return 0f;
 
-        double limit = Config.XP_DAILY_LIMIT.get();
+        double limit = Config.XP_LIMIT.get();
         if(limit == -1.0) return amount;
 
         var data = player.getData(LimitsTracker.DATA);
@@ -202,7 +202,7 @@ public class XpManager {
 
     public static float getLimitPercentage(ServerPlayer player){
         float limitFraction = -1f;
-        double limitConfig = Config.XP_DAILY_LIMIT.get();
+        double limitConfig = Config.XP_LIMIT.get();
 
         if (limitConfig != -1.0) {
             var data = player.getData(LimitsTracker.DATA);

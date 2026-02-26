@@ -132,38 +132,38 @@ public class MainCommand {
                         .then(Commands.literal("set")
                                 .then(Commands.argument("skill_id", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                SkillManager.Get().getAllSkills().stream().map(Skill::getID), builder
+                                                SkillManager.get().getAllSkills().stream().map(Skill::getID), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(0, Constants.SKILL_MAX_LEVEL))
                                             .executes(ctx -> {
                                                 var player = EntityArgument.getPlayer(ctx, "player");
                                                 var id = StringArgumentType.getString(ctx, "skill_id");
                                                 var level = IntegerArgumentType.getInteger(ctx, "level");
-                                                SkillManager.Get().setSkillLevel(player, id, level);
+                                                SkillManager.get().setSkillLevel(player, id, level);
                                                 return 1;}))))
                         .then(Commands.literal("add")
                                 .then(Commands.argument("skill_id", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                SkillManager.Get().getAllSkills().stream().map(Skill::getID), builder
+                                                SkillManager.get().getAllSkills().stream().map(Skill::getID), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, Constants.SKILL_MAX_LEVEL))
                                                 .executes(ctx -> {
                                                     var player = EntityArgument.getPlayer(ctx, "player");
                                                     var id = StringArgumentType.getString(ctx, "skill_id");
                                                     var level = IntegerArgumentType.getInteger(ctx, "level");
-                                                    SkillManager.Get().addSKillLevel(player, id, level);
+                                                    SkillManager.get().addSKillLevel(player, id, level);
                                                     return 1;}))))
                         .then(Commands.literal("remove")
                                 .then(Commands.argument("skill_id", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                SkillManager.Get().getAllSkills().stream().map(Skill::getID), builder
+                                                SkillManager.get().getAllSkills().stream().map(Skill::getID), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, Constants.SKILL_MAX_LEVEL))
                                                 .executes(ctx -> {
                                                     var player = EntityArgument.getPlayer(ctx, "player");
                                                     var id = StringArgumentType.getString(ctx, "skill_id");
                                                     var level = IntegerArgumentType.getInteger(ctx, "level");
-                                                    SkillManager.Get().removeSkillLevel(player, id, level);
+                                                    SkillManager.get().removeSkillLevel(player, id, level);
                                                     return 1;})))));
     }
 
@@ -171,7 +171,7 @@ public class MainCommand {
         return Commands.literal("reload")
                 .executes(ctx -> {
                     try {
-                        DebugManager.DebugReload(ctx.getSource().getServer());
+                        DebugManager.reload(ctx.getSource().getServer());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

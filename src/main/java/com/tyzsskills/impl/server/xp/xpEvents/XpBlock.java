@@ -27,18 +27,18 @@ public class XpBlock {
 
 
     //Setup
-    public static void LoadValues(JsonObject source){
+    public static void loadValues(JsonObject source){
         for(String categoryKey : source.keySet()){
 
             JsonObject category = source.getAsJsonObject(categoryKey);
 
             if(!category.has("xp")){
-                ErrorManager.RegisterLoadError("loading '" + categoryKey + "' in block xp values", "Missing 'xp' value");
+                ErrorManager.registerLoadError("loading '" + categoryKey + "' in block xp values", "Missing 'xp' value");
                 continue;
             }
 
             if(!category.has("blocks")){
-                ErrorManager.RegisterLoadError("loading '" + categoryKey + "' in block xp values", "Missing 'block' list");
+                ErrorManager.registerLoadError("loading '" + categoryKey + "' in block xp values", "Missing 'block' list");
                 continue;
             }
 
@@ -55,7 +55,7 @@ public class XpBlock {
                     }
                     catch (Exception ex){
                         System.err.println("TyzSkills: Error when loading tags '" + entry + "' : " + ex.getMessage());
-                        ErrorManager.RegisterLoadError("parsing block/tag '" + entry + "' in block xp values", "Invalid ResourceLocation format");
+                        ErrorManager.registerLoadError("parsing block/tag '" + entry + "' in block xp values", "Invalid ResourceLocation format");
                     }
                 }
                 else{Xpvalues.put(entry, xpValue);}
@@ -63,14 +63,14 @@ public class XpBlock {
         }
     }
 
-    public static void ClearValues(){
+    public static void clearValues(){
         Xpvalues.clear();
         XpTagValues.clear();
         CACHE.clear();
     }
 
     //Actifs
-    public static void BlockBreakProfit(BlockState state, ServerPlayer player){
+    public static void blockBreakProfit(BlockState state, ServerPlayer player){
 
         if(state.getBlock() instanceof CropBlock crop){
             if(!crop.isMaxAge(state)) return;
@@ -80,14 +80,14 @@ public class XpBlock {
         }
 
 
-        var amount = GetBlockValue(state) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+        var amount = getBlockValue(state) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
         if(amount > 0) XpManager.addXP(player, amount);
     }
 
 
 
     //Getters
-    public static float GetBlockValue(BlockState state) {
+    public static float getBlockValue(BlockState state) {
 
         var block = state.getBlock();
 

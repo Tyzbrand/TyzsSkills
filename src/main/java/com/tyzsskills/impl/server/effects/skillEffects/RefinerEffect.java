@@ -1,6 +1,8 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.SkillBehavior;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.core.BlockPos;
@@ -40,7 +42,9 @@ public class RefinerEffect extends SkillBehavior {
         if(!(event.getLevel() instanceof ServerLevel level)) return;
         if (player.isShiftKeyDown()) return;
 
-        if (SkillManager.Get().getPlayerSkillLevel(player, "deep_lode") > 0) return;
+        if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
+
+        if (SkillManager.get().getPlayerSkillLevel(player, "deep_lode") > 0) return;
 
         BlockState state = event.getState();
 
@@ -88,7 +92,7 @@ public class RefinerEffect extends SkillBehavior {
                     level.addFreshEntity(entity);
                 }
 
-                NotifyClient(player, skill);
+                notifyClient(player, skill);
             }
         }
         finally {IS_SMELTING.set(false);}
