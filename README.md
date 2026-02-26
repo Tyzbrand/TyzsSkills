@@ -7,10 +7,38 @@
 ## Project Goal
 The long-term vision is to provide a fully customizable progression system. I am currently working on an **API** to allow other developers to easily create addons without needing to modify the core mod.
 
+## Integration 
+[![](https://jitpack.io/v/Tyzbrand/TyzsSkills.svg)](https://jitpack.io/#Tyzbrand/TyzsSkills)
+
+You can easily integrate TyzsSkills into your repo. **Full documentation coming soon!**
+
+Add this to your `build.gradle`
+```
+repositories {
+  maven { url 'https://jitpack.io' }
+}
+```
+```
+	dependencies {
+    implementation 'com.github.Tyzbrand:TyzsSkills:6.1.0'
+	}
+```
+
+Add this to your `neoforge.mods.toml` for the dependency
+```
+[[dependencies.your_mod_id]]
+    modId="tyzs_skills"
+    mandatory=true
+    versionRange="[6.1.0,)"
+    ordering="AFTER"
+    side="BOTH"
+```
+
+
 ## Contributions & Pull Requests
 Contributions and ideas are always welcome! 
 
-**Please note:** To maintain perfect architectural consistency as I build an upcoming API, I wont "merge" Pull Requests directly. If you submit a fix or a feature, I will  reimplement/adapt it into the main branch. This ensures I stay 100% familiar with every line of code for future maintenance. 
+**Please note:** To maintain perfect architectural consistency as I build an upcoming API, I won't "merge" Pull Requests directly. If you submit a fix or a feature, I will  reimplement/adapt it into the main branch. This ensures I stay 100% familiar with every line of code for future maintenance. 
 
 This is my first major project, so the code might not be the cleanest or most optimized in some places. I am completely open to **tips, tricks, and advice**! If you see something that could be done better, feel free to let me know—I’m here to learn.
 
