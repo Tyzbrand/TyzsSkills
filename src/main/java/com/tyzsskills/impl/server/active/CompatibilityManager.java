@@ -141,40 +141,23 @@ public class CompatibilityManager {
 
         boolean didMigrate = oldData.getBoolean(MIGRATION_TAG_V2);
         if(!didMigrate){
-            if(oldData.contains("SKILL_LEVEL")){
-                LevelManager.setLevel(player, oldData.getInt("SKILL_LEVEL"));
-                oldData.remove("SKILL_LEVEL");
-            }
+            if(oldData.contains("SKILL_LEVEL")) LevelManager.setLevel(player, oldData.getInt("SKILL_LEVEL"));
 
-            if(oldData.contains("SKILL_POINT")){
-                SpManager.setSP(player, oldData.getInt("SKILL_POINT"));
-                oldData.remove("SKILL_POINT");
-            }
+            if(oldData.contains("SKILL_POINT")) SpManager.setSP(player, oldData.getInt("SKILL_POINT"));
 
-            if(oldData.contains("SKILL_XP")){
-                XpManager.setXP(player, oldData.getFloat("SKILL_XP"));
-                oldData.remove("SKILL_XP");
-            }
+            if(oldData.contains("SKILL_XP")) XpManager.setXP(player, oldData.getFloat("SKILL_XP"));
 
-            if(oldData.contains("TRAIT_POWER")){
-                PowerManager.setPower(player, oldData.getInt("TRAIT_POWER"));
-                oldData.remove("TRAIT_POWER");
-            }
+            if(oldData.contains("TRAIT_POWER")) PowerManager.setPower(player, oldData.getInt("TRAIT_POWER"));
 
             for (var skill : SkillManager.get().getAllSkills()){
                 var id = skill.getID().toLowerCase();
                 var lvlKey = id + "_lvl";
                 var bkKey = id + "_bookmark";
 
-                if(oldData.contains(lvlKey)){
-                    SkillManager.get().setSkillLevel(player, id, oldData.getInt(lvlKey));
-                    oldData.remove(lvlKey);
-                }
+                if(oldData.contains(lvlKey)) SkillManager.get().setSkillLevel(player, id, oldData.getInt(lvlKey));
 
-                if(oldData.contains(bkKey)){
-                    SkillManager.get().bookmarkSkill(player, id);
-                    oldData.remove(bkKey);
-                }
+
+                if(oldData.contains(bkKey)) SkillManager.get().bookmarkSkill(player, id);
             }
             didMigrate = true;
         }
