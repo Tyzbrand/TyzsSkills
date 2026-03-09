@@ -31,6 +31,8 @@ public class RuntimeEvents {
         AutoSyncClient.syncSkillBookmarks(player);
         AutoSyncClient.syncStats(player);
 
+        GenericEffects.restoreEffects(player);
+
         if (player.hasPermissions(2) && ErrorManager.hasErrors()) {
             ErrorManager.printErrors(player);
         }
@@ -40,10 +42,15 @@ public class RuntimeEvents {
     public static void onPlayerClone(PlayerEvent.Clone event){
 
         if(!(event.getOriginal() instanceof ServerPlayer) ||
-                !(event.getEntity() instanceof ServerPlayer newPlayer)) return;
+                !(event.getEntity() instanceof ServerPlayer)) return;
 
-        GenericEffects.restoreEffects(newPlayer);
         SkillEffectsEvents.onPlayerClone(event);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event){
+        if(!(event.getEntity() instanceof ServerPlayer player)) return;
+        GenericEffects.restoreEffects(player);
     }
 
     @SubscribeEvent
