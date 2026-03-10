@@ -109,8 +109,5 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
 
     public static final Supplier<AttachmentType<PlayerData>> DATA = ATTACHMENT_TYPES.register(
             "player_skill_data",
-            () -> AttachmentType.serializable(PlayerData::new)
-                    .copyOnDeath()
-                    .build()
-    );
+            () -> AttachmentType.serializable(PlayerData::new).build());
 }

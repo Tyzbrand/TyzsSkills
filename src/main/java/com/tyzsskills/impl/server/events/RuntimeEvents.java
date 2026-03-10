@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.events;
 
 import com.tyzsskills.impl.server.active.*;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
+import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,8 +32,6 @@ public class RuntimeEvents {
         AutoSyncClient.syncSkillBookmarks(player);
         AutoSyncClient.syncStats(player);
 
-        GenericEffects.restoreEffects(player);
-
         if (player.hasPermissions(2) && ErrorManager.hasErrors()) {
             ErrorManager.printErrors(player);
         }
@@ -41,16 +40,14 @@ public class RuntimeEvents {
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event){
 
-        if(!(event.getOriginal() instanceof ServerPlayer) ||
-                !(event.getEntity() instanceof ServerPlayer)) return;
+        if(!(event.getOriginal() instanceof ServerPlayer oldPlayer) ||
+                !(event.getEntity() instanceof ServerPlayer newPlayer)) return;
 
+        var oldData = oldPlayer.getData(PlayerData.DATA).serializeNBT(oldPlayer.registryAccess());
+        newPlayer.getData(PlayerData.DATA).deserializeNBT(newPlayer.registryAccess(), oldData);
+
+        GenericEffects.restoreEffects(newPlayer);
         SkillEffectsEvents.onPlayerClone(event);
-    }
-
-    @SubscribeEvent
-    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event){
-        if(!(event.getEntity() instanceof ServerPlayer player)) return;
-        GenericEffects.restoreEffects(player);
     }
 
     @SubscribeEvent

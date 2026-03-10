@@ -81,7 +81,8 @@ public class GenericEffects {
     public static void restoreEffects(ServerPlayer newPlayer){
         for(var skill : SkillManager.get().getAllSkills()){
 
-            if(skill.getType() != Enums.SkillType.GENERIC){continue;}
+            if(skill.getType() != Enums.SkillType.GENERIC
+                    && skill.getType() != Enums.SkillType.CUSTOM) continue;
 
             if(newPlayer.getData(PlayerData.DATA).getSkillLevel(skill.getID()) > 0) applyEffect(skill, newPlayer);
         }

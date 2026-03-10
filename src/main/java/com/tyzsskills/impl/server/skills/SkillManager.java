@@ -128,7 +128,7 @@ public class SkillManager {
         int currentLvl = data.getSkillLevel(id);
         if(currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
-        if(skill.getType() == Enums.SkillType.GENERIC){
+        if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
 
             ResourceLocation attributeID = ResourceLocation.tryParse(skill.getModifier());
             if(attributeID == null) return false;
@@ -219,7 +219,7 @@ public class SkillManager {
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(id, lvl));
 
 
-        if(skill.getType() == Enums.SkillType.GENERIC){
+        if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
             if(lvl > 0) GenericEffects.applyEffect(skill, player);
             else GenericEffects.removeEffect(skill, player);
         }
