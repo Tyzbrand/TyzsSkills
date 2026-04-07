@@ -50,10 +50,9 @@ public class SkillManager {
         var behaviour = SkillBehaviorRegistry.getBehavior(skill.getID());
         if(behaviour != null){skill.setBehaviour(behaviour);}
 
-        if(!skillCollection.containsKey(skill.getID())) {
-            skillCollection.put(skill.getID(), skill);
-            NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
-        }
+        skillCollection.put(skill.getID(), skill);
+        NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
+
     }
 
     public void clearSkills(){

@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.active;
 
+import java.io.File;
 import java.io.IOException;
 
 import com.google.gson.JsonObject;
@@ -8,6 +9,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.impl.server.model.*;
 import com.tyzsskills.impl.server.skills.SkillLoader;
+import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.xp.XpManager;
 import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
@@ -19,9 +21,12 @@ import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.nio.file.Files;
+import java.util.stream.Stream;
 
 @ApiStatus.Internal
 public class FileManager {
@@ -32,6 +37,7 @@ public class FileManager {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private static final List<SkillPrefab> prefabQueue = new ArrayList<>();
+
 
     //Creer les dossiers
     public void initPath(MinecraftServer server){
@@ -54,10 +60,12 @@ public class FileManager {
                 .resolve("misc"));
 
         allPaths.add(globalPath.resolve("skills")
-                .resolve("custom"));
+                .resolve("default")
+                .resolve("traits"));
 
         allPaths.add(globalPath.resolve("skills")
-                .resolve("traits"));
+                .resolve("custom"));
+
 
         for(var path : allPaths){
             try {Files.createDirectories(path);}
@@ -70,17 +78,6 @@ public class FileManager {
         for(var skill : SkillsPreset.getDefaultSkills()){
             writeSkill(skill, getSkillPath(skill.getCategory(), server));
         }
-
-        var customPath = server.getServerDirectory().resolve("config")
-                .resolve("tyzs_skills")
-                .resolve("skills")
-                .resolve("custom");
-
-        var traitPath = server.getServerDirectory()
-                .resolve("config")
-                .resolve("tyzs_skills")
-                .resolve("skills")
-                .resolve("traits");
 
         for (var prefab : prefabQueue){
             Skill skillToSave;
@@ -97,7 +94,7 @@ public class FileManager {
                         prefab.icon(), prefab.displayName(), prefab.description(), prefab.unit());
             }
 
-            Path targetPath = prefab.isTrait() ? traitPath : customPath;
+            Path targetPath = getSkillPath(prefab.category(), server);
             writeSkill(skillToSave, targetPath);
         }
     }
@@ -135,21 +132,47 @@ public class FileManager {
                 .resolve("tyzs_skills")
                 .resolve("skills");
 
-        if(!Files.exists(globalPath)) return;
+        var defaultPath = globalPath.resolve("default");
+        var customPath = globalPath.resolve("custom");
 
-        try(var stream = Files.walk(globalPath)){
-            stream.filter(Files::isRegularFile)
-                    .filter(p -> p.toString().endsWith(".json"))
-                    .forEach(path ->{
-                        try{
-                            var jsonString = Files.readString(path);
-                            var jsonObj = gson.fromJson(jsonString, JsonObject.class);
-                            SkillLoader.loadSkill(jsonObj);
-                        }
-                        catch (IOException ex){throw new RuntimeException(ex);}
-                    });
+
+        if(Files.exists(defaultPath)){
+            try(var stream = Files.walk(defaultPath)){
+                stream.filter(Files::isRegularFile)
+                        .filter(p -> p.toString().endsWith(".json"))
+                        .forEach(path ->{
+                            try{
+                                var jsonString = Files.readString(path);
+                                var jsonObj = gson.fromJson(jsonString, JsonObject.class);
+                                SkillLoader.loadSkill(jsonObj);
+                            }
+                            catch (IOException ex){throw new RuntimeException(ex);}
+                        });
+            }
         }
-        catch (IOException ex){throw new RuntimeException(ex);}
+
+        if(Files.exists(customPath)){
+            try(var stream = Files.walk(customPath)){
+                stream.filter(Files::isRegularFile)
+                        .filter(p -> p.toString().endsWith(".json"))
+                        .forEach(path ->{
+                            try{
+                                var jsonString = Files.readString(path);
+                                var jsonObj = gson.fromJson(jsonString, JsonObject.class);
+
+                                var type = jsonObj.has("type") ? jsonObj.get("type").getAsString() : null;
+                                var id = jsonObj.has("id") ? jsonObj.get("id").getAsString().toLowerCase() : null;
+                                if(type == null || id == null) return;
+
+                                if(!type.equalsIgnoreCase(Enums.SkillType.CUSTOM.name())){
+                                    if(!SkillManager.get().isSkillLoaded(id)) return;
+                                }
+                                SkillLoader.loadSkill(jsonObj);
+                            }
+                            catch (Exception ex){System.out.println("Unable to load custom skill: " + path);}
+                        });
+            }
+        }
 
     }
 
@@ -197,28 +220,6 @@ public class FileManager {
         }
     }
 
-    public void readCustomSkills(MinecraftServer server){
-        Path skillPath = server.getServerDirectory().resolve("config")
-                .resolve("tyzs_skills")
-                .resolve("skills")
-                .resolve("custom");
-
-        if(!Files.exists(skillPath)) return;
-
-        try(var stream = Files.walk(skillPath)){
-            stream.filter(Files::isRegularFile)
-                    .filter(p -> p.toString().endsWith(".json"))
-                    .forEach(path ->{
-                        try{
-                            var jsonString = Files.readString(path);
-                            var jsonObj = gson.fromJson(jsonString, JsonObject.class);
-                            SkillLoader.loadSkill(jsonObj);
-                        }
-                        catch (IOException ex){throw new RuntimeException(ex);}
-                    });
-        }
-        catch (IOException ex){throw new RuntimeException(ex);}
-    }
 
     public static void registerSkillPrefab(SkillPrefab prefab){
         if(prefab != null) prefabQueue.add(prefab);
@@ -229,10 +230,7 @@ public class FileManager {
     private void writeSkill(Skill skill, Path path) throws IOException{
 
         Path skillFile = path.resolve(skill.getID() + ".json");
-        if(Files.exists(skillFile)) {return;}
-
         String skillJson = gson.toJson(skill);
-
         Files.writeString(skillFile, skillJson);
     }
 
@@ -242,7 +240,6 @@ public class FileManager {
                 .resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("skills");
-
 
         switch (category){
             case ABILITIES -> {
@@ -255,9 +252,80 @@ public class FileManager {
                 return skillPath.resolve("default").resolve("misc");
             }
             case TRAITS -> {
-                return skillPath.resolve("traits");
+                return skillPath.resolve("default").resolve("traits");
             }
         }
         return skillPath;
+    }
+
+
+    public void backupCustomFiles(MinecraftServer server) throws IOException {
+        Path skillPath = server.getServerDirectory()
+                .resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("skills");
+
+        var backupFolder = skillPath.resolve("skill_config_backup_v6.1");
+
+        if(Files.exists(backupFolder)) return;
+
+        var defaultFolder = skillPath.resolve("default");
+        var traitsFolder = skillPath.resolve("traits");
+
+        if(Files.exists(defaultFolder)) {
+            Path targetDefaultBackup = backupFolder.resolve("default");
+            try (Stream<Path> stream = Files.walk(defaultFolder)) {
+                stream.forEach(source -> {
+                    Path destination = targetDefaultBackup.resolve(defaultFolder.relativize(source));
+                    try {
+                        if (Files.isDirectory(source)) {
+                            Files.createDirectories(destination);
+                        } else {
+                            Files.createDirectories(destination.getParent());
+                            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException("[Tyz's Skills] Unable to copy file: " + source, e);
+                    }
+                });
+            }
+        }
+
+        if(Files.exists(traitsFolder)) {
+            Path targetTraitsBackup = backupFolder.resolve("traits");
+            try (Stream<Path> stream = Files.walk(traitsFolder)) {
+                stream.forEach(source -> {
+                    Path destination = targetTraitsBackup.resolve(traitsFolder.relativize(source));
+                    try {
+                        if (Files.isDirectory(source)) {
+                            Files.createDirectories(destination);
+                        } else {
+                            Files.createDirectories(destination.getParent());
+                            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException("[Tyz's Skills] Unable to copy file: " + source, e);
+                    }
+                });
+
+            }
+        }
+
+    }
+
+    public void cleanPaths(MinecraftServer server) throws IOException {
+        Path path = server.getServerDirectory()
+                .resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("skills")
+                .resolve("default");
+
+        if (!Files.exists(path)) return;
+
+        try (Stream<Path> walk = Files.walk(path)) {
+            walk.sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+        }
     }
 }

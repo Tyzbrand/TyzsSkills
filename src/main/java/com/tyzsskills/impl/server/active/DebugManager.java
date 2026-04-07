@@ -39,7 +39,6 @@ public class DebugManager {
         FileManager.get().readJsons(server);
         FileManager.get().readLevelPool(server);
         FileManager.get().readXpValues(server);
-        FileManager.get().readCustomSkills(server);
 
         var manager = SkillManager.get();
 

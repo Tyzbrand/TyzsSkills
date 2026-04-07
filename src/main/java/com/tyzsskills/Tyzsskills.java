@@ -241,6 +241,8 @@ public class Tyzsskills {
         var fileManager = FileManager.get();
         var server = event.getServer();
 
+        fileManager.backupCustomFiles(server);
+        fileManager.cleanPaths(server);
         fileManager.initPath(server);
         fileManager.loadDefaultJson(server);
         fileManager.loadDefaultXpValues(server);
@@ -249,7 +251,6 @@ public class Tyzsskills {
         fileManager.readJsons(server);
         fileManager.readXpValues(server);
         fileManager.readLevelPool(server);
-        fileManager.readCustomSkills(server);
     }
 
     @SubscribeEvent
