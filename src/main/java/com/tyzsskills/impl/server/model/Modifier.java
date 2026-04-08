@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.model;
 
 import com.tyzsskills.api.interfaces.IModifier;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.ArrayList;
@@ -28,6 +29,23 @@ public class Modifier implements IModifier {
     public List<Float> getValues(){return Collections.unmodifiableList(values);}
     @Override
     public String getUnit(){return unit;}
+
+    //Network
+    public void writeToBuffer(FriendlyByteBuf buffer){
+        buffer.writeUtf(attribute);
+        buffer.writeEnum(operation);
+        buffer.writeCollection(values, FriendlyByteBuf::writeFloat);
+        buffer.writeUtf(unit);
+    }
+
+    public static Modifier readFromBuffer(FriendlyByteBuf buffer){
+        var readAttribute = buffer.readUtf();
+        var readOperation = buffer.readEnum(AttributeModifier.Operation.class);
+        var readValues = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readFloat);
+        var readUnit = buffer.readUtf();
+
+        return new Modifier(readAttribute, readOperation, readValues, readUnit);
+    }
 }
 
 

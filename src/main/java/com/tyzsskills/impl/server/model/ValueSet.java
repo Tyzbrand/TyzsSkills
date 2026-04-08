@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.model;
 
 import com.tyzsskills.api.interfaces.IValueSet;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,4 +21,17 @@ public class ValueSet implements IValueSet {
     public List<Float> getValues(){return Collections.unmodifiableList(values);}
     @Override
     public String getUnit(){return unit;}
+
+    //Network
+    public void writeToBuffer(FriendlyByteBuf buffer){
+        buffer.writeCollection(values, FriendlyByteBuf::writeFloat);
+        buffer.writeUtf(unit);
+    }
+
+    public static ValueSet readFromBuffer(FriendlyByteBuf buffer){
+        var readValues = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readFloat);
+        var readUnit = buffer.readUtf();
+
+        return new ValueSet(readValues, readUnit);
+    }
 }

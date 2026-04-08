@@ -126,6 +126,9 @@ public class Skill implements ISkill {
         buffer.writeUtf(icon);
         buffer.writeUtf(displayName);
         buffer.writeUtf(description);
+
+        buffer.writeCollection(modifiers, (buf, modifier) ->  modifier.writeToBuffer(buf));
+        buffer.writeMap(customValues, FriendlyByteBuf::writeUtf, (buf, valueSet) ->  valueSet.writeToBuffer(buf));
     }
 
     public static @NotNull Skill readSkillFromBuffer(FriendlyByteBuf buffer){
@@ -144,7 +147,10 @@ public class Skill implements ISkill {
         String displayName = buffer.readUtf();
         String description = buffer.readUtf();
 
+        List<Modifier> readModifiers = buffer.readCollection(ArrayList::new, Modifier::readFromBuffer);
+        Map<String, ValueSet> readCustomValues = buffer.readMap(FriendlyByteBuf::readUtf, ValueSet::readFromBuffer);
+
         return new Skill(active, id, maxLevel, prices, type, category, purchasable,
-                            icon, displayName, description);
+                            icon, displayName, description, readModifiers, readCustomValues);
     }
 }
