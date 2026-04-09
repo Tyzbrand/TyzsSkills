@@ -89,9 +89,6 @@
   "skill.tyzs_skills.rage.displayName" : "Rage",
   "skill.tyzs_skills.rage.description" : "Increases damage by {damage_buff}% when health is below 3 hearts",
 
-  "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
-  "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III when health drops below {health_threshold}%",
-
   "skill.tyzs_skills.resilience.displayName" : "Resilience",
   "skill.tyzs_skills.resilience.description" : "Reduces the duration of negative status effects by {effect_time_reduction}%",
 
@@ -228,10 +225,12 @@
   "config.client.tyzs_skills.inventory_btn_y" : "Skill button Y",
   "config.client.tyzs_skills.inventory_btn_show" : "Show Skill Button",
   "config.client.tyzs_skills.debug_msg" : "Show debug messages",
-  "config.client.tyzs_skills.speed_fov_reduction" : "Speed fov reduction"
+  "config.client.tyzs_skills.speed_fov_reduction" : "Speed fov reduction",
 
 
 
+  "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
+  "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III for {effect_duration} sec when health drops below {health_threshold}%",
 
-
+  "skill.tyzs_skills.unit.seconds" : "sec"
 }

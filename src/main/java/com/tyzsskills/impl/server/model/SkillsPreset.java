@@ -283,8 +283,8 @@ public class SkillsPreset {
         finalList.add(new Skill(
                 true,
                 "adrenaline",
-                1,
-                List.of(2),
+                3,
+                List.of(2, 4, 6),
                 Enums.SkillType.IMMUTABLE,
                 Enums.CategoryType.FIGHT,
                 true,
@@ -293,7 +293,8 @@ public class SkillsPreset {
                 "skill.tyzs_skills.adrenaline.description",
                 null,
                 Map.of(
-                        "health_threshold", new ValueSet(List.of(25f), "skill.tyzs_skills.unit.percentage"))
+                        "health_threshold", new ValueSet(List.of(10f, 20f, 30f), "skill.tyzs_skills.unit.percentage"),
+                        "effect_duration", new ValueSet(List.of(3f, 5f, 8f), "skill.tyzs_skills.unit.seconds"))
         ));
 
         finalList.add(new Skill(

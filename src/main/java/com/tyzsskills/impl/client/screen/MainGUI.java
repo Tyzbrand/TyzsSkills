@@ -120,7 +120,7 @@ public class MainGUI extends Screen {
         gui.drawString(this.font, spStat, 0, 0, color2, false);
         gui.pose().popPose();
 
-        MutableComponent spValue = Component.literal(String.valueOf(ClientCache.GetSP()));
+        MutableComponent spValue = Component.literal(String.valueOf(StringTools.valueSmartFormat(ClientCache.GetSP())));
         int text2W = this.font.width(spValue);
         int rightLimit2 = leftPos + 69;
         gui.pose().pushPose();
