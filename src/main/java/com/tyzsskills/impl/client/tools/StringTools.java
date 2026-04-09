@@ -1,9 +1,9 @@
 package com.tyzsskills.impl.client.tools;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.Trait;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -20,15 +20,6 @@ import java.util.List;
 
 public class StringTools {
 
-    private static final ThreadLocal<DecimalFormat> SMART_FORMATTER = ThreadLocal.withInitial(() -> {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setDecimalSeparator('.');
-
-        DecimalFormat format = new DecimalFormat("0.#", symbols);
-        format.setRoundingMode(RoundingMode.DOWN);
-        return format;
-    });
-
     public static String valueSmartFormat(float value){
         float absValue = Math.abs(value);
 
@@ -37,11 +28,11 @@ public class StringTools {
         return SMART_FORMATTER.get().format(value);
     }
 
-    public static MutableComponent getPriceTooltip(Skill skill, int lvlToBuy, boolean canBuy){
+    public static MutableComponent getPriceLine(Skill skill, int lvlToBuy, boolean canBuy){
         LocalPlayer client = Minecraft.getInstance().player;
         if(skill == null || !skill.isPurchasable() || client == null) return Component.translatable("gui.tyzs_skills.error_value").withStyle(ChatFormatting.RED);
 
-        if(lvlToBuy  > skill.getMaximumLevel()) return  Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD);
+        if(lvlToBuy  > skill.getMaximumLevel()) return Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD);
 
         var prices = skill.getPrices();
         var priceIndex = lvlToBuy - 1;
@@ -60,54 +51,55 @@ public class StringTools {
                         .append(" ").append(Component.translatable("gui.tyzs_skills.SP")).withStyle(ChatFormatting.RED));
     }
 
-    public static List<MutableComponent> getValuesTooltip(Skill skill, int lvlToBuy){
+    public static List<MutableComponent> getTooltipAction(Skill skill, int targetedLvl, Enums.TooltipType type, boolean canBuy){
         LocalPlayer client = Minecraft.getInstance().player;
         List<MutableComponent> lines = new ArrayList<>();
 
+        var isPurchase = type == Enums.TooltipType.PURCHASE;
+
         if(skill == null || client == null) return lines;
 
-        if(lvlToBuy > skill.getMaximumLevel()) return  lines;
+        if(targetedLvl  > skill.getMaximumLevel()) {
+            lines.add(Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD));
+            return lines;
+        }
+
+        if(isPurchase) lines.add(getPriceLine(skill, targetedLvl, canBuy));
+        else {
+            if(targetedLvl < 0) return  lines;
+
+            int initialPrice = skill.getPrices().get(targetedLvl - 1);
+            int finalPrice = Math.max(1, (int)(initialPrice * (Config.REFUND_PERCENTAGE.get() / 100f)));
+
+            lines.add(Component.translatable("gui.tyzs_skills.gain").withStyle(ChatFormatting.GRAY)
+                    .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(finalPrice + " ").withStyle(ChatFormatting.BLUE))
+                    .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.BLUE)));
+        }
+
 
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
             for(var modifier : skill.getModifiers()){
-                var targetValue = modifier.getValue(lvlToBuy);
-                var currentValue = modifier.getValue(lvlToBuy - 1);
-                var diff = targetValue - currentValue;
-                var unit = modifier.unit();
+                var targetValue = isPurchase ? modifier.getValue(targetedLvl) : modifier.getValue(targetedLvl - 1);
+                var currentValue = isPurchase ? modifier.getValue(targetedLvl - 1) : modifier.getValue(targetedLvl);
 
+                var diff = targetValue - currentValue;
                 if(diff == 0) continue;
 
-                var color = ChatFormatting.WHITE;
-                if(diff < 0){color = ChatFormatting.RED;}
-                else if (diff > 0){color = ChatFormatting.GREEN;}
-                var sign = diff > 0 ? "+" : "";
-
-                var line = Component.literal("-> ")
-                        .append(Component.literal(sign + valueSmartFormat(diff) + " ").withStyle(color))
-                        .append(Component.translatable(unit));
-                lines.add(line);
+                lines.add(getValueLine(diff ,modifier.unit()));
             }
             return lines;
         }
 
         if(skill.getType() == Enums.SkillType.IMMUTABLE){
             for(var valueSet : skill.getValues().values()){
-                var targetValue = valueSet.getValue(lvlToBuy);
-                var currentValue = valueSet.getValue(lvlToBuy - 1);
-                var diff = targetValue - currentValue;
-                var unit = valueSet.unit();
+                var targetValue = isPurchase ? valueSet.getValue(targetedLvl) : valueSet.getValue(targetedLvl - 1);
+                var currentValue = isPurchase ? valueSet.getValue(targetedLvl - 1) : valueSet.getValue(targetedLvl);
 
+                var diff = targetValue - currentValue;
                 if(diff == 0) continue;
 
-                var color = ChatFormatting.WHITE;
-                if(diff < 0){color = ChatFormatting.RED;}
-                else if (diff > 0){color = ChatFormatting.GREEN;}
-                var sign = diff > 0 ? "+" : "";
-
-                var line = Component.literal("-> ")
-                        .append(Component.literal(sign + valueSmartFormat(diff) + " ").withStyle(color))
-                        .append(Component.translatable(unit));
-                lines.add(line);
+                lines.add(getValueLine(diff ,valueSet.unit()));
             }
             return lines;
         }
@@ -174,6 +166,31 @@ public class StringTools {
 
         return lines;
     }
+
+
+    //Utils
+    private static MutableComponent getValueLine(float diff, String unit){
+        var color = ChatFormatting.WHITE;
+
+        if(diff < 0){color = ChatFormatting.RED;}
+        else if (diff > 0){color = ChatFormatting.GREEN;}
+
+        var sign = diff > 0 ? "+" : "";
+
+        return Component.literal("-> ")
+                .append(Component.literal(sign + valueSmartFormat(diff) + " ").withStyle(color))
+                .append(Component.translatable(unit));
+    }
+    private static final ThreadLocal<DecimalFormat> SMART_FORMATTER = ThreadLocal.withInitial(() -> {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setDecimalSeparator('.');
+
+        DecimalFormat format = new DecimalFormat("0.#", symbols);
+        format.setRoundingMode(RoundingMode.DOWN);
+        return format;
+    });
+
+
 
 
 

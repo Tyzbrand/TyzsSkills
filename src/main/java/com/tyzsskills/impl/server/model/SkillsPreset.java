@@ -277,7 +277,8 @@ public class SkillsPreset {
                 "skill.tyzs_skills.rage.description",
                 null,
                 Map.of(
-                        "damage_buff", new ValueSet(List.of(10f, 20f, 30f, 40f, 50f), "skill.tyzs_skills.unit.percentage"))
+                        "damage_buff", new ValueSet(List.of(10f, 20f, 30f, 40f, 50f), "skill.tyzs_skills.unit.percentage_damage"),
+                        "health_threshold", new ValueSet(List.of(10f, 10f, 20f, 20f, 30f), "skill.tyzs_skills.unit.percentage_threshold"))
         ));
 
         finalList.add(new Skill(

@@ -130,14 +130,13 @@ public class SkillWidget {
         int lvlToBuy = currentLevel +1;
 
         if(CanRefund(skill) && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
-            tooltip.add(Component.translatable("gui.tyzs_skills.refund"));
+            tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false));
             return tooltip;
         }
 
         if(skill.isPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
 
-            tooltip.add(StringTools.getPriceTooltip(skill, lvlToBuy, CanBuy(skill)));
-            tooltip.addAll(StringTools.getValuesTooltip(skill, lvlToBuy));
+            tooltip.addAll(StringTools.getTooltipAction(skill, lvlToBuy, Enums.TooltipType.PURCHASE, CanBuy(skill)));
             return tooltip;
         }
 

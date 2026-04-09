@@ -6,4 +6,5 @@ public class Enums {
     public enum SkillType {GENERIC, CUSTOM, IMMUTABLE, TRAIT}
     public enum LimitType {FIXED, PERCENTAGE}
     public enum ResetType {ALL, METADATA, SKILLS, LIMITS, STATS, SHUTDOWN}
+    public enum TooltipType {REFUND, PURCHASE}
 }

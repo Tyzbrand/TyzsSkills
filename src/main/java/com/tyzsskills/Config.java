@@ -66,6 +66,8 @@ public class Config {
     public static final ModConfigSpec.BooleanValue EARN_XP_IN_CREATIVE;
 
     public static final ModConfigSpec.BooleanValue EARN_XP_BY_EATING;
+    public static final ModConfigSpec.BooleanValue EARN_XP_BY_KILLING;
+    public static final ModConfigSpec.BooleanValue EARN_XP_BY_MINING;
     public static final ModConfigSpec.DoubleValue FISHING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue SLEEPING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue CRAFTING_XP_VALUE;
@@ -283,6 +285,16 @@ public class Config {
                 .comment("Enable XP gain from eating food (values defined in JSON)")
                 .translation("config.common.tyzs_skills.eating_xp_earnings")
                 .define("eating_xp_earnings", true);
+
+        EARN_XP_BY_KILLING = commonBuilder
+                .comment("Enable XP gain from killing entities (values defined in JSON)")
+                .translation("config.common.tyzs_skills.killing_xp_earnings")
+                .define("killing_xp_earnings", true);
+
+        EARN_XP_BY_MINING = commonBuilder
+                .comment("Enable XP gain from breaking blocks (values defined in JSON)")
+                .translation("config.common.tyzs_skills.mining_xp_earnings")
+                .define("mining_xp_earnings", true);
 
         SLEEPING_XP_VALUE = commonBuilder
                 .comment("XP gained from sleeping")

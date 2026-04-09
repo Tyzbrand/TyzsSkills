@@ -19,6 +19,7 @@ import net.minecraft.server.MinecraftServer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -233,7 +234,7 @@ public class FileManager {
         Files.writeString(skillFile, skillJson);
     }
 
-    private Path getSkillPath(Enums.CategoryType category, MinecraftServer server){
+    private @NotNull Path getSkillPath(Enums.@NotNull CategoryType category, MinecraftServer server){
 
         Path skillPath = server.getServerDirectory()
                 .resolve("config")

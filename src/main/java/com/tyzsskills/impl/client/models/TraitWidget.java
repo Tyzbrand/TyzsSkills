@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client.models;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.screen.MainGUI;
 import com.tyzsskills.impl.client.tools.StringTools;
@@ -87,7 +88,16 @@ public class TraitWidget extends SkillWidget{
         List<Component> tooltip = new ArrayList<>();
 
         if(CanRefund(skill) && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)){ //REFUND
-            tooltip.add(Component.translatable("gui.tyzs_skills.refund"));
+            int currentLvl = ClientCache.GetSkillLevel(skill.getID());
+            if(currentLvl < 0) return  tooltip;
+
+            int initialPrice = skill.getPrices().get(currentLvl - 1);
+            int finalPrice = Math.max(1, (int)(initialPrice * (Config.REFUND_PERCENTAGE.get() / 100f)));
+
+            tooltip.add(Component.translatable("gui.tyzs_skills.gain").withStyle(ChatFormatting.GRAY)
+                    .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(finalPrice + " ").withStyle(ChatFormatting.BLUE))
+                    .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.BLUE)));
             return tooltip;
         }
 
@@ -100,7 +110,7 @@ public class TraitWidget extends SkillWidget{
                 return tooltip;
             }
 
-            tooltip.add(StringTools.getPriceTooltip(skill, lvlToBuy, CanBuy(skill)));
+            tooltip.add(StringTools.getPriceLine(skill, lvlToBuy, CanBuy(skill)));
 
             LocalPlayer player = Minecraft.getInstance().player;
             if(player != null){

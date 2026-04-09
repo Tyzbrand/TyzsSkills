@@ -8,7 +8,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 public class DamageDealEffect extends SkillBehavior {
 
-    public static final ThreadLocal<Boolean> IS_REFLECTING = ThreadLocal.withInitial(() ->false);
+    public static final ThreadLocal<Boolean> IS_REFLECTING = ThreadLocal.withInitial(() -> false);
 
     @Override
     public void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill) {
@@ -20,8 +20,6 @@ public class DamageDealEffect extends SkillBehavior {
 
         float chancePercentage = values.getValue(lvl);
 
-
-
         if (player.getRandom().nextFloat() < (chancePercentage / 100f)) {
             if(event.getSource().getEntity() instanceof LivingEntity source){
                 event.setCanceled(true);
@@ -29,7 +27,7 @@ public class DamageDealEffect extends SkillBehavior {
                 IS_REFLECTING.set(true);
 
                 try{
-                    var damageSrc = player.damageSources().playerAttack(player);
+                    var damageSrc = player.damageSources().thorns(player);
                     source.hurt(damageSrc, event.getAmount());
                     notifyClient(player, skill);
                 }

@@ -5,7 +5,6 @@
   "gui.tyzs_skills.Skills" : "Skills",
   "gui.tyzs_skills.Quests" : "Quests",
   "gui.tyzs_skills.traits" : "Traits",
-  "gui.tyzs_skills.refund" : "Refund",
   "gui.tyzs_skills.error_value" : "N/A",
   "gui.tyzs_skills.level_max" : "Max level",
   "gui.tyzs_skills.cost" : "Cost",
@@ -85,9 +84,6 @@
 
   "skill.tyzs_skills.backstab.displayName" : "Backstab",
   "skill.tyzs_skills.backstab.description" : "Increases damage dealt from behind by {damage_buff}%",
-
-  "skill.tyzs_skills.rage.displayName" : "Rage",
-  "skill.tyzs_skills.rage.description" : "Increases damage by {damage_buff}% when health is below 3 hearts",
 
   "skill.tyzs_skills.resilience.displayName" : "Resilience",
   "skill.tyzs_skills.resilience.description" : "Reduces the duration of negative status effects by {effect_time_reduction}%",
@@ -232,5 +228,15 @@
   "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
   "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III for {effect_duration} sec when health drops below {health_threshold}%",
 
-  "skill.tyzs_skills.unit.seconds" : "sec"
+  "skill.tyzs_skills.unit.seconds" : "sec",
+  "skill.tyzs_skills.unit.percentage_threshold" : "% (threshold)",
+  "skill.tyzs_skills.unit.percentage_damage" : "% (damage)",
+
+  "skill.tyzs_skills.rage.displayName" : "Rage",
+  "skill.tyzs_skills.rage.description" : "Increases damage by {damage_buff}% when health is below {health_threshold}%",
+
+  "gui.tyzs_skills.gain" : "Gain",
+
+  "config.common.tyzs_skills.killing_xp_earnings" : "XP from Killing entities",
+  "config.common.tyzs_skills.mining_xp_earnings" : "XP from breaking blocks"
 }

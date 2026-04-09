@@ -5,7 +5,6 @@
   "gui.tyzs_skills.Skills" : "Навыки",
   "gui.tyzs_skills.Quests" : "Квесты",
   "gui.tyzs_skills.traits" : "Особенности",
-  "gui.tyzs_skills.refund" : "Сброс",
   "gui.tyzs_skills.error_value" : "Н/Д",
   "gui.tyzs_skills.level_max" : "Макс. уровень",
   "gui.tyzs_skills.cost" : "Стоимость",
@@ -221,5 +220,6 @@
   "config.client.tyzs_skills.inventory_btn_y" : "Кнопка навыков (Позиция Y)",
   "config.client.tyzs_skills.inventory_btn_show" : "Показывать кнопку навыков",
   "config.client.tyzs_skills.debug_msg" : "Показывать отладочные сообщения",
-  "config.client.tyzs_skills.speed_fov_reduction" : "Уменьшение поля зрения (FOV) от скорости"
+  "config.client.tyzs_skills.speed_fov_reduction" : "Уменьшение поля зрения (FOV) от скорости",
+
 }

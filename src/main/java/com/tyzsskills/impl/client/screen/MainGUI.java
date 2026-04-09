@@ -4,6 +4,7 @@ import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
+import com.tyzsskills.impl.client.key.MainKeybind;
 import com.tyzsskills.impl.client.models.*;
 import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
@@ -454,7 +455,7 @@ public class MainGUI extends Screen {
     }
 
     private void renderIcons(GuiGraphics gui){
-        renderIcon(gui, .65f, 233, 191, 15, 16, leftPos+43, topPos+65, 8);
+        renderIcon(gui, .65f, 232, 190, 17, 18, leftPos+43, topPos+65, 8);
     }
 
     private void updateButtonsVisibility() {
@@ -571,6 +572,15 @@ public class MainGUI extends Screen {
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, 0xFFFFFFFF); // Bas
         gui.fill(x, y + 1, x + 1, y + height - 1, 0xFFFFFFFF); // Gauche
         gui.fill(x + width - 1, y + 1, x + width, y + height - 1, 0xFFFFFFFF);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (MainKeybind.OPEN_SKILL_KEY.matches(keyCode, scanCode)) {
+            this.onClose();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
 
