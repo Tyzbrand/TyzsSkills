@@ -16,11 +16,10 @@ public class StealthEffect extends SkillBehavior {
         Entity observer = event.getLookingEntity();
         if (!(observer instanceof Enemy)) return;
 
-        var values = skill.getValues();
-        if (values == null || values.isEmpty()) return;
+        var values = skill.getValueSet("range_reduction");
+        if(values == null) return;
 
-        int index = Math.min(lvl - 1, values.size() - 1);
-        float reductionPercent = values.get(index);
+        float reductionPercent = values.getValue(lvl);
         double multiplier = 1.0 - (reductionPercent / 100.0);
 
         event.modifyVisibility(multiplier);

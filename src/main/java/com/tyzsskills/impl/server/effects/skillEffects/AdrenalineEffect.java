@@ -12,14 +12,13 @@ public class AdrenalineEffect extends SkillBehavior {
     @Override
     public void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill) {
 
-        var values = skill.getValues();
-        if(values == null || values.isEmpty()) return;
+        var values = skill.getValueSet("health_threshold");
+        if(values == null) return;
 
         float currentHealth = player.getHealth();
         float maxHealth = player.getMaxHealth();
 
-        int index = Math.min(lvl - 1, values.size() - 1);
-        float value = values.get(index);
+        float value = values.getValue(lvl);
         float healthFlag = (value / 100f) * maxHealth;
 
         if(currentHealth <= healthFlag && !player.hasEffect(MobEffects.MOVEMENT_SPEED)){

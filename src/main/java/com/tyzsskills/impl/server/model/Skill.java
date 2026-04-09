@@ -83,6 +83,8 @@ public class Skill implements ISkill {
     @Override
     public Map<String, IValueSet> getValues(){return Map.copyOf(customValues);}
     @Override
+    public IValueSet getValueSet(String key){return customValues.getOrDefault(key, null);}
+    @Override
     public List<IModifier> getModifiers(){return List.copyOf(modifiers);}
 
 

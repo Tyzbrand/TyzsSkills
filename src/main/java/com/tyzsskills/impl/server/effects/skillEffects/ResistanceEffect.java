@@ -11,21 +11,20 @@ public class ResistanceEffect  extends SkillBehavior {
     @Override
     public void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill) {
 
-        var values = skill.getValues();
-        if (values == null || values.isEmpty()) return;
+        var values = skill.getValueSet("damage_resistance");
+        if(values == null) return;
 
         var damageSource = event.getSource();
         if(damageSource.is(DamageTypeTags.BYPASSES_RESISTANCE)) return;
 
-        int index = Math.min(lvl - 1, values.size() - 1);
 
-        float value = values.get(index);
+        float value = values.getValue(lvl);
         if(value >= 100f){
             event.setCanceled(true);
             return;
         }
 
-        float damageAbsorption = 1f - (values.get(index) / 100f);
+        float damageAbsorption = 1f - (value / 100f);
         float newDmg = event.getAmount() * damageAbsorption;
 
         event.setAmount(newDmg);

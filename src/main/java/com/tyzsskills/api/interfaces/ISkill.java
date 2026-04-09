@@ -49,6 +49,8 @@ public interface ISkill {
 
     Map<String, IValueSet> getValues();
 
+    IValueSet getValueSet(String key);
+
     List<IModifier> getModifiers();
 
 

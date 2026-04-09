@@ -23,12 +23,10 @@ public class ResilienceEffect extends SkillBehavior {
         int originalDuration = effect.getDuration();
         if(originalDuration >= 1728000) return; // > 24h
 
+        var values = skill.getValueSet("effect_time_reduction");
+        if(values == null) return;;
 
-        var values = skill.getValues();
-        if (values == null || values.isEmpty()) return;
-
-        int index = Math.min(lvl - 1, values.size() - 1);
-        float reductionPercentage = values.get(index);
+        float reductionPercentage = values.getValue(lvl);
         if(reductionPercentage <= 0) return;
 
         int newDuration = (int)(originalDuration * (1- reductionPercentage/100f));

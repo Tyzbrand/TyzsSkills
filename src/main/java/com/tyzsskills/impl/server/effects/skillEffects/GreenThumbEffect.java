@@ -35,11 +35,10 @@ public class GreenThumbEffect extends SkillBehavior {
 
         if(!flag) return;
 
-        var values = skill.getValues();
-        if (values == null || values.isEmpty()) return;
+        var values = skill.getValueSet("success_probability");
+        if(values == null) return;
 
-        int index = Math.min(lvl - 1, values.size() - 1);
-        float chancePercentage = values.get(index);
+        float chancePercentage = values.getValue(lvl);
 
         if(player.getRandom().nextFloat() < (chancePercentage / 100f)){
             BlockPos position = event.getPos();

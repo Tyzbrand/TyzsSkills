@@ -12,11 +12,10 @@ public class ExperienceBoostEffect extends SkillBehavior {
         float orbValue = event.getOrb().getValue();
         if(orbValue <= 0)return;
 
-        var values = skill.getValues();
-        if (values == null || values.isEmpty()) return;
+        var values = skill.getValueSet("bonus_percentage");
+        if(values == null) return;
 
-        int index = Math.min(lvl - 1, values.size() - 1);
-        float bonusPercentage = values.get(index) / 100f;
+        float bonusPercentage = values.getValue(lvl) / 100f;
 
         int bonusValue = (int) Math.ceil(orbValue * bonusPercentage);
 

@@ -129,29 +129,29 @@ public class SkillManager {
 
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
 
-            ResourceLocation attributeID = ResourceLocation.tryParse(skill.getModifier());
-            if(attributeID == null) return false;
-            Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
+            for(var modifier : skill.getModifiers()){
+                ResourceLocation attributeID = ResourceLocation.tryParse(modifier.getAttribute());
+                if(attributeID == null) continue;
+                Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
 
-            if(attribute == AttributeRegistry.TRAIT_POWER.get()){
-                var att = player.getAttribute(AttributeRegistry.TRAIT_POWER);
-                if(att == null) return false;
+                if(attribute == AttributeRegistry.TRAIT_POWER.get()){
+                    var att = player.getAttribute(AttributeRegistry.TRAIT_POWER);
+                    if(att == null) return false;
 
-                int max = (int)att.getValue();
-                int current = PowerManager.getPower(player);
+                    int max = (int)att.getValue();
+                    int current = PowerManager.getPower(player);
 
-                int index = Math.min(currentLvl - 1, skill.getValues().size() - 1);
-                float currentValue = skill.getValues().get(index);
+                    float currentValue = modifier.getValue(currentLvl);
+                    float powerLoss = currentValue;
 
-                float powerLoss = currentValue;
-
-                if (currentLvl > 1) {
-                    int prevIndex = Math.min(currentLvl - 2, skill.getValues().size() - 1);
-                    float prevValue = skill.getValues().get(prevIndex);
-                    powerLoss = currentValue - prevValue;
+                    if (currentLvl > 1) {
+                        float prevValue = modifier.getValue(currentLvl - 1);
+                        powerLoss = currentValue - prevValue;
+                    }
+                    if(current > (max - (int)powerLoss)) return false;
                 }
-                if(current > (max - (int)powerLoss)) return false;
             }
+
         }
 
         var prices = skill.getPrices();
@@ -219,8 +219,8 @@ public class SkillManager {
 
 
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
-            if(lvl > 0) GenericEffects.applyEffect(skill, player);
-            else GenericEffects.removeEffect(skill, player);
+            if(lvl > 0) GenericEffects.applyEffects(skill, player);
+            else GenericEffects.removeEffects(skill, player);
         }
     }
 

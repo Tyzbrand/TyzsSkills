@@ -16,11 +16,10 @@ public class MagnetEffect extends SkillBehavior {
 
         if(player.isDeadOrDying() || player.isSpectator() || player.isCrouching()) return;
 
-        var values = skill.getValues();
-        if (values == null || values.isEmpty()) return;
+        var values = skill.getValueSet("block_radius");
+        if(values == null) return;
 
-        int index = Math.min(lvl - 1, values.size() - 1);
-        float blockRadiusValue = values.get(index);
+        float blockRadiusValue = values.getValue(lvl);
         int blockRadius = (int)blockRadiusValue;
 
         AABB searchBox = player.getBoundingBox().inflate(blockRadius);
