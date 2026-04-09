@@ -217,7 +217,7 @@ public class SkillWidget {
             String powerAttrId = AttributeRegistry.TRAIT_POWER.getId().toString();
 
             for(var modifier : this.skill.getModifiers()){
-                if(modifier.getAttribute().equals(powerAttrId)){
+                if(modifier.attribute().equals(powerAttrId)){
                     var att = client.getAttribute(AttributeRegistry.TRAIT_POWER);
                     if(att == null) return false;
 

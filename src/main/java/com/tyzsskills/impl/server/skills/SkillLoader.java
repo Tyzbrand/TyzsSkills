@@ -3,15 +3,13 @@ package com.tyzsskills.impl.server.skills;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.sun.jna.platform.unix.solaris.LibKstat;
-import com.tyzsskills.Config;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.server.active.ErrorManager;
-import com.tyzsskills.impl.server.model.Modifier;
+import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.model.Trait;
-import com.tyzsskills.impl.server.model.ValueSet;
+import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -104,11 +102,11 @@ public class SkillLoader {
         }
 
         if(type == Enums.SkillType.IMMUTABLE){
-            if(!source.has("custom_values")) {ErrorManager.registerSkillError(id, "one value set is required");return;}
-            if(!source.get("custom_values").isJsonObject()) {ErrorManager.registerSkillError(id, "invalid value set structure");return;}
+            if(!source.has("customValues")) {ErrorManager.registerSkillError(id, "one value set is required");return;}
+            if(!source.get("customValues").isJsonObject()) {ErrorManager.registerSkillError(id, "invalid value set structure");return;}
 
             var valueSet = new HashMap<String, ValueSet>();
-            var obj = source.getAsJsonObject("custom_values");
+            var obj = source.getAsJsonObject("customValues");
             for(var entry : obj.entrySet()){
                 String key = entry.getKey();
 

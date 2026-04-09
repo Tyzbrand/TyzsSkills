@@ -1,0 +1,225 @@
+{
+  "gui.tyzs_skills.title" : "Интерфейс навыков",
+  "gui.tyzs_skills.SP" : "ОН",
+  "gui.tyzs_skills.Lvl" : "Ур.",
+  "gui.tyzs_skills.Skills" : "Навыки",
+  "gui.tyzs_skills.Quests" : "Квесты",
+  "gui.tyzs_skills.traits" : "Особенности",
+  "gui.tyzs_skills.refund" : "Сброс",
+  "gui.tyzs_skills.error_value" : "Н/Д",
+  "gui.tyzs_skills.level_max" : "Макс. уровень",
+  "gui.tyzs_skills.cost" : "Стоимость",
+  "gui.tyzs_skills.xp" : "Опыт",
+  "gui.tyzs_skills.active" : "Активно",
+  "gui.tyzs_skills.inactive" : "Неактивно",
+  "gui.tyzs_skills.power" : "Сила",
+  "gui.tyzs_skills.power_needed" : "Требуемая сила",
+
+  "skill.tyzs_skills.unit.percentage" : "%",
+  "skill.tyzs_skills.unit.blocks" : "блоков",
+  "skill.tyzs_skills.unit.half_hearts" : "половин сердец",
+  "skill.tyzs_skills.unit.damage" : "ед. урона",
+  "skill.tyzs_skills.unit.trait_power" : "силы особенности",
+  "skill.tyzs_skills.unit.block_radius" : "блоков в радиусе",
+
+  "overlay.tyzs_skills.level" : "Уровень",
+  "button.tyzs_skills.inventory_btn" : "Открыть меню навыков (ПКМ для перемещения)",
+
+  "gui.tyzs_skills.Tab.all" : "Все",
+  "gui.tyzs_skills.Tab.abilities" : "Способности",
+  "gui.tyzs_skills.Tab.fight" : "Бой",
+  "gui.tyzs_skills.Tab.misc" : "Разное",
+  "gui.tyzs_skills.Tab.bookmarks" : "Закладки",
+
+  "gui.tyzs_skills.stats.all_time_xp" : "Всего опыта",
+  "gui.tyzs_skills.stats.session_xp" : "Опыт за сессию",
+  "gui.tyzs_skills.stats.sp_earned" : "Получено ОН",
+  "gui.tyzs_skills.stats.sp_spent" : "Потрачено ОН",
+  "gui.tyzs_skills.stats.skill_unlocked" : "Разблокировано навыков",
+
+  "key.tyzs_skills.open_menu" : "Открыть меню навыков",
+  "key.categories.tyzs_skills" : "Навыки Tyz",
+
+  "skill.tyzs_skills.health_boost.displayName" : "Увеличение здоровья",
+  "skill.tyzs_skills.health_boost.description" : "Увеличивает максимальное здоровье на {value} половин сердец",
+
+  "skill.tyzs_skills.oxygen_boost.displayName" : "Задержка дыхания",
+  "skill.tyzs_skills.oxygen_boost.description" : "Увеличивает время дыхания под водой на {value}%",
+
+  "skill.tyzs_skills.block_reach.displayName" : "Дальность досягаемости",
+  "skill.tyzs_skills.block_reach.description" : "Увеличивает дистанцию установки и разрушения блоков на {value} блоков",
+
+  "skill.tyzs_skills.attack_damage.displayName" : "Урон от атаки",
+  "skill.tyzs_skills.attack_damage.description" : "Увеличивает урон в ближнем бою на {value}",
+
+  "skill.tyzs_skills.sneak_speed.displayName" : "Скорость в скрытности",
+  "skill.tyzs_skills.sneak_speed.description" : "Увеличивает скорость передвижения сидя на {value}%",
+
+  "skill.tyzs_skills.speed.displayName" : "Скорость",
+  "skill.tyzs_skills.speed.description" : "Увеличивает скорость передвижения на {value}%",
+
+  "skill.tyzs_skills.step_height.displayName" : "Высота шага",
+  "skill.tyzs_skills.step_height.description" : "Позволяет зашагивать на блоки высотой до {value} без прыжка",
+
+  "skill.tyzs_skills.swim_speed.displayName" : "Скорость плавания",
+  "skill.tyzs_skills.swim_speed.description" : "Увеличивает скорость плавания на {value}%",
+
+  "skill.tyzs_skills.venomous_attack.displayName" : "Ядовитый удар",
+  "skill.tyzs_skills.venomous_attack.description" : "Дает шанс {success_probability}% отравить цель при попадании",
+
+  "skill.tyzs_skills.critical_hit.displayName" : "Критический удар",
+  "skill.tyzs_skills.critical_hit.description" : "Дает шанс {success_probability}% нанести критический урон (двойной урон)",
+
+  "skill.tyzs_skills.damage_deal.displayName" : "Отражение",
+  "skill.tyzs_skills.damage_deal.description" : "Дает шанс {success_probability}% заблокировать и отразить получаемый урон в ближнем бою",
+
+  "skill.tyzs_skills.bloodlust.displayName" : "Жажда крови",
+  "skill.tyzs_skills.bloodlust.description" : "Убийство враждебного моба восстанавливает {health_percentage}% от его максимального здоровья",
+
+  "skill.tyzs_skills.resistance.displayName" : "Сопротивление",
+  "skill.tyzs_skills.resistance.description" : "Снижает весь получаемый урон на {damage_resistance}%",
+
+  "skill.tyzs_skills.backstab.displayName" : "Удар в спину",
+  "skill.tyzs_skills.backstab.description" : "Увеличивает урон, наносимый со спины, на {damage_buff}%",
+
+  "skill.tyzs_skills.rage.displayName" : "Ярость",
+  "skill.tyzs_skills.rage.description" : "Увеличивает урон на {damage_buff}%, когда здоровье опускается ниже 3 сердец",
+
+  "skill.tyzs_skills.adrenaline.displayName" : "Адреналин",
+  "skill.tyzs_skills.adrenaline.description" : "Дает эффекты Поглощения и Скорости III, когда здоровье опускается ниже {health_threshold}%",
+
+  "skill.tyzs_skills.resilience.displayName" : "Стойкость",
+  "skill.tyzs_skills.resilience.description" : "Снижает длительность негативных эффектов на {effect_time_reduction}%",
+
+  "skill.tyzs_skills.swift_learn.displayName" : "Быстрое обучение",
+  "skill.tyzs_skills.swift_learn.description" : "Увеличивает получаемый опыт навыков на {value}%",
+
+  "skill.tyzs_skills.green_thumb.displayName" : "Садовод",
+  "skill.tyzs_skills.green_thumb.description" : "Дает шанс {success_probability}% удвоить дроп при сборе урожая и растений",
+
+  "skill.tyzs_skills.nutrition.displayName" : "Метаболизм",
+  "skill.tyzs_skills.nutrition.description" : "Увеличивает ценность еды (питательность и насыщение) на {nutrition_bonus}%",
+
+  "skill.tyzs_skills.experience_boost.displayName" : "Мудрость",
+  "skill.tyzs_skills.experience_boost.description" : "Увеличивает получаемый обычный опыт (Vanilla XP) на {bonus_percentage}%",
+
+  "skill.tyzs_skills.excavation.displayName" : "Землекоп",
+  "skill.tyzs_skills.excavation.description" : "Увеличивает скорость добычи блоков на {value}%",
+
+  "skill.tyzs_skills.stealth.displayName" : "Скрытность",
+  "skill.tyzs_skills.stealth.description" : "Снижает радиус обнаружения враждебными мобами на {range_reduction}%",
+
+  "skill.tyzs_skills.magnet.displayName" : "Магнит",
+  "skill.tyzs_skills.magnet.description" : "Притягивает предметы в радиусе {block_radius} блоков",
+
+  "skill.tyzs_skills.trait_surge.displayName" : "Всплеск особенностей",
+  "skill.tyzs_skills.trait_surge.description" : "Увеличивает силу особенностей на {value}",
+
+  "skill.tyzs_skills.cinder_blood.displayName" : "Пепельная кровь",
+  "skill.tyzs_skills.cinder_blood.description" : "Дает иммунитет к урону от огня (но ванны из лавы принимать все равно не советую)",
+
+  "skill.tyzs_skills.deep_lode.displayName" : "Глубинная жила",
+  "skill.tyzs_skills.deep_lode.description" : "Добывает рудные жилы целиком за один удар (присядьте, чтобы отменить)",
+
+  "skill.tyzs_skills.root_cleaver.displayName" : "Лесоруб",
+  "skill.tyzs_skills.root_cleaver.description" : "Срубает деревья целиком за один удар (присядьте, чтобы отменить)",
+
+  "skill.tyzs_skills.iron_gut.displayName" : "Железный желудок",
+  "skill.tyzs_skills.iron_gut.description" : "Предотвращает эффект голода при поедании гнилой плоти",
+
+  "skill.tyzs_skills.gilded_aura.displayName" : "Золотая аура",
+  "skill.tyzs_skills.gilded_aura.description" : "Вам больше не нужна золотая броня, чтобы заслужить симпатию пиглинов",
+
+  "skill.tyzs_skills.silver_tongue.displayName" : "Серебряный язык",
+  "skill.tyzs_skills.silver_tongue.description" : "Жители будут следовать за вами, если вы держите в руках изумруды",
+
+  "skill.tyzs_skills.keepsake.displayName" : "Сохранность",
+  "skill.tyzs_skills.keepsake.description" : "Сохраняет предметы на панели быстрого доступа (хотбаре) после смерти",
+
+  "skill.tyzs_skills.soundless.displayName" : "Беззвучный",
+  "skill.tyzs_skills.soundless.description" : "Враги и сущности больше не могут вас услышать",
+
+  "skill.tyzs_skills.refiner.displayName" : "Переработчик",
+  "skill.tyzs_skills.refiner.description" : "Автоматически переплавляет добытые руды (присядьте, чтобы отменить)",
+
+  "skill.tyzs_skills.deep_sight.displayName" : "Глубинное зрение",
+  "skill.tyzs_skills.deep_sight.description" : "Дает ночное зрение в глубоких пещерах",
+
+  "skill.tyzs_skills.deep_rest.displayName" : "Глубокий сон",
+  "skill.tyzs_skills.deep_rest.description" : "Полностью восстанавливает здоровье и шкалу голода после сна",
+
+  "tyzs_skills.configuration.title": "Настройки навыков Tyz",
+  "tyzs_skills.configuration.section.tyzs.skills.common.toml": "Общие настройки (Геймплей)",
+  "tyzs_skills.configuration.section.tyzs.skills.client.toml": "Клиентские настройки (Визуал)",
+  "tyzs_skills.configuration.general": "Основные настройки",
+  "tyzs_skills.configuration.xp_values": "Значения получения опыта",
+  "tyzs_skills.configuration.overlays": "Настройки оверлеев",
+  "tyzs_skills.configuration.xp_overlay": "Детали оверлея опыта",
+  "tyzs_skills.configuration.level_up_overlay": "Детали оверлея повышения уровня",
+  "tyzs_skills.configuration.skill_overlay": "Детали оверлея навыков",
+  "tyzs_skills.configuration.debug": "Отладка",
+  "tyzs_skills.configuration.accessibility": "Доступность",
+  "tyzs_skills.configuration.Cinder_blood": "Пепельная кровь",
+  "tyzs_skills.configuration.Deep_sight": "Глубинное зрение",
+  "tyzs_skills.configuration.Root_cleaver": "Лесоруб",
+  "tyzs_skills.configuration.Deep_rest": "Глубокий сон",
+  "tyzs_skills.configuration.Deep_lode": "Глубинная жила",
+  "tyzs_skills.configuration.Silver_tongue": "Серебряный язык",
+  "tyzs_skills.configuration.Trait_details": "Детали особенностей",
+  "tyzs_skills.configuration.inventory_button": "Кнопка в инвентаре",
+  "tyzs_skills.configuration.Limits": "Лимиты",
+
+  "config.common.tyzs_skills.refund_system" : "Включить систему сброса навыков",
+  "config.common.tyzs_skills.refund_system_per" : "Процент возврата",
+  "config.common.tyzs_skills.trait_unlock_level" : "Уровень разблокировки особенностей",
+  "config.common.tyzs_skills.trait_system" : "Включить систему особенностей",
+  "config.common.tyzs_skills.prevent_placed_blocks_xp" : "Не давать опыт за поставленные игроком блоки",
+  "config.common..trait.max_ores" : "Макс. размер рудной жилы",
+  "config.common.tyzs_skills.trait.deep_lode_grief" : "Защита от гриферства (Глубинная жила)",
+  "config.common.tyzs_skills.trait.max_logs" : "Макс. количество сломанных бревен",
+  "config.common.tyzs_skills.trait.max_leaves" : "Макс. количество сломанной листвы",
+  "config.common.tyzs_skills.trait.match_type" : "Строгое совпадение типов блоков",
+  "config.common.tyzs_skills.trait.root_cleaver_grief" : "Защита от гриферства (Лесоруб)",
+  "config.common.tyzs_skills.trait.lava_damage" : "Предотвращать урон от лавы",
+  "config.common.tyzs_skills.trait.restores_health" : "Восстанавливать здоровье",
+  "config.common.tyzs_skills.trait.restores_nutrition" : "Восстанавливать голод",
+  "config.common.tyzs_skills.trait.restores_saturation" : "Восстанавливать насыщение",
+  "config.common.tyzs_skills.trait.ambient_threshold" : "Порог освещения (От блоков)",
+  "config.common.tyzs_skills.trait.sky_threshold" : "Порог освещения (От неба)",
+  "config.common.tyzs_skills.trait.attraction_radius" : "Радиус притяжения",
+  "config.common.tyzs_skills.trait.villagers_speed" : "Скорость жителей",
+  "config.common.tyzs_skills.earn_creative_xp" : "Получение опыта в творческом режиме",
+  "config.common.tyzs_skills.eating_xp_earnings" : "Опыт за еду",
+  "config.common.tyzs_skills.sleeping_gain" : "Опыт за сон",
+  "config.common.tyzs_skills.fishing_gain" : "Опыт за рыбалку",
+  "config.common.tyzs_skills.crafting_gain" : "Опыт за крафт",
+  "config.common.tyzs_skills.breeding_gain" : "Опыт за разведение",
+  "config.common.tyzs_skills.advancement_task_gain" : "Опыт за выполнение задач (Task)",
+  "config.common.tyzs_skills.advancement_goal_gain" : "Опыт за достижение целей (Goal)",
+  "config.common.tyzs_skills.advancement_challenge_gain" : "Опыт за испытания (Challenge)",
+  "config.common.tyzs_skills.biome_gain" : "Опыт за новые биомы",
+  "config.common.tyzs_skills.dimension_gain" : "Опыт за новые измерения",
+  "config.common.tyzs_skills.max_sp" : "Макс. количество ОН",
+  "config.common.tyzs_skills.max_lvl" : "Макс. уровень",
+  "config.common.tyzs_skills.max_sp_gain" : "Макс. прирост ОН",
+  "config.common.tyzs_skills.xp_daily" : "Дневной лимит опыта",
+  "config.common.tyzs_skills.cycle_duration" : "Продолжительность цикла",
+  "config.common.tyzs_skills.limit_type" : "Тип лимита",
+
+  "config.client.tyzs_skills.creative_overlays" : "Оверлеи в творческом режиме",
+  "config.client.tyzs_skills.xp_overlay" : "Показывать оверлей опыта",
+  "config.client.tyzs_skills.level_overlay" : "Показывать оверлей повышения уровня",
+  "config.client.tyzs_skills.skill_overlay" : "Показывать оверлей активных навыков",
+  "config.client.tyzs_skills.x_offset" : "Смещение по X",
+  "config.client.tyzs_skills.y_offset" : "Смещение по Y",
+  "config.client.tyzs_skills.duration" : "Длительность",
+  "config.client.tyzs_skills.bg_color" : "Цвет фона",
+  "config.client.tyzs_skills.bd_color" : "Цвет рамки",
+  "config.client.tyzs_skills.text_color" : "Цвет текста",
+  "config.client.tyzs_skills.scd_text_color" : "Вторичный цвет текста",
+  "config.client.tyzs_skills.inventory_btn_x" : "Кнопка навыков (Позиция X)",
+  "config.client.tyzs_skills.inventory_btn_y" : "Кнопка навыков (Позиция Y)",
+  "config.client.tyzs_skills.inventory_btn_show" : "Показывать кнопку навыков",
+  "config.client.tyzs_skills.debug_msg" : "Показывать отладочные сообщения",
+  "config.client.tyzs_skills.speed_fov_reduction" : "Уменьшение поля зрения (FOV) от скорости"
+}

@@ -23,7 +23,7 @@ public class GenericEffects {
         if(skill.getType() != Enums.SkillType.GENERIC && skill.getType() != Enums.SkillType.CUSTOM) return;
 
         for(var modifier : skill.getModifiers()){
-            ResourceLocation attributeID = ResourceLocation.tryParse(modifier.getAttribute());
+            ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
             if(attributeID == null) continue;
 
             Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
@@ -48,14 +48,14 @@ public class GenericEffects {
             if(currentLvl <= 0) continue;
 
             float value = modifier.getValue(currentLvl);
-            if(modifier.getOperation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE ||
-                    modifier.getOperation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL){
+            if(modifier.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE ||
+                    modifier.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL){
                 value /= 100f;
             }
 
-            var operation = modifier.getOperation();
+            var operation = modifier.operation();
 
-            if(modifier.getAttribute().equals("minecraft:generic.oxygen_bonus")){
+            if(modifier.attribute().equals("minecraft:generic.oxygen_bonus")){
                 operation = AttributeModifier.Operation.ADD_VALUE;
                 value += .75f;
             }
@@ -74,7 +74,7 @@ public class GenericEffects {
         if(skill.getType() != Enums.SkillType.GENERIC && skill.getType() != Enums.SkillType.CUSTOM) return;
 
         for(var modifier : skill.getModifiers()){
-            ResourceLocation attributeID = ResourceLocation.tryParse(modifier.getAttribute());
+            ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
             Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
 
             if(attribute == null || attributeID == null) continue;

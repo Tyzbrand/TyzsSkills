@@ -117,7 +117,6 @@ public class Config {
 
     //Accessibility
     public static final ModConfigSpec.DoubleValue FOV_REDUCTION;
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> FOV_AFFECTED_SKILLS;
 
     static {
         //Construction du COMMON
@@ -408,13 +407,6 @@ public class Config {
                 .translation("config.client.tyzs_skills.speed_fov_reduction")
                 .defineInRange("speed_fov_reduction", 0.95, 0, 1);
 
-        FOV_AFFECTED_SKILLS = clientBuilder
-                .comment("List of skill IDs that are affected by the FOV reduction setting")
-                .translation("config.client.tyzs_skills.fov_affected_skills")
-                .defineListAllowEmpty("fov_affected_skills",
-                        () -> List.of("speed_boost"),
-                        () -> "skill_id",
-                        obj -> obj instanceof String);
         clientBuilder.pop();
         CLIENT_SPEC = clientBuilder.build();
     }

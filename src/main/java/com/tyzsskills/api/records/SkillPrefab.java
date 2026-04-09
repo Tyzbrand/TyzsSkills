@@ -1,15 +1,15 @@
 package com.tyzsskills.api.records;
 
 import com.tyzsskills.api.Enums;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Data container to register default JSON generation for custom skills
  */
 public record SkillPrefab(boolean active, String id, int maximumLevel,
-                          List<Integer> prices, List<Float> values, Enums.SkillType type, Enums.CategoryType category,
-                          String modifier, AttributeModifier.Operation operation, boolean purchasable,
-                          String icon, String displayName, String description, String unit, boolean isTrait, int powerWeight) {
+                          List<Integer> prices, Enums.SkillType type, Enums.CategoryType category,
+                          boolean purchasable, String icon, String displayName, String description,
+                          List<Modifier> modifiers, Map<String, ValueSet> customValues, boolean isTrait, int powerWeight) {
 }

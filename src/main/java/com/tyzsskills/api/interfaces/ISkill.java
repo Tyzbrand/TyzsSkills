@@ -1,9 +1,8 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.impl.server.model.Modifier;
-import com.tyzsskills.impl.server.model.SkillBehavior;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import com.tyzsskills.api.records.Modifier;
+import com.tyzsskills.api.records.ValueSet;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,6 @@ public interface ISkill {
      * @return a list of prices (1st price in the list is the price from lvl 0 to lvl 1)
      */
     List<Integer> getPrices();
-
 
 
     Enums.SkillType getType();
@@ -47,11 +45,11 @@ public interface ISkill {
      */
     String getDescription();
 
-    Map<String, IValueSet> getValues();
+    Map<String, ValueSet> getValues();
 
-    IValueSet getValueSet(String key);
+    ValueSet getValueSet(String key);
 
-    List<IModifier> getModifiers();
+    List<Modifier> getModifiers();
 
 
 

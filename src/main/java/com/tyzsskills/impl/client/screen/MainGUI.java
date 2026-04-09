@@ -307,12 +307,12 @@ public class MainGUI extends Screen {
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.sp_earned").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
-                    .append(Component.literal(String.valueOf(ClientCache.GetSpEarned())).withStyle(ChatFormatting.GRAY)));
+                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.GetSpEarned())).withStyle(ChatFormatting.GRAY)));
 
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.sp_spent").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
-                    .append(Component.literal(String.valueOf(ClientCache.GetSpSpent())).withStyle(ChatFormatting.GRAY)));
+                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.GetSpSpent())).withStyle(ChatFormatting.GRAY)));
 
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.skill_unlocked").withStyle(ChatFormatting.BLUE)

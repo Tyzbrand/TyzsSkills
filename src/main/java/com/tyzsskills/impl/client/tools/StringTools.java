@@ -24,7 +24,7 @@ public class StringTools {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setDecimalSeparator('.');
 
-        DecimalFormat format = new DecimalFormat("#,##0.#", symbols);
+        DecimalFormat format = new DecimalFormat("0.#", symbols);
         format.setRoundingMode(RoundingMode.DOWN);
         return format;
     });
@@ -71,11 +71,19 @@ public class StringTools {
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
             for(var modifier : skill.getModifiers()){
                 var targetValue = modifier.getValue(lvlToBuy);
-                var currentValue = lvlToBuy > 1 ? modifier.getValue(lvlToBuy - 1) : 0;
-                var unit = modifier.getUnit();
+                var currentValue = modifier.getValue(lvlToBuy - 1);
+                var diff = targetValue - currentValue;
+                var unit = modifier.unit();
+
+                if(diff == 0) continue;
+
+                var color = ChatFormatting.WHITE;
+                if(diff < 0){color = ChatFormatting.RED;}
+                else if (diff > 0){color = ChatFormatting.GREEN;}
+                var sign = diff > 0 ? "+" : "";
 
                 var line = Component.literal("-> ")
-                        .append(Component.literal(valueSmartFormat(targetValue - currentValue) + " "))
+                        .append(Component.literal(sign + valueSmartFormat(diff) + " ").withStyle(color))
                         .append(Component.translatable(unit));
                 lines.add(line);
             }
@@ -85,11 +93,19 @@ public class StringTools {
         if(skill.getType() == Enums.SkillType.IMMUTABLE){
             for(var valueSet : skill.getValues().values()){
                 var targetValue = valueSet.getValue(lvlToBuy);
-                var currentValue = lvlToBuy > 1 ? valueSet.getValue(lvlToBuy - 1) : 0;
-                var unit = valueSet.getUnit();
+                var currentValue = valueSet.getValue(lvlToBuy - 1);
+                var diff = targetValue - currentValue;
+                var unit = valueSet.unit();
+
+                if(diff == 0) continue;
+
+                var color = ChatFormatting.WHITE;
+                if(diff < 0){color = ChatFormatting.RED;}
+                else if (diff > 0){color = ChatFormatting.GREEN;}
+                var sign = diff > 0 ? "+" : "";
 
                 var line = Component.literal("-> ")
-                        .append(Component.literal(valueSmartFormat(targetValue - currentValue) + " "))
+                        .append(Component.literal(sign + valueSmartFormat(diff) + " ").withStyle(color))
                         .append(Component.translatable(unit));
                 lines.add(line);
             }
@@ -107,13 +123,17 @@ public class StringTools {
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
             var modifiers = skill.getModifiers();
 
-            for(int i = 0; i < skill.getModifiers().size(); i++){
+            for(int i = 0; i < modifiers.size(); i++){
                 var targetText = i == 0 ? "{value}" : String.format("{value%d}", i + 1);
 
                 if (rawDesc.contains(targetText)) {
                     var value = modifiers.get(i).getValue(currentLvl);
 
-                    String coloredValue = ChatFormatting.GREEN + valueSmartFormat(value) + ChatFormatting.GRAY;
+                    var color = ChatFormatting.WHITE;
+                    if(value < 0){color = ChatFormatting.RED;}
+                    else if (value > 0){color = ChatFormatting.GREEN;}
+
+                    String coloredValue = color + valueSmartFormat(value) + ChatFormatting.GRAY;
                     rawDesc = rawDesc.replace(targetText, coloredValue);
                 }
             }
@@ -126,7 +146,11 @@ public class StringTools {
                 if (rawDesc.contains(targetText)) {
                     float value = entry.getValue().getValue(currentLvl);
 
-                    String coloredValue = ChatFormatting.GREEN + valueSmartFormat(value) + ChatFormatting.GRAY;
+                    var color = ChatFormatting.WHITE;
+                    if(value < 0){color = ChatFormatting.RED;}
+                    else if (value > 0){color = ChatFormatting.GREEN;}
+
+                    String coloredValue = color + valueSmartFormat(value) + ChatFormatting.GRAY;
                     rawDesc = rawDesc.replace(targetText, coloredValue);
                 }
             }

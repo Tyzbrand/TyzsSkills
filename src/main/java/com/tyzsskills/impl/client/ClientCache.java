@@ -252,6 +252,7 @@ public class ClientCache {
     public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills.values());}
     public static List<String> GetAllSkillIDs(){return new ArrayList<>(clientSkills.keySet());}
     public static List<String> GetAllBookmarkedIDs(){return new ArrayList<>(clientBookmarks);}
+    public static List<String> getAllActiveSkills(){return List.copyOf(clientSkillLevels.keySet());}
 
     public static int GetSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
     public static Skill GetSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}

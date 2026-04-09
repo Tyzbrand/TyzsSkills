@@ -69,52 +69,52 @@
   "skill.tyzs_skills.swim_speed.description" : "Increases swim speed by {value}%",
 
   "skill.tyzs_skills.venomous_attack.displayName" : "Venomous Strike",
-  "skill.tyzs_skills.venomous_attack.description" : "Adds a {value}% chance to poison targets on hit",
+  "skill.tyzs_skills.venomous_attack.description" : "Adds a {success_probability}% chance to poison targets on hit",
 
   "skill.tyzs_skills.critical_hit.displayName" : "Critical Strike",
-  "skill.tyzs_skills.critical_hit.description" : "Adds a {value}% chance to deal a critical hit (double damage)",
+  "skill.tyzs_skills.critical_hit.description" : "Adds a {success_probability}% chance to deal a critical hit (double damage)",
 
   "skill.tyzs_skills.damage_deal.displayName" : "Deflection",
-  "skill.tyzs_skills.damage_deal.description" : "Adds a {value}% chance to negate and reflect incoming melee damage",
+  "skill.tyzs_skills.damage_deal.description" : "Adds a {success_probability}% chance to negate and reflect incoming melee damage",
 
   "skill.tyzs_skills.bloodlust.displayName" : "Bloodlust",
-  "skill.tyzs_skills.bloodlust.description" : "Killing a hostile mob regenerates {value}% of its max health",
+  "skill.tyzs_skills.bloodlust.description" : "Killing a hostile mob regenerates {health_percentage}% of its max health",
 
   "skill.tyzs_skills.resistance.displayName" : "Resistance",
-  "skill.tyzs_skills.resistance.description" : "Reduces all incoming damage by {value}%",
+  "skill.tyzs_skills.resistance.description" : "Reduces all incoming damage by {damage_resistance}%",
 
   "skill.tyzs_skills.backstab.displayName" : "Backstab",
-  "skill.tyzs_skills.backstab.description" : "Increases damage dealt from behind by {value}%",
+  "skill.tyzs_skills.backstab.description" : "Increases damage dealt from behind by {damage_buff}%",
 
   "skill.tyzs_skills.rage.displayName" : "Rage",
-  "skill.tyzs_skills.rage.description" : "Increases damage by {value}% when health is below 3 hearts",
+  "skill.tyzs_skills.rage.description" : "Increases damage by {damage_buff}% when health is below 3 hearts",
 
   "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
-  "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III when health drops below {value}%",
+  "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III when health drops below {health_threshold}%",
 
   "skill.tyzs_skills.resilience.displayName" : "Resilience",
-  "skill.tyzs_skills.resilience.description" : "Reduces the duration of negative status effects by {value}%",
+  "skill.tyzs_skills.resilience.description" : "Reduces the duration of negative status effects by {effect_time_reduction}%",
 
   "skill.tyzs_skills.swift_learn.displayName" : "Swift Learning",
   "skill.tyzs_skills.swift_learn.description" : "Increases Skill XP gain by {value}%",
 
   "skill.tyzs_skills.green_thumb.displayName" : "Green Thumb",
-  "skill.tyzs_skills.green_thumb.description" : "Adds a {value}% chance to double drops when harvesting crops and plants",
+  "skill.tyzs_skills.green_thumb.description" : "Adds a {success_probability}% chance to double drops when harvesting crops and plants",
 
   "skill.tyzs_skills.nutrition.displayName" : "Metabolism",
-  "skill.tyzs_skills.nutrition.description" : "Increases food value (nutrition & saturation) by {value}%",
+  "skill.tyzs_skills.nutrition.description" : "Increases food value (nutrition & saturation) by {nutrition_bonus}%",
 
   "skill.tyzs_skills.experience_boost.displayName" : "Wisdom",
-  "skill.tyzs_skills.experience_boost.description" : "Increases Vanilla XP gain by {value}%",
+  "skill.tyzs_skills.experience_boost.description" : "Increases Vanilla XP gain by {bonus_percentage}%",
 
   "skill.tyzs_skills.excavation.displayName" : "Excavation",
   "skill.tyzs_skills.excavation.description" : "Increases mining speed by {value}%",
 
   "skill.tyzs_skills.stealth.displayName" : "Stealth",
-  "skill.tyzs_skills.stealth.description" : "Reduces the detection range of hostile mobs by {value}%",
+  "skill.tyzs_skills.stealth.description" : "Reduces the detection range of hostile mobs by {range_reduction}%",
 
   "skill.tyzs_skills.magnet.displayName" : "Magnet",
-  "skill.tyzs_skills.magnet.description" : "Attracts items within a {value} block radius",
+  "skill.tyzs_skills.magnet.description" : "Attracts items within a {block_radius} block radius",
 
   "skill.tyzs_skills.trait_surge.displayName" : "Trait Surge",
   "skill.tyzs_skills.trait_surge.description" : "Increases Trait Power by {value}",
@@ -228,8 +228,7 @@
   "config.client.tyzs_skills.inventory_btn_y" : "Skill button Y",
   "config.client.tyzs_skills.inventory_btn_show" : "Show Skill Button",
   "config.client.tyzs_skills.debug_msg" : "Show debug messages",
-  "config.client.tyzs_skills.speed_fov_reduction" : "Speed fov reduction",
-  "config.client.tyzs_skills.fov_affected_skills" : "Affected skills"
+  "config.client.tyzs_skills.speed_fov_reduction" : "Speed fov reduction"
 
 
 

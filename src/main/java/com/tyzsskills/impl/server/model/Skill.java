@@ -1,9 +1,9 @@
 package com.tyzsskills.impl.server.model;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.interfaces.IModifier;
 import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.api.interfaces.IValueSet;
+import com.tyzsskills.api.records.Modifier;
+import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
@@ -81,11 +81,11 @@ public class Skill implements ISkill {
     @Override
     public String getDescription(){return description;}
     @Override
-    public Map<String, IValueSet> getValues(){return Map.copyOf(customValues);}
+    public Map<String, ValueSet> getValues(){return Map.copyOf(customValues);}
     @Override
-    public IValueSet getValueSet(String key){return customValues.getOrDefault(key, null);}
+    public ValueSet getValueSet(String key){return customValues.getOrDefault(key, null);}
     @Override
-    public List<IModifier> getModifiers(){return List.copyOf(modifiers);}
+    public List<Modifier> getModifiers(){return List.copyOf(modifiers);}
 
 
 

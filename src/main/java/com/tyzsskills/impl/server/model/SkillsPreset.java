@@ -1,6 +1,8 @@
 package com.tyzsskills.impl.server.model;
 
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.records.Modifier;
+import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.ArrayList;

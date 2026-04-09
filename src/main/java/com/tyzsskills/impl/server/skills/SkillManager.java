@@ -130,7 +130,7 @@ public class SkillManager {
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
 
             for(var modifier : skill.getModifiers()){
-                ResourceLocation attributeID = ResourceLocation.tryParse(modifier.getAttribute());
+                ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
                 if(attributeID == null) continue;
                 Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
 

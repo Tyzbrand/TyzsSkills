@@ -1,26 +1,24 @@
-package com.tyzsskills.impl.server.model;
+package com.tyzsskills.api.records;
 
-import com.tyzsskills.api.interfaces.IValueSet;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class ValueSet implements IValueSet {
-    protected List<Float> values;
-    protected String unit;
-
-    public ValueSet(List<Float> values, String unit){
-        this.values = values != null ? new ArrayList<>(values) : new ArrayList<>();
-        this.unit = unit;
+public record ValueSet (List<Float> values, String unit) {
+    public ValueSet{
+        values = values != null ? List.copyOf(values) : List.of();
     }
 
+    public float getValue(int lvl){
+        if(lvl <= 0) return 0f;
+        if(values.isEmpty()) return 0f;
 
-    @Override
-    public List<Float> getValues(){return Collections.unmodifiableList(values);}
-    @Override
-    public String getUnit(){return unit;}
+        var index = Math.max(0, lvl - 1);
+        if(index >= values.size()) return values.getLast();
+
+        return values.get(index);
+    }
 
     //Network
     public void writeToBuffer(FriendlyByteBuf buffer){

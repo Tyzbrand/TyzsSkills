@@ -89,9 +89,8 @@ public class FileManager {
             }
             else{
                 skillToSave = new Skill(prefab.active(), prefab.id(), prefab.maximumLevel(),
-                        prefab.prices(), prefab.values(), prefab.type(), prefab.category(),
-                        prefab.modifier(), prefab.operation(), prefab.purchasable(),
-                        prefab.icon(), prefab.displayName(), prefab.description(), prefab.unit());
+                        prefab.prices(), prefab.type(), prefab.category(), prefab.purchasable(),
+                        prefab.icon(), prefab.displayName(), prefab.description(), prefab.modifiers(), prefab.customValues());
             }
 
             Path targetPath = getSkillPath(prefab.category(), server);
@@ -265,7 +264,7 @@ public class FileManager {
                 .resolve("tyzs_skills")
                 .resolve("skills");
 
-        var backupFolder = skillPath.resolve("skill_config_backup_v6.1");
+        var backupFolder = skillPath.resolve("legacy_backup_6.1");
 
         if(Files.exists(backupFolder)) return;
 
