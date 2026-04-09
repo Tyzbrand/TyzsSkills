@@ -6,6 +6,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.SoundPlayer;
 import com.tyzsskills.impl.client.screen.MainGUI;
+import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.model.Trait;
@@ -125,78 +126,27 @@ public class SkillWidget {
 
     public List<Component> getTooltip(int mouseX, int mouseY){
         List<Component> tooltip = new ArrayList<>();
+        int currentLevel = ClientCache.GetSkillLevel(this.skill.getID().toLowerCase());
+        int lvlToBuy = currentLevel +1;
 
-        //Simple TOOLTIP
         if(CanRefund(skill) && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
             tooltip.add(Component.translatable("gui.tyzs_skills.refund"));
+            return tooltip;
         }
 
         if(skill.isPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
 
-            int maxLevel = this.skill.getMaximumLevel();
-            int currentLevel = ClientCache.GetSkillLevel(this.skill.getID().toLowerCase());
-
-            if(currentLevel < maxLevel){
-                float currentValue = currentLevel <= 0 ? 0f : this.skill.getValues().get(currentLevel - 1);
-                float nextValue = this.skill.getValues().get(currentLevel);
-
-                String valueDiff = MainGUI.SmartFormat(nextValue - currentValue);
-
-                var text = Component.empty().append(GetPriceString(skill));
-                tooltip.add(text);
-                tooltip.add(Component.literal(ChatFormatting.GREEN + "+")
-                        .append(Component.literal(valueDiff + " " + ChatFormatting.GREEN))
-                                .append(Component.translatable(this.skill.getUnit())).withStyle(ChatFormatting.GREEN));
-            }
-            else tooltip.add(Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD));
-
-
-
-
+            tooltip.add(StringTools.getPriceTooltip(skill, lvlToBuy, CanBuy(skill)));
+            tooltip.addAll(StringTools.getValuesTooltip(skill, lvlToBuy));
             return tooltip;
         }
 
-        //Plusieurs TOOTLIPS
-        if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)){
+        if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)) {
             tooltip.add(Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE));
-            String rawDesc = Component.translatable(skill.getDescription()).getString();
-
-            if (rawDesc.contains("{value}")) {
-                int currentLvl = ClientCache.GetSkillLevel(skill.getID().toLowerCase());
-                var values = skill.getValues();
-
-                float val = 0f;
-
-                if (values != null && !values.isEmpty()) {
-                    if (currentLvl > 0) {
-                        int index = Math.min(currentLvl - 1, values.size() - 1);
-                        val = values.get(index);
-                    }
-
-                    String coloredValue = ChatFormatting.GREEN + MainGUI.SmartFormat(val) + ChatFormatting.GRAY;
-                    rawDesc = rawDesc.replace("{value}", coloredValue);
-
-                } else {
-                    rawDesc = rawDesc.replace("{value}", ChatFormatting.GREEN + "0" + ChatFormatting.GRAY);
-                }
-            }
-
-            Font font = Minecraft.getInstance().font;
-            MutableComponent fullDesc = Component.literal(rawDesc).withStyle(ChatFormatting.GRAY);
-
-            List<FormattedCharSequence> splitLines = font.split(fullDesc, 152);
-
-            for (FormattedCharSequence line : splitLines) {
-                MutableComponent lineComponent = Component.empty();
-
-                line.accept((index, style, codePoint) -> {
-                    lineComponent.append(Component.literal(String.valueOf((char) codePoint)).withStyle(style));
-                    return true;
-                });
-
-                tooltip.add(lineComponent);
-            }
+            tooltip.addAll(StringTools.getSkillDescription(skill));
+            return tooltip;
         }
+
         return tooltip;
     }
 
@@ -266,53 +216,30 @@ public class SkillWidget {
         if(this.skill.getType() == Enums.SkillType.GENERIC){
             String powerAttrId = AttributeRegistry.TRAIT_POWER.getId().toString();
 
-            if(this.skill.getModifier().equals(powerAttrId)){
-                var att = client.getAttribute(AttributeRegistry.TRAIT_POWER);
-                if(att == null) return false;
+            for(var modifier : this.skill.getModifiers()){
+                if(modifier.getAttribute().equals(powerAttrId)){
+                    var att = client.getAttribute(AttributeRegistry.TRAIT_POWER);
+                    if(att == null) return false;
 
-                int max = (int)att.getValue();
-                int current = ClientCache.GetPower();
+                    int max = (int)att.getValue();
+                    int current = ClientCache.GetPower();
 
-                int index = Math.min(currentLvl - 1, skill.getValues().size() - 1);
-                float currentValue = skill.getValues().get(index);
-                float powerLoss = currentValue;
+                    float currentValue = modifier.getValue(currentLvl);
+                    float powerLoss = currentValue;
 
-                if (currentLvl > 1) {
-                    int prevIndex = Math.min(currentLvl - 2, skill.getValues().size() - 1);
-                    float prevValue = skill.getValues().get(prevIndex);
-                    powerLoss = currentValue - prevValue;
+                    if (currentLvl > 1) {
+                        float prevValue = modifier.getValue(currentLvl - 1);
+                        powerLoss = currentValue - prevValue;
+                    }
+
+                    if(current > (max - (int)powerLoss)) return false;
                 }
-                if(current > (max - (int)powerLoss)) return false;
             }
         }
 
         var prices = skill.getPrices();
         return currentLvl <= prices.size();
     }
-
-    protected MutableComponent GetPriceString(Skill skill){
-        LocalPlayer client = Minecraft.getInstance().player;
-        if(skill == null || !skill.isPurchasable() || client == null) return Component.translatable("gui.tyzs_skills.error_value");
-
-        var currentLvl = ClientCache.GetSkillLevel(skill.getID());
-        if(currentLvl > skill.getMaximumLevel()) return Component.translatable("gui.tyzs_skills.error_value");
-        if(currentLvl  == skill.getMaximumLevel()) return  Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD);
-
-        var prices = skill.getPrices();
-        if(currentLvl >= prices.size()) return Component.translatable("gui.tyzs_skills.error_value");
-
-        return CanBuy(skill) ?
-                Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY)
-                        .append(": ")
-                        .append(Component.literal(ChatFormatting.BLUE + String.valueOf(prices.get(currentLvl)))).append(" ")
-                        .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.BLUE))
-                :
-                (Component.translatable("gui.tyzs_skills.cost")
-                        .append(": ").append(Component.literal(String.valueOf(prices.get(currentLvl))))
-                        .append(" ").append(Component.translatable("gui.tyzs_skills.SP")).withStyle(ChatFormatting.RED));
-
-    }
-
 
     protected boolean isMouseOver(int mouseX, int mouseY, int x, int y, int width, int height) {
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;

@@ -2,6 +2,7 @@ package com.tyzsskills.impl.client.models;
 
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.screen.MainGUI;
+import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.model.Trait;
@@ -22,10 +23,11 @@ public class TraitWidget extends SkillWidget{
     private static final int U_INACTIVE = 166, V_INACTIVE = 142;
     private static final int U_ACTIVE = 82, V_ACTIVE = 251;
 
-    private Trait trait;
+    private final Trait trait;
 
     public TraitWidget(Skill skill){
         super(skill);
+        trait = (Trait)skill;
     }
 
     @Override
@@ -33,7 +35,6 @@ public class TraitWidget extends SkillWidget{
         this.x = x;
         this.y = y;
 
-        trait = (Trait)skill;
         Font font = Minecraft.getInstance().font;
 
         boolean isOwned = ClientCache.GetSkillLevel(trait.getID().toLowerCase()) > 0;
@@ -90,24 +91,16 @@ public class TraitWidget extends SkillWidget{
             return tooltip;
         }
 
-        //Plusieurs TOOTLIPS
         if(skill.isPurchasable() && skill.isSkillActive() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
 
             int currentLvl = ClientCache.GetSkillLevel(skill.getID());
+            int lvlToBuy = currentLvl +1;
             if(currentLvl >= skill.getMaximumLevel()) {
                 tooltip.add(Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD));
                 return tooltip;
             }
 
-            var prices = skill.getPrices();
-            if(currentLvl >= prices.size()) return tooltip; // Sécurité liste
-            int price = prices.get(currentLvl);
-
-
-            if(ClientCache.GetSP() < price) {
-                tooltip.add(Component.empty().append(GetPriceString(skill)));
-                return tooltip;
-            }
+            tooltip.add(StringTools.getPriceTooltip(skill, lvlToBuy, CanBuy(skill)));
 
             LocalPlayer player = Minecraft.getInstance().player;
             if(player != null){
@@ -118,72 +111,24 @@ public class TraitWidget extends SkillWidget{
 
                     if(futurePower > maxPower){
                         tooltip.add(Component.translatable("gui.tyzs_skills.power_needed").withStyle(ChatFormatting.RED));
-                        return tooltip;
                     }
                 }
             }
 
-            tooltip.add(Component.empty().append(GetPriceString(skill)));
-
             MutableComponent powerTrad = Component.translatable("gui.tyzs_skills.power");
             String powerLow = powerTrad.getString().toLowerCase();
-
             tooltip.add(
                     Component.literal("+")
                             .append(Component.literal(String.valueOf(this.trait.getPowerWeight())))
                             .append(Component.literal(" "))
-                            .append(Component.literal(powerLow)) .withStyle(ChatFormatting.RED));
+                            .append(Component.literal(powerLow).withStyle(ChatFormatting.RED)));
             return tooltip;
         }
 
         if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)){ //DESCRTIPTION
             tooltip.add(Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE));
-            String rawDesc = Component.translatable(skill.getDescription()).getString();
-
-            if (rawDesc.contains("{value}")) {
-                int currentLvl = ClientCache.GetSkillLevel(skill.getID().toLowerCase());
-                var values = skill.getValues();
-
-                float val = 0f;
-
-                if (values != null && !values.isEmpty()) {
-                    if (currentLvl > 0) {
-                        int index = Math.min(currentLvl - 1, values.size() - 1);
-                        val = values.get(index);
-                    }
-
-                    String coloredValue = ChatFormatting.GREEN + MainGUI.SmartFormat(val) + ChatFormatting.GRAY;
-                    rawDesc = rawDesc.replace("{value}", coloredValue);
-
-                } else {
-                    rawDesc = rawDesc.replace("{value}", ChatFormatting.GREEN + "0" + ChatFormatting.GRAY);
-                }
-            }
-
-            Font font = Minecraft.getInstance().font;
-            MutableComponent fullDesc = Component.literal(rawDesc).withStyle(ChatFormatting.GRAY);
-
-            List<FormattedCharSequence> splitLines = font.split(fullDesc, 152);
-
-            for (FormattedCharSequence line : splitLines) {
-                MutableComponent lineComponent = Component.empty();
-
-                line.accept((index, style, codePoint) -> {
-                    lineComponent.append(Component.literal(String.valueOf((char) codePoint)).withStyle(style));
-                    return true;
-                });
-
-                tooltip.add(lineComponent);
-            }
-
-            MutableComponent powerTrad = Component.translatable("gui.tyzs_skills.power");
-            String powerLow = powerTrad.getString().toLowerCase();
-
-            MutableComponent powerComponent =
-                    Component.literal("(" + this.trait.getPowerWeight() + " ")
-                            .append(Component.literal(powerLow))
-                            .append(Component.literal(")")).withStyle(ChatFormatting.BLUE);
-            tooltip.add(powerComponent);
+            tooltip.addAll(StringTools.getSkillDescription(skill));
+            return tooltip;
         }
         return tooltip;
     }

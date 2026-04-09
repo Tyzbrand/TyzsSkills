@@ -5,6 +5,7 @@ import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.models.*;
+import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.ChatFormatting;
@@ -46,14 +47,6 @@ public class MainGUI extends Screen {
     private CustomTabButton miscBtn;
     private CustomTabButton bookmarksBtn;
 
-    private static final DecimalFormat SMART_FORMATTER;
-
-    static {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setGroupingSeparator(' ');
-        symbols.setDecimalSeparator('.');
-        SMART_FORMATTER = new DecimalFormat("#,##0.#", symbols);
-    }
 
     public MainGUI(){super(Component.translatable("gui.tyzs_skills.title"));}
 
@@ -247,10 +240,10 @@ public class MainGUI extends Screen {
     private void renderTooltips(GuiGraphics gui, int mouseX, int mouseY){
 
         if(isHovering(mouseX, mouseY, leftPos, topPos+96, 75, 8)){ //Xp bar
-            String xpTooltip = SmartFormat(ClientCache.GetXP()) + "/" + SmartFormat(ClientCache.GetXPGOAL()) ;
+            String xpTooltip = StringTools.valueSmartFormat(ClientCache.GetXP()) + "/" + StringTools.valueSmartFormat(ClientCache.GetXPGOAL()) ;
 
             MutableComponent finalText = Component.literal(xpTooltip)
-                            .append(Component.literal(" [+" + SmartFormat(ClientCache.GetReward()) + " ").withStyle(ChatFormatting.GREEN))
+                            .append(Component.literal(" [+" + StringTools.valueSmartFormat(ClientCache.GetReward()) + " ").withStyle(ChatFormatting.GREEN))
                             .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.GREEN))
                             .append(Component.literal("]").withStyle(ChatFormatting.GREEN));
 
@@ -260,7 +253,7 @@ public class MainGUI extends Screen {
 
         if(ClientCache.GetContainerType() == Enums.ContainerType.TRAITS
                 && isHovering(mouseX, mouseY, leftPos+173, topPos+17, 123, 6)){ //Power Bar
-            String powerTooltip = SmartFormat(ClientCache.GetPower()) + "/" + SmartFormat(
+            String powerTooltip = StringTools.valueSmartFormat(ClientCache.GetPower()) + "/" + StringTools.valueSmartFormat(
                     (float)Minecraft.getInstance().player.getAttribute(AttributeRegistry.TRAIT_POWER).getValue()) ;
 
             MutableComponent finalText =  Component.translatable("gui.tyzs_skills.power")
@@ -305,11 +298,11 @@ public class MainGUI extends Screen {
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.all_time_xp").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
-                    .append(Component.literal(SmartFormat(ClientCache.GetAllTimeXp())).withStyle(ChatFormatting.GRAY)));
+                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.GetAllTimeXp())).withStyle(ChatFormatting.GRAY)));
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.session_xp").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
-                    .append(Component.literal(SmartFormat(ClientCache.GetSessionXp())).withStyle(ChatFormatting.GRAY)));
+                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.GetSessionXp())).withStyle(ChatFormatting.GRAY)));
 
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.sp_earned").withStyle(ChatFormatting.BLUE)
@@ -541,9 +534,7 @@ public class MainGUI extends Screen {
     }
 
     //Uilitaires
-    public static String SmartFormat(float value){
-        return SMART_FORMATTER.format(value);
-    }
+
     private boolean isHovering(int mouseX, int mouseY, int x, int y, int width, int height){
         return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
     }

@@ -30,7 +30,7 @@ public class FovHandler {
             if(skill == null || skill.getValues().isEmpty()) continue;
 
             int index = Math.min(level - 1, skill.getValues().size() - 1);
-            float rawValue = skill.getValues().get(index);
+            float rawValue = skill.getModifiers().getFirst().getValue(index);
 
             float realFactor = rawValue / 100f;
             totalDampening += (float)(realFactor * reduction * 0.5f);
