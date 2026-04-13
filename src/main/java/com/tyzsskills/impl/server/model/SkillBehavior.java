@@ -38,4 +38,6 @@ public abstract class SkillBehavior {
         PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(skill.getID()));
     }
 
+    public int getPriority(){return 0;}
+
 }

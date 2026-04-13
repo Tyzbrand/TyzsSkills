@@ -37,4 +37,7 @@ public class CriticalHitEffect extends SkillBehavior {
                     SoundEvents.PLAYER_ATTACK_CRIT, player.getSoundSource(), 1.0f, 1.0f);
         }
     }
+
+    @Override
+    public int getPriority(){return 9;}
 }

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.JsonObject;
 import com.tyzsskills.Config;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
@@ -37,6 +36,7 @@ public class SkillManager {
     public static SkillManager get() {return INSTANCE;}
 
     private final Map<String, Skill> skillCollection = new HashMap<>();
+    private final List<Skill> sortedBehaviorSkills = new ArrayList<>();
 
 
     public void registerSkill(Skill skill)
@@ -53,8 +53,22 @@ public class SkillManager {
         NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
     }
 
+    public void buildSortedBehaviors() {
+        sortedBehaviorSkills.clear();
+        for (Skill skill : skillCollection.values()) {
+            if (skill.hasBehaviour()) {
+                sortedBehaviorSkills.add(skill);
+            }
+        }
+        sortedBehaviorSkills.sort((s1, s2) -> Integer.compare(
+                s2.getBehavior().getPriority(),
+                s1.getBehavior().getPriority()
+        ));
+    }
+
     public void clearSkills(){
         skillCollection.clear();
+        sortedBehaviorSkills.clear();
     }
 
 
@@ -240,6 +254,7 @@ public class SkillManager {
     public List<Skill> getAllSkills() {return new ArrayList<>(skillCollection.values());}
     public int getPlayerSkillLevel(ServerPlayer player, String id) {return player.getData(PlayerData.DATA).getSkillLevel(id);}
     public boolean isSkillLoaded(String id){return skillCollection.containsKey(id);}
+    public List<Skill> getSortedBehaviorSkills() {return sortedBehaviorSkills;}
 
     //API LINKS
     public ISkill getSkillInfos(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}

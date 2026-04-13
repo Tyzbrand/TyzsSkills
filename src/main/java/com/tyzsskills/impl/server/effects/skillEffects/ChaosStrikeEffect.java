@@ -30,8 +30,10 @@ public class ChaosStrikeEffect extends SkillBehavior {
         var inventory = target.getInventory();
         var hotbarSnapshot = new ArrayList<ItemStack>();
 
-        for(int i = 0; i < 9; i++) hotbarSnapshot.add(inventory.getItem(i));
+        for(int i = 0; i < 9; i++) hotbarSnapshot.add(inventory.getItem(i).copy());
         Collections.shuffle(hotbarSnapshot);
         for(int i = 0; i < 9; i++) inventory.setItem(i, hotbarSnapshot.get(i));
+
+        target.containerMenu.broadcastChanges();
     }
 }

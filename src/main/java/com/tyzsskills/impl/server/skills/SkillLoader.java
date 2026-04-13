@@ -42,13 +42,14 @@ public class SkillLoader {
 
     public static void finalizePreLoading() {
         for (var kvp : skillQueue.entrySet()) loadSkill(kvp.getKey(), kvp.getValue());
+        SkillManager.get().buildSortedBehaviors();
         skillQueue.clear();
     }
 
     private static void loadSkill(String id, JsonObject source){
         Boolean state = getSafeElement(source, "active", JsonPrimitive::getAsBoolean);
         if(state == null) state = false;
-        if(!state) return; //Les skills désactivés de sont pas chargés
+        if(!state) return; //Les skills désactivés ne sont pas chargés
 
         Integer maxLevel = getSafeElement(source, "maximumLevel", JsonPrimitive::getAsInt);
         if(maxLevel == null) maxLevel = 1;

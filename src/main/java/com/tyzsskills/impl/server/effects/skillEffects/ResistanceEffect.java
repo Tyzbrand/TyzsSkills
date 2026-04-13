@@ -29,4 +29,9 @@ public class ResistanceEffect  extends SkillBehavior {
 
         event.setAmount(newDmg);
     }
+
+    @Override
+    public int getPriority() {
+        return -1;
+    }
 }

@@ -330,6 +330,22 @@ public class SkillsPreset {
                         "success_probability", new ValueSet(List.of(3f, 5f, 7f), "skill.tyzs_skills.unit.percentage"))
         ));
 
+        finalList.add(new Skill(
+                true,
+                "piercing_strike",
+                3,
+                List.of(5, 8, 12),
+                Enums.SkillType.IMMUTABLE,
+                Enums.CategoryType.FIGHT,
+                true,
+                "tyzs_skills:textures/gui/skills/piercing_strike.png",
+                "skill.tyzs_skills.piercing_strike.displayName",
+                "skill.tyzs_skills.piercing_strike.description",
+                null,
+                Map.of(
+                        "success_probability", new ValueSet(List.of(3f, 6f, 9f), "skill.tyzs_skills.unit.percentage"))
+        ));
+
         return finalList;
     }
 

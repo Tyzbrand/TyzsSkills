@@ -6,14 +6,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
-public class DamageDealEffect extends SkillBehavior {
+public class PiercingStrikeEffect extends SkillBehavior {
 
-    public static final ThreadLocal<Boolean> IS_REFLECTING = ThreadLocal.withInitial(() -> false);
+    public static final ThreadLocal<Boolean> IS_PENETRATING= ThreadLocal.withInitial(() -> false);
 
     @Override
-    public void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill) {
-
-        if(IS_REFLECTING.get()) return;
+    public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill) {
+        if(IS_PENETRATING.get()) return;
 
         var values = skill.getValueSet("success_probability");
         if(values == null) return;
@@ -21,18 +20,18 @@ public class DamageDealEffect extends SkillBehavior {
         float chancePercentage = values.getValue(lvl);
 
         if (player.getRandom().nextFloat() < (chancePercentage / 100f)) {
-            if(event.getSource().getEntity() instanceof LivingEntity source){
-                event.setCanceled(true);
+            if(event.getEntity() instanceof LivingEntity target){
+                var rawDamage = event.getAmount();
 
-                IS_REFLECTING.set(true);
+                event.setCanceled(true);
+                IS_PENETRATING.set(true);
 
                 try{
-                    var damageSrc = player.damageSources().thorns(player);
-                    source.hurt(damageSrc, event.getAmount());
+                    target.hurt(target.damageSources().indirectMagic(player, player), rawDamage);
                     notifyClient(player, skill);
                 }
                 finally {
-                    IS_REFLECTING.set(false);
+                    IS_PENETRATING.set(false);
                 }
 
             }
@@ -40,5 +39,5 @@ public class DamageDealEffect extends SkillBehavior {
     }
 
     @Override
-    public int getPriority(){return 11;}
+    public int getPriority(){return -10;}
 }

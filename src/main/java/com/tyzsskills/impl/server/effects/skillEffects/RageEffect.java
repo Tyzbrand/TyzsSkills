@@ -24,4 +24,7 @@ public class RageEffect extends SkillBehavior {
         event.setAmount(finalDamage);
         notifyClient(player, skill);
     }
-    }
+
+    @Override
+    public int getPriority(){return 8;}
+}

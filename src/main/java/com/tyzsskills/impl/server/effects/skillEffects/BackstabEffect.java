@@ -25,4 +25,7 @@ public class BackstabEffect extends SkillBehavior {
         }
 
     }
+
+    @Override
+    public int getPriority(){return 10;}
 }

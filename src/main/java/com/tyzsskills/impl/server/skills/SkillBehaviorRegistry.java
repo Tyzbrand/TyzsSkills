@@ -1,10 +1,13 @@
 package com.tyzsskills.impl.server.skills;
 
 import com.tyzsskills.impl.server.effects.skillEffects.*;
+import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.model.SkillBehavior;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @ApiStatus.Internal
@@ -22,6 +25,7 @@ public class SkillBehaviorRegistry {
         behaviors.put("adrenaline", new AdrenalineEffect());
         behaviors.put("resilience", new ResilienceEffect());
         behaviors.put("chaos_strike", new ChaosStrikeEffect());
+        behaviors.put("piercing_strike", new PiercingStrikeEffect());
 
         behaviors.put("green_thumb", new GreenThumbEffect());
         behaviors.put("nutrition", new NutritionEffect());
