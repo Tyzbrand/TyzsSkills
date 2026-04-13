@@ -23,9 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.nio.file.Files;
 import java.util.stream.Stream;
 
@@ -38,6 +36,7 @@ public class FileManager {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private static final List<SkillPrefab> prefabQueue = new ArrayList<>();
+
 
 
     //Creer les dossiers
@@ -75,7 +74,7 @@ public class FileManager {
     }
 
     //Ecrit les jsons par defaut
-    public void loadDefaultJson(MinecraftServer server) throws IOException {
+    public void writeDefaultSkills(MinecraftServer server) throws IOException {
         for(var skill : SkillsPreset.getDefaultSkills()){
             writeSkill(skill, getSkillPath(skill.getCategory(), server));
         }
@@ -99,7 +98,7 @@ public class FileManager {
         }
     }
 
-    public void loadDefaultXpValues(MinecraftServer server) throws IOException {
+    public void writeDefaultXpValues(MinecraftServer server) throws IOException {
         Path blockFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("block-xp-values.json");
@@ -118,7 +117,7 @@ public class FileManager {
         if(!Files.exists(foodFile)) Files.writeString(foodFile, FoodValuesPreset.getDefaultXpValues());
     }
 
-    public void LoadDefaultLevelPool(MinecraftServer server) throws IOException {
+    public void writeDefaultLevelPool(MinecraftServer server) throws IOException {
         Path poolFile = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
                 .resolve("level-pool.json");
@@ -126,7 +125,7 @@ public class FileManager {
         if(!Files.exists(poolFile)) Files.writeString(poolFile, LevelPoolPreset.getDefaultRewardValues());
     }
 
-    //Lit les jsons par defaut
+    //Lit les jsons
     public void readJsons(MinecraftServer server) throws IOException{
         Path globalPath = server.getServerDirectory().resolve("config")
                 .resolve("tyzs_skills")
@@ -135,45 +134,40 @@ public class FileManager {
         var defaultPath = globalPath.resolve("default");
         var customPath = globalPath.resolve("custom");
 
-
+        // 1. Lire les default
         if(Files.exists(defaultPath)){
             try(var stream = Files.walk(defaultPath)){
                 stream.filter(Files::isRegularFile)
                         .filter(p -> p.toString().endsWith(".json"))
-                        .forEach(path ->{
-                            try{
+                        .forEach(path -> {
+                            try {
                                 var jsonString = Files.readString(path);
                                 var jsonObj = gson.fromJson(jsonString, JsonObject.class);
-                                SkillLoader.loadSkill(jsonObj);
+                                SkillLoader.preLoadSkill(jsonObj, true);
+                            } catch (IOException ex) {
+                                throw new RuntimeException(ex);
                             }
-                            catch (IOException ex){throw new RuntimeException(ex);}
                         });
             }
         }
 
+        // 2. Lire les custom
         if(Files.exists(customPath)){
             try(var stream = Files.walk(customPath)){
                 stream.filter(Files::isRegularFile)
                         .filter(p -> p.toString().endsWith(".json"))
-                        .forEach(path ->{
-                            try{
+                        .forEach(path -> {
+                            try {
                                 var jsonString = Files.readString(path);
                                 var jsonObj = gson.fromJson(jsonString, JsonObject.class);
-
-                                var type = jsonObj.has("type") ? jsonObj.get("type").getAsString() : null;
-                                var id = jsonObj.has("id") ? jsonObj.get("id").getAsString().toLowerCase() : null;
-                                if(type == null || id == null) return;
-
-                                if(!type.equalsIgnoreCase(Enums.SkillType.CUSTOM.name())){
-                                    if(!SkillManager.get().isSkillLoaded(id)) return;
-                                }
-                                SkillLoader.loadSkill(jsonObj);
+                                SkillLoader.preLoadSkill(jsonObj, false);
+                            } catch (Exception ex) {
+                                System.out.println("Unable to load custom skill: " + path);
                             }
-                            catch (Exception ex){System.out.println("Unable to load custom skill: " + path);}
                         });
             }
         }
-
+        SkillLoader.finalizePreLoading();
     }
 
     public void readXpValues(MinecraftServer server) throws IOException {

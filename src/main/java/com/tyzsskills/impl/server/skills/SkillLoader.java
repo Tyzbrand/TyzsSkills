@@ -16,17 +16,36 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 @ApiStatus.Internal
 public class SkillLoader {
 
-    public static void loadSkill(JsonObject source){
+    private static Map<String, JsonObject> skillQueue = new HashMap<>();
 
-        String id = getSafeElement(source, "id", JsonPrimitive::getAsString);
+    public static void preLoadSkill(JsonObject source, boolean isDefault){
+        if(source == null) return;
+
+        var id = getSafeElement(source, "id", JsonPrimitive::getAsString);
         if(id == null || id.isBlank()) {ErrorManager.registerSkillError("Unknow", "invalid id"); return;}
         id = id.toLowerCase();
 
+        if(isDefault) skillQueue.putIfAbsent(id, source);
+        else{
+            var type = getSafeElement(source, "type", JsonPrimitive::getAsString);
+            boolean isCustom = type != null && type.equalsIgnoreCase(Enums.SkillType.CUSTOM.name());
+
+            if(isCustom || skillQueue.containsKey(id)) skillQueue.put(id, source);
+        }
+    }
+
+    public static void finalizePreLoading() {
+        for (var kvp : skillQueue.entrySet()) loadSkill(kvp.getKey(), kvp.getValue());
+        skillQueue.clear();
+    }
+
+    private static void loadSkill(String id, JsonObject source){
         Boolean state = getSafeElement(source, "active", JsonPrimitive::getAsBoolean);
         if(state == null) state = false;
         if(!state) return; //Les skills désactivés de sont pas chargés
@@ -95,7 +114,7 @@ public class SkillLoader {
 
             if(modifiers.isEmpty()) {ErrorManager.registerSkillError(id, "one modifier is required"); return;}
 
-            SkillManager.get().registerSKill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
+            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
                     icon, displayName, description, modifiers, null));
             return;
 
@@ -128,7 +147,7 @@ public class SkillLoader {
 
             if(valueSet.isEmpty()){ErrorManager.registerSkillError(id, "one value set is required");return;}
 
-            SkillManager.get().registerSKill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
+            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
                     icon, displayName, description, null, valueSet));
             return;
         }
@@ -140,7 +159,7 @@ public class SkillLoader {
 
             int price = prices.isEmpty()? 0 : prices.getFirst();
 
-            SkillManager.get().registerSKill(new Trait(
+            SkillManager.get().registerSkill(new Trait(
                     true, id, powerWeight, price, purchasable, icon, displayName, description)
             );
             return;

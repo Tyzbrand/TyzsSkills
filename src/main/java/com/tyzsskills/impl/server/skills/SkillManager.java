@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.JsonObject;
 import com.tyzsskills.Config;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
@@ -40,7 +41,7 @@ public class SkillManager {
 
 
 
-    public void registerSKill(Skill skill)
+    public void registerSkill(Skill skill)
     {
         var preEvent = new SkillLoadEvent.Pre(skill);
         NeoForge.EVENT_BUS.post(preEvent);
@@ -52,7 +53,6 @@ public class SkillManager {
 
         skillCollection.put(skill.getID(), skill);
         NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
-
     }
 
     public void clearSkills(){

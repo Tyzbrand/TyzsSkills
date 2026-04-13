@@ -21,7 +21,6 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
-import net.neoforged.neoforge.event.server.ServerLifecycleEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -244,9 +243,9 @@ public class Tyzsskills {
         fileManager.backupCustomFiles(server);
         fileManager.cleanPaths(server);
         fileManager.initPath(server);
-        fileManager.loadDefaultJson(server);
-        fileManager.loadDefaultXpValues(server);
-        fileManager.LoadDefaultLevelPool(server);
+        fileManager.writeDefaultSkills(server);
+        fileManager.writeDefaultXpValues(server);
+        fileManager.writeDefaultLevelPool(server);
 
         fileManager.readJsons(server);
         fileManager.readXpValues(server);
