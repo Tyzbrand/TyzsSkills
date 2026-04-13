@@ -237,6 +237,9 @@
   "skill.tyzs_skills.sunder_armor.displayName" : "Sunder Armor",
   "skill.tyzs_skills.sunder_armor.description" : "Adds a {success_probability}% chance to inflict {damage_percentage}% of the damages as durability damage",
 
+  "skill.tyzs_skills.animal_husbandry.displayName" : "Animal Husbandry",
+  "skill.tyzs_skills.animal_husbandry.description" : "Babies will grow {growth_speed}% faster ",
+
   "skill.tyzs_skills.unit.seconds" : "sec",
   "skill.tyzs_skills.unit.percentage_threshold" : "% (threshold)",
   "skill.tyzs_skills.unit.percentage_damage" : "% (damage)",

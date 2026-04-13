@@ -249,6 +249,25 @@ public class SkillEffectsEvents {
             }
     }
 
+    @SubscribeEvent
+    public static void onBabySpawn(BabyEntitySpawnEvent event){
+        if(event.isCanceled()) return;
+
+        var manager = SkillManager.get();
+        if (!(event.getCausedByPlayer() instanceof ServerPlayer player)) return;
+
+        boolean canUseTrait = canUseTraits(player);
+
+        for (Skill skill : manager.getSortedBehaviorSkills()){
+            if(skill instanceof Trait && !canUseTrait) continue;
+
+            var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+            if( lvl<= 0) continue;
+
+            skill.getBehavior().OnBabySpawn(event, player, lvl, skill);
+        }
+    }
+
 
     private final static String[] playerTickSkills = {"magnet", "silver_tongue", "deep_sight"};
     @SubscribeEvent

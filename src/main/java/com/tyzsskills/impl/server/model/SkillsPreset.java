@@ -501,6 +501,22 @@ public class SkillsPreset {
                         "skill.tyzs_skills.unit.trait_power")),
                 null));
 
+        finalList.add(new Skill(
+                true,
+                "animal_husbandry",
+                15,
+                List.of(2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9),
+                Enums.SkillType.IMMUTABLE,
+                Enums.CategoryType.MISC,
+                true,
+                "tyzs_skills:textures/gui/skills/animal_husbandry.png",
+                "skill.tyzs_skills.animal_husbandry.displayName",
+                "skill.tyzs_skills.animal_husbandry.description",
+                null,
+                Map.of(
+                        "growth_speed", new ValueSet(List.of(50f, 100f, 150f, 200f, 250f, 300f, 350f, 400f, 450f, 500f, 550f, 600f, 650f, 700f, 750f), "skill.tyzs_skills.unit.percentage"))
+        ));
+
         return finalList;
     }
 

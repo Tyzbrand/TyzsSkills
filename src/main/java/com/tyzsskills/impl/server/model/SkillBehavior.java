@@ -24,6 +24,7 @@ public abstract class SkillBehavior {
     public void onPlayerClone(PlayerEvent.Clone event, ServerPlayer player, int lvl, ISkill skill){}
     public void OnNoiseAtPlayer(PlayLevelSoundEvent.AtEntity event, ServerPlayer player, int lvl, ISkill skill){}
     public void OnPlayerWakeUp(PlayerWakeUpEvent event, ServerPlayer player, int lvl, ISkill skill){}
+    public void OnBabySpawn(BabyEntitySpawnEvent event, ServerPlayer player, int lvl, ISkill skill){}
 
 
 
