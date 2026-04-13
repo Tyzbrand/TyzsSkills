@@ -334,7 +334,7 @@ public class SkillsPreset {
                 true,
                 "piercing_strike",
                 3,
-                List.of(5, 8, 12),
+                List.of(10, 15, 20),
                 Enums.SkillType.IMMUTABLE,
                 Enums.CategoryType.FIGHT,
                 true,
@@ -344,6 +344,23 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(3f, 6f, 9f), "skill.tyzs_skills.unit.percentage"))
+        ));
+
+        finalList.add(new Skill(
+                true,
+                "sunder_armor",
+                5,
+                List.of(4, 6, 8, 12, 16),
+                Enums.SkillType.IMMUTABLE,
+                Enums.CategoryType.FIGHT,
+                true,
+                "tyzs_skills:textures/gui/skills/sunder_armor.png",
+                "skill.tyzs_skills.sunder_armor.displayName",
+                "skill.tyzs_skills.sunder_armor.description",
+                null,
+                Map.of(
+                        "success_probability", new ValueSet(List.of( 3f, 6f, 9f, 12f, 15f), "skill.tyzs_skills.unit.percentage"),
+                        "damage_percentage", new ValueSet(List.of(20f, 40f, 60f, 80f, 100f), "skill.tyzs_skills.unit.percentage"))
         ));
 
         return finalList;
