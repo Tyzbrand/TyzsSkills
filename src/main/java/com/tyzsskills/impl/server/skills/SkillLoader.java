@@ -50,14 +50,16 @@ public class SkillLoader {
         if(state == null) state = false;
         if(!state) return; //Les skills désactivés de sont pas chargés
 
-
         Integer maxLevel = getSafeElement(source, "maximumLevel", JsonPrimitive::getAsInt);
         if(maxLevel == null) maxLevel = 1;
         maxLevel = Math.min(Math.max(maxLevel, 1), Constants.SKILL_MAX_LEVEL);
 
         List<Integer> prices = getSafeList(source, "prices", JsonElement::getAsInt);
         if(prices == null) {ErrorManager.registerSkillError(id, "invalid price list"); return;}
-
+        if(maxLevel > prices.size()) {
+            ErrorManager.registerSkillError(id, String.format("price set is too small, current : %d , expected : %d", prices.size(), maxLevel));
+            return;
+        }
 
         Enums.SkillType type = getSafeEnum(source, "type", Enums.SkillType.class);
         if(type == null) {ErrorManager.registerSkillError(id, "invalid skill type"); return;}

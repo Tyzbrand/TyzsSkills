@@ -32,9 +32,12 @@ public class RuntimeEvents {
         AutoSyncClient.syncSkillBookmarks(player);
         AutoSyncClient.syncStats(player);
 
+        GenericEffects.restoreEffects(player);
+
         if (player.hasPermissions(2) && ErrorManager.hasErrors()) {
             ErrorManager.printErrors(player);
         }
+
     }
 
     @SubscribeEvent

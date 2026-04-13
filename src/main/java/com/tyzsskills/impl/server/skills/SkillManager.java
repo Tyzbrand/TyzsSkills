@@ -39,8 +39,6 @@ public class SkillManager {
     private final Map<String, Skill> skillCollection = new HashMap<>();
 
 
-
-
     public void registerSkill(Skill skill)
     {
         var preEvent = new SkillLoadEvent.Pre(skill);
@@ -220,7 +218,7 @@ public class SkillManager {
 
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
             if(lvl > 0) GenericEffects.applyEffects(skill, player);
-            else GenericEffects.removeEffects(skill, player);
+            else GenericEffects.applyEffects(skill, player);
         }
     }
 

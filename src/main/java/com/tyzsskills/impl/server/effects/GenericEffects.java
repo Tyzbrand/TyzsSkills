@@ -14,6 +14,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 
@@ -22,86 +23,98 @@ public class GenericEffects {
     public static void applyEffects(Skill skill, ServerPlayer player){
         if(skill.getType() != Enums.SkillType.GENERIC && skill.getType() != Enums.SkillType.CUSTOM) return;
 
-        for(var modifier : skill.getModifiers()){
-            ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
-            if(attributeID == null) continue;
+        var healthSnapshot = player.getHealth();
+        var attributeChanged = false;
+        var currentLvl = SkillManager.get().getPlayerSkillLevel(player, skill.getID());
 
-            Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
+        var expectedAttributes = new HashSet<Holder<Attribute>>();
+        if(currentLvl > 0) {
+            for (var modifier : skill.getModifiers()) {
+                var id = ResourceLocation.tryParse(modifier.attribute());
+                if (id == null) continue;
 
-            if(attribute == null) continue;
-
-            Optional<Holder.Reference<Attribute>> attributeHolderOpt = BuiltInRegistries.ATTRIBUTE.getHolder(attributeID);
-            if(attributeHolderOpt.isEmpty()) continue;
-
-            AttributeInstance instance = player.getAttribute(attributeHolderOpt.get());
-            if(instance == null) continue;
-
-            String safeAttributeName = attributeID.getPath().replace(".", "_");
-            ResourceLocation modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeAttributeName);
-
-            ResourceLocation legacyID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
-            if (instance.hasModifier(legacyID)) {
-                instance.removeModifier(legacyID);
+                var holderOpt = BuiltInRegistries.ATTRIBUTE.getHolder(id);
+                holderOpt.ifPresent(expectedAttributes::add);
             }
-
-            int currentLvl = player.getData(PlayerData.DATA).getSkillLevel(skill.getID());
-            if(currentLvl <= 0) continue;
-
-            float value = modifier.getValue(currentLvl);
-            if(modifier.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE ||
-                    modifier.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL){
-                value /= 100f;
-            }
-
-            var operation = modifier.operation();
-
-            if(modifier.attribute().equals("minecraft:generic.oxygen_bonus")){
-                operation = AttributeModifier.Operation.ADD_VALUE;
-                value += .75f;
-            }
-
-            AttributeModifier AtModifier = new AttributeModifier(
-                    modifierID, value, operation);
-
-            if (instance.hasModifier(modifierID)) {instance.removeModifier(modifierID);}
-
-            instance.addPermanentModifier(AtModifier);
         }
+
+        for(var attributeHolder : BuiltInRegistries.ATTRIBUTE.holders().toList()) {
+            var instance = player.getAttribute(attributeHolder);
+            if (instance != null) {
+                var attrID = attributeHolder.key().location();
+
+                var safeName = attrID.getPath().replace(".", "_");
+                var modID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeName);
+                var legacyID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
+
+                if (instance.hasModifier(legacyID)) {
+                    instance.removeModifier(legacyID);
+                    attributeChanged = true;
+                }
+
+                if (instance.hasModifier(modID) && !expectedAttributes.contains(attributeHolder)) {
+                    instance.removeModifier(modID);
+                    attributeChanged = true;
+                }
+            }
+        }
+
+            if(currentLvl <= 0){
+                if(attributeChanged && healthSnapshot > player.getHealth()) player.setHealth(healthSnapshot);
+                return;
+            }
+
+            for(var modifier : skill.getModifiers()){
+                ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
+                if(attributeID == null) continue;
+
+                var attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
+                if(attribute == null) continue;
+
+                var attributeHolderOpt = BuiltInRegistries.ATTRIBUTE.getHolder(attributeID);
+                if(attributeHolderOpt.isEmpty()) continue;
+
+                var instance = player.getAttribute(attributeHolderOpt.get());
+                if(instance == null) continue;
+
+                var safeAttributeName = attributeID.getPath().replace(".", "_");
+                var modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeAttributeName);
+
+                float expectedValue = modifier.getValue(currentLvl);
+                if(modifier.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE ||
+                        modifier.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL){
+                    expectedValue /= 100f;
+                }
+
+                var expectedOperation = modifier.operation();
+
+                if(modifier.attribute().equals("minecraft:generic.oxygen_bonus")){
+                    expectedOperation = AttributeModifier.Operation.ADD_VALUE;
+                    expectedValue += .75f;
+                }
+
+                if (instance.hasModifier(modifierID)) {
+                    AttributeModifier existing = instance.getModifier(modifierID);
+                    if (existing != null && existing.amount() == expectedValue && existing.operation() == expectedOperation) {
+                        continue;
+                    }
+                    instance.removeModifier(modifierID);
+                }
+
+                var AtModifier = new AttributeModifier(modifierID, expectedValue, expectedOperation);
+                instance.addPermanentModifier(AtModifier);
+                attributeChanged = true;
+            }
+
+            if (attributeChanged && healthSnapshot > player.getHealth()) player.setHealth(Math.min(healthSnapshot, player.getMaxHealth()));
 
     }
 
-    public static void removeEffects(Skill skill, ServerPlayer player){
-        if(skill.getType() != Enums.SkillType.GENERIC && skill.getType() != Enums.SkillType.CUSTOM) return;
-
-        for(var modifier : skill.getModifiers()){
-            ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
-            Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
-
-            if(attribute == null || attributeID == null) continue;
-
-            Optional<Holder.Reference<Attribute>> attributeHolderOpt = BuiltInRegistries.ATTRIBUTE.getHolder(attributeID);
-            if(attributeHolderOpt.isEmpty()) continue;
-
-            AttributeInstance instance = player.getAttribute(attributeHolderOpt.get());
-            if(instance == null) continue;
-
-            String safeAttributeName = attributeID.getPath().replace(".", "_");
-            ResourceLocation modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeAttributeName);
-
-            instance.removeModifier(modifierID);
-
-            ResourceLocation legacyID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
-            instance.removeModifier(legacyID);
-        }
-    }
 
     public static void restoreEffects(ServerPlayer newPlayer){
         for(var skill : SkillManager.get().getAllSkills()){
-
-            if(skill.getType() != Enums.SkillType.GENERIC
-                    && skill.getType() != Enums.SkillType.CUSTOM) continue;
-
-            if(newPlayer.getData(PlayerData.DATA).getSkillLevel(skill.getID()) > 0) applyEffects(skill, newPlayer);
+            if(skill.getType() != Enums.SkillType.GENERIC && skill.getType() != Enums.SkillType.CUSTOM) continue;
+            applyEffects(skill, newPlayer);
         }
     }
 }

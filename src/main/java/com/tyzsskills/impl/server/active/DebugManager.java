@@ -7,6 +7,7 @@ import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.ExplorationProgression;
 import com.tyzsskills.impl.server.attachments.LimitsTracker;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
+import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.payloads.ResetPayload;
 import com.tyzsskills.impl.server.power.PowerManager;
 import com.tyzsskills.impl.server.skills.SkillManager;
@@ -50,6 +51,8 @@ public class DebugManager {
                     manager.setSkillLevel(player, skill.getID().toLowerCase(), skill.getMaximumLevel());
                 }
             }
+
+            GenericEffects.restoreEffects(player);
         }
 
         for(var player : server.getPlayerList().getPlayers()){
