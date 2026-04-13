@@ -34,6 +34,8 @@ public class SkillBehaviorRegistry {
         behaviors.put("magnet", new MagnetEffect());
         behaviors.put("stealth", new StealthEffect());
         behaviors.put("animal_husbandry", new AnimalHusbandryEffect());
+        behaviors.put("engineer", new EngineerEffect());
+        behaviors.put("twist_of_fate", new TwistOfFateEffect());
 
         behaviors.put("cinder_blood", new CinderBloodEffect());
         behaviors.put("iron_gut", new IronGutEffect());

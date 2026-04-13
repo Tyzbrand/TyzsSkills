@@ -248,6 +248,40 @@ public class SkillEffectsEvents {
                 skill.getBehavior().OnPlayerWakeUp(event, player, lvl, skill);
             }
     }
+    @SubscribeEvent
+    public static void onRightClickBlock(net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock event){
+        if (event.isCanceled() || !(event.getEntity() instanceof ServerPlayer player)) return;
+
+        var manager = SkillManager.get();
+        boolean canUseTrait = canUseTraits(player);
+
+        for (Skill skill : manager.getSortedBehaviorSkills()){
+            if(skill instanceof Trait && !canUseTrait) continue;
+
+            var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+            if(lvl <= 0) continue;
+
+            skill.getBehavior().onRightClickBlock(event, player, lvl, skill);
+        }
+    }
+
+
+    @SubscribeEvent
+    public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event){
+        var manager = SkillManager.get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        boolean canUseTrait = canUseTraits(player);
+
+        for (Skill skill : manager.getSortedBehaviorSkills()){
+            if(skill instanceof Trait && !canUseTrait) continue;
+
+            var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+            if( lvl<= 0) continue;
+
+            skill.getBehavior().onItemCrafted(event, player, lvl, skill);
+        }
+    }
 
     @SubscribeEvent
     public static void onBabySpawn(BabyEntitySpawnEvent event){

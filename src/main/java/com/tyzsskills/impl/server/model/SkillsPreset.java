@@ -278,7 +278,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "damage_buff", new ValueSet(List.of(10f, 20f, 30f, 40f, 50f), "skill.tyzs_skills.unit.percentage_damage"),
-                        "health_threshold", new ValueSet(List.of(10f, 10f, 20f, 20f, 30f), "skill.tyzs_skills.unit.percentage_threshold"))
+                        "health_threshold", new ValueSet(List.of(10f, 10f, 20f, 20f, 30f), "skill.tyzs_skills.unit.percentage"))
         ));
 
         finalList.add(new Skill(
@@ -316,15 +316,15 @@ public class SkillsPreset {
 
         finalList.add(new Skill(
                 true,
-                "chaos_strike",
+                "jinxed",
                 3,
                 List.of(5, 8, 12),
                 Enums.SkillType.IMMUTABLE,
                 Enums.CategoryType.FIGHT,
                 true,
-                "tyzs_skills:textures/gui/skills/chaos_strike.png",
-                "skill.tyzs_skills.chaos_strike.displayName",
-                "skill.tyzs_skills.chaos_strike.description",
+                "tyzs_skills:textures/gui/skills/jinxed.png",
+                "skill.tyzs_skills.jinxed.displayName",
+                "skill.tyzs_skills.jinxed.description",
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(3f, 5f, 7f), "skill.tyzs_skills.unit.percentage"))
@@ -332,15 +332,15 @@ public class SkillsPreset {
 
         finalList.add(new Skill(
                 true,
-                "piercing_strike",
+                "true_strike",
                 3,
                 List.of(10, 15, 20),
                 Enums.SkillType.IMMUTABLE,
                 Enums.CategoryType.FIGHT,
                 true,
-                "tyzs_skills:textures/gui/skills/piercing_strike.png",
-                "skill.tyzs_skills.piercing_strike.displayName",
-                "skill.tyzs_skills.piercing_strike.description",
+                "tyzs_skills:textures/gui/skills/true_strike.png",
+                "skill.tyzs_skills.true_strike.displayName",
+                "skill.tyzs_skills.true_strike.description",
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(3f, 6f, 9f), "skill.tyzs_skills.unit.percentage"))
@@ -360,7 +360,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of( 3f, 6f, 9f, 12f, 15f), "skill.tyzs_skills.unit.percentage"),
-                        "damage_percentage", new ValueSet(List.of(20f, 40f, 60f, 80f, 100f), "skill.tyzs_skills.unit.percentage"))
+                        "damage_percentage", new ValueSet(List.of(20f, 40f, 60f, 80f, 100f), "skill.tyzs_skills.unit.percentage_damage"))
         ));
 
         return finalList;
@@ -503,18 +503,50 @@ public class SkillsPreset {
 
         finalList.add(new Skill(
                 true,
-                "animal_husbandry",
+                "shepherd_s_blessing",
                 15,
                 List.of(2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9),
                 Enums.SkillType.IMMUTABLE,
                 Enums.CategoryType.MISC,
                 true,
-                "tyzs_skills:textures/gui/skills/animal_husbandry.png",
-                "skill.tyzs_skills.animal_husbandry.displayName",
-                "skill.tyzs_skills.animal_husbandry.description",
+                "tyzs_skills:textures/gui/skills/shepherd_s_blessing.png",
+                "skill.tyzs_skills.shepherd_s_blessing.displayName",
+                "skill.tyzs_skills.shepherd_s_blessing.description",
                 null,
                 Map.of(
                         "growth_speed", new ValueSet(List.of(50f, 100f, 150f, 200f, 250f, 300f, 350f, 400f, 450f, 500f, 550f, 600f, 650f, 700f, 750f), "skill.tyzs_skills.unit.percentage"))
+        ));
+
+        finalList.add(new Skill(
+                true,
+                "spare_parts",
+                5,
+                List.of(5, 8, 12, 18, 24),
+                Enums.SkillType.IMMUTABLE,
+                Enums.CategoryType.MISC,
+                true,
+                "tyzs_skills:textures/gui/skills/spare_parts.png",
+                "skill.tyzs_skills.spare_parts.displayName",
+                "skill.tyzs_skills.spare_parts.description",
+                null,
+                Map.of(
+                        "refund_chance", new ValueSet(List.of(4f, 8f, 12f, 16f, 20f), "skill.tyzs_skills.unit.percentage"))
+        ));
+
+        finalList.add(new Skill(
+                true,
+                "twist_of_fate",
+                5,
+                List.of(4, 6, 8, 12, 16),
+                Enums.SkillType.IMMUTABLE,
+                Enums.CategoryType.MISC,
+                true,
+                "tyzs_skills:textures/gui/skills/twist_of_fate.png",
+                "skill.tyzs_skills.twist_of_fate.displayName",
+                "skill.tyzs_skills.twist_of_fate.description",
+                null,
+                Map.of(
+                        "loot_multiplier", new ValueSet(List.of(10f, 20f, 30f, 40f, 50f), "skill.tyzs_skills.unit.percentage"))
         ));
 
         return finalList;

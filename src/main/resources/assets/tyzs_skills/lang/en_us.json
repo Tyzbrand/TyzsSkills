@@ -226,23 +226,28 @@
 
 
   "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
-  "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III for {effect_duration} sec when health drops below {health_threshold}%",
+  "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III for {effect_duration}s when Health falls below {health_threshold}%",
 
-  "skill.tyzs_skills.chaos_strike.displayName" : "Chaos Strike",
-  "skill.tyzs_skills.chaos_strike.description" : "Adds a {success_probability}% chance to disrupt your target's hotbar",
+  "skill.tyzs_skills.jinxed.displayName" : "Jinxed",
+  "skill.tyzs_skills.jinxed.description" : "Adds a {success_probability}% chance to scramble the target's hotbar on hit",
 
-  "skill.tyzs_skills.piercing_strike.displayName" : "Piercing Strike",
-  "skill.tyzs_skills.piercing_strike.description" : "Adds a {success_probability}% chance to deal raw damage",
+  "skill.tyzs_skills.true_strike.displayName" : "True Strike",
+  "skill.tyzs_skills.true_strike.description" : "Adds a {success_probability}% chance to deal True damage",
 
   "skill.tyzs_skills.sunder_armor.displayName" : "Sunder Armor",
-  "skill.tyzs_skills.sunder_armor.description" : "Adds a {success_probability}% chance to inflict {damage_percentage}% of the damages as durability damage",
+  "skill.tyzs_skills.sunder_armor.description" : "Adds a {success_probability}% chance for attacks to deal {damage_percentage}% additional durability damage to armor",
 
-  "skill.tyzs_skills.animal_husbandry.displayName" : "Animal Husbandry",
-  "skill.tyzs_skills.animal_husbandry.description" : "Babies will grow {growth_speed}% faster ",
+  "skill.tyzs_skills.shepherd_s_blessing.displayName" : "Shepherd’s Blessing",
+  "skill.tyzs_skills.shepherd_s_blessing.description" : "Baby animals grow {growth_speed}% faster",
+
+  "skill.tyzs_skills.spare_parts.displayName" : "Spare Parts",
+  "skill.tyzs_skills.spare_parts.description" : "Provides a {refund_chance}% chance to recover materials when crafting",
+
+  "skill.tyzs_skills.twist_of_fate.displayName" : "Twist Of Fate",
+  "skill.tyzs_skills.twist_of_fate.description" : "Increases the quantity of items found in structure loot chests by {loot_multiplier}%",
 
   "skill.tyzs_skills.unit.seconds" : "sec",
-  "skill.tyzs_skills.unit.percentage_threshold" : "% (threshold)",
-  "skill.tyzs_skills.unit.percentage_damage" : "% (damage)",
+  "skill.tyzs_skills.unit.percentage_damage" : "% (dmg)",
 
   "skill.tyzs_skills.rage.displayName" : "Rage",
   "skill.tyzs_skills.rage.description" : "Increases damage by {damage_buff}% when health is below {health_threshold}%",

@@ -25,6 +25,8 @@ public abstract class SkillBehavior {
     public void OnNoiseAtPlayer(PlayLevelSoundEvent.AtEntity event, ServerPlayer player, int lvl, ISkill skill){}
     public void OnPlayerWakeUp(PlayerWakeUpEvent event, ServerPlayer player, int lvl, ISkill skill){}
     public void OnBabySpawn(BabyEntitySpawnEvent event, ServerPlayer player, int lvl, ISkill skill){}
+    public void onItemCrafted(PlayerEvent.ItemCraftedEvent event, ServerPlayer player, int lvl, ISkill skill){}
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, ServerPlayer player, int lvl, ISkill skill){}
 
 
 
