@@ -228,6 +228,9 @@
   "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
   "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III for {effect_duration} sec when health drops below {health_threshold}%",
 
+  "skill.tyzs_skills.chaos_strike.displayName" : "Chaos Strike",
+  "skill.tyzs_skills.chaos_strike.description" : "Adds a {success_probability}% chance to disrupt your target's hotbar",
+
   "skill.tyzs_skills.unit.seconds" : "sec",
   "skill.tyzs_skills.unit.percentage_threshold" : "% (threshold)",
   "skill.tyzs_skills.unit.percentage_damage" : "% (damage)",

@@ -314,6 +314,22 @@ public class SkillsPreset {
                         "effect_time_reduction", new ValueSet(List.of(15f, 25f, 35f, 45f, 55f, 65f, 75f, 85f, 95f), "skill.tyzs_skills.unit.percentage"))
         ));
 
+        finalList.add(new Skill(
+                true,
+                "chaos_strike",
+                3,
+                List.of(5, 8, 12),
+                Enums.SkillType.IMMUTABLE,
+                Enums.CategoryType.FIGHT,
+                true,
+                "tyzs_skills:textures/gui/skills/chaos_strike.png",
+                "skill.tyzs_skills.chaos_strike.displayName",
+                "skill.tyzs_skills.chaos_strike.description",
+                null,
+                Map.of(
+                        "success_probability", new ValueSet(List.of(3f, 5f, 7f), "skill.tyzs_skills.unit.percentage"))
+        ));
+
         return finalList;
     }
 

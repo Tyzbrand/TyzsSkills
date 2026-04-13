@@ -21,6 +21,7 @@ public class SkillBehaviorRegistry {
         behaviors.put("rage", new RageEffect());
         behaviors.put("adrenaline", new AdrenalineEffect());
         behaviors.put("resilience", new ResilienceEffect());
+        behaviors.put("chaos_strike", new ChaosStrikeEffect());
 
         behaviors.put("green_thumb", new GreenThumbEffect());
         behaviors.put("nutrition", new NutritionEffect());
