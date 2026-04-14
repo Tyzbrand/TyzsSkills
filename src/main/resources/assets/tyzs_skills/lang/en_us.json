@@ -226,16 +226,16 @@
 
 
   "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
-  "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III for {effect_duration}s when Health falls below {health_threshold}%",
+  "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III for {effect_duration}s when health falls below {health_threshold}%",
 
   "skill.tyzs_skills.jinxed.displayName" : "Jinxed",
   "skill.tyzs_skills.jinxed.description" : "Adds a {success_probability}% chance to scramble the target's hotbar on hit",
 
   "skill.tyzs_skills.true_strike.displayName" : "True Strike",
-  "skill.tyzs_skills.true_strike.description" : "Adds a {success_probability}% chance to deal True damage",
+  "skill.tyzs_skills.true_strike.description" : "Adds a {success_probability}% chance to deal true damage on hit",
 
   "skill.tyzs_skills.sunder_armor.displayName" : "Sunder Armor",
-  "skill.tyzs_skills.sunder_armor.description" : "Adds a {success_probability}% chance for attacks to deal {damage_percentage}% additional durability damage to armor",
+  "skill.tyzs_skills.sunder_armor.description" : "Adds a {success_probability}% chance for attacks to deal {damage_percentage}% extra durability damage to armor",
 
   "skill.tyzs_skills.shepherd_s_blessing.displayName" : "Shepherd’s Blessing",
   "skill.tyzs_skills.shepherd_s_blessing.description" : "Baby animals grow {growth_speed}% faster",

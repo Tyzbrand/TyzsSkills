@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
-public class PiercingStrikeEffect extends SkillBehavior {
+public class TrueStrikeEffect extends SkillBehavior {
 
     public static final ThreadLocal<Boolean> IS_PENETRATING= ThreadLocal.withInitial(() -> false);
 

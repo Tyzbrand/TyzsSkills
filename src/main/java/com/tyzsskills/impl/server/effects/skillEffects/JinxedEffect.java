@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class ChaosStrikeEffect extends SkillBehavior {
+public class JinxedEffect extends SkillBehavior {
 
     @Override
     public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill) {

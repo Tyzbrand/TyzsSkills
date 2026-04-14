@@ -1,13 +1,10 @@
 package com.tyzsskills.impl.server.skills;
 
 import com.tyzsskills.impl.server.effects.skillEffects.*;
-import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.model.SkillBehavior;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @ApiStatus.Internal
@@ -24,8 +21,8 @@ public class SkillBehaviorRegistry {
         behaviors.put("rage", new RageEffect());
         behaviors.put("adrenaline", new AdrenalineEffect());
         behaviors.put("resilience", new ResilienceEffect());
-        behaviors.put("chaos_strike", new ChaosStrikeEffect());
-        behaviors.put("piercing_strike", new PiercingStrikeEffect());
+        behaviors.put("jinxed", new JinxedEffect());
+        behaviors.put("true_strike", new TrueStrikeEffect());
         behaviors.put("sunder_armor", new SunderArmorEffect());
 
         behaviors.put("green_thumb", new GreenThumbEffect());
@@ -33,8 +30,8 @@ public class SkillBehaviorRegistry {
         behaviors.put("experience_boost", new ExperienceBoostEffect());
         behaviors.put("magnet", new MagnetEffect());
         behaviors.put("stealth", new StealthEffect());
-        behaviors.put("animal_husbandry", new AnimalHusbandryEffect());
-        behaviors.put("engineer", new EngineerEffect());
+        behaviors.put("shepherd_s_blessing", new ShepherdsBlessingEffect());
+        behaviors.put("spare_parts", new SparePartsEffect());
         behaviors.put("twist_of_fate", new TwistOfFateEffect());
 
         behaviors.put("cinder_blood", new CinderBloodEffect());

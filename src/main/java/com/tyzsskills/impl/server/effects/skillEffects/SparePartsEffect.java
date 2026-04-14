@@ -7,7 +7,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-public class EngineerEffect extends SkillBehavior {
+public class SparePartsEffect extends SkillBehavior {
     @Override
     public void onItemCrafted(PlayerEvent.ItemCraftedEvent event, ServerPlayer player, int lvl, ISkill skill) {
         var values = skill.getValueSet("refund_chance");

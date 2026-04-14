@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
 import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
 
-public class AnimalHusbandryEffect extends SkillBehavior {
+public class ShepherdsBlessingEffect extends SkillBehavior {
 
     @Override
     public void OnBabySpawn(BabyEntitySpawnEvent event, ServerPlayer player, int lvl, ISkill skill) {
