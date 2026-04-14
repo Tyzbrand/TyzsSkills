@@ -60,6 +60,12 @@ public class Config {
     public static final ModConfigSpec.LongValue CYCLE_DURATION;
     public static final ModConfigSpec.EnumValue<Enums.LimitType> LIMIT_TYPE;
 
+    //Death penalties
+    public static final ModConfigSpec.BooleanValue DEATH_PENALTIES;
+    public static final ModConfigSpec.DoubleValue XP_LOSS;
+    public static final ModConfigSpec.IntValue LVL_LOSS;
+    public static final ModConfigSpec.DoubleValue SP_LOSS;
+    public static final ModConfigSpec.DoubleValue SKILL_LOSS;
 
 
     //Xp values
@@ -151,6 +157,7 @@ public class Config {
                 .translation("config.common.tyzs_skills.prevent_placed_blocks_xp")
                 .define("prevent_placed_block_xp", true);
 
+
         commonBuilder.pop();
         commonBuilder.push("Limits");
 
@@ -187,6 +194,36 @@ public class Config {
 
 
         commonBuilder.pop();
+
+        commonBuilder.push("Death_penalties");
+
+        DEATH_PENALTIES = commonBuilder
+                .comment("Apply death penalties")
+                .translation("config.common.tyzs_skills.death_penatlies")
+                .define("death_penalties", false);
+
+        XP_LOSS = commonBuilder
+                .comment("Percentage of XP deducted")
+                .translation("config.common.tyzs_skills.xp_loss")
+                .defineInRange("xp_loss", 0.0, 0.0, 100.0);
+
+        SP_LOSS = commonBuilder
+                .comment("Percentage of SP deducted")
+                .translation("config.common.tyzs_skills.sp_loss")
+                .defineInRange("sp_loss", 0.0, 0.0, 100.0);
+
+        LVL_LOSS = commonBuilder
+                .comment("Number of LVL deducted")
+                .translation("config.common.tyzs_skills.lvl_loss")
+                .defineInRange("lvl_loss", 0, 0, Integer.MAX_VALUE);
+
+        SKILL_LOSS = commonBuilder
+                .comment("Percentage of chance to lose one level on each skill")
+                .translation("config.common.tyzs_skills.skill_loss")
+                .defineInRange("skill_loss", 0.0, 0.0, 100.0);
+
+        commonBuilder.pop();
+
         commonBuilder.push("Trait_details");
 
         commonBuilder.push("Deep_lode");

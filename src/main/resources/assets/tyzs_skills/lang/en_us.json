@@ -255,5 +255,12 @@
   "gui.tyzs_skills.gain" : "Gain",
 
   "config.common.tyzs_skills.killing_xp_earnings" : "XP from Killing entities",
-  "config.common.tyzs_skills.mining_xp_earnings" : "XP from breaking blocks"
+  "config.common.tyzs_skills.mining_xp_earnings" : "XP from breaking blocks",
+  "config.common.tyzs_skills.death_penatlies" : "Death Penalties",
+  "config.common.tyzs_skills.xp_loss" : "XP loss",
+  "config.common.tyzs_skills.sp_loss" : "SP loss",
+  "config.common.tyzs_skills.lvl_loss" : "Lvl loss",
+  "config.common.tyzs_skills.skill_loss" : "Skill loss",
+
+  "tyzs_skills.configuration.Death_penalties":"Death Penalties"
 }

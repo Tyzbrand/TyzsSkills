@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.ApiStatus;
@@ -49,6 +50,13 @@ public class RuntimeEvents {
         var oldData = oldPlayer.getData(PlayerData.DATA).serializeNBT(oldPlayer.registryAccess());
         newPlayer.getData(PlayerData.DATA).deserializeNBT(newPlayer.registryAccess(), oldData);
 
+        if(event.isWasDeath()) {
+            DeathPenalties.applySpPenalty(newPlayer);
+            DeathPenalties.applyLvlPenalty(newPlayer);
+            DeathPenalties.applyXpPenalty(newPlayer);
+            DeathPenalties.applySkillPenalty(newPlayer);
+        }
+
         GenericEffects.restoreEffects(newPlayer);
         SkillEffectsEvents.onPlayerClone(event);
     }
@@ -66,5 +74,6 @@ public class RuntimeEvents {
             BlockMarker.MarkBlock((net.minecraft.world.level.Level)event.getLevel(), event.getPos());
         }
     }
+
 
 }
