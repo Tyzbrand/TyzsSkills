@@ -314,12 +314,28 @@ public class FileManager {
                 .resolve("skills")
                 .resolve("default");
 
-        if (!Files.exists(path)) return;
+        Path oldTraitPath = server.getServerDirectory()
+                .resolve("config")
+                .resolve("tyzs_skills")
+                .resolve("skills")
+                .resolve("traits");
 
-        try (Stream<Path> walk = Files.walk(path)) {
-            walk.sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
+        if (Files.exists(path)){
+            try (Stream<Path> walk = Files.walk(path)) {
+                walk.sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            }
         }
+
+        if(Files.exists(oldTraitPath)){
+            try (Stream<Path> walk = Files.walk(oldTraitPath)) {
+                walk.sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            }
+        }
+
+
     }
 }

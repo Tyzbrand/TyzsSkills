@@ -4,6 +4,7 @@ import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.server.model.Skill;
+import com.tyzsskills.impl.server.model.Trait;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -28,83 +29,150 @@ public class StringTools {
         return SMART_FORMATTER.get().format(value);
     }
 
-    public static MutableComponent getPriceLine(Skill skill, int lvlToBuy, boolean canBuy){
+    public static MutableComponent getPriceLine(Skill skill, int currentLvl, boolean canBuy, boolean isMax){
         LocalPlayer client = Minecraft.getInstance().player;
         if(skill == null || !skill.isPurchasable() || client == null) return Component.translatable("gui.tyzs_skills.error_value").withStyle(ChatFormatting.RED);
 
-        if(lvlToBuy  > skill.getMaximumLevel()) return Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD);
+        if(currentLvl >= skill.getMaximumLevel()) return Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD);
 
+        boolean effectiveMax = isMax && !(skill instanceof Trait);
+        int totalSpAmount = 0;
         var prices = skill.getPrices();
-        var priceIndex = lvlToBuy - 1;
-        if(priceIndex < 0 ||priceIndex >= prices.size()) return Component.translatable("gui.tyzs_skills.error_value").withStyle(ChatFormatting.RED);
+        boolean affordable = canBuy;
 
-        int price = prices.get(priceIndex);
+        if (!effectiveMax) {
+            if(currentLvl < prices.size()) totalSpAmount = prices.get(currentLvl);
+        } else {
+            int availableSp = ClientCache.GetSP();
+            int simulatedSp = availableSp;
+            int levelsAffordable = 0;
 
-        return canBuy ?
-                Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY)
-                        .append(": ")
-                        .append(Component.literal(ChatFormatting.BLUE + String.valueOf(price))).append(" ")
-                        .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.BLUE))
-                :
-                (Component.translatable("gui.tyzs_skills.cost")
-                        .append(": ").append(Component.literal(String.valueOf(price)))
-                        .append(" ").append(Component.translatable("gui.tyzs_skills.SP")).withStyle(ChatFormatting.RED));
+            for (int i = currentLvl; i < skill.getMaximumLevel(); i++) {
+                if (i >= prices.size()) break;
+                int price = prices.get(i);
+
+                if (simulatedSp >= price) {
+                    simulatedSp -= price;
+                    totalSpAmount += price;
+                    levelsAffordable++;
+                } else break;
+
+            }
+
+            if (levelsAffordable > 0) {
+                affordable = true;
+            } else {
+                if(currentLvl < prices.size()) totalSpAmount = prices.get(currentLvl);
+                affordable = false;
+            }
+        }
+
+        var style = affordable ? ChatFormatting.BLUE : ChatFormatting.RED;
+        return Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY)
+                .append(": ")
+                .append(Component.literal(String.valueOf(totalSpAmount)).withStyle(style)).append(" ")
+                .append(Component.translatable("gui.tyzs_skills.SP").withStyle(style));
     }
 
-    public static List<MutableComponent> getTooltipAction(Skill skill, int targetedLvl, Enums.TooltipType type, boolean canBuy){
+
+    public static List<MutableComponent> getTooltipAction(Skill skill, int currentLvl, Enums.TooltipType type, boolean canBuy) {
+        return getTooltipAction(skill, currentLvl, type, canBuy, false);
+    }
+
+    public static List<MutableComponent> getTooltipAction(Skill skill, int currentLvl, Enums.TooltipType type, boolean canBuy, boolean isMax) {
         LocalPlayer client = Minecraft.getInstance().player;
         List<MutableComponent> lines = new ArrayList<>();
 
-        var isPurchase = type == Enums.TooltipType.PURCHASE;
-
         if(skill == null || client == null) return lines;
 
-        if(targetedLvl  > skill.getMaximumLevel()) {
-            lines.add(Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD));
-            return lines;
+        boolean isPurchase = type == Enums.TooltipType.PURCHASE;
+        boolean effectiveMax = isMax && !(skill instanceof Trait);
+        int targetLvl = currentLvl;
+
+        if(isPurchase) {
+            if(currentLvl >= skill.getMaximumLevel()) {
+                lines.add(Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD));
+                return lines;
+            }
+
+            lines.add(getPriceLine(skill, currentLvl, canBuy, isMax));
+
+            if (!effectiveMax) {
+                targetLvl = currentLvl + 1;
+            } else {
+                int availableSp = ClientCache.GetSP();
+                int simulatedSp = availableSp;
+                int levelsAffordable = 0;
+                var prices = skill.getPrices();
+
+                for (int i = currentLvl; i < skill.getMaximumLevel(); i++) {
+                    if (i >= prices.size()) break;
+                    int price = prices.get(i);
+
+                    if (simulatedSp >= price) {
+                        simulatedSp -= price;
+                        targetLvl++;
+                        levelsAffordable++;
+                    } else break;
+                }
+                if (levelsAffordable == 0) targetLvl = currentLvl + 1;
+
+            }
+        } else {
+            // LE BLOC QUI MANQUAIT EST ICI
+            if(currentLvl <= 0) return lines;
+            lines.add(getRefundLine(skill, currentLvl, isMax));
+
+            targetLvl = effectiveMax ? 0 : currentLvl - 1;
         }
 
-        if(isPurchase) lines.add(getPriceLine(skill, targetedLvl, canBuy));
-        else {
-            if(targetedLvl < 0) return  lines;
-
-            int initialPrice = skill.getPrices().get(targetedLvl - 1);
-            int finalPrice = Math.max(1, (int)(initialPrice * (Config.REFUND_PERCENTAGE.get() / 100f)));
-
-            lines.add(Component.translatable("gui.tyzs_skills.gain").withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
-                    .append(Component.literal(finalPrice + " ").withStyle(ChatFormatting.BLUE))
-                    .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.BLUE)));
-        }
-
+        if (targetLvl == currentLvl) return lines;
 
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
             for(var modifier : skill.getModifiers()){
-                var targetValue = isPurchase ? modifier.getValue(targetedLvl) : modifier.getValue(targetedLvl - 1);
-                var currentValue = isPurchase ? modifier.getValue(targetedLvl - 1) : modifier.getValue(targetedLvl);
-
-                var diff = targetValue - currentValue;
+                float diff = modifier.getValue(targetLvl) - modifier.getValue(currentLvl);
                 if(diff == 0) continue;
-
-                lines.add(getValueLine(diff ,modifier.unit()));
+                lines.add(getValueLine(diff, modifier.unit()));
             }
-            return lines;
         }
-
-        if(skill.getType() == Enums.SkillType.IMMUTABLE){
+        else if(skill.getType() == Enums.SkillType.IMMUTABLE){
             for(var valueSet : skill.getValues().values()){
-                var targetValue = isPurchase ? valueSet.getValue(targetedLvl) : valueSet.getValue(targetedLvl - 1);
-                var currentValue = isPurchase ? valueSet.getValue(targetedLvl - 1) : valueSet.getValue(targetedLvl);
-
-                var diff = targetValue - currentValue;
+                float diff = valueSet.getValue(targetLvl) - valueSet.getValue(currentLvl);
                 if(diff == 0) continue;
-
-                lines.add(getValueLine(diff ,valueSet.unit()));
+                lines.add(getValueLine(diff, valueSet.unit()));
             }
-            return lines;
         }
 
         return lines;
+    }
+
+    public static MutableComponent getRefundLine(Skill skill, int currentLvl, boolean isMax) {
+        if(skill == null || currentLvl <= 0) return Component.empty();
+
+        boolean effectiveMax = isMax && !(skill instanceof Trait);
+        int totalSpAmount = 0;
+        var prices = skill.getPrices();
+
+        if (!effectiveMax) {
+            if (currentLvl - 1 < prices.size()) {
+                int p = prices.get(currentLvl - 1);
+                int ref = (int)(p * (Config.REFUND_PERCENTAGE.get() / 100f));
+                totalSpAmount = p > 0 ? Math.max(1, ref) : 0;
+            }
+        } else {
+            for (int i = currentLvl - 1; i >= 0; i--) {
+                if (i < prices.size()) {
+                    int p = prices.get(i);
+                    int ref = (int)(p * (Config.REFUND_PERCENTAGE.get() / 100f));
+                    totalSpAmount += p > 0 ? Math.max(1, ref) : 0;
+                }
+            }
+        }
+
+        return Component.translatable("gui.tyzs_skills.gain").withStyle(ChatFormatting.GRAY)
+                .append(": ")
+                .append(Component.literal(String.valueOf(totalSpAmount)).withStyle(ChatFormatting.BLUE)).append(" ")
+                .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.BLUE));
     }
 
     public static List<MutableComponent> getSkillDescription(Skill skill) {

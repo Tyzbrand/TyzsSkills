@@ -104,13 +104,12 @@ public class TraitWidget extends SkillWidget{
         if(skill.isPurchasable() && skill.isSkillActive() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
 
             int currentLvl = ClientCache.GetSkillLevel(skill.getID());
-            int lvlToBuy = currentLvl +1;
             if(currentLvl >= skill.getMaximumLevel()) {
                 tooltip.add(Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD));
                 return tooltip;
             }
 
-            tooltip.add(StringTools.getPriceLine(skill, lvlToBuy, CanBuy(skill)));
+            tooltip.add(StringTools.getPriceLine(skill, currentLvl, CanBuy(skill), false));
 
             LocalPlayer player = Minecraft.getInstance().player;
             if(player != null){

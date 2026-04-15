@@ -72,7 +72,7 @@ public class SkillManager {
     }
 
 
-    public boolean buySkill(ServerPlayer player, String id)
+    public boolean tryBuySkill(ServerPlayer player, String id)
     {
         var skill = getSkill(id);
         if(player == null || skill == null) return false;
@@ -119,7 +119,52 @@ public class SkillManager {
             return false;
     }
 
-    public boolean refundSkill(ServerPlayer player, String id)
+    public boolean tryBuyMaxSkill(ServerPlayer player, String id){
+        var skill = getSkill(id);
+        if (player == null || skill == null) return false;
+
+        var event = new SkillActionEvent.PurchasePre(skill, player);
+        NeoForge.EVENT_BUS.post(event);
+        if (event.isCanceled()) return false;
+
+        var data = player.getData(PlayerData.DATA);
+        var currentLvl = data.getSkillLevel(id);
+        var maxLvl = skill.getMaximumLevel();
+
+        if (currentLvl >= maxLvl) return false;
+
+        var prices = skill.getPrices();
+        var availableSp = SpManager.getSP(player);
+        var spToSpend = 0;
+        var levelsToAdd = 0;
+
+        for (int i = currentLvl; i < maxLvl; i++) {
+            if (i >= prices.size()) break;
+            var price = prices.get(i);
+
+            if (availableSp >= price) {
+                availableSp -= price;
+                spToSpend += price;
+                levelsToAdd++;
+            } else break;
+
+        }
+
+        if (levelsToAdd > 0) {
+            SpManager.removeSP(player, spToSpend);
+
+            PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(spToSpend));
+            player.getData(StatsTracker.DATA).addSpSpent(spToSpend);
+
+            setSkillLevel(player, id, currentLvl + levelsToAdd);
+
+            NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
+            return true;
+        }
+        return false;
+    }
+
+    public boolean tryRefundSkill(ServerPlayer player, String id)
     {
         var skill = getSkill(id);
         if(player == null || skill == null || !Config.REFUND_SYSTEM.get()) return false;
@@ -177,6 +222,80 @@ public class SkillManager {
         player.getData(StatsTracker.DATA).addSpEarned(finalPrice);
 
         setSkillLevel(player, id, currentLvl - 1);
+
+        NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
+
+        return true;
+    }
+
+    public boolean tryRefundMaxSkill(ServerPlayer player, String id){
+        var skill = getSkill(id);
+        if (player == null || skill == null || !Config.REFUND_SYSTEM.get()) return false;
+
+        var event = new SkillActionEvent.RefundPre(skill, player);
+        NeoForge.EVENT_BUS.post(event);
+        if (event.isCanceled()) return false;
+
+        var data = player.getData(PlayerData.DATA);
+        int currentLvl = data.getSkillLevel(id);
+        if (currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
+
+        int targetLvl = 0;
+
+        if (skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM) {
+            for (var modifier : skill.getModifiers()) {
+                ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
+                if (attributeID == null) continue;
+
+                Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
+                if (attribute == AttributeRegistry.TRAIT_POWER.get()) {
+
+                    var att = player.getAttribute(AttributeRegistry.TRAIT_POWER);
+                    if (att == null) return false;
+
+                    int simulatedMaxPower = (int) att.getValue();
+                    int usedPower = PowerManager.getPower(player);
+
+                    for (int l = currentLvl; l > 0; l--) {
+                        float currentValue = modifier.getValue(l);
+                        float prevValue = (l > 1) ? modifier.getValue(l - 1) : 0f;
+                        int stepPowerLoss = (int) (currentValue - prevValue);
+
+                        if (usedPower > (simulatedMaxPower - stepPowerLoss)) {
+                            targetLvl = l;
+                            break;
+                        }
+                        simulatedMaxPower -= stepPowerLoss;
+                    }
+                }
+            }
+        }
+
+        if (targetLvl == currentLvl) return false;
+
+        var prices = skill.getPrices();
+        int finalRefund = 0;
+
+        for (int i = currentLvl - 1; i >= targetLvl; i--) {
+            if (i < prices.size()) {
+                int levelPrice = prices.get(i);
+                int levelRefund = (int) (levelPrice * (Config.REFUND_PERCENTAGE.get() / 100f));
+
+                if (levelPrice > 0) {
+                    levelRefund = Math.max(1, levelRefund);
+                }
+
+                finalRefund += levelRefund;
+            }
+        }
+
+        if (finalRefund > 0) {
+            SpManager.addSP(player, finalRefund);
+            PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(finalRefund));
+            player.getData(StatsTracker.DATA).addSpEarned(finalRefund);
+        }
+
+        setSkillLevel(player, id, targetLvl);
 
         NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
 

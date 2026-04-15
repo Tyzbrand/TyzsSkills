@@ -81,4 +81,9 @@ public class ClientCacheWrapper implements IClientDataManager {
     public int getSkillLevel(String id) {
         return ClientCache.GetSkillLevel(id);
     }
+
+    @Override
+    public List<String> getPurchasedSkills(){
+        return ClientCache.getPurchasedSkills();
+    }
 }

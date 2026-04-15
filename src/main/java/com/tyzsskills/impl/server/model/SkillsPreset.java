@@ -235,8 +235,8 @@ public class SkillsPreset {
         finalList.add(new Skill(
                 true,
                 "resistance",
-                5,
-                List.of(5, 8, 12, 18, 24),
+                6,
+                List.of(5, 8, 12, 18, 24, 32),
                 Enums.SkillType.IMMUTABLE,
                 Enums.CategoryType.FIGHT,
                 true,
@@ -245,7 +245,7 @@ public class SkillsPreset {
                 "skill.tyzs_skills.resistance.description",
                 null,
                 Map.of(
-                        "damage_resistance", new ValueSet(List.of(10f, 20f, 30f, 40f, 50f), "skill.tyzs_skills.unit.percentage"))
+                        "damage_resistance", new ValueSet(List.of(7f, 15f, 20f, 30f, 35f, 45f), "skill.tyzs_skills.unit.percentage"))
         ));
 
         finalList.add(new Skill(

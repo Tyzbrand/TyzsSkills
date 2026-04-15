@@ -81,12 +81,6 @@
   "skill.tyzs_skills.backstab.displayName" : "Удар в спину",
   "skill.tyzs_skills.backstab.description" : "Увеличивает урон, наносимый со спины, на {damage_buff}%",
 
-  "skill.tyzs_skills.rage.displayName" : "Ярость",
-  "skill.tyzs_skills.rage.description" : "Увеличивает урон на {damage_buff}%, когда здоровье опускается ниже 3 сердец",
-
-  "skill.tyzs_skills.adrenaline.displayName" : "Адреналин",
-  "skill.tyzs_skills.adrenaline.description" : "Дает эффекты Поглощения и Скорости III, когда здоровье опускается ниже {health_threshold}%",
-
   "skill.tyzs_skills.resilience.displayName" : "Стойкость",
   "skill.tyzs_skills.resilience.description" : "Снижает длительность негативных эффектов на {effect_time_reduction}%",
 
@@ -222,4 +216,42 @@
   "config.client.tyzs_skills.debug_msg" : "Показывать отладочные сообщения",
   "config.client.tyzs_skills.speed_fov_reduction" : "Уменьшение поля зрения (FOV) от скорости",
 
+  "skill.tyzs_skills.adrenaline.displayName" : "Адреналин",
+  "skill.tyzs_skills.adrenaline.description" : "Дает эффекты Поглощения и Скорости III на {effect_duration} сек, когда здоровье опускается ниже {health_threshold}%",
+
+  "skill.tyzs_skills.jinxed.displayName" : "Сглаз",
+  "skill.tyzs_skills.jinxed.description" : "Дает шанс {success_probability}% перемешать предметы на панели быстрого доступа цели при попадании",
+
+  "skill.tyzs_skills.true_strike.displayName" : "Верный удар",
+  "skill.tyzs_skills.true_strike.description" : "Дает шанс {success_probability}% нанести чистый урон при попадании",
+
+  "skill.tyzs_skills.sunder_armor.displayName" : "Раскол брони",
+  "skill.tyzs_skills.sunder_armor.description" : "Дает шанс {success_probability}%, что атака нанесет на {damage_percentage}% больше урона прочности брони",
+
+  "skill.tyzs_skills.shepherd_s_blessing.displayName" : "Благословение пастуха",
+  "skill.tyzs_skills.shepherd_s_blessing.description" : "Детеныши животных растут на {growth_speed}% быстрее",
+
+  "skill.tyzs_skills.spare_parts.displayName" : "Запасные части",
+  "skill.tyzs_skills.spare_parts.description" : "Дает шанс {refund_chance}% вернуть материалы при крафте",
+
+  "skill.tyzs_skills.twist_of_fate.displayName" : "Поворот судьбы",
+  "skill.tyzs_skills.twist_of_fate.description" : "Увеличивает количество предметов в сундуках со структурами на {loot_multiplier}%",
+
+  "skill.tyzs_skills.unit.seconds" : "сек",
+  "skill.tyzs_skills.unit.percentage_damage" : "% (урона)",
+
+  "skill.tyzs_skills.rage.displayName" : "Ярость",
+  "skill.tyzs_skills.rage.description" : "Увеличивает урон на {damage_buff}%, когда здоровье опускается ниже {health_threshold}%",
+
+  "gui.tyzs_skills.gain" : "Прирост",
+
+  "config.common.tyzs_skills.killing_xp_earnings" : "Опыт за убийство сущностей",
+  "config.common.tyzs_skills.mining_xp_earnings" : "Опыт за разрушение блоков",
+  "config.common.tyzs_skills.death_penatlies" : "Штрафы за смерть",
+  "config.common.tyzs_skills.xp_loss" : "Потеря опыта",
+  "config.common.tyzs_skills.sp_loss" : "Потеря ОН",
+  "config.common.tyzs_skills.lvl_loss" : "Потеря уровней",
+  "config.common.tyzs_skills.skill_loss" : "Потеря навыков",
+
+  "tyzs_skills.configuration.Death_penalties":"Штрафы за смерть"
 }

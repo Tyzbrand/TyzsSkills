@@ -29,9 +29,11 @@ public record CActionSkillPayload(String id, int actionType) implements CustomPa
     public static void Handle(final CActionSkillPayload payload, final IPayloadContext ctx){
         ctx.enqueueWork(() -> {
             if(ctx.player() instanceof ServerPlayer player){
-                if(payload.actionType() == 0) SkillManager.get().buySkill(player, payload.id().toLowerCase());
-                else if (payload.actionType() == 1) SkillManager.get().refundSkill(player, payload.id().toLowerCase());
-                else if (payload.actionType() == 2) SkillManager.get().bookmarkSkill(player, payload.id().toLowerCase());
+                if(payload.actionType() == 0) SkillManager.get().tryBuySkill(player, payload.id().toLowerCase()); //PURCHASE
+                else if (payload.actionType() == 1) SkillManager.get().tryRefundSkill(player, payload.id().toLowerCase()); //REFUND
+                else if (payload.actionType() == 2) SkillManager.get().bookmarkSkill(player, payload.id().toLowerCase()); // BOOKMARK
+                else if(payload.actionType() == 3) SkillManager.get().tryBuyMaxSkill(player, payload.id().toLowerCase()); //MAX PURCHASE
+                else if(payload.actionType() == 4) SkillManager.get().tryRefundMaxSkill(player, payload.id().toLowerCase()); //MAX REFUND
             }
 
         });

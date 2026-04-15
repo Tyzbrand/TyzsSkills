@@ -4,6 +4,7 @@ import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -45,12 +46,30 @@ public interface ISkillManager {
     void setSkillLevel(ServerPlayer player, String id, int amount);
 
     /**
+     * @deprecated For namespace consistency
+     * Use {@link #tryBuySkill(ServerPlayer, String)} instead
+     */
+    @Deprecated(since = "6.2.0", forRemoval = true)
+    default boolean buySkill(ServerPlayer player, String id){
+        return this.tryBuySkill(player, id);
+    }
+
+    /**
      * Tries to buy a skill according to the rules of the mod (not only a verification)
      * @param id Valid id of the targeted skill (in lowercase)
      * @return true if the skill has been purchased, false otherwise
      * NOTE: if the process is successful data are handled automatically (sp, skill lvl and stats)
      */
-    boolean buySkill(ServerPlayer player, String id);
+    boolean tryBuySkill(ServerPlayer player, String id);
+
+    /**
+     *  @deprecated For namespace consistency
+     *  Use {@link #tryRefundSkill(ServerPlayer, String)} instead
+     */
+    @Deprecated(since = "6.2.0", forRemoval = true)
+    default boolean refundSkill(ServerPlayer player, String id){
+        return this.tryRefundSkill(player, id);
+    }
 
     /**
      * Tries to refund a skill according to the rules of the mod (not only a verification)
@@ -58,7 +77,7 @@ public interface ISkillManager {
      * @return true if the skill has been refunded, false otherwise
      * NOTE: if the process is successful data are handled automatically (sp, skill lvl, and stats)
      */
-    boolean refundSkill(ServerPlayer player, String id);
+    boolean tryRefundSkill(ServerPlayer player, String id);
 
     /**
      * @return a copy of the server skill list (contains all loaded skills)
@@ -69,6 +88,7 @@ public interface ISkillManager {
      * @param id Valid id of the targeted skill (in lowercase)
      * @return the skill linked to the specified id, or null if it doesn't exist
      */
+    @Nullable
     ISkill getSkill(String id);
 
     /**

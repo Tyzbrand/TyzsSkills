@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client.models;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
@@ -19,8 +20,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.lwjgl.glfw.GLFW;
 
 
 import java.util.ArrayList;
@@ -42,6 +43,8 @@ public class SkillWidget {
 
     protected static final int U_BUY_BTN = 169 ,V_BUY_BTN = 173;
     protected static final int U_BUY_BTN_HOVER = 178;
+    protected static final int U_BUY_ALL_BTN = 260;
+    protected static final int U_BUY_ALL_BTN_HOVER = 269;
 
     protected static final int U_BOOK_BTN_HOVER = 226 ,V_BOOK_BTN_HOVER = 173;
     protected static final int U_BOOK_ACTIVE = 237 , V_BOOK_ACTIVE = 174;
@@ -51,6 +54,8 @@ public class SkillWidget {
 
     protected static final int U_REFUND_BTN = 200 ,V_REFUND_BTN = 173;
     protected static final int U_REFUND_BTN_HOVER = 209;
+    protected static final int U_REFUND_ALL_BTN = 283;
+    protected static final int U_REFUND_ALL_BTN_HOVER = 292;
 
     protected final Skill skill;
     protected final ResourceLocation icon;
@@ -112,14 +117,21 @@ public class SkillWidget {
 
         if(CanBuy(skill)){
             boolean isHoverBuyBtn = isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H);
-            int currentBuyU = U_BUY_BTN;
-            if(isHoverBuyBtn){currentBuyU = U_BUY_BTN_HOVER;}
+
+            int currentBuyU;
+            if(isShiftPressed()) currentBuyU = isHoverBuyBtn ? U_BUY_ALL_BTN_HOVER : U_BUY_ALL_BTN;
+            else currentBuyU = isHoverBuyBtn ? U_BUY_BTN_HOVER : U_BUY_BTN;
+
+
             gui.blit(REF_TEXTURE, x+38, y+17, currentBuyU, V_BUY_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
         }
         if(CanRefund(skill)) {
             boolean isHoverRefundBtn = isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H);
-            int currentRefundU = U_REFUND_BTN;
-            if(isHoverRefundBtn){currentRefundU = U_REFUND_BTN_HOVER;}
+
+            int currentRefundU;
+            if(isShiftPressed()) currentRefundU = isHoverRefundBtn ? U_REFUND_ALL_BTN_HOVER : U_REFUND_ALL_BTN;
+            else currentRefundU = isHoverRefundBtn? U_REFUND_BTN_HOVER : U_REFUND_BTN;
+
             gui.blit(REF_TEXTURE, x+27, y+17, currentRefundU, V_REFUND_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
         }
     }
@@ -127,16 +139,16 @@ public class SkillWidget {
     public List<Component> getTooltip(int mouseX, int mouseY){
         List<Component> tooltip = new ArrayList<>();
         int currentLevel = ClientCache.GetSkillLevel(this.skill.getID().toLowerCase());
-        int lvlToBuy = currentLevel +1;
 
         if(CanRefund(skill) && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
-            tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false));
+            if(isShiftPressed()) tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, true));
+            else tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false));
             return tooltip;
         }
 
         if(skill.isPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
-
-            tooltip.addAll(StringTools.getTooltipAction(skill, lvlToBuy, Enums.TooltipType.PURCHASE, CanBuy(skill)));
+            if(isShiftPressed()) tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, CanBuy(skill), true));
+            else tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, CanBuy(skill)));
             return tooltip;
         }
 
@@ -156,23 +168,35 @@ public class SkillWidget {
     public boolean mouseClicked(double mouseX, double mouseY, int button){
         if(isMouseOver((int)mouseX, (int)mouseY, x+38, y+17, BTN_W, BTN_H)){
             if(!CanBuy(skill)) return false;
+
             SoundPlayer.PlayUIClick();
-            ClientCache.PredictBuy(skill);
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 0));
+
+            if(isShiftPressed()) ClientCache.predictBuyMax(skill);
+            else ClientCache.predictBuy(skill);
+
+            var actionTask = isShiftPressed() ? 3 : 0;
+            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), actionTask));
+
             return true;
         }
 
         if(isMouseOver((int)mouseX, (int)mouseY, x+27, y+17, BTN_W, BTN_H)){
             if(!CanRefund(skill)) return false;
+
             SoundPlayer.PlayUIClick();
-            ClientCache.PredictRefund(skill);
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 1));
+
+            if(isShiftPressed()) ClientCache.predictRefundMax(skill);
+            else ClientCache.predictRefund(skill);
+
+            var actionTask = isShiftPressed() ? 4 : 1;
+            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), actionTask));
+
             return true;
         }
 
         if(isMouseOver((int)mouseX, (int)mouseY, x+49, y+17, BTN_W, BTN_H)) {
             SoundPlayer.PlayUIClick();
-            ClientCache.PredictBookmark(skill);
+            ClientCache.predictBookmark(skill);
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 2));
 
             if (ClientCache.GetCategoryType() == Enums.CategoryType.BOOKMARKS) {
@@ -247,6 +271,7 @@ public class SkillWidget {
     //Utils
     protected static final int COLOR_BG = 0xD5000000;
     protected static final int COLOR_BORDER = 0xFFD6AD55;
+    private boolean isShiftPressed(){return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);}
     protected void renderBackdrop(GuiGraphics gui, int x, int y, int width, int height, int color) {
         // Fond
         gui.fill(x, y + 1, x + width, y + height - 1, color);

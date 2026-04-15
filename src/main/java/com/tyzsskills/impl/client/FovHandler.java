@@ -7,8 +7,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 
-import java.util.List;
-
 @EventBusSubscriber(modid = Tyzsskills.MODID, value = Dist.CLIENT)
 public class FovHandler {
 
@@ -19,7 +17,7 @@ public class FovHandler {
 
         float totalDampening = 0f;
 
-        for (String rawId : ClientCache.getAllActiveSkills()){
+        for (String rawId : ClientCache.getPurchasedSkills()){
             String id = rawId.toLowerCase();
 
             int level = ClientCache.GetSkillLevel(id);
