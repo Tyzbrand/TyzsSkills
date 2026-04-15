@@ -29,7 +29,7 @@ Add this to your `neoforge.mods.toml` for the dependency
 [[dependencies.your_mod_id]]
     modId="tyzs_skills"
     mandatory=true
-    versionRange="[6.1.2,)"
+    versionRange="[6.2.0,)"
     ordering="AFTER"
     side="BOTH"
 ```
