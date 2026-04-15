@@ -33,10 +33,19 @@ __Propriétés configurables__ :
 |`prices`| Valeures entieres positives | Prix pour chaque niveau (1ere valeure = prix pour acheter le niveau ) | La taille de la liste doit correspondre au `maximumLevel` |
 |`category`| ABILITIES, FIGHT, MISC | determines l'onglet dans lequel le skill apparait | |
 |`purchasable`| true, false | définit si les joueurs peuvent achetr ou rembouser le skill | Si c'est définit sur true, le seul moyen d'acheter/rembourser sera via commandes |
-|`icon`| chemin valide vers un .png (16x16) | Determine le chemin de l'icone du skill | Doit suivre le format d'assets minecraft et doit provenir d'un ressource pack ou d'un mod chargé|
-|`displayName`| clé de traduction | Determines le nom d'affichage du skill | |
-|`description`| clé de traduction | Determines la description a afficher | |
+|`icon`| Chemin valide vers un asset (16x16) | Determine le chemin de l'icone du skill | Doit suivre le format d'assets minecraft et doit provenir d'un ressource pack ou d'un mod chargé|
+|`displayName`| Clé de traduction | Determines le nom d'affichage du skill | |
+|`description`| Clé de traduction | Determines la description a afficher | |
+|`modifers`| [modifier](#modifier), vide | Determines les données relatives aux attributs affectés par le skill | Dans le cas d'un skill de type `IMMUTABLE` ou `TRAIT`, ce champ peux rester vide |
+|`customValues`| [custom value](#custom-values), vide |  Determines les données relatives aux valeures du skill | Dans le cas d'un skill qui n'est pas de type `IMMUTABLE`, ce champ peux rester vide|
 
+
+  ### MODIFIER
+
+  ### CUSTOM VALUES
+
+
+[Full vanilla attribute list](https://minecraft.wiki/w/Attribute)
 
 
 
