@@ -4,7 +4,9 @@ import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
+import com.tyzsskills.impl.client.key.MainKeybind;
 import com.tyzsskills.impl.client.models.*;
+import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.ChatFormatting;
@@ -46,14 +48,6 @@ public class MainGUI extends Screen {
     private CustomTabButton miscBtn;
     private CustomTabButton bookmarksBtn;
 
-    private static final DecimalFormat SMART_FORMATTER;
-
-    static {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setGroupingSeparator(' ');
-        symbols.setDecimalSeparator('.');
-        SMART_FORMATTER = new DecimalFormat("#,##0.#", symbols);
-    }
 
     public MainGUI(){super(Component.translatable("gui.tyzs_skills.title"));}
 
@@ -127,7 +121,7 @@ public class MainGUI extends Screen {
         gui.drawString(this.font, spStat, 0, 0, color2, false);
         gui.pose().popPose();
 
-        MutableComponent spValue = Component.literal(String.valueOf(ClientCache.GetSP()));
+        MutableComponent spValue = Component.literal(String.valueOf(StringTools.valueSmartFormat(ClientCache.GetSP())));
         int text2W = this.font.width(spValue);
         int rightLimit2 = leftPos + 69;
         gui.pose().pushPose();
@@ -247,10 +241,10 @@ public class MainGUI extends Screen {
     private void renderTooltips(GuiGraphics gui, int mouseX, int mouseY){
 
         if(isHovering(mouseX, mouseY, leftPos, topPos+96, 75, 8)){ //Xp bar
-            String xpTooltip = SmartFormat(ClientCache.GetXP()) + "/" + SmartFormat(ClientCache.GetXPGOAL()) ;
+            String xpTooltip = StringTools.valueSmartFormat(ClientCache.GetXP()) + "/" + StringTools.valueSmartFormat(ClientCache.GetXPGOAL()) ;
 
             MutableComponent finalText = Component.literal(xpTooltip)
-                            .append(Component.literal(" [+" + SmartFormat(ClientCache.GetReward()) + " ").withStyle(ChatFormatting.GREEN))
+                            .append(Component.literal(" [+" + StringTools.valueSmartFormat(ClientCache.GetReward()) + " ").withStyle(ChatFormatting.GREEN))
                             .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.GREEN))
                             .append(Component.literal("]").withStyle(ChatFormatting.GREEN));
 
@@ -260,7 +254,7 @@ public class MainGUI extends Screen {
 
         if(ClientCache.GetContainerType() == Enums.ContainerType.TRAITS
                 && isHovering(mouseX, mouseY, leftPos+173, topPos+17, 123, 6)){ //Power Bar
-            String powerTooltip = SmartFormat(ClientCache.GetPower()) + "/" + SmartFormat(
+            String powerTooltip = StringTools.valueSmartFormat(ClientCache.GetPower()) + "/" + StringTools.valueSmartFormat(
                     (float)Minecraft.getInstance().player.getAttribute(AttributeRegistry.TRAIT_POWER).getValue()) ;
 
             MutableComponent finalText =  Component.translatable("gui.tyzs_skills.power")
@@ -305,21 +299,21 @@ public class MainGUI extends Screen {
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.all_time_xp").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
-                    .append(Component.literal(SmartFormat(ClientCache.GetAllTimeXp())).withStyle(ChatFormatting.GRAY)));
+                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.GetAllTimeXp())).withStyle(ChatFormatting.GRAY)));
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.session_xp").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
-                    .append(Component.literal(SmartFormat(ClientCache.GetSessionXp())).withStyle(ChatFormatting.GRAY)));
+                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.GetSessionXp())).withStyle(ChatFormatting.GRAY)));
 
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.sp_earned").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
-                    .append(Component.literal(String.valueOf(ClientCache.GetSpEarned())).withStyle(ChatFormatting.GRAY)));
+                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.GetSpEarned())).withStyle(ChatFormatting.GRAY)));
 
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.sp_spent").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
-                    .append(Component.literal(String.valueOf(ClientCache.GetSpSpent())).withStyle(ChatFormatting.GRAY)));
+                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.GetSpSpent())).withStyle(ChatFormatting.GRAY)));
 
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.skill_unlocked").withStyle(ChatFormatting.BLUE)
@@ -461,7 +455,7 @@ public class MainGUI extends Screen {
     }
 
     private void renderIcons(GuiGraphics gui){
-        renderIcon(gui, .65f, 233, 191, 15, 16, leftPos+43, topPos+65, 8);
+        renderIcon(gui, .65f, 232, 190, 17, 18, leftPos+43, topPos+65, 8);
     }
 
     private void updateButtonsVisibility() {
@@ -541,9 +535,7 @@ public class MainGUI extends Screen {
     }
 
     //Uilitaires
-    public static String SmartFormat(float value){
-        return SMART_FORMATTER.format(value);
-    }
+
     private boolean isHovering(int mouseX, int mouseY, int x, int y, int width, int height){
         return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
     }
@@ -580,6 +572,15 @@ public class MainGUI extends Screen {
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, 0xFFFFFFFF); // Bas
         gui.fill(x, y + 1, x + 1, y + height - 1, 0xFFFFFFFF); // Gauche
         gui.fill(x + width - 1, y + 1, x + width, y + height - 1, 0xFFFFFFFF);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (MainKeybind.OPEN_SKILL_KEY.matches(keyCode, scanCode)) {
+            this.onClose();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
 

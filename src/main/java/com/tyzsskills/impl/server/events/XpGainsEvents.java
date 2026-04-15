@@ -33,6 +33,7 @@ public class XpGainsEvents {
         if(event.isCanceled()) return;
         if(!(event.getPlayer() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
+        if(!Config.EARN_XP_BY_MINING.getAsBoolean()) return;
 
         Level level = (net.minecraft.world.level.Level) event.getLevel();
         var pos = event.getPos();
@@ -49,6 +50,7 @@ public class XpGainsEvents {
         if(event.isCanceled()) return;
         if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
+        if(!Config.EARN_XP_BY_KILLING.getAsBoolean()) return;
 
         XpEntity.entityKillProfit(event.getEntity(), player);
     }

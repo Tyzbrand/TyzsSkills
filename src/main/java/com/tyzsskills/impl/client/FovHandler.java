@@ -7,8 +7,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 
-import java.util.List;
-
 @EventBusSubscriber(modid = Tyzsskills.MODID, value = Dist.CLIENT)
 public class FovHandler {
 
@@ -17,23 +15,28 @@ public class FovHandler {
         double reduction = Config.FOV_REDUCTION.get();
         if(reduction <= 0.0001D) return;
 
-        List<? extends String> affectedSkills = Config.FOV_AFFECTED_SKILLS.get();
         float totalDampening = 0f;
 
-        for (String rawId : affectedSkills){
+        for (String rawId : ClientCache.getPurchasedSkills()){
             String id = rawId.toLowerCase();
 
             int level = ClientCache.GetSkillLevel(id);
             if(level <= 0) continue;
 
             var skill = ClientCache.GetSkill(id);
-            if(skill == null || skill.getValues().isEmpty()) continue;
+            if(skill == null) continue;
 
-            int index = Math.min(level - 1, skill.getValues().size() - 1);
-            float rawValue = skill.getValues().get(index);
+            for(var modifier : skill.getModifiers()){
+                if(modifier.attribute().equals("minecraft:generic.movement_speed")){
 
-            float realFactor = rawValue / 100f;
-            totalDampening += (float)(realFactor * reduction * 0.5f);
+                    var rawValue = modifier.getValue(level);
+
+                    var realFactor = rawValue / 100f;
+                    totalDampening += (float)(realFactor * reduction * 0.5f);
+
+                    break;
+                }
+            }
         }
 
         if(totalDampening > 0) {

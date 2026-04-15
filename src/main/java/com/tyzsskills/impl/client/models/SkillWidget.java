@@ -1,11 +1,13 @@
 package com.tyzsskills.impl.client.models;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.SoundPlayer;
 import com.tyzsskills.impl.client.screen.MainGUI;
+import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.model.Trait;
@@ -18,8 +20,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.lwjgl.glfw.GLFW;
 
 
 import java.util.ArrayList;
@@ -41,6 +43,8 @@ public class SkillWidget {
 
     protected static final int U_BUY_BTN = 169 ,V_BUY_BTN = 173;
     protected static final int U_BUY_BTN_HOVER = 178;
+    protected static final int U_BUY_ALL_BTN = 260;
+    protected static final int U_BUY_ALL_BTN_HOVER = 269;
 
     protected static final int U_BOOK_BTN_HOVER = 226 ,V_BOOK_BTN_HOVER = 173;
     protected static final int U_BOOK_ACTIVE = 237 , V_BOOK_ACTIVE = 174;
@@ -50,6 +54,8 @@ public class SkillWidget {
 
     protected static final int U_REFUND_BTN = 200 ,V_REFUND_BTN = 173;
     protected static final int U_REFUND_BTN_HOVER = 209;
+    protected static final int U_REFUND_ALL_BTN = 283;
+    protected static final int U_REFUND_ALL_BTN_HOVER = 292;
 
     protected final Skill skill;
     protected final ResourceLocation icon;
@@ -111,92 +117,47 @@ public class SkillWidget {
 
         if(CanBuy(skill)){
             boolean isHoverBuyBtn = isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H);
-            int currentBuyU = U_BUY_BTN;
-            if(isHoverBuyBtn){currentBuyU = U_BUY_BTN_HOVER;}
+
+            int currentBuyU;
+            if(isShiftPressed()) currentBuyU = isHoverBuyBtn ? U_BUY_ALL_BTN_HOVER : U_BUY_ALL_BTN;
+            else currentBuyU = isHoverBuyBtn ? U_BUY_BTN_HOVER : U_BUY_BTN;
+
+
             gui.blit(REF_TEXTURE, x+38, y+17, currentBuyU, V_BUY_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
         }
         if(CanRefund(skill)) {
             boolean isHoverRefundBtn = isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H);
-            int currentRefundU = U_REFUND_BTN;
-            if(isHoverRefundBtn){currentRefundU = U_REFUND_BTN_HOVER;}
+
+            int currentRefundU;
+            if(isShiftPressed()) currentRefundU = isHoverRefundBtn ? U_REFUND_ALL_BTN_HOVER : U_REFUND_ALL_BTN;
+            else currentRefundU = isHoverRefundBtn? U_REFUND_BTN_HOVER : U_REFUND_BTN;
+
             gui.blit(REF_TEXTURE, x+27, y+17, currentRefundU, V_REFUND_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
         }
     }
 
     public List<Component> getTooltip(int mouseX, int mouseY){
         List<Component> tooltip = new ArrayList<>();
+        int currentLevel = ClientCache.GetSkillLevel(this.skill.getID().toLowerCase());
 
-        //Simple TOOLTIP
         if(CanRefund(skill) && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
-            tooltip.add(Component.translatable("gui.tyzs_skills.refund"));
-        }
-
-        if(skill.isPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
-
-            int maxLevel = this.skill.getMaximumLevel();
-            int currentLevel = ClientCache.GetSkillLevel(this.skill.getID().toLowerCase());
-
-            if(currentLevel < maxLevel){
-                float currentValue = currentLevel <= 0 ? 0f : this.skill.getValues().get(currentLevel - 1);
-                float nextValue = this.skill.getValues().get(currentLevel);
-
-                String valueDiff = MainGUI.SmartFormat(nextValue - currentValue);
-
-                var text = Component.empty().append(GetPriceString(skill));
-                tooltip.add(text);
-                tooltip.add(Component.literal(ChatFormatting.GREEN + "+")
-                        .append(Component.literal(valueDiff + " " + ChatFormatting.GREEN))
-                                .append(Component.translatable(this.skill.getUnit())).withStyle(ChatFormatting.GREEN));
-            }
-            else tooltip.add(Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD));
-
-
-
-
+            if(isShiftPressed()) tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, true));
+            else tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false));
             return tooltip;
         }
 
-        //Plusieurs TOOTLIPS
-        if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)){
-            tooltip.add(Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE));
-            String rawDesc = Component.translatable(skill.getDescription()).getString();
-
-            if (rawDesc.contains("{value}")) {
-                int currentLvl = ClientCache.GetSkillLevel(skill.getID().toLowerCase());
-                var values = skill.getValues();
-
-                float val = 0f;
-
-                if (values != null && !values.isEmpty()) {
-                    if (currentLvl > 0) {
-                        int index = Math.min(currentLvl - 1, values.size() - 1);
-                        val = values.get(index);
-                    }
-
-                    String coloredValue = ChatFormatting.GREEN + MainGUI.SmartFormat(val) + ChatFormatting.GRAY;
-                    rawDesc = rawDesc.replace("{value}", coloredValue);
-
-                } else {
-                    rawDesc = rawDesc.replace("{value}", ChatFormatting.GREEN + "0" + ChatFormatting.GRAY);
-                }
-            }
-
-            Font font = Minecraft.getInstance().font;
-            MutableComponent fullDesc = Component.literal(rawDesc).withStyle(ChatFormatting.GRAY);
-
-            List<FormattedCharSequence> splitLines = font.split(fullDesc, 152);
-
-            for (FormattedCharSequence line : splitLines) {
-                MutableComponent lineComponent = Component.empty();
-
-                line.accept((index, style, codePoint) -> {
-                    lineComponent.append(Component.literal(String.valueOf((char) codePoint)).withStyle(style));
-                    return true;
-                });
-
-                tooltip.add(lineComponent);
-            }
+        if(skill.isPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
+            if(isShiftPressed()) tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, CanBuy(skill), true));
+            else tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, CanBuy(skill)));
+            return tooltip;
         }
+
+        if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)) {
+            tooltip.add(Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE));
+            tooltip.addAll(StringTools.getSkillDescription(skill));
+            return tooltip;
+        }
+
         return tooltip;
     }
 
@@ -207,23 +168,35 @@ public class SkillWidget {
     public boolean mouseClicked(double mouseX, double mouseY, int button){
         if(isMouseOver((int)mouseX, (int)mouseY, x+38, y+17, BTN_W, BTN_H)){
             if(!CanBuy(skill)) return false;
+
             SoundPlayer.PlayUIClick();
-            ClientCache.PredictBuy(skill);
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 0));
+
+            if(isShiftPressed()) ClientCache.predictBuyMax(skill);
+            else ClientCache.predictBuy(skill);
+
+            var actionTask = isShiftPressed() ? 3 : 0;
+            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), actionTask));
+
             return true;
         }
 
         if(isMouseOver((int)mouseX, (int)mouseY, x+27, y+17, BTN_W, BTN_H)){
             if(!CanRefund(skill)) return false;
+
             SoundPlayer.PlayUIClick();
-            ClientCache.PredictRefund(skill);
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 1));
+
+            if(isShiftPressed()) ClientCache.predictRefundMax(skill);
+            else ClientCache.predictRefund(skill);
+
+            var actionTask = isShiftPressed() ? 4 : 1;
+            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), actionTask));
+
             return true;
         }
 
         if(isMouseOver((int)mouseX, (int)mouseY, x+49, y+17, BTN_W, BTN_H)) {
             SoundPlayer.PlayUIClick();
-            ClientCache.PredictBookmark(skill);
+            ClientCache.predictBookmark(skill);
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 2));
 
             if (ClientCache.GetCategoryType() == Enums.CategoryType.BOOKMARKS) {
@@ -266,53 +239,30 @@ public class SkillWidget {
         if(this.skill.getType() == Enums.SkillType.GENERIC){
             String powerAttrId = AttributeRegistry.TRAIT_POWER.getId().toString();
 
-            if(this.skill.getModifier().equals(powerAttrId)){
-                var att = client.getAttribute(AttributeRegistry.TRAIT_POWER);
-                if(att == null) return false;
+            for(var modifier : this.skill.getModifiers()){
+                if(modifier.attribute().equals(powerAttrId)){
+                    var att = client.getAttribute(AttributeRegistry.TRAIT_POWER);
+                    if(att == null) return false;
 
-                int max = (int)att.getValue();
-                int current = ClientCache.GetPower();
+                    int max = (int)att.getValue();
+                    int current = ClientCache.GetPower();
 
-                int index = Math.min(currentLvl - 1, skill.getValues().size() - 1);
-                float currentValue = skill.getValues().get(index);
-                float powerLoss = currentValue;
+                    float currentValue = modifier.getValue(currentLvl);
+                    float powerLoss = currentValue;
 
-                if (currentLvl > 1) {
-                    int prevIndex = Math.min(currentLvl - 2, skill.getValues().size() - 1);
-                    float prevValue = skill.getValues().get(prevIndex);
-                    powerLoss = currentValue - prevValue;
+                    if (currentLvl > 1) {
+                        float prevValue = modifier.getValue(currentLvl - 1);
+                        powerLoss = currentValue - prevValue;
+                    }
+
+                    if(current > (max - (int)powerLoss)) return false;
                 }
-                if(current > (max - (int)powerLoss)) return false;
             }
         }
 
         var prices = skill.getPrices();
         return currentLvl <= prices.size();
     }
-
-    protected MutableComponent GetPriceString(Skill skill){
-        LocalPlayer client = Minecraft.getInstance().player;
-        if(skill == null || !skill.isPurchasable() || client == null) return Component.translatable("gui.tyzs_skills.error_value");
-
-        var currentLvl = ClientCache.GetSkillLevel(skill.getID());
-        if(currentLvl > skill.getMaximumLevel()) return Component.translatable("gui.tyzs_skills.error_value");
-        if(currentLvl  == skill.getMaximumLevel()) return  Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD);
-
-        var prices = skill.getPrices();
-        if(currentLvl >= prices.size()) return Component.translatable("gui.tyzs_skills.error_value");
-
-        return CanBuy(skill) ?
-                Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY)
-                        .append(": ")
-                        .append(Component.literal(ChatFormatting.BLUE + String.valueOf(prices.get(currentLvl)))).append(" ")
-                        .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.BLUE))
-                :
-                (Component.translatable("gui.tyzs_skills.cost")
-                        .append(": ").append(Component.literal(String.valueOf(prices.get(currentLvl))))
-                        .append(" ").append(Component.translatable("gui.tyzs_skills.SP")).withStyle(ChatFormatting.RED));
-
-    }
-
 
     protected boolean isMouseOver(int mouseX, int mouseY, int x, int y, int width, int height) {
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
@@ -321,6 +271,7 @@ public class SkillWidget {
     //Utils
     protected static final int COLOR_BG = 0xD5000000;
     protected static final int COLOR_BORDER = 0xFFD6AD55;
+    private boolean isShiftPressed(){return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);}
     protected void renderBackdrop(GuiGraphics gui, int x, int y, int width, int height, int color) {
         // Fond
         gui.fill(x, y + 1, x + width, y + height - 1, color);

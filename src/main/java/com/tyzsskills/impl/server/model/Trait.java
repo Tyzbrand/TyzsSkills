@@ -2,20 +2,22 @@ package com.tyzsskills.impl.server.model;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ITrait;
+import com.tyzsskills.api.records.Modifier;
+import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Trait extends Skill implements ITrait {
 
     public Trait(boolean active, String id, int powerWeight,int price, boolean purchasable,
                  String icon, String displayName, String description){
 
-        super(active, id, 1, List.of(price) , List.of(), Enums.SkillType.TRAIT,
-                Enums.CategoryType.TRAITS, "", AttributeModifier.Operation.ADD_VALUE, purchasable, icon, displayName, description, "");
+        super(active, id, 1, List.of(price), Enums.SkillType.TRAIT,
+                Enums.CategoryType.TRAITS,  purchasable, icon, displayName, description, null, null);
 
         this.powerWeight = powerWeight;
     }
@@ -36,19 +38,18 @@ public class Trait extends Skill implements ITrait {
         int maxLevel = buffer.readInt();
 
         List<Integer> prices = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readInt);
-        List<Float> values = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readFloat);
 
         Enums.SkillType type = buffer.readEnum(Enums.SkillType.class);
         Enums.CategoryType category = buffer.readEnum(Enums.CategoryType.class);
 
-        String modifier = buffer.readUtf();
-        AttributeModifier.Operation operation = buffer.readEnum(AttributeModifier.Operation.class);
         boolean purchasable = buffer.readBoolean();
 
         String icon = buffer.readUtf();
         String displayName = buffer.readUtf();
         String description = buffer.readUtf();
-        String unit = buffer.readUtf();
+
+        List<Modifier> readModifiers = buffer.readCollection(ArrayList::new, Modifier::readFromBuffer);
+        Map<String, ValueSet> readCustomValues = buffer.readMap(FriendlyByteBuf::readUtf, ValueSet::readFromBuffer);
 
         int powerWeight = buffer.readInt();
 

@@ -75,7 +75,9 @@ public class TyzsskillsClient {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event){
         while (MainKeybind.OPEN_SKILL_KEY.consumeClick()){
-            Minecraft.getInstance().setScreen(new MainGUI());
+            if (Minecraft.getInstance().screen == null) {
+                Minecraft.getInstance().setScreen(new MainGUI());
+            }
         }
     }
 

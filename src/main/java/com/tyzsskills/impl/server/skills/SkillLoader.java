@@ -1,217 +1,211 @@
 package com.tyzsskills.impl.server.skills;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.tyzsskills.Config;
+import com.google.gson.JsonPrimitive;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.server.active.ErrorManager;
+import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.model.Trait;
+import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 @ApiStatus.Internal
 public class SkillLoader {
 
-    public static void loadSkill(JsonObject source){
+    private static Map<String, JsonObject> skillQueue = new HashMap<>();
 
-        String id = getSafeString(source, "id");
+    public static void preLoadSkill(JsonObject source, boolean isDefault){
+        if(source == null) return;
+
+        var id = getSafeElement(source, "id", JsonPrimitive::getAsString);
         if(id == null || id.isBlank()) {ErrorManager.registerSkillError("Unknow", "invalid id"); return;}
         id = id.toLowerCase();
 
-        Boolean state = getSafeBool(source, "active");
+        if(isDefault) skillQueue.putIfAbsent(id, source);
+        else{
+            var type = getSafeElement(source, "type", JsonPrimitive::getAsString);
+            boolean isCustom = type != null && type.equalsIgnoreCase(Enums.SkillType.CUSTOM.name());
+
+            if(isCustom || skillQueue.containsKey(id)) skillQueue.put(id, source);
+        }
+    }
+
+    public static void finalizePreLoading() {
+        for (var kvp : skillQueue.entrySet()) loadSkill(kvp.getKey(), kvp.getValue());
+        SkillManager.get().buildSortedBehaviors();
+        skillQueue.clear();
+    }
+
+    private static void loadSkill(String id, JsonObject source){
+        Boolean state = getSafeElement(source, "active", JsonPrimitive::getAsBoolean);
         if(state == null) state = false;
-        if(!state) return; //Les skills désactivés de sont pas chargés
+        if(!state) return; //Les skills désactivés ne sont pas chargés
 
-        List<Integer> prices = new ArrayList<>();
-        List<Float> values = new ArrayList<>();
-
-        Integer maxLevel = getSafeInt(source, "maximumLevel");
+        Integer maxLevel = getSafeElement(source, "maximumLevel", JsonPrimitive::getAsInt);
         if(maxLevel == null) maxLevel = 1;
         maxLevel = Math.min(Math.max(maxLevel, 1), Constants.SKILL_MAX_LEVEL);
 
-        if(source.has("prices")){
-            List<Integer> tempPrices = getSafeIntArray(source, "prices");
-            if(tempPrices == null) {ErrorManager.registerSkillError(id, "invalid price list"); return;}
-            prices = tempPrices;
+        List<Integer> prices = getSafeList(source, "prices", JsonElement::getAsInt);
+        if(prices == null) {ErrorManager.registerSkillError(id, "invalid price list"); return;}
+        if(maxLevel > prices.size()) {
+            ErrorManager.registerSkillError(id, String.format("price set is too small, current : %d , expected : %d", prices.size(), maxLevel));
+            return;
         }
 
-        if(source.has("values")){
-            List<Float> tempValues = getSafeFloatArray(source, "values");
-            if(tempValues == null) {ErrorManager.registerSkillError(id, "invalid value list"); return;}
-            values = tempValues;
-        }
-
-        Enums.SkillType type = getSafeType(source, "type");
+        Enums.SkillType type = getSafeEnum(source, "type", Enums.SkillType.class);
         if(type == null) {ErrorManager.registerSkillError(id, "invalid skill type"); return;}
 
-        Enums.CategoryType category = getSafeCategory(source, "category");
+        Enums.CategoryType category = getSafeEnum(source, "category", Enums.CategoryType.class);
         if(category == null) category = Enums.CategoryType.MISC;
 
-        Boolean purchasable = getSafeBool(source,"purchasable");
+        Boolean purchasable = getSafeElement(source,"purchasable", JsonPrimitive::getAsBoolean);
         if(purchasable == null) purchasable = true;
 
-        AttributeModifier.Operation operation = getSafeOperation(source, "operation");
-        String modifier = getSafeString(source, "modifier");
 
-
-        String icon = getSafeString(source, "icon");
+        String icon = getSafeElement(source, "icon", JsonPrimitive::getAsString);
         if(icon == null) icon = "tyzs_skills:textures/gui/skills/default.png";
 
-        String displayName = getSafeString(source, "displayName");
+        String displayName = getSafeElement(source, "displayName", JsonPrimitive::getAsString);
         if(displayName == null) displayName = "Unknown skill";
 
-        String description = getSafeString(source, "description");
+        String description = getSafeElement(source, "description", JsonPrimitive::getAsString);
         if(description == null) description = "Missing description";
 
-        String unit = getSafeString(source, "unit");
-        if(unit == null) unit = "";
+        if(type == Enums.SkillType.CUSTOM || type == Enums.SkillType.GENERIC){
+            if(!source.has("modifiers")) {
+                ErrorManager.registerSkillError(id, "one modifier is required");
+                return;
+            }
 
+            if(!source.get("modifiers").isJsonArray()) {ErrorManager.registerSkillError(id, "invalid modifier structure");return;}
 
-        Integer powerWeight = getSafeInt(source, "powerWeight");
-        if(powerWeight == null) powerWeight = 0;
-        powerWeight = Math.max(0, powerWeight);
+            var modifiers = new ArrayList<Modifier>();
+            var attributeArray = source.getAsJsonArray("modifiers");
+            for(var element : attributeArray){
+                if(!element.isJsonObject()) {ErrorManager.registerSkillError(id, "invalid modifier structure");return;}
 
+                var obj = element.getAsJsonObject();
 
-        if(type == Enums.SkillType.TRAIT || powerWeight > 0){
+                var attribute = getSafeElement(obj, "attribute", JsonPrimitive::getAsString);
+                if(attribute == null){ErrorManager.registerSkillError(id, "invalid attribute"); return;}
+
+                var operation = getSafeEnum(obj, "operation", AttributeModifier.Operation.class);
+                if(operation == null) operation = AttributeModifier.Operation.ADD_VALUE;
+
+                var values = getSafeList(obj, "values", JsonElement::getAsFloat);
+                if(values == null) {ErrorManager.registerSkillError(id, "invalid values"); return;}
+                if(values.size() < prices.size()) {
+                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), prices.size()));
+                    return;
+                }
+
+                var unit = getSafeElement(obj, "unit", JsonPrimitive::getAsString);
+                if(unit == null) unit = "";
+
+                modifiers.add(new Modifier(attribute, operation, values, unit));
+            }
+
+            if(modifiers.isEmpty()) {ErrorManager.registerSkillError(id, "one modifier is required"); return;}
+
+            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
+                    icon, displayName, description, modifiers, null));
+            return;
+
+        }
+
+        if(type == Enums.SkillType.IMMUTABLE){
+            if(!source.has("customValues")) {ErrorManager.registerSkillError(id, "one value set is required");return;}
+            if(!source.get("customValues").isJsonObject()) {ErrorManager.registerSkillError(id, "invalid value set structure");return;}
+
+            var valueSet = new HashMap<String, ValueSet>();
+            var obj = source.getAsJsonObject("customValues");
+            for(var entry : obj.entrySet()){
+                String key = entry.getKey();
+
+                if(!entry.getValue().isJsonObject()){ErrorManager.registerSkillError(id, "invalid value set structure");return;}
+                var iterationObj = entry.getValue().getAsJsonObject();
+
+                var values = getSafeList(iterationObj, "values", JsonElement::getAsFloat);
+                if(values == null) {ErrorManager.registerSkillError(id, "invalid values"); return;}
+                if(values.size() < prices.size()) {
+                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), prices.size()));
+                    return;
+                }
+
+                var unit = getSafeElement(iterationObj, "unit", JsonPrimitive::getAsString);
+                if(unit == null) unit = "";
+
+                valueSet.put(key, new ValueSet(values, unit));
+            }
+
+            if(valueSet.isEmpty()){ErrorManager.registerSkillError(id, "one value set is required");return;}
+
+            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
+                    icon, displayName, description, null, valueSet));
+            return;
+        }
+
+        if(type == Enums.SkillType.TRAIT){
+            Integer powerWeight = getSafeElement(source, "powerWeight", JsonPrimitive::getAsInt);
+            if(powerWeight == null) powerWeight = 0;
+            powerWeight = Math.max(0, powerWeight);
 
             int price = prices.isEmpty()? 0 : prices.getFirst();
 
-            SkillManager.get().registerSKill(new Trait(
-                    state, id, powerWeight, price, purchasable, icon, displayName, description)
+            SkillManager.get().registerSkill(new Trait(
+                    true, id, powerWeight, price, purchasable, icon, displayName, description)
             );
             return;
         }
-
-        if(prices.size() < maxLevel) {
-            ErrorManager.registerSkillError(id, "Not enough prices defined. Expected " + maxLevel + ", got " + prices.size());
-            return;
-        }
-
-        if(!values.isEmpty() && prices.size() != values.size()) {
-            ErrorManager.registerSkillError(id, "Array Size Mismatch: 'prices' and 'values' must have the same length.");
-            return;
-        }
-
-        if(operation == null){
-            if(type == Enums.SkillType.GENERIC || type == Enums.SkillType.CUSTOM) {ErrorManager.registerSkillError(id, "Missing 'operation' for GENERIC/CUSTOM skill."); return;}
-            else operation = AttributeModifier.Operation.ADD_VALUE;
-        }
-        if(modifier == null && (type == Enums.SkillType.GENERIC || type == Enums.SkillType.CUSTOM)) {ErrorManager.registerSkillError(id, "Missing modifier"); return;}
-
-
-        SkillManager.get().registerSKill(
-                new Skill(state, id, maxLevel, prices, values, type,
-                        category, modifier, operation, purchasable, icon, displayName, description, unit));
     }
 
 
     //Verifications
-    private static String getSafeString(JsonObject obj, String key){
-        if(obj == null || key == null) return null;
+    private static <T> T getSafeElement(JsonObject obj, String key, Function<JsonPrimitive, T> mapper){
+        if(obj == null ||key == null) return null;
 
         var value = obj.get(key);
         if(value == null || !value.isJsonPrimitive()) return null;
 
-        return value.getAsString();
+        return mapper.apply(value.getAsJsonPrimitive());
     }
 
+    private static <T> List<T> getSafeList(JsonObject obj, String key, Function<JsonElement, T> mapper){
+        if (obj == null || key == null || !obj.has(key)) return null;
 
-    private static Integer getSafeInt(JsonObject obj, String key){
-        if(obj == null || key == null) return null;
+        var element = obj.get(key);
+        if (!element.isJsonArray()) return null;
 
-        var value = obj.get(key);
-        if(value == null || !value.isJsonPrimitive()) return null;
+        var array = element.getAsJsonArray();
+        List<T> list = new ArrayList<>();
 
-        return value.getAsInt();
-    }
-
-    private static Boolean getSafeBool(JsonObject obj, String key){
-        if(obj == null || key == null) return null;
-
-        var value = obj.get(key);
-        if(value == null || !value.isJsonPrimitive()) return null;
-
-        return value.getAsBoolean();
-    }
-
-    private static List<Integer> getSafeIntArray(JsonObject obj, String key){
-        if(obj == null || key == null) return null;
-
-        var arrayValue = obj.get(key);
-        if(arrayValue == null || !arrayValue.isJsonArray()) return null;
-
-        var array = arrayValue.getAsJsonArray();
-
-        List<Integer> prices = new ArrayList<>();
-        for (var iteration : array){prices.add(iteration.getAsInt());}
-
-        return prices;
-    }
-
-    private static List<Float> getSafeFloatArray(JsonObject obj, String key){
-        if(obj == null || key == null) return null;
-
-        var arrayValue = obj.get(key);
-        if(arrayValue == null || !arrayValue.isJsonArray()) return null;
-
-        var array = arrayValue.getAsJsonArray();
-
-        List<Float> values = new ArrayList<>();
-        for (var iteration : array){values.add(iteration.getAsFloat());}
-
-        return values;
-    }
-
-    private static Enums.SkillType getSafeType(JsonObject obj, String key){
-        if (obj == null || key == null) return null;
-
-        var typeValue = obj.get(key);
-        if(typeValue == null || !typeValue.isJsonPrimitive()) return null;
-
-        var typeValueString = typeValue.getAsString();
-        if(typeValueString == null) return null;
-
-        Enums.SkillType type;
-        try {type = Enums.SkillType.valueOf(typeValueString.toUpperCase());}
-        catch (IllegalArgumentException e) {return null;}
-
-        return type;
-    }
-
-    private static Enums.CategoryType getSafeCategory(JsonObject obj, String key){
-        if (obj == null || key == null) return null;
-
-        var typeValue = obj.get(key);
-        if(typeValue == null || !typeValue.isJsonPrimitive()) return null;
-
-        var typeValueString = typeValue.getAsString();
-        if(typeValueString == null) return null;
-
-        Enums.CategoryType category;
-        try {category = Enums.CategoryType.valueOf(typeValueString.toUpperCase());}
-        catch (IllegalArgumentException e) {return null;}
-
-        return category;
-    }
-
-    private static AttributeModifier.Operation getSafeOperation(JsonObject obj, String key){
-        if (obj == null || key == null) return null;
-
-        var typeValue = obj.get(key);
-        if(typeValue == null || !typeValue.isJsonPrimitive()) return null;
-
-        var typeValueString = typeValue.getAsString();
-        if(typeValueString == null) return null;
-
-        AttributeModifier.Operation operation;
         try {
-            operation = AttributeModifier.Operation.valueOf(typeValueString.toUpperCase());}
-        catch (IllegalArgumentException e) {return null;}
+            for (var item : array) {
+                list.add(mapper.apply(item));
+            }
+        } catch (Exception e){return null;}
 
-        return operation;
+        return list;
     }
+
+    private static <T extends Enum<T>> T getSafeEnum(JsonObject obj, String key, Class<T> enumClass){
+        if (obj == null || key == null || !obj.has(key)) return null;
+
+        var element = obj.get(key);
+        if (!element.isJsonPrimitive()) return null;
+
+        try {return Enum.valueOf(enumClass, element.getAsString().toUpperCase());}
+        catch (IllegalArgumentException e) {return null;}
+    }
+
 }

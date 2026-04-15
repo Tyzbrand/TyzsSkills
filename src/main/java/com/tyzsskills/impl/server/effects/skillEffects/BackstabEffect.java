@@ -11,19 +11,21 @@ public class BackstabEffect extends SkillBehavior {
 
     @Override
     public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, @UnknownNullability ISkill skill) {
-        var values = skill.getValues();
-        if(values == null || values.isEmpty()) return;
+        var values = skill.getValueSet("damage_buff");
+        if(values == null) return;
 
         if(event.getEntity() instanceof LivingEntity target){
             double dotAngle = player.getLookAngle().dot(target.getLookAngle());
 
             if(dotAngle > 0.5){
-                int index = Math.min(lvl - 1, values.size() - 1);
-                float bonusPercentage = 1 + (values.get(index) / 100f);
+                float bonusPercentage = 1 + (values.getValue(lvl) / 100f);
                 event.setAmount(event.getAmount() * bonusPercentage);
                 notifyClient(player, skill);
             }
         }
 
     }
+
+    @Override
+    public int getPriority(){return 10;}
 }

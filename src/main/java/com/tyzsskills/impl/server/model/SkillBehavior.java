@@ -24,6 +24,9 @@ public abstract class SkillBehavior {
     public void onPlayerClone(PlayerEvent.Clone event, ServerPlayer player, int lvl, ISkill skill){}
     public void OnNoiseAtPlayer(PlayLevelSoundEvent.AtEntity event, ServerPlayer player, int lvl, ISkill skill){}
     public void OnPlayerWakeUp(PlayerWakeUpEvent event, ServerPlayer player, int lvl, ISkill skill){}
+    public void OnBabySpawn(BabyEntitySpawnEvent event, ServerPlayer player, int lvl, ISkill skill){}
+    public void onItemCrafted(PlayerEvent.ItemCraftedEvent event, ServerPlayer player, int lvl, ISkill skill){}
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, ServerPlayer player, int lvl, ISkill skill){}
 
 
 
@@ -37,5 +40,7 @@ public abstract class SkillBehavior {
     protected void notifyClient(ServerPlayer player, ISkill skill ){
         PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(skill.getID()));
     }
+
+    public int getPriority(){return 0;}
 
 }

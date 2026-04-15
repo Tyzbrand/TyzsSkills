@@ -13,11 +13,10 @@ public class CriticalHitEffect extends SkillBehavior {
 
     @Override
     public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, @UnknownNullability ISkill skill){
-        var values = skill.getValues();
-        if(values == null || values.isEmpty()) return;
+        var values = skill.getValueSet("success_probability");
+        if(values == null) return;
 
-        int index = Math.min(lvl - 1, values.size() - 1);
-        float chancePercentage = values.get(index);
+        float chancePercentage = values.getValue(lvl);
 
 
         if(player.getRandom().nextFloat() < (chancePercentage/100f)){
@@ -30,7 +29,7 @@ public class CriticalHitEffect extends SkillBehavior {
                         event.getEntity().getX(),
                         event.getEntity().getY() + 1.5,
                         event.getEntity().getZ(),
-                        15, // Nombre de particules
+                        15,
                         0.5, 0.5, 0.5, 0.1);
             }
 
@@ -38,4 +37,7 @@ public class CriticalHitEffect extends SkillBehavior {
                     SoundEvents.PLAYER_ATTACK_CRIT, player.getSoundSource(), 1.0f, 1.0f);
         }
     }
+
+    @Override
+    public int getPriority(){return 9;}
 }

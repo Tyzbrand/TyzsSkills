@@ -8,20 +8,17 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 public class DamageDealEffect extends SkillBehavior {
 
-    public static final ThreadLocal<Boolean> IS_REFLECTING = ThreadLocal.withInitial(() ->false);
+    public static final ThreadLocal<Boolean> IS_REFLECTING = ThreadLocal.withInitial(() -> false);
 
     @Override
     public void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill) {
 
         if(IS_REFLECTING.get()) return;
 
-        var values = skill.getValues();
-        if (values == null || values.isEmpty()) return;
+        var values = skill.getValueSet("success_probability");
+        if(values == null) return;
 
-        int index = Math.min(lvl - 1, values.size() - 1);
-        float chancePercentage = values.get(index);
-
-
+        float chancePercentage = values.getValue(lvl);
 
         if (player.getRandom().nextFloat() < (chancePercentage / 100f)) {
             if(event.getSource().getEntity() instanceof LivingEntity source){
@@ -30,7 +27,7 @@ public class DamageDealEffect extends SkillBehavior {
                 IS_REFLECTING.set(true);
 
                 try{
-                    var damageSrc = player.damageSources().playerAttack(player);
+                    var damageSrc = player.damageSources().thorns(player);
                     source.hurt(damageSrc, event.getAmount());
                     notifyClient(player, skill);
                 }
@@ -41,4 +38,7 @@ public class DamageDealEffect extends SkillBehavior {
             }
         }
     }
+
+    @Override
+    public int getPriority(){return 11;}
 }

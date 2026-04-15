@@ -9,20 +9,22 @@ import org.jetbrains.annotations.UnknownNullability;
 public class RageEffect extends SkillBehavior {
     @Override
     public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, @UnknownNullability ISkill skill) {
-        var values = skill.getValues();
-        if(values == null || values.isEmpty()) return;
+        var damageBuffs = skill.getValueSet("damage_buff");
+        var healthThresholds = skill.getValueSet("health_threshold");
+        if(damageBuffs == null || healthThresholds == null) return;
 
         float currentHp = player.getHealth();
+        float hpThreshold = player.getMaxHealth() * healthThresholds.getValue(lvl) / 100f;
+        if(currentHp > hpThreshold) return;
 
-        if(currentHp >= 6f) return;
 
-
-        int index = Math.min(lvl - 1, values.size() - 1);
-        float damageBonus = values.get(index);
-
+        float damageBonus = damageBuffs.getValue(lvl);
         float finalDamage = event.getAmount() * (1f + (damageBonus/100f));
 
         event.setAmount(finalDamage);
         notifyClient(player, skill);
     }
-    }
+
+    @Override
+    public int getPriority(){return 8;}
+}

@@ -27,8 +27,7 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-        for (Skill skill : manager.getAllSkills()){
-            if(!skill.HasBehaviour()) continue;
+        for (Skill skill : manager.getSortedBehaviorSkills()){
             if(skill instanceof Trait && !canUseTrait) continue;
 
             var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -47,15 +46,14 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-            for (Skill skill : manager.getAllSkills()){
-                if(!skill.HasBehaviour()) continue;
-                if(skill instanceof Trait && !canUseTrait) continue;
+        for (Skill skill : manager.getSortedBehaviorSkills()){
+            if(skill instanceof Trait && !canUseTrait) continue;
 
-                var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-                if( lvl<= 0) continue;
+            var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+            if( lvl<= 0) continue;
 
-                skill.getBehavior().onIncomingDamage(event, player, lvl, skill);
-            }
+            skill.getBehavior().onIncomingDamage(event, player, lvl, skill);
+        }
     }
 
     @SubscribeEvent
@@ -66,8 +64,7 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-            for (Skill skill : manager.getAllSkills()){
-                if(!skill.HasBehaviour()) continue;
+            for (Skill skill : manager.getSortedBehaviorSkills()){
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -84,8 +81,7 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-            for (Skill skill : manager.getAllSkills()){
-                if(!skill.HasBehaviour()) continue;
+            for (Skill skill : manager.getSortedBehaviorSkills()){
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -103,8 +99,7 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-            for (Skill skill : manager.getAllSkills()){
-                if(!skill.HasBehaviour()) continue;
+            for (Skill skill : manager.getSortedBehaviorSkills()){
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -122,8 +117,7 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-            for (Skill skill : manager.getAllSkills()){
-                if(!skill.HasBehaviour()) continue;
+            for (Skill skill : manager.getSortedBehaviorSkills()){
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -141,8 +135,7 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-            for (Skill skill : manager.getAllSkills()){
-                if(!skill.HasBehaviour()) continue;
+            for (Skill skill : manager.getSortedBehaviorSkills()){
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -159,8 +152,7 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-            for (Skill skill : manager.getAllSkills()){
-                if(!skill.HasBehaviour()) continue;
+            for (Skill skill : manager.getSortedBehaviorSkills()){
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -178,8 +170,7 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-            for (Skill skill : manager.getAllSkills()){
-                if(!skill.HasBehaviour()) continue;
+            for (Skill skill : manager.getSortedBehaviorSkills()){
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -197,8 +188,7 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-            for (Skill skill : manager.getAllSkills()){
-                if(!skill.HasBehaviour()) continue;
+            for (Skill skill : manager.getSortedBehaviorSkills()){
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -214,8 +204,7 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-            for (Skill skill : manager.getAllSkills()){
-                if(!skill.HasBehaviour()) continue;
+            for (Skill skill : manager.getSortedBehaviorSkills()){
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -233,8 +222,7 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-            for (Skill skill : manager.getAllSkills()){
-                if(!skill.HasBehaviour()) continue;
+            for (Skill skill : manager.getSortedBehaviorSkills()){
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -251,8 +239,7 @@ public class SkillEffectsEvents {
 
         boolean canUseTrait = canUseTraits(player);
 
-            for (Skill skill : manager.getAllSkills()){
-                if(!skill.HasBehaviour()) continue;
+            for (Skill skill : manager.getSortedBehaviorSkills()){
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -260,6 +247,59 @@ public class SkillEffectsEvents {
 
                 skill.getBehavior().OnPlayerWakeUp(event, player, lvl, skill);
             }
+    }
+    @SubscribeEvent
+    public static void onRightClickBlock(net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock event){
+        if (event.isCanceled() || !(event.getEntity() instanceof ServerPlayer player)) return;
+
+        var manager = SkillManager.get();
+        boolean canUseTrait = canUseTraits(player);
+
+        for (Skill skill : manager.getSortedBehaviorSkills()){
+            if(skill instanceof Trait && !canUseTrait) continue;
+
+            var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+            if(lvl <= 0) continue;
+
+            skill.getBehavior().onRightClickBlock(event, player, lvl, skill);
+        }
+    }
+
+
+    @SubscribeEvent
+    public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event){
+        var manager = SkillManager.get();
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        boolean canUseTrait = canUseTraits(player);
+
+        for (Skill skill : manager.getSortedBehaviorSkills()){
+            if(skill instanceof Trait && !canUseTrait) continue;
+
+            var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+            if( lvl<= 0) continue;
+
+            skill.getBehavior().onItemCrafted(event, player, lvl, skill);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onBabySpawn(BabyEntitySpawnEvent event){
+        if(event.isCanceled()) return;
+
+        var manager = SkillManager.get();
+        if (!(event.getCausedByPlayer() instanceof ServerPlayer player)) return;
+
+        boolean canUseTrait = canUseTraits(player);
+
+        for (Skill skill : manager.getSortedBehaviorSkills()){
+            if(skill instanceof Trait && !canUseTrait) continue;
+
+            var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+            if( lvl<= 0) continue;
+
+            skill.getBehavior().OnBabySpawn(event, player, lvl, skill);
+        }
     }
 
 
@@ -274,7 +314,7 @@ public class SkillEffectsEvents {
             for(var id : playerTickSkills){
                 var skill = SkillManager.get().getSkill(id.toLowerCase());
 
-                if(skill == null || !skill.HasBehaviour()) continue;
+                if(skill == null || !skill.hasBehaviour()) continue;
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());
@@ -295,7 +335,7 @@ public class SkillEffectsEvents {
             for(var id : entityVisibility){
                 var skill = SkillManager.get().getSkill(id.toLowerCase());
 
-                if(skill == null || !skill.HasBehaviour()) continue;
+                if(skill == null || !skill.hasBehaviour()) continue;
                 if(skill instanceof Trait && !canUseTrait) continue;
 
                 var lvl = manager.getPlayerSkillLevel(player, skill.getID());

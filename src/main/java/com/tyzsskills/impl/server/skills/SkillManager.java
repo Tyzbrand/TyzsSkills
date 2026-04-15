@@ -36,11 +36,10 @@ public class SkillManager {
     public static SkillManager get() {return INSTANCE;}
 
     private final Map<String, Skill> skillCollection = new HashMap<>();
+    private final List<Skill> sortedBehaviorSkills = new ArrayList<>();
 
 
-
-
-    public void registerSKill(Skill skill)
+    public void registerSkill(Skill skill)
     {
         var preEvent = new SkillLoadEvent.Pre(skill);
         NeoForge.EVENT_BUS.post(preEvent);
@@ -50,18 +49,30 @@ public class SkillManager {
         var behaviour = SkillBehaviorRegistry.getBehavior(skill.getID());
         if(behaviour != null){skill.setBehaviour(behaviour);}
 
-        if(!skillCollection.containsKey(skill.getID())) {
-            skillCollection.put(skill.getID(), skill);
-            NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
+        skillCollection.put(skill.getID(), skill);
+        NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
+    }
+
+    public void buildSortedBehaviors() {
+        sortedBehaviorSkills.clear();
+        for (Skill skill : skillCollection.values()) {
+            if (skill.hasBehaviour()) {
+                sortedBehaviorSkills.add(skill);
+            }
         }
+        sortedBehaviorSkills.sort((s1, s2) -> Integer.compare(
+                s2.getBehavior().getPriority(),
+                s1.getBehavior().getPriority()
+        ));
     }
 
     public void clearSkills(){
         skillCollection.clear();
+        sortedBehaviorSkills.clear();
     }
 
 
-    public boolean buySkill(ServerPlayer player, String id)
+    public boolean tryBuySkill(ServerPlayer player, String id)
     {
         var skill = getSkill(id);
         if(player == null || skill == null) return false;
@@ -108,7 +119,52 @@ public class SkillManager {
             return false;
     }
 
-    public boolean refundSkill(ServerPlayer player, String id)
+    public boolean tryBuyMaxSkill(ServerPlayer player, String id){
+        var skill = getSkill(id);
+        if (player == null || skill == null) return false;
+
+        var event = new SkillActionEvent.PurchasePre(skill, player);
+        NeoForge.EVENT_BUS.post(event);
+        if (event.isCanceled()) return false;
+
+        var data = player.getData(PlayerData.DATA);
+        var currentLvl = data.getSkillLevel(id);
+        var maxLvl = skill.getMaximumLevel();
+
+        if (currentLvl >= maxLvl) return false;
+
+        var prices = skill.getPrices();
+        var availableSp = SpManager.getSP(player);
+        var spToSpend = 0;
+        var levelsToAdd = 0;
+
+        for (int i = currentLvl; i < maxLvl; i++) {
+            if (i >= prices.size()) break;
+            var price = prices.get(i);
+
+            if (availableSp >= price) {
+                availableSp -= price;
+                spToSpend += price;
+                levelsToAdd++;
+            } else break;
+
+        }
+
+        if (levelsToAdd > 0) {
+            SpManager.removeSP(player, spToSpend);
+
+            PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(spToSpend));
+            player.getData(StatsTracker.DATA).addSpSpent(spToSpend);
+
+            setSkillLevel(player, id, currentLvl + levelsToAdd);
+
+            NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
+            return true;
+        }
+        return false;
+    }
+
+    public boolean tryRefundSkill(ServerPlayer player, String id)
     {
         var skill = getSkill(id);
         if(player == null || skill == null || !Config.REFUND_SYSTEM.get()) return false;
@@ -128,31 +184,31 @@ public class SkillManager {
         int currentLvl = data.getSkillLevel(id);
         if(currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
-        if(skill.getType() == Enums.SkillType.GENERIC){
+        if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
 
-            ResourceLocation attributeID = ResourceLocation.tryParse(skill.getModifier());
-            if(attributeID == null) return false;
-            Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
+            for(var modifier : skill.getModifiers()){
+                ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
+                if(attributeID == null) continue;
+                Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
 
-            if(attribute == AttributeRegistry.TRAIT_POWER.get()){
-                var att = player.getAttribute(AttributeRegistry.TRAIT_POWER);
-                if(att == null) return false;
+                if(attribute == AttributeRegistry.TRAIT_POWER.get()){
+                    var att = player.getAttribute(AttributeRegistry.TRAIT_POWER);
+                    if(att == null) return false;
 
-                int max = (int)att.getValue();
-                int current = PowerManager.getPower(player);
+                    int max = (int)att.getValue();
+                    int current = PowerManager.getPower(player);
 
-                int index = Math.min(currentLvl - 1, skill.getValues().size() - 1);
-                float currentValue = skill.getValues().get(index);
+                    float currentValue = modifier.getValue(currentLvl);
+                    float powerLoss = currentValue;
 
-                float powerLoss = currentValue;
-
-                if (currentLvl > 1) {
-                    int prevIndex = Math.min(currentLvl - 2, skill.getValues().size() - 1);
-                    float prevValue = skill.getValues().get(prevIndex);
-                    powerLoss = currentValue - prevValue;
+                    if (currentLvl > 1) {
+                        float prevValue = modifier.getValue(currentLvl - 1);
+                        powerLoss = currentValue - prevValue;
+                    }
+                    if(current > (max - (int)powerLoss)) return false;
                 }
-                if(current > (max - (int)powerLoss)) return false;
             }
+
         }
 
         var prices = skill.getPrices();
@@ -166,6 +222,80 @@ public class SkillManager {
         player.getData(StatsTracker.DATA).addSpEarned(finalPrice);
 
         setSkillLevel(player, id, currentLvl - 1);
+
+        NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
+
+        return true;
+    }
+
+    public boolean tryRefundMaxSkill(ServerPlayer player, String id){
+        var skill = getSkill(id);
+        if (player == null || skill == null || !Config.REFUND_SYSTEM.get()) return false;
+
+        var event = new SkillActionEvent.RefundPre(skill, player);
+        NeoForge.EVENT_BUS.post(event);
+        if (event.isCanceled()) return false;
+
+        var data = player.getData(PlayerData.DATA);
+        int currentLvl = data.getSkillLevel(id);
+        if (currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
+
+        int targetLvl = 0;
+
+        if (skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM) {
+            for (var modifier : skill.getModifiers()) {
+                ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
+                if (attributeID == null) continue;
+
+                Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
+                if (attribute == AttributeRegistry.TRAIT_POWER.get()) {
+
+                    var att = player.getAttribute(AttributeRegistry.TRAIT_POWER);
+                    if (att == null) return false;
+
+                    int simulatedMaxPower = (int) att.getValue();
+                    int usedPower = PowerManager.getPower(player);
+
+                    for (int l = currentLvl; l > 0; l--) {
+                        float currentValue = modifier.getValue(l);
+                        float prevValue = (l > 1) ? modifier.getValue(l - 1) : 0f;
+                        int stepPowerLoss = (int) (currentValue - prevValue);
+
+                        if (usedPower > (simulatedMaxPower - stepPowerLoss)) {
+                            targetLvl = l;
+                            break;
+                        }
+                        simulatedMaxPower -= stepPowerLoss;
+                    }
+                }
+            }
+        }
+
+        if (targetLvl == currentLvl) return false;
+
+        var prices = skill.getPrices();
+        int finalRefund = 0;
+
+        for (int i = currentLvl - 1; i >= targetLvl; i--) {
+            if (i < prices.size()) {
+                int levelPrice = prices.get(i);
+                int levelRefund = (int) (levelPrice * (Config.REFUND_PERCENTAGE.get() / 100f));
+
+                if (levelPrice > 0) {
+                    levelRefund = Math.max(1, levelRefund);
+                }
+
+                finalRefund += levelRefund;
+            }
+        }
+
+        if (finalRefund > 0) {
+            SpManager.addSP(player, finalRefund);
+            PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(finalRefund));
+            player.getData(StatsTracker.DATA).addSpEarned(finalRefund);
+        }
+
+        setSkillLevel(player, id, targetLvl);
 
         NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
 
@@ -219,9 +349,9 @@ public class SkillManager {
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(id, lvl));
 
 
-        if(skill.getType() == Enums.SkillType.GENERIC){
-            if(lvl > 0) GenericEffects.applyEffect(skill, player);
-            else GenericEffects.removeEffect(skill, player);
+        if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
+            if(lvl > 0) GenericEffects.applyEffects(skill, player);
+            else GenericEffects.applyEffects(skill, player);
         }
     }
 
@@ -243,6 +373,7 @@ public class SkillManager {
     public List<Skill> getAllSkills() {return new ArrayList<>(skillCollection.values());}
     public int getPlayerSkillLevel(ServerPlayer player, String id) {return player.getData(PlayerData.DATA).getSkillLevel(id);}
     public boolean isSkillLoaded(String id){return skillCollection.containsKey(id);}
+    public List<Skill> getSortedBehaviorSkills() {return sortedBehaviorSkills;}
 
     //API LINKS
     public ISkill getSkillInfos(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}

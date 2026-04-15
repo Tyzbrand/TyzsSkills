@@ -2,82 +2,95 @@ package com.tyzsskills.impl.server.model;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.api.records.Modifier;
+import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 
 public class Skill implements ISkill {
 
 
-
-
     public Skill(boolean active, String id, int maximumLevel,
-                 List<Integer> prices, List<Float> values, Enums.SkillType type, Enums.CategoryType category,
-                 String modifier, AttributeModifier.Operation operation, boolean purchasable,
-                 String icon, String displayName, String description, String unit)
+                 List<Integer> prices, Enums.SkillType type, Enums.CategoryType category, boolean purchasable,
+                 String icon, String displayName, String description, List<Modifier> modifiers, Map<String, ValueSet> customValues)
     {
         this.active = active;
         this.id = id;
         this.maximumLevel = maximumLevel;
-        this.prices = new ArrayList<>(prices);
-        this.values = new ArrayList<>(values);
+        this.prices = prices != null ?  new ArrayList<>(prices) : new ArrayList<>();
         this.type = type;
         this.category = category;
-        this.modifier = modifier;
-        this.operation = operation;
         this.purchasable = purchasable;
 
         this.icon = icon;
         this.displayName = displayName;
         this.description = description;
-        this.unit = unit;
 
-        if(category == Enums.CategoryType.ALL || category == Enums.CategoryType.BOOKMARKS) category = Enums.CategoryType.MISC;
+        this.modifiers = modifiers != null? new ArrayList<>(modifiers) : new ArrayList<>();
+
+        this.customValues = customValues != null ? new HashMap<>(customValues) : new HashMap<>();
+
+        if(category == Enums.CategoryType.ALL || category == Enums.CategoryType.BOOKMARKS) this.category = Enums.CategoryType.MISC;
     }
 
     protected transient SkillBehavior behaviour;
 
+    //Common data -----------------------
     protected boolean active;
     protected String id;
     protected int maximumLevel;
     protected List<Integer> prices;
-    protected List<Float> values;
     protected Enums.SkillType type;
     protected Enums.CategoryType category;
-    protected String modifier;
-    protected AttributeModifier.Operation operation;
     protected boolean purchasable;
 
+    //Visual -----------------------
     protected String icon;
     protected String displayName;
     protected String description;
-    protected String unit;
+
+    //Generic
+    protected List<Modifier> modifiers;
+
+    //Immutables and traits
+    protected Map<String, ValueSet> customValues;
 
 
     //Getters
     public boolean isSkillActive(){return active;}
+    @Override
     public String getID() {return id;}
+    @Override
     public int getMaximumLevel() {return maximumLevel;}
+    @Override
     public List<Integer> getPrices() {return Collections.unmodifiableList(prices);}
-    public String getModifier() {return modifier;}
-    public List<Float> getValues() {return Collections.unmodifiableList(values);}
+    @Override
     public Enums.SkillType getType(){return type;}
+    @Override
     public Enums.CategoryType getCategory(){return category;}
-    public AttributeModifier.Operation getModifierOperation(){return operation;}
+    @Override
     public boolean isPurchasable(){return purchasable;}
+    @Override
     public String getIcon(){return icon;}
+    @Override
     public String getDisplayName(){return displayName;}
+    @Override
     public String getDescription(){return description;}
-    public String getUnit(){return unit;}
-    public SkillBehavior getBehavior(){return behaviour;}
-    public boolean HasBehaviour(){return behaviour != null;}
+    @Override
+    public Map<String, ValueSet> getValues(){return Map.copyOf(customValues);}
+    @Override
+    public ValueSet getValueSet(String key){return customValues.getOrDefault(key, null);}
+    @Override
+    public List<Modifier> getModifiers(){return List.copyOf(modifiers);}
 
+
+
+    public SkillBehavior getBehavior(){return behaviour;}
+    public boolean hasBehaviour(){return behaviour != null;}
 
     //Setters
     public void setBehaviour(SkillBehavior behaviour){
@@ -106,19 +119,18 @@ public class Skill implements ISkill {
         buffer.writeInt(maximumLevel);
 
         buffer.writeCollection(prices, FriendlyByteBuf::writeInt);
-        buffer.writeCollection(values, FriendlyByteBuf::writeFloat);
 
         buffer.writeEnum(type);
         buffer.writeEnum(category);
 
-        buffer.writeUtf(modifier);
-        buffer.writeEnum(operation);
         buffer.writeBoolean(purchasable);
 
         buffer.writeUtf(icon);
         buffer.writeUtf(displayName);
         buffer.writeUtf(description);
-        buffer.writeUtf(unit);
+
+        buffer.writeCollection(modifiers, (buf, modifier) ->  modifier.writeToBuffer(buf));
+        buffer.writeMap(customValues, FriendlyByteBuf::writeUtf, (buf, valueSet) ->  valueSet.writeToBuffer(buf));
     }
 
     public static @NotNull Skill readSkillFromBuffer(FriendlyByteBuf buffer){
@@ -127,21 +139,20 @@ public class Skill implements ISkill {
         int maxLevel = buffer.readInt();
 
         List<Integer> prices = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readInt);
-        List<Float> values = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readFloat);
 
         Enums.SkillType type = buffer.readEnum(Enums.SkillType.class);
         Enums.CategoryType category = buffer.readEnum(Enums.CategoryType.class);
 
-        String modifier = buffer.readUtf();
-        AttributeModifier.Operation operation = buffer.readEnum(AttributeModifier.Operation.class);
         boolean purchasable = buffer.readBoolean();
 
         String icon = buffer.readUtf();
         String displayName = buffer.readUtf();
         String description = buffer.readUtf();
-        String unit = buffer.readUtf();
 
-        return new Skill(active, id, maxLevel, prices, values, type, category, modifier, operation, purchasable,
-                            icon, displayName, description, unit);
+        List<Modifier> readModifiers = buffer.readCollection(ArrayList::new, Modifier::readFromBuffer);
+        Map<String, ValueSet> readCustomValues = buffer.readMap(FriendlyByteBuf::readUtf, ValueSet::readFromBuffer);
+
+        return new Skill(active, id, maxLevel, prices, type, category, purchasable,
+                            icon, displayName, description, readModifiers, readCustomValues);
     }
 }

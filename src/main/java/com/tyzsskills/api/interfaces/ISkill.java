@@ -1,10 +1,12 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.impl.server.model.SkillBehavior;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import com.tyzsskills.api.records.Modifier;
+import com.tyzsskills.api.records.ValueSet;
 
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ReadOnly interface used to access skill information
@@ -20,26 +22,12 @@ public interface ISkill {
      */
     List<Integer> getPrices();
 
-    /**
-     * @return the modifier affected by the skill as a string
-     * NOTE: if the skill isn't an ABILITIES skill, it will be null
-     */
-    String getModifier();
-
-    /**
-     * @return a list of values (1st value in the list is the value used at lvl 1)
-     * NOTE: If the skill is ABILITIES and operation isn't ADD_VALUE, values will be treated as percentage
-     */
-    List<Float> getValues();
-
 
     Enums.SkillType getType();
 
 
     Enums.CategoryType getCategory();
 
-
-    AttributeModifier.Operation getModifierOperation();
 
     boolean isPurchasable();
 
@@ -59,10 +47,26 @@ public interface ISkill {
     String getDescription();
 
     /**
-     * 'unit' refer to the small text next to the value in the GUI's buying tooltip
-     * @return a localization key
+     * Retrieves all registered value sets for this skill
+     * @return An unmodifiable map where the key is the ValueSet ID
+     * and the value is the corresponding {@link ValueSet} object
      */
-    String getUnit();
+    Map<String, ValueSet> getValues();
+
+    /**
+     * Gets a specific value set by its ID
+     * @param key The unique ID of the value set (as defined in your JSON data)
+     * @return The {@link ValueSet} associated with the key if found
+     */
+    @Nullable
+    ValueSet getValueSet(String key);
+
+    /**
+     * Returns a list of all modifiers affected by the skill
+     * @return A {@link List} of {@link Modifier} objects
+     */
+    List<Modifier> getModifiers();
+
 
 
 }

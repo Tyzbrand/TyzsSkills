@@ -21,12 +21,18 @@ public class SkillBehaviorRegistry {
         behaviors.put("rage", new RageEffect());
         behaviors.put("adrenaline", new AdrenalineEffect());
         behaviors.put("resilience", new ResilienceEffect());
+        behaviors.put("jinxed", new JinxedEffect());
+        behaviors.put("true_strike", new TrueStrikeEffect());
+        behaviors.put("sunder_armor", new SunderArmorEffect());
 
         behaviors.put("green_thumb", new GreenThumbEffect());
         behaviors.put("nutrition", new NutritionEffect());
         behaviors.put("experience_boost", new ExperienceBoostEffect());
         behaviors.put("magnet", new MagnetEffect());
         behaviors.put("stealth", new StealthEffect());
+        behaviors.put("shepherd_s_blessing", new ShepherdsBlessingEffect());
+        behaviors.put("spare_parts", new SparePartsEffect());
+        behaviors.put("twist_of_fate", new TwistOfFateEffect());
 
         behaviors.put("cinder_blood", new CinderBloodEffect());
         behaviors.put("iron_gut", new IronGutEffect());

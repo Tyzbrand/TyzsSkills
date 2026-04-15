@@ -56,4 +56,10 @@ public interface IClientDataManager {
      */
     int getSkillLevel(String id);
 
+    /**
+     * Retrieves the IDs of all skills that the player has at least one level in
+     * @return A list of unique ids for all skills currently unlocked (level > 0)
+     */
+    List<String> getPurchasedSkills();
+
 }

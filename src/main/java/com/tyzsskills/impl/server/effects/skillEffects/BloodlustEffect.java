@@ -12,15 +12,14 @@ public class BloodlustEffect extends SkillBehavior {
     @Override
     public void onPlayerKill(LivingDeathEvent event, ServerPlayer player, int lvl, @UnknownNullability ISkill skill) {
 
-        var values = skill.getValues();
-        if (values == null || values.isEmpty()) return;
+        var values = skill.getValueSet("health_percentage");
+        if (values == null) return;
 
         var target = event.getEntity();
         if(!(target instanceof Enemy)) return;
         var targetHealth = target.getMaxHealth();
 
-        int index = Math.min(lvl - 1, values.size() - 1);
-        float percentage = values.get(index) / 100f;
+        float percentage = values.getValue(lvl) / 100f;
         float healthAmount = Math.max(percentage * targetHealth, 1f);
 
         if (event.getSource().getEntity() instanceof ServerPlayer) {

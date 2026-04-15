@@ -14,11 +14,10 @@ public class NutritionEffect extends SkillBehavior {
         var foodValue = item.getFoodProperties(player);
         if(foodValue == null) return;
 
-        var values = skill.getValues();
-        if (values == null || values.isEmpty()) return;
+        var values = skill.getValueSet("nutrition_bonus");
+        if(values == null) return;
 
-        int index = Math.min(lvl - 1, values.size() - 1);
-        float bonusPercentage = values.get(index) / 100f;
+        float bonusPercentage = values.getValue(lvl) / 100f;
 
         int nutritionBonus = Math.round(foodValue.nutrition() * bonusPercentage);
 

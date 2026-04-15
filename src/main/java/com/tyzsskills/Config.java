@@ -60,12 +60,20 @@ public class Config {
     public static final ModConfigSpec.LongValue CYCLE_DURATION;
     public static final ModConfigSpec.EnumValue<Enums.LimitType> LIMIT_TYPE;
 
+    //Death penalties
+    public static final ModConfigSpec.BooleanValue DEATH_PENALTIES;
+    public static final ModConfigSpec.DoubleValue XP_LOSS;
+    public static final ModConfigSpec.IntValue LVL_LOSS;
+    public static final ModConfigSpec.DoubleValue SP_LOSS;
+    public static final ModConfigSpec.DoubleValue SKILL_LOSS;
 
 
     //Xp values
     public static final ModConfigSpec.BooleanValue EARN_XP_IN_CREATIVE;
 
     public static final ModConfigSpec.BooleanValue EARN_XP_BY_EATING;
+    public static final ModConfigSpec.BooleanValue EARN_XP_BY_KILLING;
+    public static final ModConfigSpec.BooleanValue EARN_XP_BY_MINING;
     public static final ModConfigSpec.DoubleValue FISHING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue SLEEPING_XP_VALUE;
     public static final ModConfigSpec.DoubleValue CRAFTING_XP_VALUE;
@@ -117,7 +125,6 @@ public class Config {
 
     //Accessibility
     public static final ModConfigSpec.DoubleValue FOV_REDUCTION;
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> FOV_AFFECTED_SKILLS;
 
     static {
         //Construction du COMMON
@@ -149,6 +156,7 @@ public class Config {
                 .comment("Prevent manually placed block from providing xp")
                 .translation("config.common.tyzs_skills.prevent_placed_blocks_xp")
                 .define("prevent_placed_block_xp", true);
+
 
         commonBuilder.pop();
         commonBuilder.push("Limits");
@@ -186,6 +194,36 @@ public class Config {
 
 
         commonBuilder.pop();
+
+        commonBuilder.push("Death_penalties");
+
+        DEATH_PENALTIES = commonBuilder
+                .comment("Apply death penalties")
+                .translation("config.common.tyzs_skills.death_penatlies")
+                .define("death_penalties", false);
+
+        XP_LOSS = commonBuilder
+                .comment("Percentage of XP deducted")
+                .translation("config.common.tyzs_skills.xp_loss")
+                .defineInRange("xp_loss", 0.0, 0.0, 100.0);
+
+        SP_LOSS = commonBuilder
+                .comment("Percentage of SP deducted")
+                .translation("config.common.tyzs_skills.sp_loss")
+                .defineInRange("sp_loss", 0.0, 0.0, 100.0);
+
+        LVL_LOSS = commonBuilder
+                .comment("Number of LVL deducted")
+                .translation("config.common.tyzs_skills.lvl_loss")
+                .defineInRange("lvl_loss", 0, 0, Integer.MAX_VALUE);
+
+        SKILL_LOSS = commonBuilder
+                .comment("Percentage of chance to lose one level on each skill")
+                .translation("config.common.tyzs_skills.skill_loss")
+                .defineInRange("skill_loss", 0.0, 0.0, 100.0);
+
+        commonBuilder.pop();
+
         commonBuilder.push("Trait_details");
 
         commonBuilder.push("Deep_lode");
@@ -284,6 +322,16 @@ public class Config {
                 .comment("Enable XP gain from eating food (values defined in JSON)")
                 .translation("config.common.tyzs_skills.eating_xp_earnings")
                 .define("eating_xp_earnings", true);
+
+        EARN_XP_BY_KILLING = commonBuilder
+                .comment("Enable XP gain from killing entities (values defined in JSON)")
+                .translation("config.common.tyzs_skills.killing_xp_earnings")
+                .define("killing_xp_earnings", true);
+
+        EARN_XP_BY_MINING = commonBuilder
+                .comment("Enable XP gain from breaking blocks (values defined in JSON)")
+                .translation("config.common.tyzs_skills.mining_xp_earnings")
+                .define("mining_xp_earnings", true);
 
         SLEEPING_XP_VALUE = commonBuilder
                 .comment("XP gained from sleeping")
@@ -408,13 +456,6 @@ public class Config {
                 .translation("config.client.tyzs_skills.speed_fov_reduction")
                 .defineInRange("speed_fov_reduction", 0.95, 0, 1);
 
-        FOV_AFFECTED_SKILLS = clientBuilder
-                .comment("List of skill IDs that are affected by the FOV reduction setting")
-                .translation("config.client.tyzs_skills.fov_affected_skills")
-                .defineListAllowEmpty("fov_affected_skills",
-                        () -> List.of("speed_boost"),
-                        () -> "skill_id",
-                        obj -> obj instanceof String);
         clientBuilder.pop();
         CLIENT_SPEC = clientBuilder.build();
     }

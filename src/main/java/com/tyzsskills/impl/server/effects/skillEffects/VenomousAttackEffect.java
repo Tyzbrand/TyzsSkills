@@ -13,13 +13,12 @@ public class VenomousAttackEffect extends SkillBehavior {
 
     @Override
     public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, @UnknownNullability ISkill skill) {
-        var values = skill.getValues();
-        if(values == null || values.isEmpty()) return;
+        var values = skill.getValueSet("success_probability");
+        if(values == null) return;
 
         LivingEntity target = event.getEntity();
 
-        int index = Math.min(lvl - 1, values.size() - 1);
-        float chancePercentage = values.get(index);
+        float chancePercentage = values.getValue(lvl);
 
         if(player.getRandom().nextFloat() < (chancePercentage/100f)){
             target.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 1));

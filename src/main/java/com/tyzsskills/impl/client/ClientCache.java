@@ -163,13 +163,13 @@ public class ClientCache {
 
 
 
-    public static void PredictBookmark(Skill skill){
+    public static void predictBookmark(Skill skill){
         String id = skill.getID();
         if(isSkillBookmarked(id)) clientBookmarks.remove(id);
         else clientBookmarks.add(id);
     }
 
-    public static void PredictBuy(Skill skill) {
+    public static void predictBuy(Skill skill) {
         String id = skill.getID().toLowerCase();
         int currentLvl = GetSkillLevel(id);
 
@@ -190,7 +190,34 @@ public class ClientCache {
         if(skill instanceof Trait trait) clientPower += trait.getPowerWeight();
     }
 
-    public static void PredictRefund(Skill skill) {
+    public static void predictBuyMax(Skill skill) {
+        String id = skill.getID().toLowerCase();
+        int currentLvl = GetSkillLevel(id);
+        int maxLvl = skill.getMaximumLevel();
+
+        if (currentLvl >= maxLvl) return;
+
+        var prices = skill.getPrices();
+        int simulatedSP = clientSP;
+        int levelsToAdd = 0;
+
+        for (int i = currentLvl; i < maxLvl; i++) {
+            if (i >= prices.size()) break;
+            int price = prices.get(i);
+
+            if (simulatedSP >= price) {
+                simulatedSP -= price;
+                levelsToAdd++;
+            } else break;
+
+        }
+        if (levelsToAdd > 0) {
+            clientSP = simulatedSP;
+            UpdateSkillLevels(id, currentLvl + levelsToAdd);
+        }
+    }
+
+    public static void predictRefund(Skill skill) {
         String id = skill.getID().toLowerCase();
         int currentLvl = GetSkillLevel(id);
 
@@ -212,8 +239,35 @@ public class ClientCache {
             clientSP += refundAmount;
             if(skill instanceof Trait trait) clientPower -= trait.getPowerWeight();
         }
+    }
 
+    public static void predictRefundMax(Skill skill) {
+        String id = skill.getID().toLowerCase();
+        int currentLvl = GetSkillLevel(id);
 
+        if (currentLvl <= 0) return;
+
+        double percentage = GetConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
+        var prices = skill.getPrices();
+
+        int totalRefund = 0;
+        int targetLvl = 0;
+
+        for (int i = currentLvl - 1; i >= targetLvl; i--) {
+            if (i < prices.size()) {
+                int levelPrice = prices.get(i);
+                int levelRefund = (int) (levelPrice * (percentage / 100.0));
+
+                if (levelPrice > 0) {
+                    levelRefund = Math.max(1, levelRefund);
+                }
+                totalRefund += levelRefund;
+            }
+        }
+        if (totalRefund > 0) {
+            clientSP += totalRefund;
+        }
+        UpdateSkillLevels(id, targetLvl);
     }
 
     public static void ClearCache(Enums.ResetType type){
@@ -252,6 +306,7 @@ public class ClientCache {
     public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills.values());}
     public static List<String> GetAllSkillIDs(){return new ArrayList<>(clientSkills.keySet());}
     public static List<String> GetAllBookmarkedIDs(){return new ArrayList<>(clientBookmarks);}
+    public static List<String> getPurchasedSkills(){return List.copyOf(clientSkillLevels.keySet());}
 
     public static int GetSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
     public static Skill GetSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}

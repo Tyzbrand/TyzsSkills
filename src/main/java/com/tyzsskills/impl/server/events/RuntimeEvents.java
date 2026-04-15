@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.events;
 
 import com.tyzsskills.impl.server.active.*;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
+import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,6 +11,7 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.ApiStatus;
@@ -31,16 +33,29 @@ public class RuntimeEvents {
         AutoSyncClient.syncSkillBookmarks(player);
         AutoSyncClient.syncStats(player);
 
+        GenericEffects.restoreEffects(player);
+
         if (player.hasPermissions(2) && ErrorManager.hasErrors()) {
             ErrorManager.printErrors(player);
         }
+
     }
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event){
 
-        if(!(event.getOriginal() instanceof ServerPlayer) ||
+        if(!(event.getOriginal() instanceof ServerPlayer oldPlayer) ||
                 !(event.getEntity() instanceof ServerPlayer newPlayer)) return;
+
+        var oldData = oldPlayer.getData(PlayerData.DATA).serializeNBT(oldPlayer.registryAccess());
+        newPlayer.getData(PlayerData.DATA).deserializeNBT(newPlayer.registryAccess(), oldData);
+
+        if(event.isWasDeath()) {
+            DeathPenalties.applySpPenalty(newPlayer);
+            DeathPenalties.applyLvlPenalty(newPlayer);
+            DeathPenalties.applyXpPenalty(newPlayer);
+            DeathPenalties.applySkillPenalty(newPlayer);
+        }
 
         GenericEffects.restoreEffects(newPlayer);
         SkillEffectsEvents.onPlayerClone(event);
@@ -59,5 +74,6 @@ public class RuntimeEvents {
             BlockMarker.MarkBlock((net.minecraft.world.level.Level)event.getLevel(), event.getPos());
         }
     }
+
 
 }
