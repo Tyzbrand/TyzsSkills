@@ -1,14 +1,37 @@
 # Use KubeJS events to react to the mod for 6.2+
 
+You can catch events to cancel, modify or react to them by using `TyzsSkillsEvents`.
+When an event is cancelable, you can use `event.cancel()`.
+
+_Examples of usage:_
+```js
+// Example 1: Canceling an event
+TyzsSkillsEvents.skill_purchase_pre(event => {
+  // Prevent players from buying a specific skill
+  if (event.getSkill().getId() == 'my_custom_skill') {
+    event.cancel()
+  }
+})
+
+
+// Example 2: Modifying a value dynamically
+TyzsSkillsEvents.xp_change(event => {
+  // Example: Double the XP gained by the player!
+  let oldXp = event.getOldAmount()
+  let newXp = event.getNewAmount()
+  
+  if (newXp > oldXp) {
+    let gained = newXp - oldXp
+    event.setNewAmount(oldXp + (gained * 2))
+  }
+})
+```
+
+<br>
+<br>
 
 ## EVENTS
-You can catch events to cancel, modify or react to them by using `TyzsSkillsEvents`.
-When an event is canclable, you can use `event.cancel()`.
-
-<br>
-<br>
-<br>
-<br>
+### Technical
 
 - `skill_load_pre` -> At the start of the server, just before a skill is loaded. **[Cancelable]**
 > Skill: `event.getSkill()`
@@ -22,7 +45,7 @@ When an event is canclable, you can use `event.cancel()`.
 <br>
 <br>
 
-`skill_reload` -> When server skill list is reloaded (/skills reload).
+- `skill_reload` -> When server skill list is reloaded (/skills reload).
 
 <br>
 <br>
@@ -33,7 +56,9 @@ When an event is canclable, you can use `event.cancel()`.
 <br>
 <br>
 
-- `sp_change` -> When the sp amount of a player changes. **[Cancelable]**
+### Metadata
+
+- `sp_change` -> When the SP amount of a player changes. **[Cancelable]**
 > Player: `event.getPlayer()`<br>
 > Amount: `event.getNewAmount()`,  `event.getOldAmount()`,  `event.setNewAmount(amount)`
 
@@ -48,19 +73,21 @@ When an event is canclable, you can use `event.cancel()`.
 <br>
 <br>
 
-- `xp_change` -> When the xp amount of a player changes. **[Cancelable]**
+- `xp_change` -> When the XP amount of a player changes. **[Cancelable]**
 > Player: `event.getPlayer()`<br>
 > Amount: `event.getNewAmount()`,  `event.getOldAmount()`,  `event.setNewAmount(amount)`
 
 <br>
 <br>
 
-- `skill_level_change` -> When a player level changes.  **[Cancelable]**
+- `skill_level_change` -> When a player's level changes.  **[Cancelable]**
 > Player: `event.getPlayer()`<br>
 > Amount: `event.getNewLevel()`,  `event.getOldLevel()`,  `event.setNewLevel(level)`
 
 <br>
 <br>
+
+### Specific Actions
 
 - `skill_purchase_pre` -> Just before a skill is bought by a player. **[Cancelable]**
 > Player: `event.getPlayer()`<br>
