@@ -7,29 +7,41 @@
 ## Project Goal
 The long-term vision is to provide a fully customizable progression system. I am currently working on an **API** to allow other developers to easily create addons without needing to modify the core mod.
 
+## Documentation
+Here the official documentation! It is still growing, but it will help you get started.<br>
+_Compatible with: NeoForge 1.21.1 | Mod version: 6.2+_
+
+### JSON Tweaks
+- [Configure existing skills](docs/configure_skill.md)
+- [Create custom skills](docs/create_skill.md)
+
+### KubeJS
+- []()
+
+
 ## Integration 
 [![](https://jitpack.io/v/Tyzbrand/TyzsSkills.svg)](https://jitpack.io/#Tyzbrand/TyzsSkills)
 
-You can easily integrate TyzsSkills into your repo. **Full documentation coming soon!**
+You can easily integrate TyzsSkills into your repo.
 
 Add this to your `build.gradle`
-```
+```gradle
 repositories {
   maven { url 'https://jitpack.io' }
 }
 ```
-```
+```gradle
 dependencies {
-    implementation 'com.github.Tyzbrand:TyzsSkills:6.1.0'
+    implementation 'com.github.Tyzbrand:TyzsSkills:6.2.0'
 }
 ```
 
 Add this to your `neoforge.mods.toml` for the dependency
-```
+```toml
 [[dependencies.your_mod_id]]
     modId="tyzs_skills"
     mandatory=true
-    versionRange="[6.1.2,)"
+    versionRange="[6.2.0,)"
     ordering="AFTER"
     side="BOTH"
 ```
