@@ -8,7 +8,7 @@
 The long-term vision is to provide a fully customizable progression system. I am currently working on an **API** to allow other developers to easily create addons without needing to modify the core mod.
 
 ## Documentation
-Here the official documentation! It is still growing, but it will help you get started.<br>
+Here is the official documentation! It is still growing, but it will help you get started.<br>
 _Compatible with: NeoForge 1.21.1 | Mod version: 6.2+_
 
 ### JSON Tweaks
@@ -17,6 +17,10 @@ _Compatible with: NeoForge 1.21.1 | Mod version: 6.2+_
 
 ### KubeJS
 - [KubeJS events](docs/kubejs_events.md)
+- [KubeJS methods](docs/kubejs_methods.md)
+
+### Java API
+- _**Coming soon**_
 
 
 ## Integration 
