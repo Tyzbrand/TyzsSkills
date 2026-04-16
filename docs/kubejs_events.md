@@ -5,16 +5,18 @@ When an event is cancelable, you can use `event.cancel()`.
 
 _Examples of usage:_
 ```js
-// Example 1: Canceling an event
+// Canceling an event
 TyzsSkillsEvents.skill_purchase_pre(event => {
   // Prevent players from buying a specific skill
   if (event.getSkill().getId() == 'my_custom_skill') {
     event.cancel()
   }
 })
+```
+<br>
 
-
-// Example 2: Modifying a value dynamically
+```js
+// Modifying a value dynamically
 TyzsSkillsEvents.xp_change(event => {
   // Double the XP gained by the player
   let oldXp = event.getOldAmount()
@@ -26,7 +28,6 @@ TyzsSkillsEvents.xp_change(event => {
   }
 })
 ```
-
 <br>
 <br>
 
