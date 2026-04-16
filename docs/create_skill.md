@@ -1,21 +1,21 @@
 # Create your own skill for 6.2+
-I will explain step by step how to properly create your own skill
+I will explain step by step how to properly create your own skill.
 
 <br>
 
 ## Disclaimer
-- Je ne vais pas traiter l'intégralité des details pour chaque propriété, car cela a déja été fait [ici](#docs/configure_skill).
-- Si vous compter creer vos propres skills en utilisant du code java/js, vous n'etes pas au bon endroit. Ici cela ne concerne que la création de skills en uilisant seulment les json
-- Vous ne pouvez creer des skills seulement en utilisant des attributs
+- I will not cover every detail for each property here, as that is already explained [here](configure_skill.md).
+- If you intend to create skills using Java/JS code, you are in the wrong place. This guide only covers skill creation using JSON files.
+- You can only create custom skills that modify player attributes.
 
 <br>
 <br>
 
 ## How it works
-Petit rappel sur la maniere de gérer ça!
-Les fichiers de skills se trouve dans le dossier `GAMEDIRECTORY/config/tyzs_skills/skills`. Ce qui nous interesse c'es tle dossier `custom`.
-Pour chaque skill que vous mettez ici, le jeux tentera de le charger.<br>
-[Details](#docs/configure_skill#how-it-works)
+A quick reminder on how this works!
+Skill files are located in the `GAMEDIRECTORY/config/tyzs_skills/skills` folder. The folder we are interested in is `custom`.
+For every skill you place inside it, the game will attempt to load it.<br>
+[More details here](configure_skill.md#how-it-works)
 
 <br>
 <br>
@@ -28,7 +28,7 @@ Pour chaque skill que vous mettez ici, le jeux tentera de le charger.<br>
 <br>
 
 ### 2- Use the template
-- Copy and paste the template below:
+- Copy and paste the template below into your file:
 ```
 {
   "active": true,
@@ -49,19 +49,19 @@ Pour chaque skill que vous mettez ici, le jeux tentera de le charger.<br>
 
 <br>
 
-### 3- Choose an unique ID
-This is the most important part, this is like your first name. It let the mod recognize and manage it.
+### 3- Choose a unique ID
+This is the most important part, this is like your first name. It lets the mod recognize and manage it.
 
-- Choose an unique id in lower case, without spaces and with only underscores (e.g., `my_custom_skill`)
+- Choose a unique id in lower case, without spaces and with only underscores (e.g., `my_custom_skill`)
 
 <br>
 
 ### 4- Setup your skill properties
-> **🛑 I will only deal with specific properties, for details on how to setup general information, please refeere to [Configure Skills](#docs/configure_skill#configuration)**
+> **🛑 I will only cover specific properties. For details on how to set up general information, please refer to [Configure Skills](configure_skill.md#configuration)**
 
-Le fichier json contient une propriété `modifiers`. cette propriété peux contenir des "modifers", c'est ce que nous allons utiliser pour avoir des effets en jeux.
+The JSON file contains a `modifiers` property. This property holds "modifiers", which we will use to apply in-game effects.
 
-_Un modifier suit le format suivant:_
+_A modifier follows this format:_
 ```
 {
       "attribute": "minecraft:generic.movement_speed",
@@ -71,8 +71,8 @@ _Un modifier suit le format suivant:_
 }
 ```
 
-- Copiez et coller ce template entre les crochets de `modifers`.
-- Nous pouvons maintenant modifier les données:
+- Copy and paste this template between the brackets `[]` of `modifiers`.
+- We can now modify the data:
 
 `attribute`
 - This is the player attribute you are going to modify.
@@ -100,13 +100,13 @@ _Un modifier suit le format suivant:_
 <br>
 
 ### 5- Finalizing
-Before trying it in game, make sure these condition are met:
+Before trying it in game, make sure these conditions are met:
 - The skill ID is unique and without spaces.
-- The price list size doesn't exceed the maximum level.
+- The price list size matches the maximum level.
 - The field "type" is clearly defined on "CUSTOM".
 - The modifier(s) exists.
 
-Now you can try your skill and continue to add custom skill!
+Now you can try your skill and continue to add custom skills!
 
 
 <br>
@@ -115,22 +115,22 @@ Now you can try your skill and continue to add custom skill!
 ## Tips
 
 **Values**
-- Vous pouvez utiliser des valeures négatives pour simuler un malus (e.g., `"values": [-1.0, -2.0, -3.0, -4.0]`).
-- If you want your skill to work on top of existing effects (potions or other modifiers), you can use "ADD_MULTIPLIED_TOTAL" as operation.
+- You can use negative values to simulate a penalty or debuff (e.g., `"values": [-1.0, -2.0, -3.0, -4.0]`).
+- If you want your skill to work on top of existing effects (potions or other modifiers), you can use "ADD_MULTIPLIED_TOTAL" as the operation.
 
 <br>
 
 **Design**
-- You can use minecraft item/block textures as an icon (exemple with stick:` minecraft:textures/item/stick.png`).
-- You can use icons already used (exemple with the one for Health Boost: `tyzs_skills:textures/gui/skills/health_boost.png`).
+- You can use minecraft item/block textures as an icon (example with stick:`minecraft:textures/item/stick.png`).
+- You can use icons already used (example with the one for Health Boost: `tyzs_skills:textures/gui/skills/health_boost.png`).
 - I've added few unused icons you can use (e.g., `tyzs_skills:textures/gui/skills/unused_icon_set/FILENAME.png`).
 - You are not forced to set an icon, it will display a default one.
 
 <br>
 
 **Texts**
-- You can use `{value}` in your description to display skill effect intensity. Si il y a plusieurs modifers, utilisez des numéros pour tout ceux qui seront apres 1(e.g, `{value2}`).
-- Vous pouvez directement ecrire les textes (description, displayName, units) directement a la place des clés de traduction. Vous ne pourrez simplement pas les traduires.
+- You can use `{value}` in your description to display skill effect intensity. If there are multiple modifiers, use numbers for the subsequent ones (e.g, `{value2}`).
+- You can directly write plain text (description, displayName, units) instead of translation keys. You simply won't be able to translate them into other languages via resource packs.
 
 <br>
 
