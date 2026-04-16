@@ -16,7 +16,7 @@ _Compatible with: NeoForge 1.21.1 | Mod version: 6.2+_
 - [Create custom skills](docs/create_skill.md)
 
 ### KubeJS
-- []()
+- [KubeJS events](docs/kubejs_events.md)
 
 
 ## Integration 
