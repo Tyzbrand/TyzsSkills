@@ -29,7 +29,7 @@ For every skill you place inside it, the game will attempt to load it.<br>
 
 ### 2- Use the template
 - Copy and paste the template below into your file:
-```
+```json
 {
   "active": true,
   "id": "my_custom_skill",
@@ -62,7 +62,7 @@ This is the most important part, this is like your first name. It lets the mod r
 The JSON file contains a `modifiers` property. This property holds "modifiers", which we will use to apply in-game effects.
 
 _A modifier follows this format:_
-```
+```json
 {
       "attribute": "minecraft:generic.movement_speed",
       "operation": "ADD_VALUE",
