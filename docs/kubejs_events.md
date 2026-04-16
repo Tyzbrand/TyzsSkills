@@ -16,7 +16,7 @@ TyzsSkillsEvents.skill_purchase_pre(event => {
 
 // Example 2: Modifying a value dynamically
 TyzsSkillsEvents.xp_change(event => {
-  // Example: Double the XP gained by the player!
+  // Double the XP gained by the player
   let oldXp = event.getOldAmount()
   let newXp = event.getNewAmount()
   
