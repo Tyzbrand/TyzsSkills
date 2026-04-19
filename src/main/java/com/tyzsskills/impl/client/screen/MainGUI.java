@@ -13,6 +13,7 @@ import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
@@ -36,7 +37,7 @@ public class MainGUI extends Screen {
             "main_font");
 
     private final int imageWidth = 301;
-    private final int imageHeight = 139;
+    private final int imageHeight = 142;
 
     private int leftPos;
     private int topPos;
@@ -53,6 +54,7 @@ public class MainGUI extends Screen {
     public MainGUI(){super(Component.translatable("gui.tyzs_skills.title"));}
 
     private CustomScrollView scrollView;
+    private EditBox searchBar;
 
     @Override
     protected void init(){
@@ -62,6 +64,7 @@ public class MainGUI extends Screen {
 
         this.addButtons();
         this.addScrollView();
+        this.addSearchBar();
 
         renderList();
     }
@@ -78,10 +81,11 @@ public class MainGUI extends Screen {
 
         this.renderEntity(guiGraphics, 30, mouseX, mouseY );
 
-
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         this.renderIcons(guiGraphics);
+
+        guiGraphics.blit(background, leftPos + 144, topPos + 146, 82, 252, 106, 13, 325, 325);
 
         this.renderTooltips(guiGraphics, mouseX, mouseY);
     }
@@ -151,7 +155,7 @@ public class MainGUI extends Screen {
         int widthToDraw = (int)(ratio*70);
 
         if(widthToDraw > 0) {
-            gui.blit(background, leftPos + 2, topPos + 98, 82, 142, widthToDraw, 5, 325, 325);
+            gui.blit(background, leftPos + 2, topPos + 98, 82, 143, widthToDraw, 5, 325, 325);
         }
     }
 
@@ -380,6 +384,23 @@ public class MainGUI extends Screen {
         this.addRenderableWidget(this.scrollView);
     }
 
+    private void addSearchBar(){
+        this.searchBar = new EditBox(this.font, leftPos + 146, topPos + 149, 98, 13, Component.literal("Search"));
+
+        this.searchBar.setBordered(false);
+        this.searchBar.setTextColor(0xFFFFFF);
+
+        if(Config.KEEP_SEARCH_QUERY.getAsBoolean()) this.searchBar.setValue(SortTools.getCurrentSearchQuery());
+
+        this.searchBar.setResponder((s) -> {
+            SortTools.setSearchQuery(s);
+            SortTools.refreshList();
+            this.renderList();
+        });
+
+        this.addRenderableWidget(this.searchBar);
+    }
+
 
     //Actifs
     public void renderList(){
@@ -445,6 +466,10 @@ public class MainGUI extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.searchBar.isFocused()) {
+            return this.searchBar.keyPressed(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
+        }
+
         if (MainKeybind.OPEN_SKILL_KEY.matches(keyCode, scanCode)) {
             this.onClose();
             return true;
@@ -452,6 +477,11 @@ public class MainGUI extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
+    @Override
+    public void removed() {
+        if(!Config.KEEP_SEARCH_QUERY.getAsBoolean()) SortTools.setSearchQuery("");
+        super.removed();
+    }
 
     //states
     @Override
@@ -462,5 +492,6 @@ public class MainGUI extends Screen {
     }
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
+
 
 }

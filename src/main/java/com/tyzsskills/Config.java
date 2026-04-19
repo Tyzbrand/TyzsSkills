@@ -88,6 +88,10 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<String> SKILL_BG_COLOR;
     public static final ModConfigSpec.ConfigValue<String> SKILL_BD_COLOR;
 
+    //Search bar
+    public static final ModConfigSpec.BooleanValue KEEP_SEARCH_QUERY;
+    public static final ModConfigSpec.BooleanValue QUERY_TOLERANCE;
+
     //Button
     public static final ModConfigSpec.BooleanValue SHOW_SKILL_BUTTON;
     public static final ModConfigSpec.IntValue INVENTORY_BUTTON_X;
@@ -333,6 +337,19 @@ public class Config {
                 .defineInRange("speed_fov_reduction", 0.95, 0, 1);
 
         clientBuilder.pop();
+
+        clientBuilder.push("search_bar");
+        KEEP_SEARCH_QUERY = clientBuilder
+                .comment("Keep search query when closing the menu")
+                .translation("config.client.tyzs_skills.keep_search_query")
+                .define("keep_search_query", true);
+
+        QUERY_TOLERANCE = clientBuilder
+                .comment("§c[Experimental] §rAllow query typos")
+                .translation("config.client.tyzs_skills.query_tolerance")
+                .define("query_tolerance", false);
+        clientBuilder.pop();
+
         CLIENT_SPEC = clientBuilder.build();
     }
 

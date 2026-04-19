@@ -210,5 +210,10 @@
   "skill.tyzs_skills.keepsake.displayName" : "Keepsake",
   "skill.tyzs_skills.keepsake.description" : "Safeguards the first {saved_slots} slot(s) of your inventory upon death",
 
-  "skill.tyzs_skills.unit.slot" : "slot(s)"
+  "skill.tyzs_skills.unit.slot" : "slot(s)",
+
+  "tyzs_skills.configuration.search_bar":"Search Bar",
+
+  "config.client.tyzs_skills.keep_search_query" : "Keep search query",
+  "config.client.tyzs_skills.query_tolerance" : "Query tolerance"
 }
