@@ -103,14 +103,10 @@ public class ClientCache {
     }
 
     public static void SetContainerType(Enums.ContainerType type){
-        if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true) && type == Enums.ContainerType.TRAITS) return;
-        if(GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20) > clientLevel && type == Enums.ContainerType.TRAITS) return;
         currentContainerType = type;
     }
 
     public static void SetCategoryType(Enums.CategoryType category){
-        if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true) && category == Enums.CategoryType.TRAITS) return;
-        if(GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20) > clientLevel && category == Enums.CategoryType.TRAITS) return;
         currentContainerCategory = category;
     }
 
@@ -129,7 +125,6 @@ public class ClientCache {
 
         int owned = 0;
         for(var skill : clientSkills.values()){
-            if(skill instanceof Trait) continue;
             if(!clientSkillLevels.containsKey(skill.getID().toLowerCase())) continue;
             owned += clientSkillLevels.get(skill.getID().toLowerCase());
         }
@@ -173,11 +168,6 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = GetSkillLevel(id);
 
-        if(skill instanceof Trait){
-            if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true)) return;
-            if(clientLevel < GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20)) return;
-        }
-
         if (currentLvl >= skill.getMaximumLevel()) return;
 
         var prices = skill.getPrices();
@@ -186,8 +176,6 @@ public class ClientCache {
 
         clientSP -= price;
         UpdateSkillLevels(id, currentLvl + 1);
-
-        if(skill instanceof Trait trait) clientPower += trait.getPowerWeight();
     }
 
     public static void predictBuyMax(Skill skill) {
@@ -221,11 +209,6 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = GetSkillLevel(id);
 
-        if(skill instanceof Trait){
-            if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true)) return;
-            if(clientLevel < GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20)) return;
-        }
-
         if (currentLvl <= 0) return;
 
         UpdateSkillLevels(id, currentLvl - 1);
@@ -237,7 +220,6 @@ public class ClientCache {
             int initialPrice = prices.get(currentLvl - 1);
             int refundAmount = Math.max(1, (int)(initialPrice * (percentage / 100.0)));
             clientSP += refundAmount;
-            if(skill instanceof Trait trait) clientPower -= trait.getPowerWeight();
         }
     }
 
@@ -321,7 +303,6 @@ public class ClientCache {
     public static int GetSkillCount(){
         int count = 0;
         for(var skill : clientSkills.values()){
-            if(skill instanceof Trait) continue;
             count += skill.getMaximumLevel();
         }
         return count;

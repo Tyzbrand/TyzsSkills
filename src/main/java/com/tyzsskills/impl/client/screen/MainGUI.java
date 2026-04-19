@@ -74,7 +74,6 @@ public class MainGUI extends Screen {
         this.renderStrings(guiGraphics, mouseX, mouseY);
 
         this.renderXpBar(guiGraphics);
-        if(ClientCache.GetContainerType() == Enums.ContainerType.TRAITS) renderPowerBar(guiGraphics);
 
         this.renderEntity(guiGraphics, 30, mouseX, mouseY );
 
@@ -130,23 +129,16 @@ public class MainGUI extends Screen {
         gui.drawString(this.font, spValue, -text2W, 0, color2, false);
         gui.pose().popPose();
 
-        if(ClientCache.GetContainerType() == Enums.ContainerType.TRAITS){
-            MutableComponent text = Component.translatable("gui.tyzs_skills.traits");
-            int textW = font.width(text); int textH = font.lineHeight; int padding = 3;
-            renderBackdrop(gui, (leftPos+90) - padding, (topPos+12) - padding, textW + (padding*2), textH + (padding*2), 0xD5000000);
-            gui.drawString(this.font, text, leftPos+90 , topPos+13, 0xFFFFFFFF, false);
-        }
-        else{
-            if(ClientCache.GetCategoryType() == Enums.CategoryType.BOOKMARKS) return;
-            String localizationKey = "gui.tyzs_skills.Tab." + ClientCache.GetCategoryType().toString().toLowerCase();
-            MutableComponent enumDisplayName = Component.translatable(localizationKey);
-            int text3W = this.font.width(enumDisplayName);
-            int rightLimit3 = leftPos+293;
-            int textW = font.width(enumDisplayName); int textH = font.lineHeight; int padding = 3;
-            renderBackdrop(gui, (rightLimit3 -text3W) - padding, (topPos+12) - padding, textW + (padding*2), textH + (padding*2), 0xD5000000);
-            gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+13, 0xFFFFFFFF, false);
-        }
 
+        if(ClientCache.GetCategoryType() == Enums.CategoryType.BOOKMARKS) return;
+
+        String localizationKey = "gui.tyzs_skills.Tab." + ClientCache.GetCategoryType().toString().toLowerCase();
+        MutableComponent enumDisplayName = Component.translatable(localizationKey);
+        int text3W = this.font.width(enumDisplayName);
+        int rightLimit3 = leftPos+293;
+        int textW = font.width(enumDisplayName); int textH = font.lineHeight; int padding = 3;
+        renderBackdrop(gui, (rightLimit3 -text3W) - padding, (topPos+12) - padding, textW + (padding*2), textH + (padding*2), 0xD5000000);
+        gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+13, 0xFFFFFFFF, false);
     }
 
     private void renderXpBar(GuiGraphics gui){
@@ -164,30 +156,6 @@ public class MainGUI extends Screen {
         }
     }
 
-    private void renderPowerBar(GuiGraphics gui){
-        var player = Minecraft.getInstance().player;
-        if(player == null) return;
-
-        var attr = player.getAttribute(AttributeRegistry.TRAIT_POWER);
-        if (attr == null) return;
-
-        double maxPower = attr.getValue();
-        if (maxPower <= 0) maxPower = 1;
-
-        int currentPower = ClientCache.GetPower();
-
-        double ratio = Math.min(1.0, currentPower / maxPower);
-
-        gui.blit(background, leftPos+173, topPos+17, 82, 285, 124, 7, 325, 325);
-
-        boolean isFull = ratio >= 1.0;
-        int currentV = isFull ? 297 : 292;
-        int widthToDraw = (int)(ratio * 122);
-
-        if (widthToDraw > 0) {
-            gui.blit(background, leftPos+174, topPos+18, 83, currentV, widthToDraw, 5, 325, 325);
-        }
-    }
 
     private void renderEntity(GuiGraphics gui, int scale,  int mouseX, int mouseY){
         LivingEntity player = this.minecraft.player;
@@ -252,36 +220,11 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, finalText, mouseX, mouseY);
         }
 
-        if(ClientCache.GetContainerType() == Enums.ContainerType.TRAITS
-                && isHovering(mouseX, mouseY, leftPos+173, topPos+17, 123, 6)){ //Power Bar
-            String powerTooltip = StringTools.valueSmartFormat(ClientCache.GetPower()) + "/" + StringTools.valueSmartFormat(
-                    (float)Minecraft.getInstance().player.getAttribute(AttributeRegistry.TRAIT_POWER).getValue()) ;
-
-            MutableComponent finalText =  Component.translatable("gui.tyzs_skills.power")
-                    .append(Component.literal(": "))
-                    .append(Component.literal(powerTooltip));
-            gui.renderTooltip(this.font, finalText, mouseX, mouseY);
-        }
-
-
         if(isHovering(mouseX, mouseY, leftPos + 55, topPos + 6, 15, 15)){ //Skills button
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Skills"), mouseX, mouseY);
         }
 
 
-        if (isHovering(mouseX, mouseY, leftPos + 55, topPos + 24, 15, 15)
-            && ClientCache.GetConfigBool(Config.TRAIT_SYSTEM_KEY, true)){ //Traits button
-
-            int traitLvl = ClientCache.GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20);
-            List<Component> tooltip = new ArrayList<>();
-            tooltip.add(Component.translatable("gui.tyzs_skills.traits"));
-
-            if(ClientCache.GetLvl() < traitLvl){
-              tooltip.add(Component.translatable("overlay.tyzs_skills.level").append(" " + traitLvl).withStyle(ChatFormatting.RED));
-            }
-
-            gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
-        }
 
         if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)){
             SkillWidget hoveredWidget = this.scrollView.getHoveredWidget(mouseX, mouseY);
@@ -363,20 +306,6 @@ public class MainGUI extends Screen {
                 });
         this.addRenderableWidget(this.skillBtn);
 
-        this.traitBtn = new CustomTabButton(
-                leftPos + 55, topPos + 21,
-                14, 14,
-                83, 168,
-                97, 168,
-                111, 168,
-                325, 325,
-                () -> ClientCache.GetContainerType() == Enums.ContainerType.TRAITS,
-                background,
-                (b) -> {
-                    ClientCache.SetContainerType(Enums.ContainerType.TRAITS);
-                    refreshList();
-                });
-        this.addRenderableWidget(this.traitBtn);
 
         this.allBtn = new CustomTabButton(
                 leftPos + 92, topPos + 7,
@@ -466,8 +395,6 @@ public class MainGUI extends Screen {
         if (this.fightBtn != null) this.fightBtn.visible = isSkillMode;
         if (this.miscBtn != null) this.miscBtn.visible = isSkillMode;
         if (this.bookmarksBtn != null) this.bookmarksBtn.visible = isSkillMode;
-
-        if(this.traitBtn != null) this.traitBtn.visible = ClientCache.GetConfigBool(Config.TRAIT_SYSTEM_KEY, true);
     }
 
     private void addScrollView(){
@@ -496,42 +423,24 @@ public class MainGUI extends Screen {
         SkillEntry currentRow = null;
         int countInRow = 0;
 
-        if(containerType == Enums.ContainerType.TRAITS){
-            for(Skill skill : ClientCache.GetAllSkills()){
-                if(skill.getCategory() != Enums.CategoryType.TRAITS) continue;
 
-                if(currentRow == null || countInRow >= maxPerLine){
-                    currentRow = new SkillEntry();
-                    this.scrollView.AddEntry(currentRow);
-                    countInRow = 0;
-                }
 
-                currentRow.addWidget(new TraitWidget(skill));
-                countInRow++;
+        var categoryToLoad = ClientCache.GetCategoryType();
+        for(Skill skill : ClientCache.GetAllSkills()){
+            if(skill.getCategory() != categoryToLoad &&
+                    categoryToLoad != Enums.CategoryType.ALL && categoryToLoad != Enums.CategoryType.BOOKMARKS) continue;
+
+            if(categoryToLoad == Enums.CategoryType.BOOKMARKS && !ClientCache.isSkillBookmarked(skill.getID())) continue;
+
+            if(currentRow == null || countInRow >= maxPerLine){
+                currentRow = new SkillEntry();
+                this.scrollView.AddEntry(currentRow);
+                countInRow = 0;
             }
-            this.scrollView.setScrollAmount(0);
+            currentRow.addWidget(new SkillWidget(skill));
+            countInRow++;
         }
-        else {
-            var categoryToLoad = ClientCache.GetCategoryType();
-            for(Skill skill : ClientCache.GetAllSkills()){
-                if(skill.getCategory() == Enums.CategoryType.TRAITS) continue;
-                if(skill.getCategory() != categoryToLoad &&
-                        categoryToLoad != Enums.CategoryType.ALL && categoryToLoad != Enums.CategoryType.BOOKMARKS) continue;
-
-                if(categoryToLoad == Enums.CategoryType.BOOKMARKS && !ClientCache.isSkillBookmarked(skill.getID())) continue;
-
-                if(currentRow == null || countInRow >= maxPerLine){
-                    currentRow = new SkillEntry();
-                    this.scrollView.AddEntry(currentRow);
-                    countInRow = 0;
-                }
-
-                currentRow.addWidget(new SkillWidget(skill));
-                countInRow++;
-            }
-            this.scrollView.setScrollAmount(0);
-        }
-
+        this.scrollView.setScrollAmount(0);
     }
 
     //Uilitaires

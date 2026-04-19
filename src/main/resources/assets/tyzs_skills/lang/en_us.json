@@ -4,7 +4,6 @@
   "gui.tyzs_skills.Lvl" : "Lvl",
   "gui.tyzs_skills.Skills" : "Skills",
   "gui.tyzs_skills.Quests" : "Quests",
-  "gui.tyzs_skills.traits" : "Traits",
   "gui.tyzs_skills.error_value" : "N/A",
   "gui.tyzs_skills.level_max" : "Max level",
   "gui.tyzs_skills.cost" : "Cost",
@@ -13,13 +12,15 @@
   "gui.tyzs_skills.inactive" : "Inactive",
   "gui.tyzs_skills.power" : "Power",
   "gui.tyzs_skills.power_needed" : "Power required",
+  "gui.tyzs_skills.gain" : "Gain",
 
   "skill.tyzs_skills.unit.percentage" : "%",
   "skill.tyzs_skills.unit.blocks" : "blocks",
   "skill.tyzs_skills.unit.half_hearts" : "half hearts",
   "skill.tyzs_skills.unit.damage" : "damage",
-  "skill.tyzs_skills.unit.trait_power" : "trait power",
   "skill.tyzs_skills.unit.block_radius" : "block radius",
+  "skill.tyzs_skills.unit.seconds" : "sec",
+  "skill.tyzs_skills.unit.percentage_damage" : "% (dmg)",
 
 
   "overlay.tyzs_skills.level" : "Level",
@@ -85,6 +86,9 @@
   "skill.tyzs_skills.backstab.displayName" : "Backstab",
   "skill.tyzs_skills.backstab.description" : "Increases damage dealt from behind by {damage_buff}%",
 
+  "skill.tyzs_skills.rage.displayName" : "Rage",
+  "skill.tyzs_skills.rage.description" : "Increases damage by {damage_buff}% when health is below {health_threshold}%",
+
   "skill.tyzs_skills.resilience.displayName" : "Resilience",
   "skill.tyzs_skills.resilience.description" : "Reduces the duration of negative status effects by {effect_time_reduction}%",
 
@@ -109,41 +113,26 @@
   "skill.tyzs_skills.magnet.displayName" : "Magnet",
   "skill.tyzs_skills.magnet.description" : "Attracts items within a {block_radius} block radius",
 
-  "skill.tyzs_skills.trait_surge.displayName" : "Trait Surge",
-  "skill.tyzs_skills.trait_surge.description" : "Increases Trait Power by {value}",
+  "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
+  "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III for {effect_duration}s when health falls below {health_threshold}%",
 
-  "skill.tyzs_skills.cinder_blood.displayName" : "Cinder Blood",
-  "skill.tyzs_skills.cinder_blood.description" : "Grants immunity to fire damage (I wouldn't recommend a lava bath)",
+  "skill.tyzs_skills.jinxed.displayName" : "Jinxed",
+  "skill.tyzs_skills.jinxed.description" : "Adds a {success_probability}% chance to scramble the target's hotbar on hit",
 
-  "skill.tyzs_skills.deep_lode.displayName" : "Deep Lode",
-  "skill.tyzs_skills.deep_lode.description" : "Vein-mines ores in a single action (Sneak to avoid)",
+  "skill.tyzs_skills.true_strike.displayName" : "True Strike",
+  "skill.tyzs_skills.true_strike.description" : "Adds a {success_probability}% chance to deal true damage on hit",
 
-  "skill.tyzs_skills.root_cleaver.displayName" : "Root Cleaver",
-  "skill.tyzs_skills.root_cleaver.description" : "Fells entire trees in a single action (sneak to avoid)",
+  "skill.tyzs_skills.sunder_armor.displayName" : "Sunder Armor",
+  "skill.tyzs_skills.sunder_armor.description" : "Adds a {success_probability}% chance for attacks to deal {damage_percentage}% extra durability damage to armor",
 
-  "skill.tyzs_skills.iron_gut.displayName" : "Iron Gut",
-  "skill.tyzs_skills.iron_gut.description" : "Prevents Hunger effect when eating Rotten Flesh",
+  "skill.tyzs_skills.shepherd_s_blessing.displayName" : "Shepherd’s Blessing",
+  "skill.tyzs_skills.shepherd_s_blessing.description" : "Baby animals grow {growth_speed}% faster",
 
-  "skill.tyzs_skills.gilded_aura.displayName" : "Gilded Aura",
-  "skill.tyzs_skills.gilded_aura.description" : "You no longer need golden armor to win the Piglins' sympathy",
+  "skill.tyzs_skills.spare_parts.displayName" : "Spare Parts",
+  "skill.tyzs_skills.spare_parts.description" : "Provides a {refund_chance}% chance to recover materials when crafting",
 
-  "skill.tyzs_skills.silver_tongue.displayName" : "Silver Tongue",
-  "skill.tyzs_skills.silver_tongue.description" : "Villagers follow you when you hold Emeralds",
-
-  "skill.tyzs_skills.keepsake.displayName" : "Keepsake",
-  "skill.tyzs_skills.keepsake.description" : "Keeps hotbar items upon death",
-
-  "skill.tyzs_skills.soundless.displayName" : "Soundless",
-  "skill.tyzs_skills.soundless.description" : "Prevents enemies and entities from hearing you",
-
-  "skill.tyzs_skills.refiner.displayName" : "Refiner",
-  "skill.tyzs_skills.refiner.description" : "Automatically smelts mined ores (sneak to avoid)",
-
-  "skill.tyzs_skills.deep_sight.displayName" : "Deep Sight",
-  "skill.tyzs_skills.deep_sight.description" : "Grants Night Vision when in deep caves",
-
-  "skill.tyzs_skills.deep_rest.displayName" : "Deep Rest",
-  "skill.tyzs_skills.deep_rest.description" : "Fully restores health and hunger after sleeping",
+  "skill.tyzs_skills.twist_of_fate.displayName" : "Twist Of Fate",
+  "skill.tyzs_skills.twist_of_fate.description" : "Increases the quantity of items found in structure loot chests by {loot_multiplier}%",
 
 
 
@@ -159,35 +148,14 @@
   "tyzs_skills.configuration.skill_overlay": "Skill Overlay Details",
   "tyzs_skills.configuration.debug": "Debug",
   "tyzs_skills.configuration.accessibility": "Accessibility",
-  "tyzs_skills.configuration.Cinder_blood": "Cinder blood",
-  "tyzs_skills.configuration.Deep_sight": "Deep sight",
-  "tyzs_skills.configuration.Root_cleaver": "Root cleaver",
-  "tyzs_skills.configuration.Deep_rest": "Deep rest",
-  "tyzs_skills.configuration.Deep_lode": "Deep lode",
-  "tyzs_skills.configuration.Silver_tongue": "Silver tongue",
-  "tyzs_skills.configuration.Trait_details": "Trait details",
   "tyzs_skills.configuration.inventory_button": "Inventory Button",
   "tyzs_skills.configuration.Limits": "Limits",
+  "tyzs_skills.configuration.Death_penalties":"Death Penalties",
 
   "config.common.tyzs_skills.refund_system" : "Enable Refund System",
   "config.common.tyzs_skills.refund_system_per" : "Refund percentage",
-  "config.common.tyzs_skills.trait_unlock_level" : "Trait unlock level",
-  "config.common.tyzs_skills.trait_system" : "Enable Trait System",
   "config.common.tyzs_skills.prevent_placed_blocks_xp" : "Prevent placed blocks xp",
   "config.common..trait.max_ores" : "Max Vein Size",
-  "config.common.tyzs_skills.trait.deep_lode_grief" : "Grief protection",
-  "config.common.tyzs_skills.trait.max_logs" : "Max Logs Broken",
-  "config.common.tyzs_skills.trait.max_leaves" : "Max Leaves Broken",
-  "config.common.tyzs_skills.trait.match_type" : "Strict Block Matching",
-  "config.common.tyzs_skills.trait.root_cleaver_grief" : "Grief protection",
-  "config.common.tyzs_skills.trait.lava_damage" : "Prevent lava damage",
-  "config.common.tyzs_skills.trait.restores_health" : "Restore health",
-  "config.common.tyzs_skills.trait.restores_nutrition" : "Restore nutrition",
-  "config.common.tyzs_skills.trait.restores_saturation" : "Restore saturation",
-  "config.common.tyzs_skills.trait.ambient_threshold" : "Light Threshold (Block)",
-  "config.common.tyzs_skills.trait.sky_threshold" : "Light Threshold (Sky)",
-  "config.common.tyzs_skills.trait.attraction_radius" : "Attraction radius",
-  "config.common.tyzs_skills.trait.villagers_speed" : "Villager speed",
   "config.common.tyzs_skills.earn_creative_xp" : "XP in Creative Mode",
   "config.common.tyzs_skills.eating_xp_earnings" : "XP from Eating",
   "config.common.tyzs_skills.sleeping_gain" : "XP from Sleeping",
@@ -224,36 +192,6 @@
   "config.client.tyzs_skills.speed_fov_reduction" : "Speed fov reduction",
 
 
-
-  "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
-  "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III for {effect_duration}s when health falls below {health_threshold}%",
-
-  "skill.tyzs_skills.jinxed.displayName" : "Jinxed",
-  "skill.tyzs_skills.jinxed.description" : "Adds a {success_probability}% chance to scramble the target's hotbar on hit",
-
-  "skill.tyzs_skills.true_strike.displayName" : "True Strike",
-  "skill.tyzs_skills.true_strike.description" : "Adds a {success_probability}% chance to deal true damage on hit",
-
-  "skill.tyzs_skills.sunder_armor.displayName" : "Sunder Armor",
-  "skill.tyzs_skills.sunder_armor.description" : "Adds a {success_probability}% chance for attacks to deal {damage_percentage}% extra durability damage to armor",
-
-  "skill.tyzs_skills.shepherd_s_blessing.displayName" : "Shepherd’s Blessing",
-  "skill.tyzs_skills.shepherd_s_blessing.description" : "Baby animals grow {growth_speed}% faster",
-
-  "skill.tyzs_skills.spare_parts.displayName" : "Spare Parts",
-  "skill.tyzs_skills.spare_parts.description" : "Provides a {refund_chance}% chance to recover materials when crafting",
-
-  "skill.tyzs_skills.twist_of_fate.displayName" : "Twist Of Fate",
-  "skill.tyzs_skills.twist_of_fate.description" : "Increases the quantity of items found in structure loot chests by {loot_multiplier}%",
-
-  "skill.tyzs_skills.unit.seconds" : "sec",
-  "skill.tyzs_skills.unit.percentage_damage" : "% (dmg)",
-
-  "skill.tyzs_skills.rage.displayName" : "Rage",
-  "skill.tyzs_skills.rage.description" : "Increases damage by {damage_buff}% when health is below {health_threshold}%",
-
-  "gui.tyzs_skills.gain" : "Gain",
-
   "config.common.tyzs_skills.killing_xp_earnings" : "XP from Killing entities",
   "config.common.tyzs_skills.mining_xp_earnings" : "XP from breaking blocks",
   "config.common.tyzs_skills.death_penatlies" : "Death Penalties",
@@ -262,5 +200,15 @@
   "config.common.tyzs_skills.lvl_loss" : "Lvl loss",
   "config.common.tyzs_skills.skill_loss" : "Skill loss",
 
-  "tyzs_skills.configuration.Death_penalties":"Death Penalties"
+
+
+
+
+  "skill.tyzs_skills.haggler.displayName" : "haggler",
+  "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius. They will follow you with a {villager_speed}% speed bonus",
+
+  "skill.tyzs_skills.keepsake.displayName" : "Keepsake",
+  "skill.tyzs_skills.keepsake.description" : "Safeguards the first {saved_slots} slot(s) of your inventory upon death",
+
+  "skill.tyzs_skills.unit.slot" : "slot(s)"
 }

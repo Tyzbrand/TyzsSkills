@@ -60,10 +60,6 @@ public class FileManager {
                 .resolve("misc"));
 
         allPaths.add(globalPath.resolve("skills")
-                .resolve("default")
-                .resolve("traits"));
-
-        allPaths.add(globalPath.resolve("skills")
                 .resolve("custom"));
 
 
@@ -80,18 +76,10 @@ public class FileManager {
         }
 
         for (var prefab : prefabQueue){
-            Skill skillToSave;
-
-            if(prefab.isTrait()){
-                var firstPrice = prefab.prices().isEmpty()? 0 : prefab.prices().getFirst();
-                skillToSave = new Trait(prefab.active(), prefab.id(), prefab.powerWeight(),
-                        firstPrice, prefab.purchasable(), prefab.icon(), prefab.displayName(), prefab.description());
-            }
-            else{
-                skillToSave = new Skill(prefab.active(), prefab.id(), prefab.maximumLevel(),
+            Skill skillToSave = new Skill(prefab.active(), prefab.id(), prefab.maximumLevel(),
                         prefab.prices(), prefab.type(), prefab.category(), prefab.purchasable(),
-                        prefab.icon(), prefab.displayName(), prefab.description(), prefab.modifiers(), prefab.customValues());
-            }
+                        prefab.icon(), prefab.displayName(), prefab.description(), prefab.modifiers(), prefab.customValues()
+            );
 
             Path targetPath = getSkillPath(prefab.category(), server);
             writeSkill(skillToSave, targetPath);
@@ -235,21 +223,17 @@ public class FileManager {
                 .resolve("tyzs_skills")
                 .resolve("skills");
 
-        switch (category){
+        switch (category) {
             case ABILITIES -> {
                 return skillPath.resolve("default").resolve("abilities");
             }
             case FIGHT -> {
                 return skillPath.resolve("default").resolve("fight");
             }
-            case MISC, ALL, BOOKMARKS -> {
+            default -> {
                 return skillPath.resolve("default").resolve("misc");
             }
-            case TRAITS -> {
-                return skillPath.resolve("default").resolve("traits");
-            }
         }
-        return skillPath;
     }
 
 

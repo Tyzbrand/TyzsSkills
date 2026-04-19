@@ -10,7 +10,6 @@ import com.tyzsskills.impl.client.screen.MainGUI;
 import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.Trait;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -236,29 +235,6 @@ public class SkillWidget {
         var currentLvl = ClientCache.GetSkillLevel(skill.getID());
         if(currentLvl > skill.getMaximumLevel() || currentLvl < 1) return false;
 
-        if(this.skill.getType() == Enums.SkillType.GENERIC){
-            String powerAttrId = AttributeRegistry.TRAIT_POWER.getId().toString();
-
-            for(var modifier : this.skill.getModifiers()){
-                if(modifier.attribute().equals(powerAttrId)){
-                    var att = client.getAttribute(AttributeRegistry.TRAIT_POWER);
-                    if(att == null) return false;
-
-                    int max = (int)att.getValue();
-                    int current = ClientCache.GetPower();
-
-                    float currentValue = modifier.getValue(currentLvl);
-                    float powerLoss = currentValue;
-
-                    if (currentLvl > 1) {
-                        float prevValue = modifier.getValue(currentLvl - 1);
-                        powerLoss = currentValue - prevValue;
-                    }
-
-                    if(current > (max - (int)powerLoss)) return false;
-                }
-            }
-        }
 
         var prices = skill.getPrices();
         return currentLvl <= prices.size();
@@ -279,7 +255,6 @@ public class SkillWidget {
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
 
         // Bordure
-        if(skill instanceof Trait) return;
         if(ClientCache.GetSkillLevel(skill.getID().toLowerCase()) < skill.getMaximumLevel()) return;
         gui.fill(x + 1, y, x + width - 1, y + 1, COLOR_BORDER); // Haut
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, COLOR_BORDER); // Bas

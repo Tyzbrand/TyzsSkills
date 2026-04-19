@@ -10,7 +10,6 @@ public class TyzsSkillsAPI {
     private static ILevelManager levelManager;
     private static IXpManager xpManager;
     private static ISkillManager skillManager;
-    private static IPowerManager powerManager;
 
     private static IClientDataManager clientDataManager;
 
@@ -22,8 +21,6 @@ public class TyzsSkillsAPI {
     public static void registerXpManager(IXpManager manager){xpManager = manager;}
     @ApiStatus.Internal
     public static void registerSkillManager(ISkillManager manager){skillManager = manager;}
-    @ApiStatus.Internal
-    public static void registerPowerManager(IPowerManager manager){powerManager = manager;}
 
     @ApiStatus.Internal
     public static void registerPlayerCacheManager(IClientDataManager manager){clientDataManager = manager;}
@@ -47,11 +44,6 @@ public class TyzsSkillsAPI {
     public static ISkillManager skills(){
         if(skillManager == null) ex("SkillManager");
         return skillManager;
-    }
-
-    public static IPowerManager power(){
-        if(powerManager == null) ex("PowerManager");
-        return powerManager;
     }
 
     public static IClientDataManager client(){

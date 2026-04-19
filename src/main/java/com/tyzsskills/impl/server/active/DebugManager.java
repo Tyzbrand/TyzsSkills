@@ -9,7 +9,6 @@ import com.tyzsskills.impl.server.attachments.LimitsTracker;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.payloads.ResetPayload;
-import com.tyzsskills.impl.server.power.PowerManager;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;
@@ -98,7 +97,6 @@ public class DebugManager {
     private static void resetMetaData(ServerPlayer player){
         LevelManager.setLevel(player, 1);
         SpManager.setSP(player, 0);
-        PowerManager.setPower(player, 0);
         XpManager.setXP(player, 0f);
         player.getData(ExplorationProgression.DATA).resetPlayerData();
     }

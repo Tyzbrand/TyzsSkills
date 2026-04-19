@@ -21,7 +21,8 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     private int playerLevel = 1;
     private int playerSP = 0;
     private float playerXP = 0f;
-    private int playerPower = 0;
+
+    private final Set<String> compatibility_tags = new HashSet<>();
 
 
     //-----------------Skill level-----------------
@@ -58,9 +59,9 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     public float getXP(){return playerXP;}
 
 
-    //-----------------Power-----------------
-    public void setPower(int power){playerPower = Math.max(0, power);}
-    public int getPower(){return playerPower;}
+    //-----------------COMPATIBILITY-----------------
+    public void putTag(String tag){if(tag != null) compatibility_tags.add(tag);}
+    public boolean hasMigrated(String tag){return tag != null && compatibility_tags.contains(tag);}
 
 
     @Override
@@ -78,7 +79,10 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         tag.putInt("skill_level", playerLevel);
         tag.putInt("skill_point", playerSP);
         tag.putFloat("skill_xp", playerXP);
-        tag.putInt("trait_power", playerPower);
+
+        ListTag compatTags = new ListTag();
+        compatibility_tags.forEach(b -> compatTags.add(StringTag.valueOf(b)));
+        tag.put("compatibility_tags", compatTags);
 
         return tag;
     }
@@ -102,7 +106,13 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         if(compoundTag.contains("skill_level")) playerLevel = compoundTag.getInt("skill_level");
         if(compoundTag.contains("skill_point")) playerSP = compoundTag.getInt("skill_point");
         if(compoundTag.contains("skill_xp")) playerXP = compoundTag.getFloat("skill_xp");
-        if(compoundTag.contains("trait_power")) playerPower = compoundTag.getInt("trait_power");
+
+
+        if(compoundTag.contains("compatibility_tags")){
+            for (var id : compoundTag.getList("compatibility_tags", Tag.TAG_STRING)){
+                compatibility_tags.add(id.getAsString());
+            }
+        }
     }
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Tyzsskills.MODID);

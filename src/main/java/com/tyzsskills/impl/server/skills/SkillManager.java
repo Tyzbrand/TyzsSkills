@@ -11,20 +11,13 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.SkillActionEvent;
 import com.tyzsskills.api.events.SkillLoadEvent;
 import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.impl.server.active.AttributeRegistry;
-import com.tyzsskills.impl.server.Level.LevelManager;
-import com.tyzsskills.impl.server.power.PowerManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.Trait;
 import com.tyzsskills.impl.server.payloads.*;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
@@ -81,42 +74,26 @@ public class SkillManager {
         NeoForge.EVENT_BUS.post(event);
         if(event.isCanceled()) return false;
 
-        if(skill instanceof Trait){
-            if(!Config.TRAIT_SYSTEM.get()) return false;
-            if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return false;
-        }
-
         var data = player.getData(PlayerData.DATA);
 
         int currentLvl = data.getSkillLevel(id);
         if(currentLvl >= skill.getMaximumLevel()) return false;
 
-        if(skill instanceof Trait trait) {
-            if (currentLvl == 0) {
-                var attr = player.getAttribute(AttributeRegistry.TRAIT_POWER);
-                if (attr == null) return false;
+        var prices = skill.getPrices();
+        if(currentLvl >= prices.size()) return false;
+        int price = prices.get(currentLvl);
 
-                int freeSpace = (int) attr.getValue() - PowerManager.getPower(player);
-                if (trait.getPowerWeight() > freeSpace) return false;
-            }
+        if(SpManager.getSP(player) >= price){
+            SpManager.removeSP(player, price);
+            PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
+            player.getData(StatsTracker.DATA).addSpSpent(price);
+
+            setSkillLevel(player, id, currentLvl + 1);
+
+            NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
+            return true;
         }
-
-            var prices = skill.getPrices();
-            if(currentLvl >= prices.size()) return false;
-            int price = prices.get(currentLvl);
-
-
-            if(SpManager.getSP(player) >= price){
-                SpManager.removeSP(player, price);
-                PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
-                player.getData(StatsTracker.DATA).addSpSpent(price);
-
-                setSkillLevel(player, id, currentLvl + 1);
-
-                NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
-                return true;
-            }
-            return false;
+        return false;
     }
 
     public boolean tryBuyMaxSkill(ServerPlayer player, String id){
@@ -173,43 +150,10 @@ public class SkillManager {
         NeoForge.EVENT_BUS.post(event);
         if(event.isCanceled()) return false;
 
-        if(skill instanceof Trait){
-            if(!Config.TRAIT_SYSTEM.get()) return false;
-            if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return false;
-        }
-
-
         var data = player.getData(PlayerData.DATA);
 
         int currentLvl = data.getSkillLevel(id);
         if(currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
-
-        if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
-
-            for(var modifier : skill.getModifiers()){
-                ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
-                if(attributeID == null) continue;
-                Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
-
-                if(attribute == AttributeRegistry.TRAIT_POWER.get()){
-                    var att = player.getAttribute(AttributeRegistry.TRAIT_POWER);
-                    if(att == null) return false;
-
-                    int max = (int)att.getValue();
-                    int current = PowerManager.getPower(player);
-
-                    float currentValue = modifier.getValue(currentLvl);
-                    float powerLoss = currentValue;
-
-                    if (currentLvl > 1) {
-                        float prevValue = modifier.getValue(currentLvl - 1);
-                        powerLoss = currentValue - prevValue;
-                    }
-                    if(current > (max - (int)powerLoss)) return false;
-                }
-            }
-
-        }
 
         var prices = skill.getPrices();
         if (currentLvl > prices.size()) return false;
@@ -241,38 +185,6 @@ public class SkillManager {
         if (currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
         int targetLvl = 0;
-
-        if (skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM) {
-            for (var modifier : skill.getModifiers()) {
-                ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());
-                if (attributeID == null) continue;
-
-                Attribute attribute = BuiltInRegistries.ATTRIBUTE.get(attributeID);
-                if (attribute == AttributeRegistry.TRAIT_POWER.get()) {
-
-                    var att = player.getAttribute(AttributeRegistry.TRAIT_POWER);
-                    if (att == null) return false;
-
-                    int simulatedMaxPower = (int) att.getValue();
-                    int usedPower = PowerManager.getPower(player);
-
-                    for (int l = currentLvl; l > 0; l--) {
-                        float currentValue = modifier.getValue(l);
-                        float prevValue = (l > 1) ? modifier.getValue(l - 1) : 0f;
-                        int stepPowerLoss = (int) (currentValue - prevValue);
-
-                        if (usedPower > (simulatedMaxPower - stepPowerLoss)) {
-                            targetLvl = l;
-                            break;
-                        }
-                        simulatedMaxPower -= stepPowerLoss;
-                    }
-                }
-            }
-        }
-
-        if (targetLvl == currentLvl) return false;
-
         var prices = skill.getPrices();
         int finalRefund = 0;
 
@@ -322,12 +234,6 @@ public class SkillManager {
         var skill = getSkill(id.toLowerCase());
         if(skill == null) return;
 
-        if(skill instanceof Trait){
-            if(!Config.TRAIT_SYSTEM.get()) return;
-            if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
-        }
-
-
         var data = player.getData(PlayerData.DATA);
 
         lvl = Math.max(0, Math.min(lvl, skill.getMaximumLevel()));
@@ -335,16 +241,6 @@ public class SkillManager {
 
         data.setSkillLevel(id, lvl);
         NeoForge.EVENT_BUS.post(new SkillActionEvent.LevelChange(skill, player, oldLvl, lvl));
-
-        if(skill instanceof Trait trait){
-            if(oldLvl == 0 && lvl > 0) {
-                PowerManager.addPower(player, trait.getPowerWeight());
-            }
-            else if(oldLvl > 0 && lvl == 0) {
-                PowerManager.removePower(player, trait.getPowerWeight());
-            }
-        }
-
 
         PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(id, lvl));
 
@@ -364,8 +260,6 @@ public class SkillManager {
         int current = getPlayerSkillLevel(player, id);
         setSkillLevel(player, id, current - amount);
     }
-
-
 
 
     //getters

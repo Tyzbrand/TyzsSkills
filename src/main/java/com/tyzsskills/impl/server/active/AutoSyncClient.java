@@ -5,7 +5,6 @@ import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.payloads.*;
-import com.tyzsskills.impl.server.power.PowerManager;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;
@@ -39,8 +38,7 @@ public class AutoSyncClient {
     public static void syncConfig(ServerPlayer player){
         PacketDistributor.sendToPlayer(player, new ConfigSyncPayload(Config.REFUND_SYSTEM.get(),
                 Config.REFUND_PERCENTAGE.get(),
-                Config.TRAIT_UNLOCK_LEVEL.get(),
-                Config.TRAIT_SYSTEM.get(), Config.XP_LIMIT.get()));
+                Config.XP_LIMIT.get()));
     }
 
     public static void syncMainData(ServerPlayer player){
@@ -48,7 +46,6 @@ public class AutoSyncClient {
         PacketDistributor.sendToPlayer(player, new LevelUpdatePayload(LevelManager.getLevel(player)));
         PacketDistributor.sendToPlayer(player, new SpUpdatePayload(SpManager.getSP(player)));
         PacketDistributor.sendToPlayer(player, new LevelDataUpdatePayload(XpManager.getLevelData(LevelManager.getLevel(player))));
-        PacketDistributor.sendToPlayer(player, new PowerUpdatePayload(PowerManager.getPower(player)));
     }
 
     public static void syncStats(ServerPlayer player){

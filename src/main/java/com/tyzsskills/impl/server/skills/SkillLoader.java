@@ -8,7 +8,6 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.Trait;
 import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.ApiStatus;
@@ -152,19 +151,6 @@ public class SkillLoader {
 
             SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
                     icon, displayName, description, null, valueSet));
-            return;
-        }
-
-        if(type == Enums.SkillType.TRAIT){
-            Integer powerWeight = getSafeElement(source, "powerWeight", JsonPrimitive::getAsInt);
-            if(powerWeight == null) powerWeight = 0;
-            powerWeight = Math.max(0, powerWeight);
-
-            int price = prices.isEmpty()? 0 : prices.getFirst();
-
-            SkillManager.get().registerSkill(new Trait(
-                    true, id, powerWeight, price, purchasable, icon, displayName, description)
-            );
             return;
         }
     }

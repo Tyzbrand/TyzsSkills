@@ -101,16 +101,9 @@ public class Skill implements ISkill {
 
     //Network
     public static final StreamCodec<FriendlyByteBuf, Skill> STREAM_CODEC = StreamCodec.ofMember(
-            (skill, buffer) -> {
-                boolean isTrait = skill instanceof Trait;
-                buffer.writeBoolean(isTrait);
-                skill.writeToBuffer(buffer);
-            },
-            (buffer) -> {
-                boolean isTrait = buffer.readBoolean();
-                if(isTrait) return Trait.readTraitFromBuffer(buffer);
-                else return Skill.readSkillFromBuffer(buffer);
-            });
+            Skill::writeToBuffer,
+            Skill::readSkillFromBuffer
+    );
 
 
     public void writeToBuffer(FriendlyByteBuf buffer){

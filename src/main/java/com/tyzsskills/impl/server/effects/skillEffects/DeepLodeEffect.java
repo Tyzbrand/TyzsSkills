@@ -37,145 +37,145 @@ import java.util.Set;
 
 public class DeepLodeEffect extends SkillBehavior {
 
-    private static final ThreadLocal<Boolean> IS_MINING = ThreadLocal.withInitial(() -> false);
-
-    @Override
-    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
-        if (IS_MINING.get()) return;
-        if(!(event.getLevel() instanceof ServerLevel level)) return;
-
-        if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
-
-        if (player.isShiftKeyDown()) return;
-
-        BlockState state = event.getState();
-        if (!state.is(Tags.Blocks.ORES)) return;
-
-        ItemStack tool = player.getMainHandItem();
-        if (!tool.isCorrectToolForDrops(state)) return;
-
-        BlockPos startPos = event.getPos();
-
-        boolean griefProtection = Config.DEEP_LODE_GRIEF_PROTECTION.getAsBoolean();
-        if(griefProtection && BlockMarker.IsPlayerPlaced(level, startPos)) return;
-
-        Block targetBlock = state.getBlock();
-
-        event.setCanceled(true);
-        IS_MINING.set(true);
-
-        int MAX_BLOCKS = Config.MAX_ORES.getAsInt();
-
-        try {
-            Queue<BlockPos> queue = new LinkedList<>();
-            Set<BlockPos> visited = new HashSet<>();
-
-            queue.add(startPos);
-            visited.add(startPos);
-
-            int blocksBroken = 0;
-
-            Vec3 dropPos = Vec3.atCenterOf(startPos).add(0, 0.5, 0);
-
-            Holder<Enchantment> silkTouchHolder = level.registryAccess()
-                    .lookupOrThrow(Registries.ENCHANTMENT)
-                    .getOrThrow(Enchantments.SILK_TOUCH);
-
-            ItemEnchantments enchants = tool.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-             boolean hasSilkTouch = enchants.getLevel(silkTouchHolder) > 0;
-
-            while (!queue.isEmpty()) {
-                if (blocksBroken >= MAX_BLOCKS) break;
-
-                BlockPos currentPos = queue.poll();
-                BlockState currentState = level.getBlockState(currentPos);
-
-                if (currentState.is(targetBlock)) {
-
-                    if (griefProtection && BlockMarker.IsPlayerPlaced(level, currentPos)) continue;
-
-                    if (!currentPos.equals(startPos)) {
-                        BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
-                        NeoForge.EVENT_BUS.post(checkEvent);
-                        if (checkEvent.isCanceled()) continue;
-                    }
-
-                    LootParams.Builder lootParams = new LootParams.Builder(level)
-                            .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(currentPos))
-                            .withParameter(LootContextParams.TOOL, tool)
-                            .withParameter(LootContextParams.THIS_ENTITY, player)
-                            .withParameter(LootContextParams.BLOCK_STATE, currentState);
-
-                    List<ItemStack> drops = currentState.getDrops(lootParams);
-
-                    if (SkillManager.get().getPlayerSkillLevel(player, "refiner") > 0 && !hasSilkTouch) {
-                        List<ItemStack> smelted = RefinerEffect.smeltDrops(level, drops);
-                        if (smelted != null) {
-                            drops = smelted;
-                            notifyClient(player, SkillManager.get().getSkill("refiner"));
-                        }
-                    }
-
-                    int vanillaXp = currentState.getExpDrop(level, currentPos, level.getBlockEntity(currentPos), player, tool);
-
-                    if (hasSilkTouch) {
-                        vanillaXp = 0;
-                    }
-
-                    boolean success;
-                    if (currentPos.equals(startPos)) {
-                        success = level.destroyBlock(currentPos, false, player);
-                    } else {
-                        success = level.removeBlock(currentPos, false);
-                        if(success) {
-                            player.awardStat(Stats.BLOCK_MINED.get(currentState.getBlock()));
-                            if (vanillaXp > 0) {
-                                ExperienceOrb orb = new ExperienceOrb(level, dropPos.x, dropPos.y, dropPos.z, vanillaXp);
-                                level.addFreshEntity(orb);
-                            }
-                        }
-                    }
-
-                    if (success) {
-                        for (ItemStack item : drops) {
-                            if(!item.isEmpty()) {
-                                ItemEntity entity = new ItemEntity(level, dropPos.x, dropPos.y, dropPos.z, item.copy());
-                                entity.setDefaultPickUpDelay();
-                                entity.setDeltaMovement(Vec3.ZERO);
-                                level.addFreshEntity(entity);
-                            }
-                        }
-
-                        player.causeFoodExhaustion(0.005F);
-
-                        blocksBroken++;
-                        tool.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
-                        if (tool.isEmpty()) break;
-
-                        addNeighbors(currentPos, queue, visited);
-                    }
-                }
-            }
-
-            if(blocksBroken > 1) notifyClient(player, skill);
-
-        } finally {
-            IS_MINING.set(false);
-        }
-    }
-
-    private void addNeighbors(BlockPos pos, Queue<BlockPos> queue, Set<BlockPos> visited) {
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dy = -1; dy <= 1; dy++) {
-                for (int dz = -1; dz <= 1; dz++) {
-                    if (dx == 0 && dy == 0 && dz == 0) continue;
-                    BlockPos neighbor = pos.offset(dx, dy, dz);
-                    if (!visited.contains(neighbor)) {
-                        visited.add(neighbor);
-                        queue.add(neighbor);
-                    }
-                }
-            }
-        }
-    }
+//    private static final ThreadLocal<Boolean> IS_MINING = ThreadLocal.withInitial(() -> false);
+//
+//    @Override
+//    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
+//        if (IS_MINING.get()) return;
+//        if(!(event.getLevel() instanceof ServerLevel level)) return;
+//
+//        if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
+//
+//        if (player.isShiftKeyDown()) return;
+//
+//        BlockState state = event.getState();
+//        if (!state.is(Tags.Blocks.ORES)) return;
+//
+//        ItemStack tool = player.getMainHandItem();
+//        if (!tool.isCorrectToolForDrops(state)) return;
+//
+//        BlockPos startPos = event.getPos();
+//
+//        boolean griefProtection = Config.DEEP_LODE_GRIEF_PROTECTION.getAsBoolean();
+//        if(griefProtection && BlockMarker.IsPlayerPlaced(level, startPos)) return;
+//
+//        Block targetBlock = state.getBlock();
+//
+//        event.setCanceled(true);
+//        IS_MINING.set(true);
+//
+//        int MAX_BLOCKS = Config.MAX_ORES.getAsInt();
+//
+//        try {
+//            Queue<BlockPos> queue = new LinkedList<>();
+//            Set<BlockPos> visited = new HashSet<>();
+//
+//            queue.add(startPos);
+//            visited.add(startPos);
+//
+//            int blocksBroken = 0;
+//
+//            Vec3 dropPos = Vec3.atCenterOf(startPos).add(0, 0.5, 0);
+//
+//            Holder<Enchantment> silkTouchHolder = level.registryAccess()
+//                    .lookupOrThrow(Registries.ENCHANTMENT)
+//                    .getOrThrow(Enchantments.SILK_TOUCH);
+//
+//            ItemEnchantments enchants = tool.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+//             boolean hasSilkTouch = enchants.getLevel(silkTouchHolder) > 0;
+//
+//            while (!queue.isEmpty()) {
+//                if (blocksBroken >= MAX_BLOCKS) break;
+//
+//                BlockPos currentPos = queue.poll();
+//                BlockState currentState = level.getBlockState(currentPos);
+//
+//                if (currentState.is(targetBlock)) {
+//
+//                    if (griefProtection && BlockMarker.IsPlayerPlaced(level, currentPos)) continue;
+//
+//                    if (!currentPos.equals(startPos)) {
+//                        BlockEvent.BreakEvent checkEvent = new BlockEvent.BreakEvent(level, currentPos, currentState, player);
+//                        NeoForge.EVENT_BUS.post(checkEvent);
+//                        if (checkEvent.isCanceled()) continue;
+//                    }
+//
+//                    LootParams.Builder lootParams = new LootParams.Builder(level)
+//                            .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(currentPos))
+//                            .withParameter(LootContextParams.TOOL, tool)
+//                            .withParameter(LootContextParams.THIS_ENTITY, player)
+//                            .withParameter(LootContextParams.BLOCK_STATE, currentState);
+//
+//                    List<ItemStack> drops = currentState.getDrops(lootParams);
+//
+//                    if (SkillManager.get().getPlayerSkillLevel(player, "refiner") > 0 && !hasSilkTouch) {
+//                        List<ItemStack> smelted = RefinerEffect.smeltDrops(level, drops);
+//                        if (smelted != null) {
+//                            drops = smelted;
+//                            notifyClient(player, SkillManager.get().getSkill("refiner"));
+//                        }
+//                    }
+//
+//                    int vanillaXp = currentState.getExpDrop(level, currentPos, level.getBlockEntity(currentPos), player, tool);
+//
+//                    if (hasSilkTouch) {
+//                        vanillaXp = 0;
+//                    }
+//
+//                    boolean success;
+//                    if (currentPos.equals(startPos)) {
+//                        success = level.destroyBlock(currentPos, false, player);
+//                    } else {
+//                        success = level.removeBlock(currentPos, false);
+//                        if(success) {
+//                            player.awardStat(Stats.BLOCK_MINED.get(currentState.getBlock()));
+//                            if (vanillaXp > 0) {
+//                                ExperienceOrb orb = new ExperienceOrb(level, dropPos.x, dropPos.y, dropPos.z, vanillaXp);
+//                                level.addFreshEntity(orb);
+//                            }
+//                        }
+//                    }
+//
+//                    if (success) {
+//                        for (ItemStack item : drops) {
+//                            if(!item.isEmpty()) {
+//                                ItemEntity entity = new ItemEntity(level, dropPos.x, dropPos.y, dropPos.z, item.copy());
+//                                entity.setDefaultPickUpDelay();
+//                                entity.setDeltaMovement(Vec3.ZERO);
+//                                level.addFreshEntity(entity);
+//                            }
+//                        }
+//
+//                        player.causeFoodExhaustion(0.005F);
+//
+//                        blocksBroken++;
+//                        tool.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+//                        if (tool.isEmpty()) break;
+//
+//                        addNeighbors(currentPos, queue, visited);
+//                    }
+//                }
+//            }
+//
+//            if(blocksBroken > 1) notifyClient(player, skill);
+//
+//        } finally {
+//            IS_MINING.set(false);
+//        }
+//    }
+//
+//    private void addNeighbors(BlockPos pos, Queue<BlockPos> queue, Set<BlockPos> visited) {
+//        for (int dx = -1; dx <= 1; dx++) {
+//            for (int dy = -1; dy <= 1; dy++) {
+//                for (int dz = -1; dz <= 1; dz++) {
+//                    if (dx == 0 && dy == 0 && dz == 0) continue;
+//                    BlockPos neighbor = pos.offset(dx, dy, dz);
+//                    if (!visited.contains(neighbor)) {
+//                        visited.add(neighbor);
+//                        queue.add(neighbor);
+//                    }
+//                }
+//            }
+//        }
+//    }
 }

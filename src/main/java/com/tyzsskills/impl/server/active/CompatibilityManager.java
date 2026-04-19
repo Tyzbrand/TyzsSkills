@@ -2,8 +2,8 @@ package com.tyzsskills.impl.server.active;
 
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.LegacyData;
+import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
-import com.tyzsskills.impl.server.power.PowerManager;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;
@@ -23,18 +23,20 @@ import java.util.Locale;
 @ApiStatus.Internal
 public class CompatibilityManager {
 
+    private static PlayerData getData(ServerPlayer player) {return player.getData(PlayerData.DATA);}
+
     //Migration from old Mcreator attachment -> persistent data
     private static final String MIGRATION_TAG = "tyzs_migrated_v1";
     public static void processMigration(ServerPlayer player){
-        if(player.getPersistentData().getBoolean(MIGRATION_TAG)) return;
+        var data = getData(player);
+        if(data.hasMigrated(MIGRATION_TAG)) return;
 
         var legacy = player.getData(LegacyData.PLAYER_VARIABLES);
 
         if(!legacy.hasData()){
-            player.getPersistentData().putBoolean(MIGRATION_TAG, true);
+            data.putTag(MIGRATION_TAG);
             return;
         }
-
 
         //Main data
         double oldLevel = legacy.getOldValue("Level");
@@ -48,16 +50,16 @@ public class CompatibilityManager {
 
 
         //Stat data
-        var data = player.getData(StatsTracker.DATA);
+        var statData = player.getData(StatsTracker.DATA);
 
         double oldLifeTimeXp = legacy.getOldValue("lifetime_xp");
-        if(oldLifeTimeXp > 0) data.addXp((float)oldLifeTimeXp);
+        if(oldLifeTimeXp > 0) statData.addXp((float)oldLifeTimeXp);
 
         double oldEarns = legacy.getOldValue("earned_points");
-        if(oldEarns > 0) data.addSpEarned((int)oldEarns);
+        if(oldEarns > 0) statData.addSpEarned((int)oldEarns);
 
         double oldGains = legacy.getOldValue("spent_points");
-        if(oldGains > 0) data.addSpSpent((int)oldGains);
+        if(oldGains > 0) statData.addSpSpent((int)oldGains);
 
 
         removeOldModifier(player, Attributes.MOVEMENT_SPEED, "speedmodifier");
@@ -104,9 +106,7 @@ public class CompatibilityManager {
             player.level().playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.5f, 1.0f);
         }
 
-
-        player.getPersistentData().putBoolean(MIGRATION_TAG, true);
-
+        data.putTag(MIGRATION_TAG);
         XpManager.levelUpCheck(player);
     }
 
@@ -137,9 +137,10 @@ public class CompatibilityManager {
     //Migration from persistent data -> attachment
     private static final String MIGRATION_TAG_V2 = "tyzs_migrated_v2";
     public static void processMigrationV2(ServerPlayer player){
-        var oldData = player.getPersistentData();
+        var data = getData(player);
+        boolean didMigrate = data.hasMigrated(MIGRATION_TAG_V2);
 
-        boolean didMigrate = oldData.getBoolean(MIGRATION_TAG_V2);
+        var oldData = player.getPersistentData();
         if(!didMigrate){
             if(oldData.contains("SKILL_LEVEL")) LevelManager.setLevel(player, oldData.getInt("SKILL_LEVEL"));
 
@@ -147,7 +148,6 @@ public class CompatibilityManager {
 
             if(oldData.contains("SKILL_XP")) XpManager.setXP(player, oldData.getFloat("SKILL_XP"));
 
-            if(oldData.contains("TRAIT_POWER")) PowerManager.setPower(player, oldData.getInt("TRAIT_POWER"));
 
             for (var skill : SkillManager.get().getAllSkills()){
                 var id = skill.getID().toLowerCase();
@@ -156,11 +156,63 @@ public class CompatibilityManager {
 
                 if(oldData.contains(lvlKey)) SkillManager.get().setSkillLevel(player, id, oldData.getInt(lvlKey));
 
-
                 if(oldData.contains(bkKey)) SkillManager.get().bookmarkSkill(player, id);
             }
-            didMigrate = true;
         }
-        oldData.putBoolean(MIGRATION_TAG_V2, true);
+        data.putTag(MIGRATION_TAG_V2);
+    }
+
+    //Migration for refund old purchased Traits
+    private static final String MIGRATION_TAG_V3 = "tyzs_migrated_v3";
+    public static void processMigrationV3(ServerPlayer player){
+        var data = getData(player);
+        boolean didMigrate = data.hasMigrated(MIGRATION_TAG_V3);
+
+        if(!didMigrate){
+
+            int totalRefund = 0;
+
+            totalRefund += checkAndRefundTrait(player, "cinder_blood", 65);
+            totalRefund += checkAndRefundTrait(player, "deep_lode", 55);
+            totalRefund += checkAndRefundTrait(player, "root_cleaver", 25);
+            totalRefund += checkAndRefundTrait(player, "iron_gut", 10);
+            totalRefund += checkAndRefundTrait(player, "gilded_aura", 20);
+            totalRefund += checkAndRefundTrait(player, "silver_tongue", 15);
+            totalRefund += checkAndRefundTrait(player, "soundless", 45);
+            totalRefund += checkAndRefundTrait(player, "refiner", 35);
+            totalRefund += checkAndRefundTrait(player, "deep_sight", 40);
+            totalRefund += checkAndRefundTrait(player, "deep_rest", 30);
+            totalRefund += checkAndRefundTrait(player, "keepsake", 65);
+
+            var manager = SkillManager.get();
+            var traitSurgeLvl = manager.getPlayerSkillLevel(player, "trait_surge");
+            if(traitSurgeLvl > 0){
+                var prices = new int[]{10, 15, 20, 30, 45};
+                traitSurgeLvl = Math.min(traitSurgeLvl, 5);
+
+                manager.setSkillLevel(player, "trait_surge", 0);
+
+                for(int i = 0; i < traitSurgeLvl; i++){
+                    var price = prices[i];
+
+                    totalRefund += price;
+                    SpManager.addSP(player, price);
+                }
+            }
+
+            if(totalRefund > 0) player.sendSystemMessage(Component.literal("§e[Tyzs Skills] §rRemoved traits refund: §6+" + totalRefund + " SP"));
+        }
+        data.putTag(MIGRATION_TAG_V3);
+    }
+
+    private static int checkAndRefundTrait(ServerPlayer player, String id, int price){
+        var manager = SkillManager.get();
+        if(manager.getPlayerSkillLevel(player, id) > 0) {
+            manager.setSkillLevel(player, id, 0);
+            SpManager.addSP(player, price);
+
+            return price;
+        }
+        return 0;
     }
 }

@@ -34,17 +34,11 @@ public class SkillBehaviorRegistry {
         behaviors.put("spare_parts", new SparePartsEffect());
         behaviors.put("twist_of_fate", new TwistOfFateEffect());
 
-        behaviors.put("cinder_blood", new CinderBloodEffect());
-        behaviors.put("iron_gut", new IronGutEffect());
-        behaviors.put("gilded_aura", new GildedAuraEffect());
-        behaviors.put("silver_tongue", new SilverTongueEffect());
+        behaviors.put("haggler", new HagglerEffect());
         behaviors.put("keepsake", new KeepsakeEffect());
-        behaviors.put("soundless", new SoundlessEffect());
         behaviors.put("root_cleaver", new RootCleaverEffect());
         behaviors.put("deep_lode", new DeepLodeEffect());
         behaviors.put("refiner", new RefinerEffect());
-        behaviors.put("deep_rest", new DeepRestEffect());
-        behaviors.put("deep_sight", new DeepSightEffect());
     }
 
     public static void registerCustomBehavior(String id, SkillBehavior behavior){

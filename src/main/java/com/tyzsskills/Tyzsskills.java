@@ -106,7 +106,6 @@ public class Tyzsskills {
         TyzsSkillsAPI.registerLevelManager(new LevelWrapper());
         TyzsSkillsAPI.registerXpManager(new XpWrapper());
         TyzsSkillsAPI.registerSkillManager(new SkillWrapper());
-        TyzsSkillsAPI.registerPowerManager(new PowerWrapper());
     }
 
     private void registerAttributes(EntityAttributeModificationEvent event) {
@@ -116,10 +115,6 @@ public class Tyzsskills {
 
         if (!event.has(EntityType.PLAYER, AttributeRegistry.SP_MULTIPLIER)) {
             event.add(EntityType.PLAYER, AttributeRegistry.SP_MULTIPLIER);
-        }
-
-        if (!event.has(EntityType.PLAYER, AttributeRegistry.TRAIT_POWER)) {
-            event.add(EntityType.PLAYER, AttributeRegistry.TRAIT_POWER);
         }
     }
 
@@ -203,11 +198,6 @@ public class Tyzsskills {
                 SkillBookmarksPayload::Handle
         );
 
-        registrar.playToClient(
-                PowerUpdatePayload.TYPE,
-                PowerUpdatePayload.STREAM_CODEC,
-                PowerUpdatePayload::Handle
-        );
 
         registrar.playToClient(
                 StatsXpPayload.TYPE,

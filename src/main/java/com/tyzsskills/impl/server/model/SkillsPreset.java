@@ -17,7 +17,6 @@ public class SkillsPreset {
         finalList.addAll(getAbilitySkills());
         finalList.addAll(getFightSkills());
         finalList.addAll(getMiscSkills());
-        finalList.addAll(getTraits());
 
         return finalList;
     }
@@ -484,22 +483,6 @@ public class SkillsPreset {
                         "block_radius", new ValueSet(List.of(3f, 5f, 7f, 10f), "skill.tyzs_skills.unit.block_radius"))
         ));
 
-        finalList.add(new Skill(
-                true,
-                "trait_surge",
-                5,
-                List.of(10, 15, 20, 30, 45),
-                Enums.SkillType.GENERIC,
-                Enums.CategoryType.MISC,
-                true,
-                "tyzs_skills:textures/gui/skills/trait_surge.png",
-                "skill.tyzs_skills.trait_surge.displayName",
-                "skill.tyzs_skills.trait_surge.description",
-                List.of(new Modifier("tyzs_skills:trait_power",
-                        AttributeModifier.Operation.ADD_VALUE,
-                        List.of(1f, 2f, 3f, 4f, 5f),
-                        "skill.tyzs_skills.unit.trait_power")),
-                null));
 
         finalList.add(new Skill(
                 true,
@@ -549,123 +532,40 @@ public class SkillsPreset {
                         "loot_multiplier", new ValueSet(List.of(10f, 20f, 30f, 40f, 50f), "skill.tyzs_skills.unit.percentage"))
         ));
 
-        return finalList;
-    }
-
-    private static List<Skill> getTraits(){
-        List<Skill> finalList = new ArrayList<>();
-
-        finalList.add(new Trait(
-                true,
-                "cinder_blood",
-                6,
-                55,
-                true,
-                "tyzs_skills:textures/gui/skills/cinder_blood.png",
-                "skill.tyzs_skills.cinder_blood.displayName",
-                "skill.tyzs_skills.cinder_blood.description"));
-
-        finalList.add(new Trait(
-                true,
-                "deep_lode",
-                6,
-                55,
-                true,
-                "tyzs_skills:textures/gui/skills/deep_lode.png",
-                "skill.tyzs_skills.deep_lode.displayName",
-                "skill.tyzs_skills.deep_lode.description"));
-
-        finalList.add(new Trait(
-                true,
-                "root_cleaver",
-                3,
-                25,
-                true,
-                "tyzs_skills:textures/gui/skills/root_cleaver.png",
-                "skill.tyzs_skills.root_cleaver.displayName",
-                "skill.tyzs_skills.root_cleaver.description"));
-
-        finalList.add(new Trait(
-                true,
-                "iron_gut",
-                1,
-                10,
-                true,
-                "tyzs_skills:textures/gui/skills/iron_gut.png",
-                "skill.tyzs_skills.iron_gut.displayName",
-                "skill.tyzs_skills.iron_gut.description"));
-
-        finalList.add(new Trait(
-                true,
-                "gilded_aura",
-                3,
-                20,
-                true,
-                "tyzs_skills:textures/gui/skills/gilded_aura.png",
-                "skill.tyzs_skills.gilded_aura.displayName",
-                "skill.tyzs_skills.gilded_aura.description"));
-
-        finalList.add(new Trait(
-                true,
-                "silver_tongue",
-                2,
-                15,
-                true,
-                "tyzs_skills:textures/gui/skills/silver_tongue.png",
-                "skill.tyzs_skills.silver_tongue.displayName",
-                "skill.tyzs_skills.silver_tongue.description"));
-
-        finalList.add(new Trait(
+        finalList.add(new Skill(
                 true,
                 "keepsake",
-                7,
-                65,
+                8,
+                List.of(4, 6, 8, 12, 16, 20, 25, 30),
+                Enums.SkillType.IMMUTABLE,
+                Enums.CategoryType.MISC,
                 true,
                 "tyzs_skills:textures/gui/skills/keepsake.png",
                 "skill.tyzs_skills.keepsake.displayName",
-                "skill.tyzs_skills.keepsake.description"));
+                "skill.tyzs_skills.keepsake.description",
+                null,
+                Map.of(
+                        "saved_slots", new ValueSet(List.of(1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f), "skill.tyzs_skills.unit.slot"))
+        ));
 
-        finalList.add(new Trait(
-                false,
-                "soundless",
-                5,
-                45,
-                false,
-                "tyzs_skills:textures/gui/skills/soundless.png",
-                "skill.tyzs_skills.soundless.displayName",
-                "skill.tyzs_skills.soundless.description"));
-
-        finalList.add(new Trait(
+        finalList.add(new Skill(
                 true,
-                "refiner",
+                "haggler",
                 4,
-                35,
+                List.of(2, 3, 4, 5),
+                Enums.SkillType.IMMUTABLE,
+                Enums.CategoryType.MISC,
                 true,
-                "tyzs_skills:textures/gui/skills/refiner.png",
-                "skill.tyzs_skills.refiner.displayName",
-                "skill.tyzs_skills.refiner.description"));
-
-        finalList.add(new Trait(
-                true,
-                "deep_sight",
-                4,
-                40,
-                true,
-                "tyzs_skills:textures/gui/skills/deep_sight.png",
-                "skill.tyzs_skills.deep_sight.displayName",
-                "skill.tyzs_skills.deep_sight.description"));
-
-        finalList.add(new Trait(
-                true,
-                "deep_rest",
-                4,
-                30,
-                true,
-                "tyzs_skills:textures/gui/skills/deep_rest.png",
-                "skill.tyzs_skills.deep_rest.displayName",
-                "skill.tyzs_skills.deep_rest.description"));
-
+                "tyzs_skills:textures/gui/skills/haggler.png",
+                "skill.tyzs_skills.haggler.displayName",
+                "skill.tyzs_skills.haggler.description",
+                null,
+                Map.of(
+                        "block_radius", new ValueSet(List.of(10f, 15f, 20f, 25f), "skill.tyzs_skills.unit.block_radius"),
+                        "villager_speed", new ValueSet(List.of(0f, 25f, 25f, 50f), "skill.tyzs_skills.unit.percentage"))
+        ));
 
         return finalList;
     }
+
 }

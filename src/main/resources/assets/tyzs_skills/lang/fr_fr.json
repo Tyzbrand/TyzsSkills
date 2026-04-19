@@ -4,7 +4,6 @@
   "gui.tyzs_skills.Lvl" : "Nv",
   "gui.tyzs_skills.Skills" : "Compétences",
   "gui.tyzs_skills.Quests" : "Quêtes",
-  "gui.tyzs_skills.traits" : "Traits",
   "gui.tyzs_skills.error_value" : "N/A",
   "gui.tyzs_skills.level_max" : "Niveau max",
   "gui.tyzs_skills.cost" : "Coût",
@@ -18,7 +17,6 @@
   "skill.tyzs_skills.unit.blocks" : "blocs",
   "skill.tyzs_skills.unit.half_hearts" : "demis-coeurs",
   "skill.tyzs_skills.unit.damage" : "dégâts",
-  "skill.tyzs_skills.unit.trait_power" : "puissance",
   "skill.tyzs_skills.unit.block_radius" : "zone",
 
 
@@ -109,85 +107,26 @@
   "skill.tyzs_skills.magnet.displayName" : "Aimant",
   "skill.tyzs_skills.magnet.description" : "Attire les items au sol dans un rayon de {block_radius} blocs",
 
-  "skill.tyzs_skills.trait_surge.displayName" : "Essor des traits",
-  "skill.tyzs_skills.trait_surge.description" : "Augmente la puissance de trait de {value}",
 
-  "skill.tyzs_skills.cinder_blood.displayName" : "Sang ardent",
-  "skill.tyzs_skills.cinder_blood.description" : "Immunise contre les dégâts du feu (je ne tenterait pas de me baigner dans la lave)",
-
-  "skill.tyzs_skills.deep_lode.displayName" : "Fracture",
-  "skill.tyzs_skills.deep_lode.description" : "Détruit un filon de minerai d'un coup (s'accroupir pour désactiver)",
-
-  "skill.tyzs_skills.root_cleaver.displayName" : "Déracinement",
-  "skill.tyzs_skills.root_cleaver.description" : "Abat un arbre entier d'un coup (s'accroupir pour désactiver)",
-
-  "skill.tyzs_skills.iron_gut.displayName" : "Estomac d'Acier",
-  "skill.tyzs_skills.iron_gut.description" : "Empêche l'effet de faim lors de la consommation de chair putréfiée",
-
-  "skill.tyzs_skills.gilded_aura.displayName" : "Aura Dorée",
-  "skill.tyzs_skills.gilded_aura.description" : "Plus besoin d'armure en or pour sympatiser avec les piglins",
-
-  "skill.tyzs_skills.silver_tongue.displayName" : "Persuasion",
-  "skill.tyzs_skills.silver_tongue.description" : "Les villageois vous suivent si vous tenez des émeraudes",
+  "skill.tyzs_skills.haggler.displayName" : "Persuasion",
+  "skill.tyzs_skills.haggler.description" : "Les villageois vous suivent si vous tenez des émeraudes",
 
   "skill.tyzs_skills.keepsake.displayName" : "Souvenirs",
   "skill.tyzs_skills.keepsake.description" : "Permet de conserver les objets de la hotbar après la mort",
 
-  "skill.tyzs_skills.soundless.displayName" : "Soundless",
-  "skill.tyzs_skills.soundless.description" : "Prevents enemies and entities from hearing you",
 
-  "skill.tyzs_skills.refiner.displayName" : "Catalyse",
-  "skill.tyzs_skills.refiner.description" : "Cuit automatiquement les minerais minés (s'accroupir pour désactiver)",
-
-  "skill.tyzs_skills.deep_sight.displayName" : "Vision Nocturne",
-  "skill.tyzs_skills.deep_sight.description" : "Donne un effet de vision nocturne dans les grottes",
-
-  "skill.tyzs_skills.deep_rest.displayName" : "Repos Réparateur",
-  "skill.tyzs_skills.deep_rest.description" : "Dormir restaure entièrement la santé et la faim",
-
-
-
-
-  "tyzs_skills.configuration.title": "Tyz's Skills Configuration",
-  "tyzs_skills.configuration.section.tyzs.skills.common.toml": "Common Config (Gameplay)",
-  "tyzs_skills.configuration.section.tyzs.skills.client.toml": "Client Config (Visuals)",
-  "tyzs_skills.configuration.general": "General Settings",
-  "tyzs_skills.configuration.xp_values": "XP Gain Values",
-  "tyzs_skills.configuration.overlays": "Overlays Settings",
   "tyzs_skills.configuration.xp_overlay": "XP Overlay Details",
   "tyzs_skills.configuration.level_up_overlay": "Level Up Overlay Details",
   "tyzs_skills.configuration.skill_overlay": "Skill Overlay Details",
   "tyzs_skills.configuration.debug": "Debug",
   "tyzs_skills.configuration.accessibility": "Accessibility",
-  "tyzs_skills.configuration.Cinder_blood": "Cinder blood",
-  "tyzs_skills.configuration.Deep_sight": "Deep sight",
-  "tyzs_skills.configuration.Root_cleaver": "Root cleaver",
-  "tyzs_skills.configuration.Deep_rest": "Deep rest",
-  "tyzs_skills.configuration.Deep_lode": "Deep lode",
-  "tyzs_skills.configuration.Silver_tongue": "Silver tongue",
-  "tyzs_skills.configuration.Trait_details": "Trait details",
   "tyzs_skills.configuration.inventory_button": "Inventory Button",
   "tyzs_skills.configuration.Limits": "Limits",
 
   "config.common.tyzs_skills.refund_system" : "Enable Refund System",
   "config.common.tyzs_skills.refund_system_per" : "Refund percentage",
-  "config.common.tyzs_skills.trait_unlock_level" : "Trait unlock level",
-  "config.common.tyzs_skills.trait_system" : "Enable Trait System",
   "config.common.tyzs_skills.prevent_placed_blocks_xp" : "Prevent placed blocks xp",
   "config.common..trait.max_ores" : "Max Vein Size",
-  "config.common.tyzs_skills.trait.deep_lode_grief" : "Grief protection",
-  "config.common.tyzs_skills.trait.max_logs" : "Max Logs Broken",
-  "config.common.tyzs_skills.trait.max_leaves" : "Max Leaves Broken",
-  "config.common.tyzs_skills.trait.match_type" : "Strict Block Matching",
-  "config.common.tyzs_skills.trait.root_cleaver_grief" : "Grief protection",
-  "config.common.tyzs_skills.trait.lava_damage" : "Prevent lava damage",
-  "config.common.tyzs_skills.trait.restores_health" : "Restore health",
-  "config.common.tyzs_skills.trait.restores_nutrition" : "Restore nutrition",
-  "config.common.tyzs_skills.trait.restores_saturation" : "Restore saturation",
-  "config.common.tyzs_skills.trait.ambient_threshold" : "Light Threshold (Block)",
-  "config.common.tyzs_skills.trait.sky_threshold" : "Light Threshold (Sky)",
-  "config.common.tyzs_skills.trait.attraction_radius" : "Attraction radius",
-  "config.common.tyzs_skills.trait.villagers_speed" : "Villager speed",
   "config.common.tyzs_skills.earn_creative_xp" : "XP in Creative Mode",
   "config.common.tyzs_skills.eating_xp_earnings" : "XP from Eating",
   "config.common.tyzs_skills.sleeping_gain" : "XP from Sleeping",
@@ -251,15 +190,6 @@
   "skill.tyzs_skills.rage.displayName" : "Rage",
   "skill.tyzs_skills.rage.description" : "Augmente les dégâts de {damage_buff}% quand la santé descend sous {health_threshold}%",
 
-  "gui.tyzs_skills.gain" : "Gain",
+  "gui.tyzs_skills.gain" : "Gain"
 
-  "config.common.tyzs_skills.killing_xp_earnings" : "XP from Killing entities",
-  "config.common.tyzs_skills.mining_xp_earnings" : "XP from breaking blocks",
-  "config.common.tyzs_skills.death_penatlies" : "Death Penalties",
-  "config.common.tyzs_skills.xp_loss" : "XP loss",
-  "config.common.tyzs_skills.sp_loss" : "SP loss",
-  "config.common.tyzs_skills.lvl_loss" : "Lvl loss",
-  "config.common.tyzs_skills.skill_loss" : "Skill loss",
-
-  "tyzs_skills.configuration.Death_penalties":"Death Penalties"
 }

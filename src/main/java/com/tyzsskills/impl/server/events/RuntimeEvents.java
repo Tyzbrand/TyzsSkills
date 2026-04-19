@@ -25,6 +25,7 @@ public class RuntimeEvents {
 
         CompatibilityManager.processMigration(player);
         CompatibilityManager.processMigrationV2(player);
+        CompatibilityManager.processMigrationV3(player);
 
         AutoSyncClient.syncMainData(player);
         AutoSyncClient.syncSkillList(player);

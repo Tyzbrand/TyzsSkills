@@ -18,35 +18,8 @@ public class Config {
     public static final String REFUND_PERCENTAGE_KEY = "refund_percentage";
     public static final ModConfigSpec.DoubleValue REFUND_PERCENTAGE;
 
-    public static final String TRAIT_UNLOCK_LEVEL_KEY = "trait_unlock";
-    public static final ModConfigSpec.IntValue TRAIT_UNLOCK_LEVEL;
-
-    public static final String TRAIT_SYSTEM_KEY = "trait_system";
-    public static final ModConfigSpec.BooleanValue TRAIT_SYSTEM;
-
     public static final ModConfigSpec.BooleanValue PREVENT_PLACED_BLOCK_XP;
 
-    //Traits
-    //===Deep lode===
-    public static final ModConfigSpec.IntValue MAX_ORES;
-    public static final ModConfigSpec.BooleanValue DEEP_LODE_GRIEF_PROTECTION;
-    //===Root cleaver===
-    public static final ModConfigSpec.IntValue MAX_LOGS;
-    public static final ModConfigSpec.IntValue MAX_LEAVES;
-    public static final ModConfigSpec.BooleanValue MATCH_TYPE;
-    public static final ModConfigSpec.BooleanValue ROOT_CLEAVER_GRIEF_PROTECTION;
-    //===Cinder blood===
-    public static final ModConfigSpec.BooleanValue PREVENT_LAVA_DAMAGE;
-    //===Deep rest===
-    public static final ModConfigSpec.BooleanValue RESTORES_HEALTH;
-    public static final ModConfigSpec.BooleanValue RESTORES_SATURATION;
-    public static final ModConfigSpec.BooleanValue RESTORES_NUTRITION;
-    //===Deep sight===
-    public static final ModConfigSpec.IntValue AMBIENT_BRIGHTNESS_THRESHOLD;
-    public static final ModConfigSpec.IntValue SKY_BRIGHTNESS_THRESHOLD;
-    //===Silver tongue===
-    public static final ModConfigSpec.DoubleValue ATTRACTION_RADIUS;
-    public static final ModConfigSpec.DoubleValue VILLAGERS_SPEED;
 
     //Limits
     public static final ModConfigSpec.IntValue MAX_LEVEL;
@@ -142,15 +115,6 @@ public class Config {
                 .translation("config.common.tyzs_skills.refund_system_per")
                 .defineInRange("refund_percentage", 30.0, 1.0, 100.0);
 
-        TRAIT_UNLOCK_LEVEL = commonBuilder
-                .comment("Minimum player level required to unlock and use traits")
-                .translation("config.common.tyzs_skills.trait_unlock_level")
-                .defineInRange("trait_unlock_level", 20, 1, Integer.MAX_VALUE);
-
-        TRAIT_SYSTEM = commonBuilder
-                .comment("Enable or disable the entire Trait system")
-                .translation("config.common.tyzs_skills.trait_system")
-                .define("trait_system", true);
 
         PREVENT_PLACED_BLOCK_XP = commonBuilder
                 .comment("Prevent manually placed block from providing xp")
@@ -221,94 +185,6 @@ public class Config {
                 .comment("Percentage of chance to lose one level on each skill")
                 .translation("config.common.tyzs_skills.skill_loss")
                 .defineInRange("skill_loss", 0.0, 0.0, 100.0);
-
-        commonBuilder.pop();
-
-        commonBuilder.push("Trait_details");
-
-        commonBuilder.push("Deep_lode");
-        MAX_ORES = commonBuilder
-                .comment("Define the max ores contained in a vein")
-                .translation("config.common..trait.max_ores")
-                .defineInRange("max_ore", 64, 1, Integer.MAX_VALUE);
-
-        DEEP_LODE_GRIEF_PROTECTION = commonBuilder
-                .comment("Prevents player-placed blocks from being destroyed by this trait")
-                .translation("config.common.tyzs_skills.trait.deep_lode_grief")
-                .define("deep_lode_grief_protection", true);
-        commonBuilder.pop();
-
-        commonBuilder.push("Root_cleaver");
-        MAX_LOGS = commonBuilder
-                .comment("Define the max logs that can be broken")
-                .translation("config.common.tyzs_skills.trait.max_logs")
-                .defineInRange("max_log", 256, 1, Integer.MAX_VALUE);
-
-        MAX_LEAVES = commonBuilder
-                .comment("Define the max leaves that can be broken")
-                .translation("config.common.tyzs_skills.trait.max_leaves")
-                .defineInRange("max_leaf", 512, 0, Integer.MAX_VALUE);
-
-        MATCH_TYPE = commonBuilder
-                .comment("Restrict chain-breaking to the initial block type (wood and leaves)")
-                .translation("config.common.tyzs_skills.trait.match_type")
-                .define("match_type", true);
-
-        ROOT_CLEAVER_GRIEF_PROTECTION = commonBuilder
-                .comment("Prevents player-placed blocks from being destroyed by this trait")
-                .translation("config.common.tyzs_skills.trait.root_cleaver_grief")
-                .define("root_cleaver_grief_protection", true);
-        commonBuilder.pop();
-
-        commonBuilder.push("Cinder_blood");
-        PREVENT_LAVA_DAMAGE = commonBuilder
-                .comment("Allow the trait to prevent lava damage")
-                .translation("config.common.tyzs_skills.trait.lava_damage")
-                .define("prevent_lava_damage", false);
-        commonBuilder.pop();
-
-        commonBuilder.push("Deep_rest");
-        RESTORES_SATURATION = commonBuilder
-                .comment("Restores saturation upon waking")
-                .translation("config.common.tyzs_skills.trait.restores_saturation")
-                .define("restores_sat", true);
-
-        RESTORES_HEALTH = commonBuilder
-                .comment("Restores health upon waking")
-                .translation("config.common.tyzs_skills.trait.restores_health")
-                .define("restores_health", true);
-
-        RESTORES_NUTRITION = commonBuilder
-                .comment("Restores nutrition upon waking")
-                .translation("config.common.tyzs_skills.trait.restores_nutrition")
-                .define("restores_nutrition", true);
-        commonBuilder.pop();
-
-        commonBuilder.push("Deep_sight");
-        AMBIENT_BRIGHTNESS_THRESHOLD = commonBuilder
-                .comment("Block light level threshold for activation")
-                .translation("config.common.tyzs_skills.trait.ambient_threshold")
-                .defineInRange("ambient_threshold", 5, 0, 15);
-
-        SKY_BRIGHTNESS_THRESHOLD = commonBuilder
-                .comment("Sky light level threshold for activation")
-                .translation("config.common.tyzs_skills.trait.sky_threshold")
-                .defineInRange("sky_threshold", 0, 0, 15);
-        commonBuilder.pop();
-
-        commonBuilder.push("Silver_tongue");
-        ATTRACTION_RADIUS = commonBuilder
-                .comment("Radius in blocks within which villagers are attracted")
-                .translation("config.common.tyzs_skills.trait.attraction_radius")
-                .defineInRange("attraction_radius", 16.0, 0.5, 50.0);
-
-        VILLAGERS_SPEED = commonBuilder
-                .comment("Movement speed of attracted villagers")
-                .translation("config.common.tyzs_skills.trait.villagers_speed")
-                .defineInRange("villager_speed", 0.6, 0.1, 25.0);
-        commonBuilder.pop();
-
-
 
         commonBuilder.pop();
         commonBuilder.push("xp_values");

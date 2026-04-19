@@ -11,5 +11,5 @@ import java.util.Map;
 public record SkillPrefab(boolean active, String id, int maximumLevel,
                           List<Integer> prices, Enums.SkillType type, Enums.CategoryType category,
                           boolean purchasable, String icon, String displayName, String description,
-                          List<Modifier> modifiers, Map<String, ValueSet> customValues, boolean isTrait, int powerWeight) {
+                          List<Modifier> modifiers, Map<String, ValueSet> customValues) {
 }
