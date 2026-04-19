@@ -6,6 +6,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.key.MainKeybind;
 import com.tyzsskills.impl.client.models.*;
+import com.tyzsskills.impl.client.tools.SortTools;
 import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.model.Skill;
@@ -62,7 +63,7 @@ public class MainGUI extends Screen {
         this.addButtons();
         this.addScrollView();
 
-        refreshList();
+        renderList();
     }
 
     @Override
@@ -81,8 +82,6 @@ public class MainGUI extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         this.renderIcons(guiGraphics);
-
-        updateButtonsVisibility();
 
         this.renderTooltips(guiGraphics, mouseX, mouseY);
     }
@@ -130,9 +129,9 @@ public class MainGUI extends Screen {
         gui.pose().popPose();
 
 
-        if(ClientCache.GetCategoryType() == Enums.CategoryType.BOOKMARKS) return;
+        if(SortTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS) return;
 
-        String localizationKey = "gui.tyzs_skills.Tab." + ClientCache.GetCategoryType().toString().toLowerCase();
+        String localizationKey = "gui.tyzs_skills.Tab." + SortTools.getCurrentSkillCategory().toString().toLowerCase();
         MutableComponent enumDisplayName = Component.translatable(localizationKey);
         int text3W = this.font.width(enumDisplayName);
         int rightLimit3 = leftPos+293;
@@ -220,12 +219,6 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, finalText, mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY, leftPos + 55, topPos + 6, 15, 15)){ //Skills button
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Skills"), mouseX, mouseY);
-        }
-
-
-
         if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)){
             SkillWidget hoveredWidget = this.scrollView.getHoveredWidget(mouseX, mouseY);
 
@@ -267,7 +260,6 @@ public class MainGUI extends Screen {
             gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
         }
 
-        if(ClientCache.GetContainerType() != Enums.ContainerType.SKILLS) return;
 
         if(isHovering(mouseX, mouseY, leftPos + 92, topPos + 7, 29, 20)){ //All tab
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
@@ -291,22 +283,6 @@ public class MainGUI extends Screen {
     }
 
     private void addButtons(){
-         this.skillBtn = new CustomTabButton(
-                leftPos + 55, topPos + 6,
-                14, 14,
-                83, 154,
-                97, 154,
-                111, 154,
-                325, 325,
-                () -> ClientCache.GetContainerType() == Enums.ContainerType.SKILLS,
-                background,
-                (b) -> {
-                    ClientCache.SetContainerType(Enums.ContainerType.SKILLS);
-                    refreshList();
-                });
-        this.addRenderableWidget(this.skillBtn);
-
-
         this.allBtn = new CustomTabButton(
                 leftPos + 92, topPos + 7,
                 29, 20,
@@ -314,11 +290,12 @@ public class MainGUI extends Screen {
                 82, 227,
                 82, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == Enums.CategoryType.ALL,
+                () -> SortTools.getCurrentSkillCategory() == Enums.CategoryType.ALL,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(Enums.CategoryType.ALL);
-                    this.refreshList();
+                    SortTools.SetCategoryType(Enums.CategoryType.ALL);
+                    SortTools.refreshList();
+                    this.renderList();
                 });
         this.addRenderableWidget(this.allBtn);
 
@@ -329,11 +306,12 @@ public class MainGUI extends Screen {
                 140, 227,
                 140, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == Enums.CategoryType.ABILITIES,
+                () -> SortTools.getCurrentSkillCategory() == Enums.CategoryType.ABILITIES,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(Enums.CategoryType.ABILITIES);
-                    this.refreshList();
+                    SortTools.SetCategoryType(Enums.CategoryType.ABILITIES);
+                    SortTools.refreshList();
+                    this.renderList();
                 });
         this.addRenderableWidget(this.abilitiesBtn);
 
@@ -344,11 +322,12 @@ public class MainGUI extends Screen {
                 111, 227,
                 111, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == Enums.CategoryType.FIGHT,
+                () -> SortTools.getCurrentSkillCategory() == Enums.CategoryType.FIGHT,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(Enums.CategoryType.FIGHT);
-                    this.refreshList();
+                    SortTools.SetCategoryType(Enums.CategoryType.FIGHT);
+                    SortTools.refreshList();
+                    this.renderList();
                 });
         this.addRenderableWidget(this.fightBtn);
 
@@ -359,11 +338,12 @@ public class MainGUI extends Screen {
                 169, 227,
                 169, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == Enums.CategoryType.MISC,
+                () -> SortTools.getCurrentSkillCategory() == Enums.CategoryType.MISC,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(Enums.CategoryType.MISC);
-                    this.refreshList();
+                    SortTools.SetCategoryType(Enums.CategoryType.MISC);
+                    SortTools.refreshList();
+                    this.renderList();
                 });
         this.addRenderableWidget(this.miscBtn);
 
@@ -374,27 +354,18 @@ public class MainGUI extends Screen {
                 198, 227,
                 198, 207,
                 325, 325,
-                () -> ClientCache.GetCategoryType() == Enums.CategoryType.BOOKMARKS,
+                () -> SortTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS,
                 background,
                 (b) -> {
-                    ClientCache.SetCategoryType(Enums.CategoryType.BOOKMARKS);
-                    this.refreshList();
+                    SortTools.SetCategoryType(Enums.CategoryType.BOOKMARKS);
+                    SortTools.refreshList();
+                    this.renderList();
                 });
         this.addRenderableWidget(this.bookmarksBtn);
     }
 
     private void renderIcons(GuiGraphics gui){
         renderIcon(gui, .65f, 232, 190, 17, 18, leftPos+43, topPos+65, 8);
-    }
-
-    private void updateButtonsVisibility() {
-        boolean isSkillMode = ClientCache.GetContainerType() == Enums.ContainerType.SKILLS;
-
-        if (this.allBtn != null) this.allBtn.visible = isSkillMode;
-        if (this.abilitiesBtn != null) this.abilitiesBtn.visible = isSkillMode;
-        if (this.fightBtn != null) this.fightBtn.visible = isSkillMode;
-        if (this.miscBtn != null) this.miscBtn.visible = isSkillMode;
-        if (this.bookmarksBtn != null) this.bookmarksBtn.visible = isSkillMode;
     }
 
     private void addScrollView(){
@@ -411,11 +382,8 @@ public class MainGUI extends Screen {
 
 
     //Actifs
-    public void refreshList(){
+    public void renderList(){
         if(this.scrollView == null) return;
-
-        var containerType = ClientCache.GetContainerType();
-
         scrollView.clearEntries();
 
         int maxPerLine = 3;
@@ -423,15 +391,7 @@ public class MainGUI extends Screen {
         SkillEntry currentRow = null;
         int countInRow = 0;
 
-
-
-        var categoryToLoad = ClientCache.GetCategoryType();
-        for(Skill skill : ClientCache.GetAllSkills()){
-            if(skill.getCategory() != categoryToLoad &&
-                    categoryToLoad != Enums.CategoryType.ALL && categoryToLoad != Enums.CategoryType.BOOKMARKS) continue;
-
-            if(categoryToLoad == Enums.CategoryType.BOOKMARKS && !ClientCache.isSkillBookmarked(skill.getID())) continue;
-
+        for(var skill : SortTools.getCurrentSkillOrder()){
             if(currentRow == null || countInRow >= maxPerLine){
                 currentRow = new SkillEntry();
                 this.scrollView.AddEntry(currentRow);

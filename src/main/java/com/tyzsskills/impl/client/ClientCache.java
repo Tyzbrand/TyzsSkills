@@ -32,8 +32,7 @@ public class ClientCache {
     private final static Map<String, Object> clientConfigMap = new HashMap<>();
     private final static HashSet<String> clientBookmarks = new HashSet<>();
 
-    private static Enums.ContainerType currentContainerType = Enums.ContainerType.SKILLS;
-    private static Enums.CategoryType currentContainerCategory = Enums.CategoryType.ALL;
+
 
 
     public static void UpdateClientCacheLevel(int level){
@@ -102,13 +101,8 @@ public class ClientCache {
         }
     }
 
-    public static void SetContainerType(Enums.ContainerType type){
-        currentContainerType = type;
-    }
 
-    public static void SetCategoryType(Enums.CategoryType category){
-        currentContainerCategory = category;
-    }
+
 
     public static void UpdateSkills(List<Skill> skills){
         clientSkills.clear();
@@ -281,8 +275,6 @@ public class ClientCache {
     public static int GetLvl(){return clientLevel;}
     public static float GetXPGOAL(){return clientLevelData.goal();}
     public static int GetReward(){return clientLevelData.reward();}
-    public static Enums.ContainerType GetContainerType(){return currentContainerType;}
-    public static Enums.CategoryType GetCategoryType(){return currentContainerCategory;}
     public static int getLimitPercentage(){return (int)(clientXpLimit * 100);}
 
     public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills.values());}
@@ -368,8 +360,6 @@ public class ClientCache {
     private static void shutDownReset(){
         clientConfigMap.clear();
         clientBookmarks.clear();
-        currentContainerCategory = Enums.CategoryType.ALL;
-        currentContainerType = Enums.ContainerType.SKILLS;
         clientSkills.clear();
     }
 }
