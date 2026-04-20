@@ -150,8 +150,7 @@ public class ClientCache {
     }
 
 
-
-
+    //PREDICTIONS
     public static void predictBookmark(Skill skill){
         String id = skill.getID();
         if(isSkillBookmarked(id)) clientBookmarks.remove(id);
@@ -299,6 +298,34 @@ public class ClientCache {
         }
         return count;
     }
+    public static float getTotalXpPerHour(){
+        var level = Minecraft.getInstance().level;
+        if(level == null) return 0f;
+
+        var ticks = level.getGameTime();
+
+        var effectiveTicks = Math.max(ticks, 1200f);
+        var exactHours = effectiveTicks / 72000f;
+
+        return clientAllTimeXP / exactHours;
+    }
+
+    private static long sessionStartTick = -1L;
+    public static float getSessionXpPerHour(){
+        var level = Minecraft.getInstance().level;
+        if(level == null) return 0f;
+
+        if (sessionStartTick == -1) {
+            sessionStartTick = level.getGameTime();
+        }
+
+        var sessionTicks = level.getGameTime() - sessionStartTick;
+
+        var effectiveTicks = Math.max(sessionTicks, 1200f);
+        var exactSessionHours = effectiveTicks / 72000f;
+
+        return ClientCache.GetSessionXp() / exactSessionHours;
+    }
 
     //getters config
     public static boolean GetConfigBool(String id, boolean fallback){
@@ -351,6 +378,7 @@ public class ClientCache {
         clientAllTimeXP = 0f;
         clientSpEarned = 0;
         clientSpSpent = 0;
+        sessionStartTick = -1L;
     }
 
     private static void resetLimits(){

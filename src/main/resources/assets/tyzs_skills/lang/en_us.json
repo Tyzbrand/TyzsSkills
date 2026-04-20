@@ -33,7 +33,6 @@
   "gui.tyzs_skills.Tab.misc" : "Misc",
   "gui.tyzs_skills.Tab.bookmarks" : "Bookmarks",
 
-  "gui.tyzs_skills.stats.all_time_xp" : "Total xp",
   "gui.tyzs_skills.stats.session_xp" : "Session xp",
   "gui.tyzs_skills.stats.sp_earned" : "SP earned",
   "gui.tyzs_skills.stats.sp_spent" : "SP spent",
@@ -215,5 +214,10 @@
   "tyzs_skills.configuration.search_bar":"Search Bar",
 
   "config.client.tyzs_skills.keep_search_query" : "Keep search query",
-  "config.client.tyzs_skills.query_tolerance" : "Query tolerance"
+  "config.client.tyzs_skills.query_tolerance" : "Query tolerance",
+
+  "button.tyzs_skills.config_btn" : "Configuration",
+
+  "gui.tyzs_skills.stats.xp_per_hour" : "/h",
+  "gui.tyzs_skills.stats.all_time_xp" : "All time xp"
 }

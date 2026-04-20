@@ -4,12 +4,11 @@ import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
+import com.tyzsskills.impl.client.SoundPlayer;
 import com.tyzsskills.impl.client.key.MainKeybind;
 import com.tyzsskills.impl.client.models.*;
 import com.tyzsskills.impl.client.tools.SortTools;
 import com.tyzsskills.impl.client.tools.StringTools;
-import com.tyzsskills.impl.server.active.AttributeRegistry;
-import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,14 +19,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class MainGUI extends Screen {
     private static final ResourceLocation background = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID,
@@ -83,9 +81,9 @@ public class MainGUI extends Screen {
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        this.renderIcons(guiGraphics);
+        this.renderIcons(guiGraphics, mouseX, mouseY);
 
-        guiGraphics.blit(background, leftPos + 144, topPos + 146, 82, 252, 106, 13, 325, 325);
+        guiGraphics.blit(background, leftPos + 130, topPos + 142, 83, 254, 115, 18, 325, 325);
 
         this.renderTooltips(guiGraphics, mouseX, mouseY);
     }
@@ -155,7 +153,7 @@ public class MainGUI extends Screen {
         int widthToDraw = (int)(ratio*70);
 
         if(widthToDraw > 0) {
-            gui.blit(background, leftPos + 2, topPos + 98, 82, 143, widthToDraw, 5, 325, 325);
+            gui.blit(background, leftPos + 2, topPos + 98, 82, 142, widthToDraw, 5, 325, 325);
         }
     }
 
@@ -234,16 +232,26 @@ public class MainGUI extends Screen {
             }
         }
 
-        if(isHovering(mouseX, mouseY, leftPos+43, topPos+65, 8, 8)){ //Stats
+        if(isHovering(mouseX, mouseY, leftPos + 56, topPos + 58, 14, 14)){ //Stats
             List<Component> tooltip = new ArrayList<>();
 
-            tooltip.add(Component.translatable("gui.tyzs_skills.stats.all_time_xp").withStyle(ChatFormatting.BLUE)
-                    .append(Component.literal(": "))
-                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.GetAllTimeXp())).withStyle(ChatFormatting.GRAY)));
+            tooltip.add(Component.empty()
+                    .append(Component.translatable("gui.tyzs_skills.stats.all_time_xp").withStyle(ChatFormatting.BLUE))
+                    .append(Component.literal(": ").withStyle(ChatFormatting.BLUE))
+                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.GetAllTimeXp())).withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(" (" + StringTools.valueSmartFormat(ClientCache.getTotalXpPerHour()))
+                            .append(Component.translatable("gui.tyzs_skills.stats.xp_per_hour"))
+                            .append(Component.literal(")"))).withStyle(ChatFormatting.DARK_GRAY));
 
-            tooltip.add(Component.translatable("gui.tyzs_skills.stats.session_xp").withStyle(ChatFormatting.BLUE)
-                    .append(Component.literal(": "))
-                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.GetSessionXp())).withStyle(ChatFormatting.GRAY)));
+
+
+            tooltip.add(Component.empty()
+                    .append(Component.translatable("gui.tyzs_skills.stats.session_xp").withStyle(ChatFormatting.BLUE))
+                    .append(Component.literal(": ").withStyle(ChatFormatting.BLUE))
+                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.GetSessionXp())).withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(" (" + StringTools.valueSmartFormat(ClientCache.getSessionXpPerHour()))
+                            .append(Component.translatable("gui.tyzs_skills.stats.xp_per_hour"))
+                            .append(Component.literal(")"))).withStyle(ChatFormatting.DARK_GRAY));
 
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.sp_earned").withStyle(ChatFormatting.BLUE)
@@ -261,9 +269,13 @@ public class MainGUI extends Screen {
                     .append(Component.literal(ClientCache.GetUnlockedSkills() + "/" + ClientCache.GetSkillCount())
                             .withStyle(ChatFormatting.GRAY)));
 
+
             gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
         }
 
+        if(isHovering(mouseX, mouseY, leftPos + 56, topPos + 44, 11, 11)){ //Config
+            gui.renderTooltip(this.font, Component.translatable("button.tyzs_skills.config_btn"), mouseX, mouseY);
+        }
 
         if(isHovering(mouseX, mouseY, leftPos + 92, topPos + 7, 29, 20)){ //All tab
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
@@ -368,8 +380,12 @@ public class MainGUI extends Screen {
         this.addRenderableWidget(this.bookmarksBtn);
     }
 
-    private void renderIcons(GuiGraphics gui){
-        renderIcon(gui, .65f, 232, 190, 17, 18, leftPos+43, topPos+65, 8);
+    private void renderIcons(GuiGraphics gui, int mouseX, int mouseY){
+        var statsU = isHovering(mouseX, mouseY, leftPos + 56, topPos + 58, 14, 14) ? 247 : 232;
+        renderIcon(gui, .80f, statsU, 190, 14, 18, leftPos + 59, topPos + 61, 8);
+
+        var gearU = isHovering(mouseX, mouseY, leftPos + 56, topPos + 44, 11, 11) ? 286 : 271;
+        renderIcon(gui, .80f, gearU, 192, 14, 14, leftPos + 59, topPos + 46, 8);
     }
 
     private void addScrollView(){
@@ -385,10 +401,10 @@ public class MainGUI extends Screen {
     }
 
     private void addSearchBar(){
-        this.searchBar = new EditBox(this.font, leftPos + 146, topPos + 149, 98, 13, Component.literal("Search"));
+        this.searchBar = new EditBox(this.font, leftPos + 135, topPos + 147,  80, 18, Component.literal("Search"));
 
         this.searchBar.setBordered(false);
-        this.searchBar.setTextColor(0xFFFFFF);
+        this.searchBar.setTextColor(0x000000);
 
         if(Config.KEEP_SEARCH_QUERY.getAsBoolean()) this.searchBar.setValue(SortTools.getCurrentSearchQuery());
 
@@ -430,10 +446,14 @@ public class MainGUI extends Screen {
         return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
     }
 
+    private boolean isHovering(double mouseX, double mouseY, int x, int y, int width, int height){
+        return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
+    }
+
     private void renderIcon(GuiGraphics gui, float scale, int u, int v, int w, int h, int btnX, int btnY, int btnS){
 
         float scaledSize = w * scale;
-        float offset = (btnS -scaledSize) / 2f;
+        float offset = (btnS - scaledSize) / 2f;
 
         float targetVisualX = btnX + offset;
         float targetVisualY = btnY + offset;
@@ -465,6 +485,23 @@ public class MainGUI extends Screen {
     }
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button){
+        if(button == 0 && isHovering(mouseX, mouseY, leftPos + 56, topPos + 44, 11, 11)){
+
+            var container = ModList.get().getModContainerById(Tyzsskills.MODID).orElseThrow();
+            container.getCustomExtension(IConfigScreenFactory.class).ifPresent(factory -> {
+                if(this.minecraft != null) this.minecraft.setScreen(factory.createScreen(container, this));
+            });
+
+            var player = Minecraft.getInstance().player;
+            if(player != null) SoundPlayer.PlayUIClick();
+
+            return true;
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (this.searchBar.isFocused()) {
             return this.searchBar.keyPressed(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
@@ -492,6 +529,5 @@ public class MainGUI extends Screen {
     }
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
-
 
 }
