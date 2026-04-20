@@ -562,7 +562,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "block_radius", new ValueSet(List.of(10f, 15f, 20f, 25f), "skill.tyzs_skills.unit.block_radius"),
-                        "villager_speed", new ValueSet(List.of(0f, 25f, 25f, 50f), "skill.tyzs_skills.unit.percentage"))
+                        "villager_speed", new ValueSet(List.of(0f, 5f, 5f, 10f), "skill.tyzs_skills.unit.percentage"))
         ));
 
         return finalList;

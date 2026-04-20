@@ -401,7 +401,7 @@ public class MainGUI extends Screen {
     }
 
     private void addSearchBar(){
-        this.searchBar = new EditBox(this.font, leftPos + 135, topPos + 147,  80, 18, Component.literal("Search"));
+        this.searchBar = new EditBox(this.font, leftPos + 135, topPos + 147,  83, 18, Component.literal("Search"));
 
         this.searchBar.setBordered(false);
         this.searchBar.setTextColor(0x000000);

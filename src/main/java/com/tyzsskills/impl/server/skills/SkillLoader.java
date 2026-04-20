@@ -103,8 +103,8 @@ public class SkillLoader {
 
                 var values = getSafeList(obj, "values", JsonElement::getAsFloat);
                 if(values == null) {ErrorManager.registerSkillError(id, "invalid values"); return;}
-                if(values.size() < prices.size()) {
-                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), prices.size()));
+                if(values.size() < maxLevel) {
+                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), maxLevel));
                     return;
                 }
 
@@ -136,8 +136,8 @@ public class SkillLoader {
 
                 var values = getSafeList(iterationObj, "values", JsonElement::getAsFloat);
                 if(values == null) {ErrorManager.registerSkillError(id, "invalid values"); return;}
-                if(values.size() < prices.size()) {
-                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), prices.size()));
+                if(values.size() < maxLevel) {
+                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), maxLevel));
                     return;
                 }
 

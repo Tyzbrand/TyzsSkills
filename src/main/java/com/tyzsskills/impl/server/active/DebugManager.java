@@ -15,11 +15,14 @@ import com.tyzsskills.impl.server.xp.XpManager;
 import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
 import com.tyzsskills.impl.server.xp.xpEvents.XpFood;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -40,17 +43,10 @@ public class DebugManager {
         FileManager.get().readLevelPool(server);
         FileManager.get().readXpValues(server);
 
-        var manager = SkillManager.get();
-
         for(var player : server.getPlayerList().getPlayers()){
+            checkForInconsistencies(player);
+
             XpManager.levelUpCheck(player);
-
-            for (var skill : manager.getAllSkills()){
-                if(manager.getPlayerSkillLevel(player, skill.getID().toLowerCase()) > skill.getMaximumLevel()){
-                    manager.setSkillLevel(player, skill.getID().toLowerCase(), skill.getMaximumLevel());
-                }
-            }
-
             GenericEffects.restoreEffects(player);
         }
 
@@ -73,6 +69,32 @@ public class DebugManager {
         NeoForge.EVENT_BUS.post(new SkillReloadEvent());
     }
 
+    //------------CHECKS------------
+    public static void checkForInconsistencies(@NotNull ServerPlayer player){
+        var manager = SkillManager.get();
+        for (var skill : manager.getAllSkills()){
+            var id = skill.getID();
+            if(!manager.isSkillLoaded(skill.getID())) continue;
+
+            var lvl = manager.getPlayerSkillLevel(player, skill.getID());
+            var maxLvl = skill.getMaximumLevel();
+            if(lvl <= maxLvl) continue;
+
+            var prices = skill.getPrices();
+
+            var spToRefund = 0;
+            for(int i = lvl - 1; i >= maxLvl; i--){
+                if(i >= prices.size()) continue;
+                spToRefund += prices.get(i);
+            }
+
+            manager.setSkillLevel(player, id, maxLvl);
+
+            if(spToRefund <= 0) continue;
+
+            SpManager.addSP(player, spToRefund);
+        }
+    }
 
     //------------RESET------------
 

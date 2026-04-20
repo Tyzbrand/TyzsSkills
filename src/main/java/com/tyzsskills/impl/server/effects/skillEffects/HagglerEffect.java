@@ -31,7 +31,7 @@ public class HagglerEffect extends SkillBehavior {
         var blockRadius = radiusValues.getValue(lvl);
         if(blockRadius <= 0) return;
 
-        var villagerSpeedFactor = 1f + speedValues.getValue(lvl) / 100f;
+        var villagerSpeedFactor = 0.6f + speedValues.getValue(lvl) / 100f;
 
 
         AABB area = player.getBoundingBox().inflate(blockRadius);

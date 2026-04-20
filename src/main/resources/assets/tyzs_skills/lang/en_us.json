@@ -204,7 +204,7 @@
 
 
   "skill.tyzs_skills.haggler.displayName" : "haggler",
-  "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius. They will follow you with a {villager_speed}% speed bonus",
+  "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius.\nThey will follow you with a {villager_speed}% speed bonus",
 
   "skill.tyzs_skills.keepsake.displayName" : "Keepsake",
   "skill.tyzs_skills.keepsake.description" : "Safeguards the first {saved_slots} slot(s) of your inventory upon death",
