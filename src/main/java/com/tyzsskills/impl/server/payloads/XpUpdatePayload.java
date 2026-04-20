@@ -27,7 +27,7 @@ public record XpUpdatePayload(float xp, float gained, boolean triggersOverlay, f
     }
 
     public static void Handle(final XpUpdatePayload payload, final IPayloadContext ctx){
-        ctx.enqueueWork(() -> {ClientCache.UpdateClientCacheXP(payload.xp(), payload.gained(), payload.triggersOverlay(), payload.limit());} );
+        ctx.enqueueWork(() -> {ClientCache.updateClientCacheXP(payload.xp(), payload.gained(), payload.triggersOverlay(), payload.limit());} );
     }
 
 }

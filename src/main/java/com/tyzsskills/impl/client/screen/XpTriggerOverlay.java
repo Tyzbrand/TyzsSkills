@@ -82,9 +82,9 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
         alpha = Mth.clamp(alpha, 0f, 1f);
         if (alpha <= 0.05f) return;
 
-        int cfgBg = ClientCache.ParseColor(Config.XP_BG_COLOR.get(), 0xAA000000);
-        int cfgBorder = ClientCache.ParseColor(Config.XP_BD_COLOR.get(), 0xFFFFFFFF);
-        int cfgText = ClientCache.ParseColor(Config.XP_TEXT_COLOR.get(), 0xFFFFFFFF);
+        int cfgBg = ClientCache.parseColor(Config.XP_BG_COLOR.get(), 0xAA000000);
+        int cfgBorder = ClientCache.parseColor(Config.XP_BD_COLOR.get(), 0xFFFFFFFF);
+        int cfgText = ClientCache.parseColor(Config.XP_TEXT_COLOR.get(), 0xFFFFFFFF);
 
         String amountStr = (accumulatedXp == (long) accumulatedXp)
                 ? String.format("%d", (long) accumulatedXp) : String.format(Locale.US, "%.1f", accumulatedXp);
@@ -92,7 +92,7 @@ public class XpTriggerOverlay implements LayeredDraw.Layer {
         MutableComponent text = Component.literal("+ " + amountStr + " ")
                 .append(Component.translatable("gui.tyzs_skills.xp"));
 
-        if(ClientCache.GetConfigDouble(Config.MAX_XP_KEY, -1) != -1){
+        if(ClientCache.getConfigDouble(Config.MAX_XP_KEY, -1) != -1){
             text = text.append(Component.literal(" (" + ClientCache.getLimitPercentage() + "%)"));
         }
 

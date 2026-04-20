@@ -37,7 +37,7 @@ public record ConfigSyncPayload(boolean refundSys, double refundPer, double maxX
             configMap.put(Config.REFUND_PERCENTAGE_KEY, payload.refundPer());
             configMap.put(Config.MAX_XP_KEY, payload.maxXP());
 
-            ClientCache.SyncConfig(configMap);
+            ClientCache.syncConfig(configMap);
         });
     }
 

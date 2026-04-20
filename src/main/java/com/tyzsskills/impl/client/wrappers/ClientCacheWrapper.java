@@ -9,67 +9,62 @@ public class ClientCacheWrapper implements IClientDataManager {
 
     @Override
     public int getLevel() {
-        return ClientCache.GetLvl();
+        return ClientCache.getLvl();
     }
 
     @Override
     public int getSP() {
-        return ClientCache.GetSP();
+        return ClientCache.getSP();
     }
 
     @Override
     public float getXP() {
-        return ClientCache.GetXP();
-    }
-
-    @Override
-    public int getPower() {
-        return ClientCache.GetPower();
+        return ClientCache.getXP();
     }
 
     @Override
     public int getSpReward() {
-        return ClientCache.GetReward();
+        return ClientCache.getReward();
     }
 
     @Override
     public float getXpGoal() {
-        return ClientCache.GetXPGOAL();
+        return ClientCache.getXpGoal();
     }
 
     @Override
     public float getAllTimeXP() {
-        return ClientCache.GetAllTimeXp();
+        return ClientCache.getAllTimeXp();
     }
 
     @Override
     public float getSessionXP() {
-        return ClientCache.GetSessionXp();
+        return ClientCache.getSessionXp();
     }
 
     @Override
     public int getSpEarned() {
-        return ClientCache.GetSpEarned();
+        return ClientCache.getSpEarned();
     }
 
     @Override
     public int getSpSpent() {
-        return ClientCache.GetSpSpent();
+        return ClientCache.getSpSpent();
     }
 
     @Override
     public int getOwnedSkills() {
-        return ClientCache.GetUnlockedSkills();
+        return ClientCache.getUnlockedSkills();
     }
 
     @Override
     public List<String> getSkillList() {
-        return ClientCache.GetAllSkillIDs();
+        return ClientCache.getAllSkillIDs();
     }
 
     @Override
     public List<String> getBookmarks() {
-        return ClientCache.GetAllBookmarkedIDs();
+        return ClientCache.getAllBookmarkedIDs();
     }
 
     @Override
@@ -79,7 +74,7 @@ public class ClientCacheWrapper implements IClientDataManager {
 
     @Override
     public int getSkillLevel(String id) {
-        return ClientCache.GetSkillLevel(id);
+        return ClientCache.getSkillLevel(id);
     }
 
     @Override

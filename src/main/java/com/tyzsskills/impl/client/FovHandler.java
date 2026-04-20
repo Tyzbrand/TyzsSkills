@@ -20,10 +20,10 @@ public class FovHandler {
         for (String rawId : ClientCache.getPurchasedSkills()){
             String id = rawId.toLowerCase();
 
-            int level = ClientCache.GetSkillLevel(id);
+            int level = ClientCache.getSkillLevel(id);
             if(level <= 0) continue;
 
-            var skill = ClientCache.GetSkill(id);
+            var skill = ClientCache.getSkill(id);
             if(skill == null) continue;
 
             for(var modifier : skill.getModifiers()){

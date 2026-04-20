@@ -51,6 +51,16 @@ public class SkillWrapper implements ISkillManager {
     }
 
     @Override
+    public boolean tryBulkBuy(ServerPlayer player, String id) {
+        return SkillManager.get().tryBulkBuy(player, id);
+    }
+
+    @Override
+    public boolean tryBulkRefund(ServerPlayer player, String id) {
+        return SkillManager.get().tryBulkRefund(player, id);
+    }
+
+    @Override
     public List<ISkill> getSkillList(){
         return SkillManager.get().getAllSkillsInfos();
     }

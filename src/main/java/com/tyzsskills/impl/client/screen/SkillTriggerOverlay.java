@@ -35,7 +35,7 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
 
     public static void ShowSkillIcon(String id){
         if(!Config.SHOW_SKILL_OVERLAY.get()) return;
-        Skill skill = ClientCache.GetSkill(id.toLowerCase());
+        Skill skill = ClientCache.getSkill(id.toLowerCase());
         if(skill != null){
             var icon = ResourceLocation.tryParse(skill.getIcon());
             if(icon == null || Minecraft.getInstance().getResourceManager().getResource(icon).isEmpty()){
@@ -108,8 +108,8 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
         alpha = Mth.clamp(alpha, 0f, 1f);
         if (alpha <= 0.05f) return;
 
-        int cfgBg = ClientCache.ParseColor(Config.SKILL_BG_COLOR.get(), 0xAA000000);
-        int cfgBorder = ClientCache.ParseColor(Config.SKILL_BD_COLOR.get(), 0xFFD6AD55);
+        int cfgBg = ClientCache.parseColor(Config.SKILL_BG_COLOR.get(), 0xAA000000);
+        int cfgBorder = ClientCache.parseColor(Config.SKILL_BD_COLOR.get(), 0xFFD6AD55);
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(scale, scale, 1f);

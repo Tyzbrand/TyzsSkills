@@ -41,7 +41,7 @@ public class StringTools {
         if (!isMax) {
             if(currentLvl < prices.size()) totalSpAmount = prices.get(currentLvl);
         } else {
-            int availableSp = ClientCache.GetSP();
+            int availableSp = ClientCache.getSP();
             int simulatedSp = availableSp;
             int levelsAffordable = 0;
 
@@ -97,7 +97,7 @@ public class StringTools {
             if (!isMax) {
                 targetLvl = currentLvl + 1;
             } else {
-                int availableSp = ClientCache.GetSP();
+                int availableSp = ClientCache.getSP();
                 int simulatedSp = availableSp;
                 int levelsAffordable = 0;
                 var prices = skill.getPrices();
@@ -174,7 +174,7 @@ public class StringTools {
     public static List<MutableComponent> getSkillDescription(Skill skill) {
         List<MutableComponent> lines = new ArrayList<>();
         String rawDesc = Component.translatable(skill.getDescription()).getString();
-        var currentLvl = ClientCache.GetSkillLevel(skill.getID().toLowerCase());
+        var currentLvl = ClientCache.getSkillLevel(skill.getID().toLowerCase());
 
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
             var modifiers = skill.getModifiers();

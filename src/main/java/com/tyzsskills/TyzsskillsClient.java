@@ -61,7 +61,7 @@ public class TyzsskillsClient {
 
     @SubscribeEvent
     public static void onClientLogOut(ClientPlayerNetworkEvent.LoggingOut event){
-        ClientCache.ClearCache(Enums.ResetType.SHUTDOWN);
+        ClientCache.clearCache(Enums.ResetType.SHUTDOWN);
         SkillTriggerOverlay.Clear();
         XpTriggerOverlay.Clear();
         Tyzsskills.LOGGER.info("CACHE CLEARED");

@@ -9,14 +9,12 @@ import com.tyzsskills.impl.client.SoundPlayer;
 import com.tyzsskills.impl.client.screen.MainGUI;
 import com.tyzsskills.impl.client.tools.SortTools;
 import com.tyzsskills.impl.client.tools.StringTools;
-import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -78,7 +76,7 @@ public class SkillWidget {
         Font font = Minecraft.getInstance().font;
 
         int currentU = U_BACKGROUND;
-        if(ClientCache.GetSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel()){currentU = U_BACKGROUND_FINAL;}
+        if(ClientCache.getSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel()){currentU = U_BACKGROUND_FINAL;}
         gui.blit(REF_TEXTURE, x, y, currentU, V_BACKGROUND, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
 
         gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_NEUTRAL, V_BOOK_ACTIVE, 9, 9, TEXTURE_W, TEXTURE_H);
@@ -86,7 +84,7 @@ public class SkillWidget {
         gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
 
         MutableComponent count =  Component.translatable("gui.tyzs_skills.Lvl")
-                .append(": " + ClientCache.GetSkillLevel(skill.getID()) + "/" + skill.getMaximumLevel());
+                .append(": " + ClientCache.getSkillLevel(skill.getID()) + "/" + skill.getMaximumLevel());
 
 
 
@@ -115,7 +113,7 @@ public class SkillWidget {
         }
 
 
-        if(CanBuy(skill)){
+        if(canBuy()){
             boolean isHoverBuyBtn = isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H);
 
             int currentBuyU;
@@ -125,7 +123,7 @@ public class SkillWidget {
 
             gui.blit(REF_TEXTURE, x+38, y+17, currentBuyU, V_BUY_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
         }
-        if(CanRefund(skill)) {
+        if(canRefund()) {
             boolean isHoverRefundBtn = isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H);
 
             int currentRefundU;
@@ -138,17 +136,17 @@ public class SkillWidget {
 
     public List<Component> getTooltip(int mouseX, int mouseY){
         List<Component> tooltip = new ArrayList<>();
-        int currentLevel = ClientCache.GetSkillLevel(this.skill.getID().toLowerCase());
+        int currentLevel = ClientCache.getSkillLevel(this.skill.getID().toLowerCase());
 
-        if(CanRefund(skill) && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
+        if(canRefund() && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
             if(isShiftPressed()) tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, true));
             else tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false));
             return tooltip;
         }
 
         if(skill.isPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
-            if(isShiftPressed()) tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, CanBuy(skill), true));
-            else tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, CanBuy(skill)));
+            if(isShiftPressed()) tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy(), true));
+            else tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy()));
             return tooltip;
         }
 
@@ -167,7 +165,7 @@ public class SkillWidget {
 
     public boolean mouseClicked(double mouseX, double mouseY, int button){
         if(isMouseOver((int)mouseX, (int)mouseY, x+38, y+17, BTN_W, BTN_H)){
-            if(!CanBuy(skill)) return false;
+            if(!canBuy()) return false;
 
             SoundPlayer.PlayUIClick();
 
@@ -181,7 +179,7 @@ public class SkillWidget {
         }
 
         if(isMouseOver((int)mouseX, (int)mouseY, x+27, y+17, BTN_W, BTN_H)){
-            if(!CanRefund(skill)) return false;
+            if(!canRefund()) return false;
 
             SoundPlayer.PlayUIClick();
 
@@ -211,35 +209,6 @@ public class SkillWidget {
         return false;
     }
 
-    protected boolean CanBuy(Skill skill){
-        LocalPlayer client = Minecraft.getInstance().player;
-        if(client == null || skill == null) return false;
-
-        if(!skill.isPurchasable() || !skill.isSkillActive()) return false;
-
-        var currentLvl = ClientCache.GetSkillLevel(skill.getID());
-        if(currentLvl >= skill.getMaximumLevel()) return false;
-
-        var prices = skill.getPrices();
-        if(currentLvl >= prices.size()) return false;
-        int price = prices.get(currentLvl);
-
-        return price <= ClientCache.GetSP();
-    }
-
-    protected boolean CanRefund(Skill skill){
-        LocalPlayer client = Minecraft.getInstance().player;
-        if(client == null || skill == null) return false;
-
-        if(!ClientCache.GetConfigBool(Config.REFUND_SYSTEM_KEY, false) || !skill.isSkillActive()) return false;
-
-        var currentLvl = ClientCache.GetSkillLevel(skill.getID());
-        if(currentLvl > skill.getMaximumLevel() || currentLvl < 1) return false;
-
-
-        var prices = skill.getPrices();
-        return currentLvl <= prices.size();
-    }
 
     protected boolean isMouseOver(int mouseX, int mouseY, int x, int y, int width, int height) {
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
@@ -256,10 +225,18 @@ public class SkillWidget {
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
 
         // Bordure
-        if(ClientCache.GetSkillLevel(skill.getID().toLowerCase()) < skill.getMaximumLevel()) return;
+        if(ClientCache.getSkillLevel(skill.getID().toLowerCase()) < skill.getMaximumLevel()) return;
         gui.fill(x + 1, y, x + width - 1, y + 1, COLOR_BORDER); // Haut
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, COLOR_BORDER); // Bas
         gui.fill(x, y + 1, x + 1, y + height - 1, COLOR_BORDER); // Gauche
         gui.fill(x + width - 1, y + 1, x + width, y + height - 1, COLOR_BORDER); // Droite
+    }
+
+    protected boolean canBuy(){
+        return skill.canBuy(ClientCache.getSkillLevel(skill.getID()), ClientCache.getSP());
+    }
+
+    protected boolean canRefund(){
+        return skill.canRefund(ClientCache.getSkillLevel(skill.getID()), ClientCache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
     }
 }

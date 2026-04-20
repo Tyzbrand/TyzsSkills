@@ -80,6 +80,22 @@ public interface ISkillManager {
     boolean tryRefundSkill(ServerPlayer player, String id);
 
     /**
+     * Tries to buy the maximum levels a player can afford, according to the rules of the mod (not only a verification).
+     * @param id Valid id of the targeted skill (in lowercase)
+     * @return {@code true} if the bulk has succeeded, {@code false} otherwise.
+     * NOTE: if the process is successful data are handled automatically (sp, skill lvl, and stats)
+     */
+    boolean tryBulkBuy(ServerPlayer player, String id);
+
+    /**
+     * Tries to refund the skill levels to 0, according to the rules of the mod (not only a verification).
+     * @param id Valid id of the targeted skill (in lowercase).
+     * @return {@code true} if the bulk has succeeded, {@code false} otherwise.
+     * NOTE: if the process is successful data are handled automatically (sp, skill lvl, and stats).
+     */
+    boolean tryBulkRefund(ServerPlayer player, String id);
+
+    /**
      * @return a copy of the server skill list (contains all loaded skills)
      */
     List<ISkill> getSkillList();
@@ -134,8 +150,6 @@ public interface ISkillManager {
      * @param id The valid ID of the targeted skill used as ref icon (in lowercase)
      */
     void triggerSkillActivationOverlay(ServerPlayer player, String id);
-
-
 
 
 }

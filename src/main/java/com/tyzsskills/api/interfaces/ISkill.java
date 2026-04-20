@@ -1,8 +1,8 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.records.Modifier;
-import com.tyzsskills.api.records.ValueSet;
+import com.tyzsskills.api.records.*;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -66,6 +66,38 @@ public interface ISkill {
      * @return A {@link List} of {@link Modifier} objects
      */
     List<Modifier> getModifiers();
+
+    /**
+     * Checks if the player can purchase the next skill level.
+     * @param currentLvl The current skill level of the player.
+     * @param currentSP The current amount of SP the player possesses.
+     * @return {@code true} if the player can afford the next skill level, {@code false} otherwise.
+     */
+    boolean canBuy(int currentLvl, int currentSP);
+
+    /**
+     * Checks if the player can refund their current skill level.
+     * @param currentLvl The current skill level of the player.
+     * @param refundEnabled The current state of the refund system configuration.
+     * @return {@code true} if the skill level can be refunded, {@code false} otherwise.
+     */
+    boolean canRefund(int currentLvl, boolean refundEnabled);
+
+    /**
+     * Calculates the maximum number of skill levels a player can purchase at once.
+     * @param currentLvl The current skill level of the player.
+     * @param availableSp The current amount of SP the player possesses.
+     * @return A {@link BulkPurchaseResult} indicating how many levels can be bought and the total cost. Never null.
+     */
+    BulkPurchaseResult checkBulkPurchase(int currentLvl, int availableSp);
+
+    /**
+     * Calculates the total amount of SP returned from a complete skill refund.
+     * @param currentLvl The current skill level of the player.
+     * @param refundPercentage The current value of the refund percentage configuration.
+     * @return The total amount of SP the player will receive from the bulk refund.
+     */
+    int checkBulkRefund(int currentLvl, float refundPercentage);
 
 
 

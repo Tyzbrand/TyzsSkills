@@ -24,7 +24,7 @@ public record LevelUpdatePayload(int level) implements CustomPacketPayload{
     }
 
     public static void Handle(final LevelUpdatePayload payload, final IPayloadContext ctx){
-        ctx.enqueueWork(() -> {ClientCache.UpdateClientCacheLevel(payload.level());} );
+        ctx.enqueueWork(() -> {ClientCache.updateClientCacheLevel(payload.level());} );
     }
 
 }

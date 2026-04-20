@@ -41,14 +41,14 @@ public class SortTools {
 
 
     public static List<Skill> refreshList(){
-        List<Skill> listToSort =  new ArrayList<>(ClientCache.GetAllSkills());
+        List<Skill> listToSort =  new ArrayList<>(ClientCache.getAllSkills());
 
         if(!currentSearchQuery.isBlank()){
             var query = currentSearchQuery.trim().toLowerCase(Locale.ROOT);
             listToSort.removeIf(s -> queryCheck(query, s));
         }
 
-        if(!showUnowned) listToSort.removeIf(s -> ClientCache.GetSkillLevel(s.getID()) <= 0);
+        if(!showUnowned) listToSort.removeIf(s -> ClientCache.getSkillLevel(s.getID()) <= 0);
 
         if(currentSkillCategory == Enums.CategoryType.BOOKMARKS) listToSort.removeIf(s -> !ClientCache.isSkillBookmarked(s.getID()));
         else if(currentSkillCategory != Enums.CategoryType.ALL) listToSort.removeIf(s -> s.getCategory() != currentSkillCategory);

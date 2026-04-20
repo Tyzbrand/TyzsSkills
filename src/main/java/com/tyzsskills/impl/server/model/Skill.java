@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.model;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.api.records.BulkPurchaseResult;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.network.FriendlyByteBuf;
@@ -98,6 +99,57 @@ public class Skill implements ISkill {
     }
 
 
+
+    //Behavior
+    @Override
+    public boolean canRefund(int currentLvl, boolean refundEnabled){
+        if(!refundEnabled || !isPurchasable() || currentLvl <= 0) return false;
+
+        return currentLvl <= prices.size();
+    }
+
+    @Override
+    public boolean canBuy(int currentLvl, int currentSP){
+        if(!isPurchasable() || currentLvl >= maximumLevel) return false;
+
+        var price = prices.get(currentLvl);
+        return price <= currentSP;
+    }
+
+    @Override
+    public BulkPurchaseResult checkBulkPurchase(int currentLvl, int availableSp){
+        var spToSpend = 0;
+        var levelsToAdd = 0;
+
+        for (int i = currentLvl; i < maximumLevel; i++) {
+            if (i >= prices.size()) break;
+            var price = prices.get(i);
+
+            if (availableSp >= price) {
+                availableSp -= price;
+                spToSpend += price;
+                levelsToAdd++;
+            } else break;
+        }
+
+        return new BulkPurchaseResult(levelsToAdd, spToSpend);
+    }
+
+    @Override
+    public int checkBulkRefund(int currentLvl, float refundPercentage){
+        var finalRefund = 0;
+
+        for (int i = currentLvl - 1; i >= 0; i--) {
+            if (i < prices.size()) {
+                int levelPrice = prices.get(i);
+                int levelRefund = (int) (levelPrice * (refundPercentage / 100f));
+
+                if (levelPrice > 0) levelRefund = Math.max(1, levelRefund);
+                finalRefund += levelRefund;
+            }
+        }
+        return finalRefund;
+    }
 
     //Network
     public static final StreamCodec<FriendlyByteBuf, Skill> STREAM_CODEC = StreamCodec.ofMember(

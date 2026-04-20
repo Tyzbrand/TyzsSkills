@@ -13,7 +13,6 @@ public interface IClientDataManager {
     int getLevel();
     int getSP();
     float getXP();
-    int getPower();
 
     /**
      * @return the amount of SP the player will earn when he'll reach the goal (level up)
@@ -61,5 +60,7 @@ public interface IClientDataManager {
      * @return A list of unique ids for all skills currently unlocked (level > 0)
      */
     List<String> getPurchasedSkills();
+
+
 
 }

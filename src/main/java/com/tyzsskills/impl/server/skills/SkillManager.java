@@ -77,13 +77,11 @@ public class SkillManager {
         var data = player.getData(PlayerData.DATA);
 
         int currentLvl = data.getSkillLevel(id);
-        if(currentLvl >= skill.getMaximumLevel()) return false;
 
-        var prices = skill.getPrices();
-        if(currentLvl >= prices.size()) return false;
-        int price = prices.get(currentLvl);
 
-        if(SpManager.getSP(player) >= price){
+        if(skill.canBuy(currentLvl, SpManager.getSP(player))){
+            var price = skill.getPrices().get(currentLvl);
+
             SpManager.removeSP(player, price);
             PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
             player.getData(StatsTracker.DATA).addSpSpent(price);
@@ -96,7 +94,7 @@ public class SkillManager {
         return false;
     }
 
-    public boolean tryBuyMaxSkill(ServerPlayer player, String id){
+    public boolean tryBulkBuy(ServerPlayer player, String id){
         var skill = getSkill(id);
         if (player == null || skill == null) return false;
 
@@ -110,30 +108,17 @@ public class SkillManager {
 
         if (currentLvl >= maxLvl) return false;
 
-        var prices = skill.getPrices();
         var availableSp = SpManager.getSP(player);
-        var spToSpend = 0;
-        var levelsToAdd = 0;
 
-        for (int i = currentLvl; i < maxLvl; i++) {
-            if (i >= prices.size()) break;
-            var price = prices.get(i);
+        var bulkResult = skill.checkBulkPurchase(currentLvl, availableSp);
 
-            if (availableSp >= price) {
-                availableSp -= price;
-                spToSpend += price;
-                levelsToAdd++;
-            } else break;
+        if (bulkResult.levelToAdd() > 0) {
+            SpManager.removeSP(player, bulkResult.spToWithdraw());
 
-        }
+            PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(bulkResult.spToWithdraw()));
+            player.getData(StatsTracker.DATA).addSpSpent(bulkResult.spToWithdraw());
 
-        if (levelsToAdd > 0) {
-            SpManager.removeSP(player, spToSpend);
-
-            PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(spToSpend));
-            player.getData(StatsTracker.DATA).addSpSpent(spToSpend);
-
-            setSkillLevel(player, id, currentLvl + levelsToAdd);
+            setSkillLevel(player, id, currentLvl + bulkResult.levelToAdd());
 
             NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
             return true;
@@ -153,12 +138,10 @@ public class SkillManager {
         var data = player.getData(PlayerData.DATA);
 
         int currentLvl = data.getSkillLevel(id);
-        if(currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
-        var prices = skill.getPrices();
-        if (currentLvl > prices.size()) return false;
+        if(!skill.canRefund(currentLvl, Config.REFUND_SYSTEM.getAsBoolean())) return false;
 
-        int initialPrice = prices.get(currentLvl - 1);
+        int initialPrice = skill.getPrices().get(currentLvl - 1);
         int finalPrice = Math.max(1, (int)(initialPrice * (Config.REFUND_PERCENTAGE.get() / 100f)));
 
         SpManager.addSP(player, finalPrice);
@@ -172,7 +155,7 @@ public class SkillManager {
         return true;
     }
 
-    public boolean tryRefundMaxSkill(ServerPlayer player, String id){
+    public boolean tryBulkRefund(ServerPlayer player, String id){
         var skill = getSkill(id);
         if (player == null || skill == null || !Config.REFUND_SYSTEM.get()) return false;
 
@@ -184,30 +167,15 @@ public class SkillManager {
         int currentLvl = data.getSkillLevel(id);
         if (currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
-        int targetLvl = 0;
-        var prices = skill.getPrices();
-        int finalRefund = 0;
+        var spToRefund = skill.checkBulkRefund(currentLvl, (float)Config.REFUND_PERCENTAGE.getAsDouble());
 
-        for (int i = currentLvl - 1; i >= targetLvl; i--) {
-            if (i < prices.size()) {
-                int levelPrice = prices.get(i);
-                int levelRefund = (int) (levelPrice * (Config.REFUND_PERCENTAGE.get() / 100f));
-
-                if (levelPrice > 0) {
-                    levelRefund = Math.max(1, levelRefund);
-                }
-
-                finalRefund += levelRefund;
-            }
+        if (spToRefund > 0) {
+            SpManager.addSP(player, spToRefund);
+            PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(spToRefund));
+            player.getData(StatsTracker.DATA).addSpEarned(spToRefund);
         }
 
-        if (finalRefund > 0) {
-            SpManager.addSP(player, finalRefund);
-            PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(finalRefund));
-            player.getData(StatsTracker.DATA).addSpEarned(finalRefund);
-        }
-
-        setSkillLevel(player, id, targetLvl);
+        setSkillLevel(player, id, 0);
 
         NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
 

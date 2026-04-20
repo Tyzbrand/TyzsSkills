@@ -25,7 +25,7 @@ public record SkillLevelSyncPayload(String id, int level) implements CustomPacke
     }
 
     public static void Handle(final SkillLevelSyncPayload payload, final IPayloadContext ctx){
-        ctx.enqueueWork(() -> {ClientCache.UpdateSkillLevels(payload.id(), payload.level());} );
+        ctx.enqueueWork(() -> {ClientCache.updateSkillLevels(payload.id(), payload.level());} );
     }
 
 }
