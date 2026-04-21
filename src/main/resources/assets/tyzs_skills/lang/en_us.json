@@ -203,10 +203,10 @@
 
 
 
-  "skill.tyzs_skills.haggler.displayName" : "haggler",
+  "skill.tyzs_skills.haggler.displayName" : "Haggler",
   "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius.\nThey will follow you with a {villager_speed}% speed bonus",
 
-  "skill.tyzs_skills.keepsake.displayName" : "Keepsake",
+  "skill.tyzs_skills.keepsake.displayName" : "Safekept",
   "skill.tyzs_skills.keepsake.description" : "Safeguards the first {saved_slots} slot(s) of your inventory upon death",
 
   "skill.tyzs_skills.unit.slot" : "slot(s)",
@@ -223,5 +223,15 @@
 
   "gui.tyzs_skills.level_lock" : "Requires Level",
   "gui.tyzs_skills.conlict" : "Conflicts with",
-  "gui.tyzs_skills.locked" : "Locked"
+  "gui.tyzs_skills.locked" : "Locked",
+
+  "gui.tyzs_skills.sorting.price" : "By Price",
+  "gui.tyzs_skills.sorting.name" : "By Name",
+  "gui.tyzs_skills.sorting.random" : "Random",
+  "gui.tyzs_skills.sorting.level" : "By Level",
+
+  "gui.tyzs_skills.sorting_type.ascending" : "Ascending",
+  "gui.tyzs_skills.sorting_type.descending" : "Descending",
+  "gui.tyzs_skills.sorting_switch.show_maxed" : "Show Maxed",
+  "gui.tyzs_skills.sorting_switch.show_unaffordable" : "Show Unaffordable"
 }

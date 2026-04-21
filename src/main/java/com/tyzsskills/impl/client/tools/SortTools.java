@@ -8,8 +8,10 @@ import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,7 +29,8 @@ public class SortTools {
     private static Enums.CategoryType currentSkillCategory = Enums.CategoryType.ALL;
 
     //BOOLS
-    private static boolean showUnowned = true;
+    private static boolean showMaxed = true;
+    private static boolean showUnbuyable = true;
 
     //SEARCH BAR
     private static String currentSearchQuery = "";
@@ -48,17 +51,25 @@ public class SortTools {
             listToSort.removeIf(s -> queryCheck(query, s));
         }
 
-        if(!showUnowned) listToSort.removeIf(s -> ClientCache.getSkillLevel(s.getID()) <= 0);
+        if(!showUnbuyable) listToSort.removeIf(s ->
+                !s.canBuy(ClientCache.getSkillLevel(s.getID()), ClientCache.getLvl(), ClientCache.getSP(), ClientCache.getPurchasedSkills()));
+
+        if(!showMaxed) listToSort.removeIf(s -> ClientCache.getSkillLevel(s.getID()) >= s.getMaximumLevel());
+
 
         if(currentSkillCategory == Enums.CategoryType.BOOKMARKS) listToSort.removeIf(s -> !ClientCache.isSkillBookmarked(s.getID()));
         else if(currentSkillCategory != Enums.CategoryType.ALL) listToSort.removeIf(s -> s.getCategory() != currentSkillCategory);
 
         if(!activeSortTypes.isEmpty()){
             var currentSortType = activeSortTypes.get(currentSortTypeIndex);
-            var comparator = currentSortingDirection == Enums.SortingDirection.ASCENDING ?
-                    currentSortType.comparator() : currentSortType.comparator().reversed();
 
-            listToSort.sort(comparator);
+            var comparator = currentSortType.comparator();
+            if(comparator == null) Collections.shuffle(listToSort);
+            else {
+                if(currentSortingDirection == Enums.SortingDirection.DESCENDING) comparator = comparator.reversed();
+                listToSort.sort(comparator);
+            }
+
         }
 
         currentSkillOrder.clear();
@@ -80,8 +91,11 @@ public class SortTools {
         currentSkillCategory = category;
     }
 
-    public static void ToggleUnowned(){
-        showUnowned = !showUnowned;
+    public static void toggleShowMaxed(){
+        showMaxed = !showMaxed;
+    }
+    public static void toggleShowUnbuyable(){
+        showUnbuyable = !showUnbuyable;
     }
 
     public static void setSearchQuery(@NotNull String searchQuery){
@@ -102,9 +116,14 @@ public class SortTools {
         return currentSkillCategory;
     }
 
+    public static Enums.SortingDirection getCurrentSortingDirection(){return currentSortingDirection;}
+
     public static String getCurrentSearchQuery(){
         return currentSearchQuery;
     }
+
+    public static boolean getShowMaxedState() {return showMaxed;}
+    public static boolean getShowUnbuyableState() {return showUnbuyable;}
 
     //Util
     private static boolean queryCheck(String query, Skill skill){

@@ -23,6 +23,13 @@ public interface ISkill {
      */
     List<Integer> getPrices();
 
+    /**
+     * Gets tht skill price to buy the specified level.
+     * @param lvl The Targeted level.
+     * @return The price for the specified level.
+     */
+    int getPrice(int lvl);
+
 
     Enums.SkillType getType();
 

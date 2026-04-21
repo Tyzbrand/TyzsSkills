@@ -78,6 +78,11 @@ public class Skill implements ISkill {
     @Override
     public List<Integer> getPrices() {return Collections.unmodifiableList(prices);}
     @Override
+    public int getPrice(int lvl) {
+        if(lvl <= 0 || lvl > prices.size()) return Integer.MAX_VALUE;
+        return prices.get(lvl - 1);
+    }
+    @Override
     public Enums.SkillType getType(){return type;}
     @Override
     public Enums.CategoryType getCategory(){return category;}

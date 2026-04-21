@@ -40,8 +40,6 @@ public class MainGUI extends Screen {
     private int leftPos;
     private int topPos;
 
-    private CustomTabButton skillBtn;
-    private CustomTabButton traitBtn;
     private CustomTabButton allBtn;
     private CustomTabButton abilitiesBtn;
     private CustomTabButton fightBtn;
@@ -64,6 +62,7 @@ public class MainGUI extends Screen {
         this.addScrollView();
         this.addSearchBar();
 
+        SortTools.refreshList();
         renderList();
     }
 
@@ -81,9 +80,11 @@ public class MainGUI extends Screen {
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        this.renderIcons(guiGraphics, mouseX, mouseY);
+        this.renderBacks(guiGraphics);
 
-        guiGraphics.blit(background, leftPos + 130, topPos + 142, 83, 254, 115, 18, 325, 325);
+        this.renderCustomButtons(guiGraphics, mouseX, mouseY);
+
+        this.renderIcons(guiGraphics, mouseX, mouseY);
 
         this.renderTooltips(guiGraphics, mouseX, mouseY);
     }
@@ -296,6 +297,42 @@ public class MainGUI extends Screen {
         if(isHovering(mouseX, mouseY, leftPos + 216, topPos + 7, 29, 20)){ //Bookmarks tab
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.bookmarks"), mouseX, mouseY);
         }
+
+        if(isHovering(mouseX, mouseY,leftPos + 251, topPos - 10, 14, 8)){
+            var message = SortTools.getCurrentSortingDirection() == Enums.SortingDirection.ASCENDING ?
+                    Component.translatable("gui.tyzs_skills.sorting_type.ascending")
+                    : Component.translatable("gui.tyzs_skills.sorting_type.descending");
+
+            gui.renderTooltip(this.font, message, mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY,leftPos + 267, topPos - 10, 14, 8)){
+            gui.renderTooltip(this.font, Component.translatable(SortTools.getCurrentSortType().name()), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 101, topPos - 9, 12, 6)){
+            var state = SortTools.getShowUnbuyableState();
+            var color = state ? ChatFormatting.GREEN : ChatFormatting.RED;
+            var message = Component.empty()
+                    .append(Component.translatable("gui.tyzs_skills.sorting_switch.show_unaffordable"))
+                    .append(Component.literal(" [")
+                            .append(Component.literal(String.valueOf(state)).withStyle(color))
+                            .append(Component.literal("]")));
+
+            gui.renderTooltip(this.font, message, mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 118, topPos - 9, 12, 6)){
+            var state = SortTools.getShowMaxedState();
+            var color = state ? ChatFormatting.GREEN : ChatFormatting.RED;
+            var message = Component.empty()
+                    .append(Component.translatable("gui.tyzs_skills.sorting_switch.show_maxed"))
+                    .append(Component.literal(" [")
+                            .append(Component.literal(String.valueOf(state)).withStyle(color))
+                            .append(Component.literal("]")));
+
+            gui.renderTooltip(this.font, message, mouseX, mouseY);
+        }
     }
 
     private void addButtons(){
@@ -388,6 +425,61 @@ public class MainGUI extends Screen {
         renderIcon(gui, .80f, gearU, 192, 14, 14, leftPos + 59, topPos + 46, 8);
     }
 
+    private void renderCustomButtons(GuiGraphics gui, int mouseX, int mouseY){
+
+        //ASCENT - DESCENT
+        int currentDirectionV = isHovering(mouseX, mouseY,leftPos + 251, topPos - 10, 14, 8) ? 181 : 170;
+        int currentDirectionU = SortTools.getCurrentSortingDirection() == Enums.SortingDirection.ASCENDING ? 42 : 59;
+
+        gui.blit(background, leftPos + 251, topPos - 10, currentDirectionU, currentDirectionV, 15, 9, 325, 325);
+
+        //SORT TYPE
+        gui.blit(background, leftPos + 267, topPos - 10, 76, 170, 15, 9, 325, 325);
+
+        int iconU = 0;
+        int iconV = 0;
+        var currentSortType = SortTools.getCurrentSortType();
+
+        if(currentSortType != null){
+            if(isHovering(mouseX, mouseY,leftPos + 267, topPos - 10, 14, 8)){
+                iconU = currentSortType.uHover();
+                iconV = currentSortType.vHover();
+            }
+            else{
+                iconU = currentSortType.u();
+                iconV = currentSortType.v();
+            }
+        }
+
+        renderIcon(gui, .45f, iconU, iconV, 13, 13, leftPos + 268 , topPos - 12, 13);
+
+        //SWITCH UNBUYABLE
+        boolean isHoverUnbuyable = isHovering(mouseX, mouseY, leftPos + 101, topPos - 9, 12, 6);
+        if(SortTools.getShowUnbuyableState()){
+            if(isHoverUnbuyable) gui.blit(background, leftPos + 100, topPos - 10, 43, 158, 15, 9, 325, 325);
+            else gui.blit(background, leftPos + 101, topPos - 9, 44, 150, 13, 7, 325, 325);
+        }
+        else{
+            if(isHoverUnbuyable) gui.blit(background, leftPos + 100, topPos - 10, 58, 158, 15, 9, 325, 325);
+            else gui.blit(background, leftPos + 101, topPos - 9, 59, 150, 13, 7, 325, 325);
+        }
+
+        //SWITCH MAXED
+        boolean isHoverMaxed = isHovering(mouseX, mouseY, leftPos + 118, topPos - 9, 12, 6);
+        if(SortTools.getShowMaxedState()){
+            if(isHoverMaxed) gui.blit(background, leftPos + 117, topPos - 10, 43, 158, 15, 9, 325, 325);
+            else gui.blit(background, leftPos + 118, topPos - 9, 44, 150, 13, 7, 325, 325);
+        }
+        else{
+            if(isHoverMaxed) gui.blit(background, leftPos + 117, topPos - 10, 58, 158, 15, 9, 325, 325);
+            else gui.blit(background, leftPos + 118, topPos - 9, 59, 150, 13, 7, 325, 325);
+        }
+    }
+
+    private void renderBacks(GuiGraphics gui){
+        gui.blit(background, leftPos + 97, topPos - 17, 83, 256, 189, 17, 325, 325);
+    }
+
     private void addScrollView(){
          scrollView = new CustomScrollView(
                 this.minecraft,
@@ -401,10 +493,10 @@ public class MainGUI extends Screen {
     }
 
     private void addSearchBar(){
-        this.searchBar = new EditBox(this.font, leftPos + 135, topPos + 147,  83, 18, Component.literal("Search"));
+        this.searchBar = new EditBox(this.font, leftPos + 144, topPos - 9,  78, 11, Component.literal("Search"));
 
         this.searchBar.setBordered(false);
-        this.searchBar.setTextColor(0x000000);
+        this.searchBar.setTextColor(0xFFFFFF);
 
         if(Config.KEEP_SEARCH_QUERY.getAsBoolean()) this.searchBar.setValue(SortTools.getCurrentSearchQuery());
 
@@ -486,8 +578,8 @@ public class MainGUI extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button){
+        //Config Button
         if(button == 0 && isHovering(mouseX, mouseY, leftPos + 56, topPos + 44, 11, 11)){
-
             var container = ModList.get().getModContainerById(Tyzsskills.MODID).orElseThrow();
             container.getCustomExtension(IConfigScreenFactory.class).ifPresent(factory -> {
                 if(this.minecraft != null) this.minecraft.setScreen(factory.createScreen(container, this));
@@ -498,6 +590,47 @@ public class MainGUI extends Screen {
 
             return true;
         }
+
+        //Sort direction Button
+        if(button == 0 && isHovering(mouseX, mouseY, leftPos + 251, topPos - 10, 15, 8)){
+            SortTools.CycleSortDirection();
+            SortTools.refreshList();
+            this.renderList();
+
+            var player = Minecraft.getInstance().player;
+            if(player != null) SoundPlayer.PlayUIClick();
+        }
+
+        //Sort type Button
+        if(button == 0 && isHovering(mouseX, mouseY,leftPos + 267, topPos - 10, 15, 8)){
+            SortTools.CycleSortType();
+            SortTools.refreshList();
+            this.renderList();
+
+            var player = Minecraft.getInstance().player;
+            if(player != null) SoundPlayer.PlayUIClick();
+        }
+
+        //Sort switch unbuyable
+        if(button == 0 && isHovering(mouseX, mouseY,leftPos + 101, topPos - 9, 13, 7)){
+            SortTools.toggleShowUnbuyable();
+            SortTools.refreshList();
+            this.renderList();
+
+            var player = Minecraft.getInstance().player;
+            if(player != null) SoundPlayer.PlayUIClick();
+        }
+
+        //Sort switch maxed
+        if(button == 0 && isHovering(mouseX, mouseY,leftPos + 118, topPos - 9, 13, 7)){
+            SortTools.toggleShowMaxed();
+            SortTools.refreshList();
+            this.renderList();
+
+            var player = Minecraft.getInstance().player;
+            if(player != null) SoundPlayer.PlayUIClick();
+        }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
