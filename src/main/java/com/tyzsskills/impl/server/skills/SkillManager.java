@@ -11,6 +11,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.SkillActionEvent;
 import com.tyzsskills.api.events.SkillLoadEvent;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
@@ -21,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 @ApiStatus.Internal
 public class SkillManager {
@@ -78,8 +80,7 @@ public class SkillManager {
 
         int currentLvl = data.getSkillLevel(id);
 
-
-        if(skill.canBuy(currentLvl, SpManager.getSP(player))){
+        if(skill.canBuy(currentLvl, LevelManager.getLevel(player), SpManager.getSP(player), getPlayerOwnedSkillIds(player))){
             var price = skill.getPrices().get(currentLvl);
 
             SpManager.removeSP(player, price);
@@ -108,9 +109,7 @@ public class SkillManager {
 
         if (currentLvl >= maxLvl) return false;
 
-        var availableSp = SpManager.getSP(player);
-
-        var bulkResult = skill.checkBulkPurchase(currentLvl, availableSp);
+        var bulkResult = skill.checkBulkBuy(currentLvl, LevelManager.getLevel(player), SpManager.getSP(player), getPlayerOwnedSkillIds(player));
 
         if (bulkResult.levelToAdd() > 0) {
             SpManager.removeSP(player, bulkResult.spToWithdraw());
@@ -167,7 +166,7 @@ public class SkillManager {
         int currentLvl = data.getSkillLevel(id);
         if (currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
-        var spToRefund = skill.checkBulkRefund(currentLvl, (float)Config.REFUND_PERCENTAGE.getAsDouble());
+        var spToRefund = skill.checkBulkRefund(currentLvl, (float)Config.REFUND_PERCENTAGE.getAsDouble(), Config.REFUND_SYSTEM.getAsBoolean());
 
         if (spToRefund > 0) {
             SpManager.addSP(player, spToRefund);
@@ -231,15 +230,22 @@ public class SkillManager {
 
 
     //getters
+    @Nullable
     public Skill getSkill(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}
     public List<Skill> getAllSkills() {return new ArrayList<>(skillCollection.values());}
-    public int getPlayerSkillLevel(ServerPlayer player, String id) {return player.getData(PlayerData.DATA).getSkillLevel(id);}
     public boolean isSkillLoaded(String id){return skillCollection.containsKey(id);}
     public List<Skill> getSortedBehaviorSkills() {return sortedBehaviorSkills;}
 
-    //API LINKS
-    public ISkill getSkillInfos(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}
-    public List<ISkill> getAllSkillsInfos(){return new ArrayList<>(skillCollection.values());}
+    public int getPlayerSkillLevel(ServerPlayer player, String id) {return player.getData(PlayerData.DATA).getSkillLevel(id);}
+    public List<String> getPlayerOwnedSkillIds(ServerPlayer player){
+        var data = player.getData(PlayerData.DATA).getOwnedSkillIds();
+        return data.stream().filter(this::isSkillLoaded).toList();
+    }
+
+    //API
+    public List<ISkill> getAllISkills(){return List.copyOf(skillCollection.values());}
+    @Nullable
+    public ISkill getISkill(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}
 
     public boolean isSkillBookmarked(ServerPlayer player,String id) {return player.getData(PlayerData.DATA).isBookmarked(id);}
     public List<String> getAllBookmarkIDs(ServerPlayer player){return player.getData(PlayerData.DATA).getBookmarks();}

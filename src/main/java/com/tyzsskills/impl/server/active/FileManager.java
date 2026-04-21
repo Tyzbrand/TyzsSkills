@@ -78,7 +78,8 @@ public class FileManager {
         for (var prefab : prefabQueue){
             Skill skillToSave = new Skill(prefab.active(), prefab.id(), prefab.maximumLevel(),
                         prefab.prices(), prefab.type(), prefab.category(), prefab.purchasable(),
-                        prefab.icon(), prefab.displayName(), prefab.description(), prefab.modifiers(), prefab.customValues()
+                        prefab.icon(), prefab.displayName(), prefab.description(), prefab.modifiers(), prefab.customValues(),
+                    prefab.levelRequirement(), prefab.incompatibleSkills()
             );
 
             Path targetPath = getSkillPath(prefab.category(), server);

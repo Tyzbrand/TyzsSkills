@@ -219,5 +219,9 @@
   "button.tyzs_skills.config_btn" : "Configuration",
 
   "gui.tyzs_skills.stats.xp_per_hour" : "/h",
-  "gui.tyzs_skills.stats.all_time_xp" : "All time xp"
+  "gui.tyzs_skills.stats.all_time_xp" : "All time xp",
+
+  "gui.tyzs_skills.level_lock" : "Requires Level",
+  "gui.tyzs_skills.conlict" : "Conflicts with",
+  "gui.tyzs_skills.locked" : "Locked"
 }

@@ -33,6 +33,7 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         else playerSkills.put(id, lvl);
     }
     public int getSkillLevel(String id){return playerSkills.getOrDefault(id, 0);}
+    public List<String> getOwnedSkillIds(){return List.copyOf(playerSkills.keySet());}
 
 
     //-----------------Bookmarks-----------------

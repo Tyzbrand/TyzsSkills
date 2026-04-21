@@ -3,6 +3,7 @@ package com.tyzsskills.impl.client;
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
+import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.model.*;
 import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.client.Minecraft;
@@ -107,7 +108,10 @@ public class ClientCache {
     }
 
     public static void updateSkillLevels(String id, int lvl){
-        clientSkillLevels.put(id.toLowerCase(), lvl);
+        id = id.toLowerCase();
+
+        if(lvl <= 0) clientSkillLevels.remove(id);
+        else clientSkillLevels.put(id.toLowerCase(), lvl);
 
         int owned = 0;
         for(var skill : clientSkills.values()){
@@ -153,7 +157,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if(!skill.canBuy(currentLvl, clientSP)) return;
+        if(!skill.canBuy(currentLvl, clientLevel, clientSP, getPurchasedSkills())) return;
         int price = skill.getPrices().get(currentLvl);
 
         clientSP -= price;
@@ -164,7 +168,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        var bulkResult = skill.checkBulkPurchase(currentLvl, clientSP);
+        var bulkResult = skill.checkBulkBuy(currentLvl, clientLevel, clientSP, getPurchasedSkills());
 
         if (bulkResult.levelToAdd() > 0) {
             clientSP -= bulkResult.spToWithdraw();
@@ -193,7 +197,8 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        var spToRefund = skill.checkBulkRefund(currentLvl, (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D));
+        var spToRefund = skill.checkBulkRefund(currentLvl,
+                (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), getConfigBool(Config.REFUND_SYSTEM_KEY, false));
 
         if (spToRefund > 0) {
             clientSP += spToRefund;
@@ -235,7 +240,7 @@ public class ClientCache {
     public static List<Skill> getAllSkills(){return new ArrayList<>(clientSkills.values());}
     public static List<String> getAllSkillIDs(){return new ArrayList<>(clientSkills.keySet());}
     public static List<String> getAllBookmarkedIDs(){return new ArrayList<>(clientBookmarks);}
-    public static List<String> getPurchasedSkills(){return List.copyOf(clientSkillLevels.keySet());}
+    public static List<String> getPurchasedSkills(){return clientSkillLevels.keySet().stream().filter(clientSkills::containsKey).toList();}
 
     public static int getSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
     public static Skill getSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}

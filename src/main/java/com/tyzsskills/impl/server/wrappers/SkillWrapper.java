@@ -10,6 +10,8 @@ import com.tyzsskills.impl.server.skills.SkillBehaviorRegistry;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.checkerframework.checker.units.qual.N;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -62,12 +64,13 @@ public class SkillWrapper implements ISkillManager {
 
     @Override
     public List<ISkill> getSkillList(){
-        return SkillManager.get().getAllSkillsInfos();
+        return SkillManager.get().getAllISkills();
     }
 
     @Override
+    @Nullable
     public ISkill getSkill(String id) {
-        return SkillManager.get().getSkillInfos(id);
+        return SkillManager.get().getISkill(id);
     }
 
     @Override

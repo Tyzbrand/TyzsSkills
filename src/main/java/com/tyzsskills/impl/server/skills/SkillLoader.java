@@ -9,6 +9,7 @@ import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.api.records.ValueSet;
+import com.tyzsskills.impl.server.model.SkillBehavior;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -43,6 +44,18 @@ public class SkillLoader {
         for (var kvp : skillQueue.entrySet()) loadSkill(kvp.getKey(), kvp.getValue());
         SkillManager.get().buildSortedBehaviors();
         skillQueue.clear();
+
+        for(var skill : SkillManager.get().getAllSkills()){
+            var incompatibilities = skill.getRawIncompatibilities();
+            for (var id : incompatibilities){
+                var conflict = SkillManager.get().getSkill(id);
+                var sourceId = skill.getID();
+
+                if(conflict == null) continue;
+
+                if(!conflict.isSkillIncompatible(sourceId)) conflict.addIncompatibility(sourceId);
+            }
+        }
     }
 
     private static void loadSkill(String id, JsonObject source){
@@ -79,6 +92,11 @@ public class SkillLoader {
 
         String description = getSafeElement(source, "description", JsonPrimitive::getAsString);
         if(description == null) description = "Missing description";
+
+        Integer levelRequirement = getSafeElement(source, "levelRequirement", JsonPrimitive::getAsInt);
+        if(levelRequirement == null) levelRequirement = -1;
+
+        List<String> incompatibilities = getSafeList(source, "incompatibleSkills", JsonElement::getAsString);
 
         if(type == Enums.SkillType.CUSTOM || type == Enums.SkillType.GENERIC){
             if(!source.has("modifiers")) {
@@ -117,7 +135,7 @@ public class SkillLoader {
             if(modifiers.isEmpty()) {ErrorManager.registerSkillError(id, "one modifier is required"); return;}
 
             SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
-                    icon, displayName, description, modifiers, null));
+                    icon, displayName, description, modifiers, null, levelRequirement, incompatibilities));
             return;
 
         }
@@ -150,7 +168,7 @@ public class SkillLoader {
             if(valueSet.isEmpty()){ErrorManager.registerSkillError(id, "one value set is required");return;}
 
             SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
-                    icon, displayName, description, null, valueSet));
+                    icon, displayName, description, null, valueSet, levelRequirement, incompatibilities));
             return;
         }
     }

@@ -8,6 +8,7 @@ import com.tyzsskills.impl.server.attachments.ExplorationProgression;
 import com.tyzsskills.impl.server.attachments.LimitsTracker;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.effects.GenericEffects;
+import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.payloads.ResetPayload;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @ApiStatus.Internal
 public class DebugManager {
@@ -72,28 +74,52 @@ public class DebugManager {
     //------------CHECKS------------
     public static void checkForInconsistencies(@NotNull ServerPlayer player){
         var manager = SkillManager.get();
-        for (var skill : manager.getAllSkills()){
-            var id = skill.getID();
-            if(!manager.isSkillLoaded(skill.getID())) continue;
+        for (var skillId : manager.getPlayerOwnedSkillIds(player)){
 
-            var lvl = manager.getPlayerSkillLevel(player, skill.getID());
-            var maxLvl = skill.getMaximumLevel();
-            if(lvl <= maxLvl) continue;
+            var skill = manager.getSkill(skillId);
+            if(skill == null) continue;
 
-            var prices = skill.getPrices();
+            var lvl = manager.getPlayerSkillLevel(player, skillId);
 
-            var spToRefund = 0;
-            for(int i = lvl - 1; i >= maxLvl; i--){
-                if(i >= prices.size()) continue;
-                spToRefund += prices.get(i);
+            var incompatibilities = skill.getIncompatibilities(manager.getPlayerOwnedSkillIds(player));
+
+            if(!skill.meetsLevelRequirement(LevelManager.getLevel(player))){
+                cleanRefund(0, lvl, player, skill);
+                continue;
+            }
+            else if(incompatibilities  != null){
+                cleanRefund(0, lvl, player, skill);
+
+                for(var id : incompatibilities){
+                    var conflict = manager.getSkill(id);
+                    if(conflict != null )cleanRefund(0, manager.getPlayerSkillLevel(player, id), player, conflict);
+                }
+                continue;
             }
 
-            manager.setSkillLevel(player, id, maxLvl);
 
-            if(spToRefund <= 0) continue;
+            if(!manager.isSkillLoaded(skill.getID())) continue;
 
-            SpManager.addSP(player, spToRefund);
+            var maxLvl = skill.getMaximumLevel();
+            if(lvl <= maxLvl) continue;
+            cleanRefund(maxLvl, lvl, player, skill);
         }
+    }
+
+    private static void cleanRefund(int targetLvl, int currentLvl, ServerPlayer player, Skill skill){
+        if (currentLvl == targetLvl) return;
+
+        var spToRefund = 0;
+        for(int i = currentLvl - 1; i >= targetLvl; i--){
+            if(i >= skill.getPrices().size()) continue;
+            spToRefund += skill.getPrices().get(i);
+        }
+
+        SkillManager.get().setSkillLevel(player, skill.getID(), targetLvl);
+
+        if(spToRefund <= 0) return;
+        SpManager.addSP(player, spToRefund);
+        player.sendSystemMessage(Component.literal("Skill §9[" + skill.getID() + "] §rrules changed. §6" + spToRefund + " §rSP refunded."));
     }
 
     //------------RESET------------
