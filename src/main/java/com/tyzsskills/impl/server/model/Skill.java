@@ -5,6 +5,7 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.records.BulkPurchaseResult;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
+import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;

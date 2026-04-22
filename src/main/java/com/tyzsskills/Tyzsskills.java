@@ -1,10 +1,14 @@
 package com.tyzsskills;
 
 import com.tyzsskills.api.TyzsSkillsAPI;
+import com.tyzsskills.api.events.TyzsSkillsCommonSetupEvent;
+import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.impl.server.active.*;
 import com.tyzsskills.impl.server.attachments.*;
+import com.tyzsskills.impl.server.effects.skillEffects.*;
 import com.tyzsskills.impl.server.events.SkillEffectsEvents;
 import com.tyzsskills.impl.server.events.XpGainsEvents;
+import com.tyzsskills.impl.server.model.SkillsPreset;
 import com.tyzsskills.impl.server.skills.SkillBehaviorRegistry;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.commands.MainCommand;
@@ -18,6 +22,7 @@ import com.tyzsskills.impl.server.xp.xpEvents.XpFood;
 import com.tyzsskills.integration.kubejs.JsEventsDelegate;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
@@ -38,6 +43,8 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.common.NeoForge;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Tyzsskills.MODID)
@@ -46,17 +53,23 @@ public class Tyzsskills {
     public static final String MODID = "tyzs_skills";
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static net.neoforged.bus.api.IEventBus MOD_BUS;
 
 
     public Tyzsskills(IEventBus modEventBus, ModContainer modContainer) {
+        MOD_BUS = modContainer.getEventBus();
 
         //API
         registerWrappers();
 
        //Register attributes
         AttributeRegistry.ATTRIBUTES.register(modEventBus);
+
+
         modEventBus.addListener(this::registerAttributes);
         modEventBus.addListener(this::reloadConfig);
+        modEventBus.addListener(this::onServerSetup);
+        modEventBus.addListener(this::onTyzsSkillsCommonSetup);
 
         //Register Attachments
         BlockMarker.ATTACHMENT_TYPES.register(modEventBus);
@@ -91,9 +104,6 @@ public class Tyzsskills {
 
         // Register config (Visual)
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
-
-        //Initialize skill behaviours
-        SkillBehaviorRegistry.init();
     }
 
 
@@ -223,6 +233,18 @@ public class Tyzsskills {
                 ResetPayload::Handle
         );
 
+    }
+
+
+
+    private void onServerSetup(FMLCommonSetupEvent event){
+        MOD_BUS.post(new TyzsSkillsCommonSetupEvent(new TyzsSkillsCommonRegistrationWrapper()));
+    }
+
+    private void onTyzsSkillsCommonSetup(TyzsSkillsCommonSetupEvent event){
+        for(var prefab : SkillsPreset.getDefaultSkills()){
+            event.wrapper().registerSkill(prefab);
+        }
     }
 
     @SubscribeEvent

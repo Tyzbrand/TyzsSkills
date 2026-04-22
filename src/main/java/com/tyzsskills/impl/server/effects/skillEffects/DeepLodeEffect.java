@@ -1,39 +1,6 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
-import com.tyzsskills.Config;
-import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.impl.server.Level.LevelManager;
-import com.tyzsskills.impl.server.attachments.BlockMarker;
-import com.tyzsskills.impl.server.model.SkillBehavior;
-import com.tyzsskills.impl.server.skills.SkillManager;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.stats.Stats;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.event.level.BlockEvent;
-
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import com.tyzsskills.api.model.SkillBehavior;
 
 public class DeepLodeEffect extends SkillBehavior {
 

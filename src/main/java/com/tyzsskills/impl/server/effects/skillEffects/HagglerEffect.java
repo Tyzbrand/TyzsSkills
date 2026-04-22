@@ -1,9 +1,7 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
-import com.tyzsskills.Config;
 import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.impl.server.Level.LevelManager;
-import com.tyzsskills.impl.server.model.SkillBehavior;
+import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.Items;

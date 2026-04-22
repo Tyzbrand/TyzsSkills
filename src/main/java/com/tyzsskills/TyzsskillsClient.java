@@ -12,6 +12,7 @@ import com.tyzsskills.impl.client.screen.LevelTriggerOverlay;
 import com.tyzsskills.impl.client.screen.MainGUI;
 import com.tyzsskills.impl.client.screen.SkillTriggerOverlay;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
+import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.client.wrappers.ClientCacheWrapper;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
 import net.minecraft.client.Minecraft;
@@ -111,6 +112,7 @@ public class TyzsskillsClient {
     @SubscribeEvent
     public static void onClientLogOut(ClientPlayerNetworkEvent.LoggingOut event){
         ClientCache.clearCache(Enums.ResetType.SHUTDOWN);
+        SortingTools.clearData();
         SkillTriggerOverlay.Clear();
         XpTriggerOverlay.Clear();
         Tyzsskills.LOGGER.info("CACHE CLEARED");

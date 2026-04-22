@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.model;
+package com.tyzsskills.api.model;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.payloads.SkillTriggerPayload;

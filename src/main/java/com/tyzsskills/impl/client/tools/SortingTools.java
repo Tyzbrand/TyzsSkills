@@ -101,6 +101,15 @@ public class SortingTools {
         currentSearchQuery = searchQuery.toLowerCase();
     }
 
+    public static void clearData(){
+        currentSortTypeIndex = 0;
+        currentSortingDirection = Enums.SortingDirection.ASCENDING;
+        currentSkillCategory = Enums.CategoryType.ALL;
+        showMaxed = true;
+        showUnbuyable = true;
+        currentSearchQuery = "";
+    }
+
 
     //Getters
     public static List<Skill> getCurrentSkillOrder() {

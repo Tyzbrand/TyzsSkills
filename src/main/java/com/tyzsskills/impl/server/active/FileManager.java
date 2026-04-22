@@ -6,8 +6,10 @@ import java.io.IOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.impl.server.model.*;
+import com.tyzsskills.impl.server.skills.SkillBehaviorRegistry;
 import com.tyzsskills.impl.server.skills.SkillLoader;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.xp.XpManager;
@@ -20,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -71,10 +74,6 @@ public class FileManager {
 
     //Ecrit les jsons par defaut
     public void writeDefaultSkills(MinecraftServer server) throws IOException {
-        for(var skill : SkillsPreset.getDefaultSkills()){
-            writeSkill(skill, getSkillPath(skill.getCategory(), server));
-        }
-
         for (var prefab : prefabQueue){
             Skill skillToSave = new Skill(prefab.active(), prefab.id(), prefab.maximumLevel(),
                         prefab.prices(), prefab.type(), prefab.category(), prefab.purchasable(),
@@ -204,8 +203,8 @@ public class FileManager {
     }
 
 
-    public static void registerSkillPrefab(SkillPrefab prefab){
-        if(prefab != null) prefabQueue.add(prefab);
+    public static void registerPrefab(@NotNull SkillPrefab prefab){
+        prefabQueue.add(prefab);
     }
 
 
