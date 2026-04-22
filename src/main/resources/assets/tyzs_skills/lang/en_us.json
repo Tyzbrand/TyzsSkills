@@ -233,5 +233,10 @@
   "gui.tyzs_skills.sorting_type.ascending" : "Ascending",
   "gui.tyzs_skills.sorting_type.descending" : "Descending",
   "gui.tyzs_skills.sorting_switch.show_maxed" : "Show Maxed",
-  "gui.tyzs_skills.sorting_switch.show_unaffordable" : "Show Unaffordable"
+  "gui.tyzs_skills.sorting_switch.show_unaffordable" : "Show Unaffordable",
+
+  "gui.tuzs_skills.sorting_tooltip.header" : "Search by Name or ID",
+  "gui.tuzs_skills.sorting_tooltip.body" : "Advanced prefixes",
+  "gui.tuzs_skills.sorting_tooltip.prefix_description" : "Search in description",
+  "gui.tuzs_skills.sorting_tooltip.prefix_id" : "Search strictly by ID"
 }

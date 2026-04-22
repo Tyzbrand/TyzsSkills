@@ -7,7 +7,7 @@ import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.SoundPlayer;
 import com.tyzsskills.impl.client.key.MainKeybind;
 import com.tyzsskills.impl.client.models.*;
-import com.tyzsskills.impl.client.tools.SortTools;
+import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.client.tools.StringTools;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -23,6 +23,7 @@ import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +63,7 @@ public class MainGUI extends Screen {
         this.addScrollView();
         this.addSearchBar();
 
-        SortTools.refreshList();
+        SortingTools.refreshList();
         renderList();
     }
 
@@ -95,17 +96,17 @@ public class MainGUI extends Screen {
         float scale = 0.6f;
         int yOffset = 1;
 
-        int color1 = isHovering(mouseX, mouseY, leftPos, topPos + 81, 36, 12) ? 0xD6AD55 : 0xFFFFFFFF;
+        int color1 = isHovering(mouseX, mouseY, leftPos, topPos + 81, 37, 12) ? 0xD6AD55 : 0xFFFFFFFF;
         MutableComponent lvlStat = Component.translatable("gui.tyzs_skills.Lvl");
         gui.pose().pushPose();
-        gui.pose().translate(leftPos + 7, topPos + 84 + yOffset, 0);
+        gui.pose().translate(leftPos + 6, topPos + 84 + yOffset, 0);
         gui.pose().scale(scale, scale, 1.0f);
         gui.drawString(this.font, lvlStat, 0, 0, color1, false);
         gui.pose().popPose();
 
         MutableComponent lvlValue = Component.literal(String.valueOf(ClientCache.getLvl()));
         int text1W = this.font.width(lvlValue);
-        int rightLimit1 = leftPos + 31;
+        int rightLimit1 = leftPos + 32;
         gui.pose().pushPose();
         gui.pose().translate(rightLimit1, topPos + 84 + yOffset, 0);
         gui.pose().scale(scale, scale, 1.0f);
@@ -114,17 +115,17 @@ public class MainGUI extends Screen {
 
 
 
-        int color2 = isHovering(mouseX, mouseY, leftPos + 37, topPos + 81, 36, 12) ? 0xD6AD55 : 0xFFFFFFFF;
+        int color2 = isHovering(mouseX, mouseY, leftPos + 39, topPos + 81, 37, 12) ? 0xD6AD55 : 0xFFFFFFFF;
         MutableComponent spStat = Component.translatable("gui.tyzs_skills.SP");
         gui.pose().pushPose();
-        gui.pose().translate(leftPos + 46, topPos + 84 + yOffset, 0);
+        gui.pose().translate(leftPos + 45, topPos + 84 + yOffset, 0);
         gui.pose().scale(scale, scale, 1.0f);
         gui.drawString(this.font, spStat, 0, 0, color2, false);
         gui.pose().popPose();
 
         MutableComponent spValue = Component.literal(String.valueOf(StringTools.valueSmartFormat(ClientCache.getSP())));
         int text2W = this.font.width(spValue);
-        int rightLimit2 = leftPos + 69;
+        int rightLimit2 = leftPos + 71;
         gui.pose().pushPose();
         gui.pose().translate(rightLimit2, topPos + 84 + yOffset, 0);
         gui.pose().scale(scale, scale, 1.0f);
@@ -132,9 +133,9 @@ public class MainGUI extends Screen {
         gui.pose().popPose();
 
 
-        if(SortTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS) return;
+        if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS) return;
 
-        String localizationKey = "gui.tyzs_skills.Tab." + SortTools.getCurrentSkillCategory().toString().toLowerCase();
+        String localizationKey = "gui.tyzs_skills.Tab." + SortingTools.getCurrentSkillCategory().toString().toLowerCase();
         MutableComponent enumDisplayName = Component.translatable(localizationKey);
         int text3W = this.font.width(enumDisplayName);
         int rightLimit3 = leftPos+293;
@@ -210,7 +211,7 @@ public class MainGUI extends Screen {
 
     private void renderTooltips(GuiGraphics gui, int mouseX, int mouseY){
 
-        if(isHovering(mouseX, mouseY, leftPos, topPos+96, 75, 8)){ //Xp bar
+        if(isHovering(mouseX, mouseY, leftPos, topPos+96, 76, 9)){ //Xp bar
             String xpTooltip = StringTools.valueSmartFormat(ClientCache.getXP()) + "/" + StringTools.valueSmartFormat(ClientCache.getXpGoal()) ;
 
             MutableComponent finalText = Component.literal(xpTooltip)
@@ -233,7 +234,7 @@ public class MainGUI extends Screen {
             }
         }
 
-        if(isHovering(mouseX, mouseY, leftPos + 56, topPos + 58, 14, 14)){ //Stats
+        if(isHovering(mouseX, mouseY, leftPos + 56, topPos + 58, 12, 14)){ //Stats
             List<Component> tooltip = new ArrayList<>();
 
             tooltip.add(Component.empty()
@@ -274,7 +275,7 @@ public class MainGUI extends Screen {
             gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY, leftPos + 56, topPos + 44, 11, 11)){ //Config
+        if(isHovering(mouseX, mouseY, leftPos + 56, topPos + 44, 12, 12)){ //Config
             gui.renderTooltip(this.font, Component.translatable("button.tyzs_skills.config_btn"), mouseX, mouseY);
         }
 
@@ -298,20 +299,20 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.bookmarks"), mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY,leftPos + 251, topPos - 10, 14, 8)){
-            var message = SortTools.getCurrentSortingDirection() == Enums.SortingDirection.ASCENDING ?
+        if(isHovering(mouseX, mouseY,leftPos + 251, topPos - 10, 15, 9)){ //Sort direction
+            var message = SortingTools.getCurrentSortingDirection() == Enums.SortingDirection.ASCENDING ?
                     Component.translatable("gui.tyzs_skills.sorting_type.ascending")
                     : Component.translatable("gui.tyzs_skills.sorting_type.descending");
 
             gui.renderTooltip(this.font, message, mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY,leftPos + 267, topPos - 10, 14, 8)){
-            gui.renderTooltip(this.font, Component.translatable(SortTools.getCurrentSortType().name()), mouseX, mouseY);
+        if(isHovering(mouseX, mouseY,leftPos + 267, topPos - 10, 15, 9)){ //Sort type
+            gui.renderTooltip(this.font, Component.translatable(SortingTools.getCurrentSortType().name()), mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY, leftPos + 101, topPos - 9, 12, 6)){
-            var state = SortTools.getShowUnbuyableState();
+        if(isHovering(mouseX, mouseY, leftPos + 101, topPos - 9, 13, 7)){ //Affordable switch
+            var state = SortingTools.getShowUnbuyableState();
             var color = state ? ChatFormatting.GREEN : ChatFormatting.RED;
             var message = Component.empty()
                     .append(Component.translatable("gui.tyzs_skills.sorting_switch.show_unaffordable"))
@@ -322,8 +323,8 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, message, mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY, leftPos + 118, topPos - 9, 12, 6)){
-            var state = SortTools.getShowMaxedState();
+        if(isHovering(mouseX, mouseY, leftPos + 118, topPos - 9, 13, 7)){ //Maxed switch
+            var state = SortingTools.getShowMaxedState();
             var color = state ? ChatFormatting.GREEN : ChatFormatting.RED;
             var message = Component.empty()
                     .append(Component.translatable("gui.tyzs_skills.sorting_switch.show_maxed"))
@@ -332,6 +333,20 @@ public class MainGUI extends Screen {
                             .append(Component.literal("]")));
 
             gui.renderTooltip(this.font, message, mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 144, topPos - 9,  78, 11) && this.searchBar.getValue().isBlank()){ //Search bar
+            List<Component> tooltip = new ArrayList<>();
+
+            tooltip.add(Component.translatable("gui.tuzs_skills.sorting_tooltip.header").withStyle(ChatFormatting.BLUE));
+            tooltip.add(Component.empty());
+            tooltip.add(Component.translatable("gui.tuzs_skills.sorting_tooltip.body").withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.literal("@ ").append(Component.translatable("gui.tuzs_skills.sorting_tooltip.prefix_description"))
+                    .withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.DARK_GRAY));
+            tooltip.add(Component.literal("# ").append(Component.translatable("gui.tuzs_skills.sorting_tooltip.prefix_id"))
+                    .withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.DARK_GRAY));
+
+            gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
         }
     }
 
@@ -343,11 +358,16 @@ public class MainGUI extends Screen {
                 82, 227,
                 82, 207,
                 325, 325,
-                () -> SortTools.getCurrentSkillCategory() == Enums.CategoryType.ALL,
+                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.ALL,
                 background,
                 (b) -> {
-                    SortTools.SetCategoryType(Enums.CategoryType.ALL);
-                    SortTools.refreshList();
+                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.ALL){
+                        this.scrollView.setScrollAmount(0);
+                        return;
+                    }
+
+                    SortingTools.SetCategoryType(Enums.CategoryType.ALL);
+                    SortingTools.refreshList();
                     this.renderList();
                 });
         this.addRenderableWidget(this.allBtn);
@@ -359,11 +379,16 @@ public class MainGUI extends Screen {
                 140, 227,
                 140, 207,
                 325, 325,
-                () -> SortTools.getCurrentSkillCategory() == Enums.CategoryType.ABILITIES,
+                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.ABILITIES,
                 background,
                 (b) -> {
-                    SortTools.SetCategoryType(Enums.CategoryType.ABILITIES);
-                    SortTools.refreshList();
+                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.ABILITIES){
+                        this.scrollView.setScrollAmount(0);
+                        return;
+                    }
+
+                    SortingTools.SetCategoryType(Enums.CategoryType.ABILITIES);
+                    SortingTools.refreshList();
                     this.renderList();
                 });
         this.addRenderableWidget(this.abilitiesBtn);
@@ -375,11 +400,16 @@ public class MainGUI extends Screen {
                 111, 227,
                 111, 207,
                 325, 325,
-                () -> SortTools.getCurrentSkillCategory() == Enums.CategoryType.FIGHT,
+                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.FIGHT,
                 background,
                 (b) -> {
-                    SortTools.SetCategoryType(Enums.CategoryType.FIGHT);
-                    SortTools.refreshList();
+                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.FIGHT){
+                        this.scrollView.setScrollAmount(0);
+                        return;
+                    }
+
+                    SortingTools.SetCategoryType(Enums.CategoryType.FIGHT);
+                    SortingTools.refreshList();
                     this.renderList();
                 });
         this.addRenderableWidget(this.fightBtn);
@@ -391,11 +421,16 @@ public class MainGUI extends Screen {
                 169, 227,
                 169, 207,
                 325, 325,
-                () -> SortTools.getCurrentSkillCategory() == Enums.CategoryType.MISC,
+                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.MISC,
                 background,
                 (b) -> {
-                    SortTools.SetCategoryType(Enums.CategoryType.MISC);
-                    SortTools.refreshList();
+                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.MISC){
+                        this.scrollView.setScrollAmount(0);
+                        return;
+                    }
+
+                    SortingTools.SetCategoryType(Enums.CategoryType.MISC);
+                    SortingTools.refreshList();
                     this.renderList();
                 });
         this.addRenderableWidget(this.miscBtn);
@@ -407,29 +442,34 @@ public class MainGUI extends Screen {
                 198, 227,
                 198, 207,
                 325, 325,
-                () -> SortTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS,
+                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS,
                 background,
                 (b) -> {
-                    SortTools.SetCategoryType(Enums.CategoryType.BOOKMARKS);
-                    SortTools.refreshList();
+                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS){
+                        this.scrollView.setScrollAmount(0);
+                        return;
+                    }
+
+                    SortingTools.SetCategoryType(Enums.CategoryType.BOOKMARKS);
+                    SortingTools.refreshList();
                     this.renderList();
                 });
         this.addRenderableWidget(this.bookmarksBtn);
     }
 
     private void renderIcons(GuiGraphics gui, int mouseX, int mouseY){
-        var statsU = isHovering(mouseX, mouseY, leftPos + 56, topPos + 58, 14, 14) ? 247 : 232;
+        var statsU = isHovering(mouseX, mouseY, leftPos + 56, topPos + 58, 12, 14) ? 247 : 232;
         renderIcon(gui, .80f, statsU, 190, 14, 18, leftPos + 59, topPos + 61, 8);
 
-        var gearU = isHovering(mouseX, mouseY, leftPos + 56, topPos + 44, 11, 11) ? 286 : 271;
+        var gearU = isHovering(mouseX, mouseY, leftPos + 56, topPos + 44, 12, 12) ? 286 : 271;
         renderIcon(gui, .80f, gearU, 192, 14, 14, leftPos + 59, topPos + 46, 8);
     }
 
     private void renderCustomButtons(GuiGraphics gui, int mouseX, int mouseY){
 
         //ASCENT - DESCENT
-        int currentDirectionV = isHovering(mouseX, mouseY,leftPos + 251, topPos - 10, 14, 8) ? 181 : 170;
-        int currentDirectionU = SortTools.getCurrentSortingDirection() == Enums.SortingDirection.ASCENDING ? 42 : 59;
+        int currentDirectionV = isHovering(mouseX, mouseY,leftPos + 251, topPos - 10, 15, 9) ? 181 : 170;
+        int currentDirectionU = SortingTools.getCurrentSortingDirection() == Enums.SortingDirection.ASCENDING ? 42 : 59;
 
         gui.blit(background, leftPos + 251, topPos - 10, currentDirectionU, currentDirectionV, 15, 9, 325, 325);
 
@@ -438,10 +478,10 @@ public class MainGUI extends Screen {
 
         int iconU = 0;
         int iconV = 0;
-        var currentSortType = SortTools.getCurrentSortType();
+        var currentSortType = SortingTools.getCurrentSortType();
 
         if(currentSortType != null){
-            if(isHovering(mouseX, mouseY,leftPos + 267, topPos - 10, 14, 8)){
+            if(isHovering(mouseX, mouseY,leftPos + 267, topPos - 10, 15, 9)){
                 iconU = currentSortType.uHover();
                 iconV = currentSortType.vHover();
             }
@@ -454,8 +494,8 @@ public class MainGUI extends Screen {
         renderIcon(gui, .45f, iconU, iconV, 13, 13, leftPos + 268 , topPos - 12, 13);
 
         //SWITCH UNBUYABLE
-        boolean isHoverUnbuyable = isHovering(mouseX, mouseY, leftPos + 101, topPos - 9, 12, 6);
-        if(SortTools.getShowUnbuyableState()){
+        boolean isHoverUnbuyable = isHovering(mouseX, mouseY, leftPos + 101, topPos - 9, 13, 7);
+        if(SortingTools.getShowUnbuyableState()){
             if(isHoverUnbuyable) gui.blit(background, leftPos + 100, topPos - 10, 43, 158, 15, 9, 325, 325);
             else gui.blit(background, leftPos + 101, topPos - 9, 44, 150, 13, 7, 325, 325);
         }
@@ -465,8 +505,8 @@ public class MainGUI extends Screen {
         }
 
         //SWITCH MAXED
-        boolean isHoverMaxed = isHovering(mouseX, mouseY, leftPos + 118, topPos - 9, 12, 6);
-        if(SortTools.getShowMaxedState()){
+        boolean isHoverMaxed = isHovering(mouseX, mouseY, leftPos + 118, topPos - 9, 13, 7);
+        if(SortingTools.getShowMaxedState()){
             if(isHoverMaxed) gui.blit(background, leftPos + 117, topPos - 10, 43, 158, 15, 9, 325, 325);
             else gui.blit(background, leftPos + 118, topPos - 9, 44, 150, 13, 7, 325, 325);
         }
@@ -498,11 +538,11 @@ public class MainGUI extends Screen {
         this.searchBar.setBordered(false);
         this.searchBar.setTextColor(0xFFFFFF);
 
-        if(Config.KEEP_SEARCH_QUERY.getAsBoolean()) this.searchBar.setValue(SortTools.getCurrentSearchQuery());
+        if(Config.KEEP_SEARCH_QUERY.getAsBoolean()) this.searchBar.setValue(SortingTools.getCurrentSearchQuery());
 
         this.searchBar.setResponder((s) -> {
-            SortTools.setSearchQuery(s);
-            SortTools.refreshList();
+            SortingTools.setSearchQuery(s);
+            SortingTools.refreshList();
             this.renderList();
         });
 
@@ -520,7 +560,7 @@ public class MainGUI extends Screen {
         SkillEntry currentRow = null;
         int countInRow = 0;
 
-        for(var skill : SortTools.getCurrentSkillOrder()){
+        for(var skill : SortingTools.getCurrentSkillOrder()){
             if(currentRow == null || countInRow >= maxPerLine){
                 currentRow = new SkillEntry();
                 this.scrollView.AddEntry(currentRow);
@@ -535,12 +575,9 @@ public class MainGUI extends Screen {
     //Uilitaires
 
     private boolean isHovering(int mouseX, int mouseY, int x, int y, int width, int height){
-        return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
+        return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
     }
 
-    private boolean isHovering(double mouseX, double mouseY, int x, int y, int width, int height){
-        return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
-    }
 
     private void renderIcon(GuiGraphics gui, float scale, int u, int v, int w, int h, int btnX, int btnY, int btnS){
 
@@ -578,8 +615,11 @@ public class MainGUI extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button){
+        int mX = (int) mouseX;
+        int mY = (int) mouseY;
+
         //Config Button
-        if(button == 0 && isHovering(mouseX, mouseY, leftPos + 56, topPos + 44, 11, 11)){
+        if(button == 0 && isHovering(mX, mY, leftPos + 56, topPos + 44, 11, 11)){
             var container = ModList.get().getModContainerById(Tyzsskills.MODID).orElseThrow();
             container.getCustomExtension(IConfigScreenFactory.class).ifPresent(factory -> {
                 if(this.minecraft != null) this.minecraft.setScreen(factory.createScreen(container, this));
@@ -592,9 +632,9 @@ public class MainGUI extends Screen {
         }
 
         //Sort direction Button
-        if(button == 0 && isHovering(mouseX, mouseY, leftPos + 251, topPos - 10, 15, 8)){
-            SortTools.CycleSortDirection();
-            SortTools.refreshList();
+        if(button == 0 && isHovering(mX, mY, leftPos + 251, topPos - 10, 15, 8)){
+            SortingTools.CycleSortDirection();
+            SortingTools.refreshList();
             this.renderList();
 
             var player = Minecraft.getInstance().player;
@@ -602,9 +642,9 @@ public class MainGUI extends Screen {
         }
 
         //Sort type Button
-        if(button == 0 && isHovering(mouseX, mouseY,leftPos + 267, topPos - 10, 15, 8)){
-            SortTools.CycleSortType();
-            SortTools.refreshList();
+        if(button == 0 && isHovering(mX, mY,leftPos + 267, topPos - 10, 15, 8)){
+            SortingTools.CycleSortType();
+            SortingTools.refreshList();
             this.renderList();
 
             var player = Minecraft.getInstance().player;
@@ -612,9 +652,9 @@ public class MainGUI extends Screen {
         }
 
         //Sort switch unbuyable
-        if(button == 0 && isHovering(mouseX, mouseY,leftPos + 101, topPos - 9, 13, 7)){
-            SortTools.toggleShowUnbuyable();
-            SortTools.refreshList();
+        if(button == 0 && isHovering(mX, mY,leftPos + 101, topPos - 9, 13, 7)){
+            SortingTools.toggleShowUnbuyable();
+            SortingTools.refreshList();
             this.renderList();
 
             var player = Minecraft.getInstance().player;
@@ -622,13 +662,18 @@ public class MainGUI extends Screen {
         }
 
         //Sort switch maxed
-        if(button == 0 && isHovering(mouseX, mouseY,leftPos + 118, topPos - 9, 13, 7)){
-            SortTools.toggleShowMaxed();
-            SortTools.refreshList();
+        if(button == 0 && isHovering(mX, mY,leftPos + 118, topPos - 9, 13, 7)){
+            SortingTools.toggleShowMaxed();
+            SortingTools.refreshList();
             this.renderList();
 
             var player = Minecraft.getInstance().player;
             if(player != null) SoundPlayer.PlayUIClick();
+        }
+
+
+        if(button == 1){
+            if(this.searchBar.isFocused()) this.searchBar.setFocused(false);
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
@@ -636,8 +681,24 @@ public class MainGUI extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (this.searchBar.isFocused()) {
+
+        if((keyCode == GLFW.GLFW_KEY_ESCAPE) && this.searchBar.isFocused()){ //Unfocus search bar
+            this.searchBar.setFocused(false);
+            return true;
+        }
+
+        if (this.searchBar.isFocused()) { //Allow I and some other "button" to be used by the search bar
             return this.searchBar.keyPressed(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
+        }
+
+        if(keyCode == GLFW.GLFW_KEY_HOME){
+            this.scrollView.setScrollAmount(0);
+            return true;
+        }
+
+        if(keyCode == GLFW.GLFW_KEY_END){
+            this.scrollView.setScrollAmount(this.scrollView.getMaxScroll());
+            return true;
         }
 
         if (MainKeybind.OPEN_SKILL_KEY.matches(keyCode, scanCode)) {
@@ -649,7 +710,7 @@ public class MainGUI extends Screen {
 
     @Override
     public void removed() {
-        if(!Config.KEEP_SEARCH_QUERY.getAsBoolean()) SortTools.setSearchQuery("");
+        if(!Config.KEEP_SEARCH_QUERY.getAsBoolean()) SortingTools.setSearchQuery("");
         super.removed();
     }
 

@@ -8,7 +8,6 @@ import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 @ApiStatus.Internal
-public class SortTools {
+public class SortingTools {
 
     //TYPE
     private static final List<SortType> activeSortTypes = new ArrayList<>();

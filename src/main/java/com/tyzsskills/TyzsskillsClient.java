@@ -2,7 +2,6 @@ package com.tyzsskills;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.TyzsSkillsAPI;
-import com.tyzsskills.api.events.SkillActionEvent;
 import com.tyzsskills.api.events.TyzsSkillsClientSetupEvent;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.records.SortType;
@@ -13,7 +12,6 @@ import com.tyzsskills.impl.client.screen.LevelTriggerOverlay;
 import com.tyzsskills.impl.client.screen.MainGUI;
 import com.tyzsskills.impl.client.screen.SkillTriggerOverlay;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
-import com.tyzsskills.impl.client.tools.SortTools;
 import com.tyzsskills.impl.client.wrappers.ClientCacheWrapper;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
 import net.minecraft.client.Minecraft;
@@ -25,7 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -33,7 +30,6 @@ import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.Comparator;
 

@@ -7,7 +7,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.SoundPlayer;
 import com.tyzsskills.impl.client.screen.MainGUI;
-import com.tyzsskills.impl.client.tools.SortTools;
+import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
@@ -24,7 +24,6 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 public class SkillWidget {
 
@@ -270,7 +269,7 @@ public class SkillWidget {
             ClientCache.predictBookmark(skill);
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 2));
 
-            if (SortTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS) {
+            if (SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS) {
                 if (Minecraft.getInstance().screen instanceof MainGUI gui) {
                     gui.renderList();
                 }
