@@ -38,7 +38,6 @@ import java.util.Comparator;
 @Mod(value = Tyzsskills.MODID, dist = Dist.CLIENT)
 // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
 @EventBusSubscriber(modid = Tyzsskills.MODID, value = Dist.CLIENT)
-
 public class TyzsskillsClient {
 
     public static net.neoforged.bus.api.IEventBus MOD_BUS;
