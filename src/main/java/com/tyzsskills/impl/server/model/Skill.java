@@ -77,7 +77,7 @@ public class Skill implements ISkill {
     @Override
     public int getMaximumLevel() {return maximumLevel;}
     @Override
-    public List<Integer> getPrices() {return Collections.unmodifiableList(prices);}
+    public @NotNull List<Integer> getPrices() {return Collections.unmodifiableList(prices);}
     @Override
     public int getPrice(int lvl) {
         if(lvl <= 0 || lvl > prices.size()) return Integer.MAX_VALUE;

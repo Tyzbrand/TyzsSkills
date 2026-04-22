@@ -9,6 +9,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.server.active.DebugManager;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.Skill;
+import com.tyzsskills.impl.server.payloads.ExportPayload;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;
@@ -16,6 +17,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.io.IOException;
 
@@ -24,13 +26,13 @@ public class MainCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
         return Commands.literal("skills")
-                .requires(src -> src.hasPermission(3))
-                .then(xp())
-                .then(level())
-                .then(sp())
-                .then(skill())
-                .then(reload())
-                .then(reset());
+                .then(xp().requires(src -> src.hasPermission(3)))
+                .then(level().requires(src -> src.hasPermission(3)))
+                .then(sp().requires(src -> src.hasPermission(3)))
+                .then(skill().requires(src -> src.hasPermission(3)))
+                .then(reload().requires(src -> src.hasPermission(3)))
+                .then(reset().requires(src -> src.hasPermission(3)))
+                .then(export());
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> xp(){
@@ -213,6 +215,15 @@ public class MainCommand {
                         })));
 
 
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> export(){
+        return Commands.literal("export")
+                .executes(ctx -> {
+                    var player = ctx.getSource().getPlayer();
+                    if(player != null) PacketDistributor.sendToPlayer(player, new ExportPayload());
+                    return 1;
+                });
     }
 
 

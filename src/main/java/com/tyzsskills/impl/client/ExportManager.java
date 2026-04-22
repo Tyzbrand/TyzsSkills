@@ -1,9 +1,8 @@
-package com.tyzsskills.impl.client.wrappers;
+package com.tyzsskills.impl.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tyzsskills.impl.client.records.ExportData;
-import com.tyzsskills.impl.client.ClientCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;

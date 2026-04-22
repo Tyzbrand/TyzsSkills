@@ -224,6 +224,7 @@
   "gui.tyzs_skills.level_lock" : "Requires Level",
   "gui.tyzs_skills.conlict" : "Conflicts with",
   "gui.tyzs_skills.locked" : "Locked",
+  "gui.tyzs_skills.incompatibilities" : "Incompatibilities",
 
   "gui.tyzs_skills.sorting.price" : "By Price",
   "gui.tyzs_skills.sorting.name" : "By Name",

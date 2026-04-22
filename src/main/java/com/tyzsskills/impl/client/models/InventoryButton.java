@@ -24,7 +24,7 @@ public class InventoryButton extends AbstractWidget {
     private int dragOffsetY = 0;
 
     public InventoryButton(int x, int y, Runnable onPress) {
-        super(x, y, 14, 14, Component.literal("Skills Button"));
+        super(x, y, 20, 19, Component.literal("Skills Button"));
         this.onPress = onPress;
     }
 
@@ -41,10 +41,10 @@ public class InventoryButton extends AbstractWidget {
         guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 
-        int currentU = this.isHovered ? 97 : 83;
+        int currentU = this.isHovered ? 256 : 232;
 
 
-        guiGraphics.blit(TEXTURE_NORMAL, this.getX(), this.getY(), currentU, 154, 14, 14, 325, 325);
+        guiGraphics.blit(TEXTURE_NORMAL, this.getX(), this.getY(), currentU, 211, 20, 19, 325, 325);
 
         guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.disableBlend();

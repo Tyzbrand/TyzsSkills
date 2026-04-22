@@ -19,14 +19,17 @@ public interface ISkill {
     int getMaximumLevel();
 
     /**
-     * @return a list of prices (1st price in the list is the price from lvl 0 to lvl 1)
+     * Gets the skill prices list.
+     * @return a list of prices (1st price in the list is the price from lvl 0 to lvl 1).
      */
-    List<Integer> getPrices();
+    @NotNull List<Integer> getPrices();
 
     /**
-     * Gets tht skill price to buy the specified level.
+     * Gets the skill price to buy the specified level.
+     * This represents the price for a single upgrade (from level - 1 to the specified level),
+     * NOT the cumulative total cost from the actual player level to the targeted level.
      * @param lvl The Targeted level.
-     * @return The price for the specified level.
+     * @return The SP cost required to unlock the specified level.
      */
     int getPrice(int lvl);
 

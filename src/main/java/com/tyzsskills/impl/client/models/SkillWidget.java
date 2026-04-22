@@ -175,6 +175,19 @@ public class SkillWidget {
         if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)) {
             tooltip.add(Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE));
             tooltip.addAll(StringTools.getSkillDescription(skill));
+
+
+            var incompatibilities = skill.getRawIncompatibilities();
+            if(!incompatibilities.isEmpty()){
+                tooltip.add(Component.empty());
+
+                tooltip.add(Component.translatable("gui.tyzs_skills.incompatibilities").append(Component.literal(":")).withStyle(ChatFormatting.BLUE));
+                for(var id : incompatibilities){
+                    var conflict = ClientCache.getSkill(id);
+                    if(conflict == null) continue;
+                    tooltip.add(Component.literal("- ").append(Component.translatable(conflict.getDisplayName())).withStyle(ChatFormatting.DARK_GRAY));
+                }
+            }
             return tooltip;
         }
 

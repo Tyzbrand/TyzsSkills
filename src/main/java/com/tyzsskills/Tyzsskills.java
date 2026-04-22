@@ -233,6 +233,12 @@ public class Tyzsskills {
                 ResetPayload::Handle
         );
 
+        registrar.playToClient(
+                ExportPayload.TYPE,
+                ExportPayload.STREAM_CODEC,
+                ExportPayload::Handle
+        );
+
     }
 
 
