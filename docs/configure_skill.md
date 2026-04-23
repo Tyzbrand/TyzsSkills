@@ -1,4 +1,4 @@
-# Configure an existing skill for 6.2+
+# Configure an existing skill for 6.3+
 
 
 I will explain how to properly modify an existing skill.
