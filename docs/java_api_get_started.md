@@ -55,7 +55,13 @@ This is the only entry point of the mod. It is strongly recommended to only use 
 
 <br>
 
+## Registration lifecycle
+To register your own elements (custom skills, behaviors, GUI tweaks...) during the game initialization, the API provides two specific events fired on the `MOD_BUS`:
+- `TyzsSkillsCommonSetupEvent`: Used to register server-side and common elements.
+- `TyzsSkillsClientSetupEvent`: Used to register client-side only elements.
+
+<br>
+
 ## Summary
-This documentation is divided into several parts to help you navigate the API:
 1. Creating Skills: Learn how to create, register and update your own skills so they appear in the game and the default config folder.
 
