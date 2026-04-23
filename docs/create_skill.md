@@ -1,4 +1,4 @@
-# Create your own skill for 6.2+
+# Create your own skill for 6.3+
 I will explain step by step how to properly create your own skill.
 
 <br>
@@ -38,6 +38,8 @@ For every skill you place inside it, the game will attempt to load it.<br>
   "type": "CUSTOM",
   "category": "ABILITIES",
   "purchasable": true,
+  "levelRequirement": -1,
+  "incompatibleSkills": [],
   "icon": "tyzs_skills:textures/gui/skills/my_custom_skill.png",
   "displayName": "skill.tyzs_skills.my_custom_skill.displayName",
   "description": "skill.tyzs_skills.my_custom_skill.description",
