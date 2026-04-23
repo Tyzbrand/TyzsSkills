@@ -25,7 +25,7 @@ public record StatsSpSpentPayload(int spSpent) implements CustomPacketPayload{
 
     public static void Handle(final StatsSpSpentPayload payload, final IPayloadContext ctx){
         ctx.enqueueWork(() -> {
-            ClientCache.UpdateClientStatSpSpent(payload.spSpent());
+            ClientCache.updateClientStatSpSpent(payload.spSpent());
         });
     }
 

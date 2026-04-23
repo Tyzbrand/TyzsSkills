@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.impl.server.model.SkillBehavior;
+import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;

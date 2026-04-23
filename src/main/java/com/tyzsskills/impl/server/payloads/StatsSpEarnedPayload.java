@@ -25,7 +25,7 @@ public record StatsSpEarnedPayload(int spGain) implements CustomPacketPayload{
 
     public static void Handle(final StatsSpEarnedPayload payload, final IPayloadContext ctx){
         ctx.enqueueWork(() -> {
-            ClientCache.UpdateClientStatSpEarned(payload.spGain());
+            ClientCache.updateClientStatSpEarned(payload.spGain());
         });
     }
 

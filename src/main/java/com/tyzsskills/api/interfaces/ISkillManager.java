@@ -1,7 +1,7 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.records.SkillPrefab;
-import com.tyzsskills.impl.server.model.SkillBehavior;
+import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nullable;
@@ -80,6 +80,22 @@ public interface ISkillManager {
     boolean tryRefundSkill(ServerPlayer player, String id);
 
     /**
+     * Tries to buy the maximum levels a player can afford, according to the rules of the mod (not only a verification).
+     * @param id Valid id of the targeted skill (in lowercase)
+     * @return {@code true} if the bulk has succeeded, {@code false} otherwise.
+     * NOTE: if the process is successful data are handled automatically (sp, skill lvl, and stats)
+     */
+    boolean tryBulkBuy(ServerPlayer player, String id);
+
+    /**
+     * Tries to refund the skill levels to 0, according to the rules of the mod (not only a verification).
+     * @param id Valid id of the targeted skill (in lowercase).
+     * @return {@code true} if the bulk has succeeded, {@code false} otherwise.
+     * NOTE: if the process is successful data are handled automatically (sp, skill lvl, and stats).
+     */
+    boolean tryBulkRefund(ServerPlayer player, String id);
+
+    /**
      * @return a copy of the server skill list (contains all loaded skills)
      */
     List<ISkill> getSkillList();
@@ -109,33 +125,12 @@ public interface ISkillManager {
     List<String> getBookmarkedSkillIDs(ServerPlayer player);
 
 
-    //Functions below  are used for skill creation
-
-    /**
-     * Registers a default skill configuration to be generated as a JSON file
-     * @param prefab The skill prefab to generate
-     * NOTE: If the JSON already exists in the config folder, it will NOT be overwritten
-     * DISCLAIMER: This method must be called BEFORE the server starts (e.g., FMLCommonSetupEvent)
-     */
-    void registerSkillPrefab(SkillPrefab prefab);
-
-    /**
-     * Registers a custom behavior linked to a skill ID
-     * When the skill JSON is loaded by the server, it will automatically attach this logic
-     * @param id The valid ID of the targeted skill (in lowercase)
-     * @param behavior The behavior logic class to attach
-     * DISCLAIMER: This method must be called BEFORE the server starts (e.g., FMLCommonSetupEvent)
-     */
-    void registerSkillBehavior(String id, SkillBehavior behavior);
-
     /**
      * Triggers the skill activation overlay on the client side
      * Useful for custom events handled outside of standard SkillBehaviors
      * @param id The valid ID of the targeted skill used as ref icon (in lowercase)
      */
     void triggerSkillActivationOverlay(ServerPlayer player, String id);
-
-
 
 
 }

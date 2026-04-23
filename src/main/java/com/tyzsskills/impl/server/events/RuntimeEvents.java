@@ -25,6 +25,7 @@ public class RuntimeEvents {
 
         CompatibilityManager.processMigration(player);
         CompatibilityManager.processMigrationV2(player);
+        CompatibilityManager.processMigrationV3(player);
 
         AutoSyncClient.syncMainData(player);
         AutoSyncClient.syncSkillList(player);
@@ -32,6 +33,8 @@ public class RuntimeEvents {
         AutoSyncClient.syncConfig(player);
         AutoSyncClient.syncSkillBookmarks(player);
         AutoSyncClient.syncStats(player);
+
+        DebugManager.checkForInconsistencies(player);
 
         GenericEffects.restoreEffects(player);
 

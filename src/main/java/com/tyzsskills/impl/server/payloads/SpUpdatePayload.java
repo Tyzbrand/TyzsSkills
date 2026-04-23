@@ -24,7 +24,7 @@ public record SpUpdatePayload(int sp) implements CustomPacketPayload{
     }
 
     public static void Handle(final SpUpdatePayload payload, final IPayloadContext ctx){
-        ctx.enqueueWork(() -> {ClientCache.UpdateClientCacheSP(payload.sp());} );
+        ctx.enqueueWork(() -> {ClientCache.updateClientCacheSP(payload.sp());} );
     }
 
 }

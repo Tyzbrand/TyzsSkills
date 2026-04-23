@@ -29,6 +29,6 @@ public record LevelDataUpdatePayload(XpManager.LevelData data) implements Custom
 
     public static void Handle(final LevelDataUpdatePayload payload, final IPayloadContext ctx){
         ctx.enqueueWork(() -> {
-            ClientCache.UpdateClientCacheLevelData(payload.data());} );
+            ClientCache.updateClientCacheLevelData(payload.data());} );
     }
 }

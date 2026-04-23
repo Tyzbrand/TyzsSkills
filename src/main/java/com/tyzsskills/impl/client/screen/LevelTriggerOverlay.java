@@ -89,10 +89,10 @@ public class LevelTriggerOverlay implements LayeredDraw.Layer {
         alpha = Mth.clamp(alpha, 0f, 1f);
         if (alpha <= 0.05f) return;
 
-        int cfgBg = ClientCache.ParseColor(Config.LEVEL_BG_COLOR.get(), 0xAA000000);
-        int cfgBorder = ClientCache.ParseColor(Config.LEVEL_BD_COLOR.get(), 0xFFD6AD55);
-        int cfgText = ClientCache.ParseColor(Config.LEVEL_TEXT_COLOR.get(), 0xFFFFFFFF);
-        int spBaseColor = ClientCache.ParseColor(Config.LEVEL_SCD_TEXT_COLOR.get(), 0xFFD6AD55);
+        int cfgBg = ClientCache.parseColor(Config.LEVEL_BG_COLOR.get(), 0xAA000000);
+        int cfgBorder = ClientCache.parseColor(Config.LEVEL_BD_COLOR.get(), 0xFFD6AD55);
+        int cfgText = ClientCache.parseColor(Config.LEVEL_TEXT_COLOR.get(), 0xFFFFFFFF);
+        int spBaseColor = ClientCache.parseColor(Config.LEVEL_SCD_TEXT_COLOR.get(), 0xFFD6AD55);
 
         int spBaseAlpha = (spBaseColor >> 24) & 0xFF;
         int spFinalAlpha = (int)(spBaseAlpha * alpha);

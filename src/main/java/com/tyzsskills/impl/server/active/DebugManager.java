@@ -8,21 +8,25 @@ import com.tyzsskills.impl.server.attachments.ExplorationProgression;
 import com.tyzsskills.impl.server.attachments.LimitsTracker;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.effects.GenericEffects;
+import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.payloads.ResetPayload;
-import com.tyzsskills.impl.server.power.PowerManager;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;
 import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
 import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
 import com.tyzsskills.impl.server.xp.xpEvents.XpFood;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @ApiStatus.Internal
 public class DebugManager {
@@ -41,17 +45,10 @@ public class DebugManager {
         FileManager.get().readLevelPool(server);
         FileManager.get().readXpValues(server);
 
-        var manager = SkillManager.get();
-
         for(var player : server.getPlayerList().getPlayers()){
+            checkForInconsistencies(player);
+
             XpManager.levelUpCheck(player);
-
-            for (var skill : manager.getAllSkills()){
-                if(manager.getPlayerSkillLevel(player, skill.getID().toLowerCase()) > skill.getMaximumLevel()){
-                    manager.setSkillLevel(player, skill.getID().toLowerCase(), skill.getMaximumLevel());
-                }
-            }
-
             GenericEffects.restoreEffects(player);
         }
 
@@ -74,6 +71,56 @@ public class DebugManager {
         NeoForge.EVENT_BUS.post(new SkillReloadEvent());
     }
 
+    //------------CHECKS------------
+    public static void checkForInconsistencies(@NotNull ServerPlayer player){
+        var manager = SkillManager.get();
+        for (var skillId : manager.getPlayerOwnedSkillIds(player)){
+
+            var skill = manager.getSkill(skillId);
+            if(skill == null) continue;
+
+            var lvl = manager.getPlayerSkillLevel(player, skillId);
+
+            var incompatibilities = skill.getIncompatibilities(manager.getPlayerOwnedSkillIds(player));
+
+            if(!skill.meetsLevelRequirement(LevelManager.getLevel(player))){
+                cleanRefund(0, lvl, player, skill);
+                continue;
+            }
+            else if(incompatibilities  != null){
+                cleanRefund(0, lvl, player, skill);
+
+                for(var id : incompatibilities){
+                    var conflict = manager.getSkill(id);
+                    if(conflict != null )cleanRefund(0, manager.getPlayerSkillLevel(player, id), player, conflict);
+                }
+                continue;
+            }
+
+
+            if(!manager.isSkillLoaded(skill.getID())) continue;
+
+            var maxLvl = skill.getMaximumLevel();
+            if(lvl <= maxLvl) continue;
+            cleanRefund(maxLvl, lvl, player, skill);
+        }
+    }
+
+    private static void cleanRefund(int targetLvl, int currentLvl, ServerPlayer player, Skill skill){
+        if (currentLvl == targetLvl) return;
+
+        var spToRefund = 0;
+        for(int i = currentLvl - 1; i >= targetLvl; i--){
+            if(i >= skill.getPrices().size()) continue;
+            spToRefund += skill.getPrices().get(i);
+        }
+
+        SkillManager.get().setSkillLevel(player, skill.getID(), targetLvl);
+
+        if(spToRefund <= 0) return;
+        SpManager.addSP(player, spToRefund);
+        player.sendSystemMessage(Component.literal("Skill §9[" + skill.getID() + "] §rrules changed. §6" + spToRefund + " §rSP refunded."));
+    }
 
     //------------RESET------------
 
@@ -98,7 +145,6 @@ public class DebugManager {
     private static void resetMetaData(ServerPlayer player){
         LevelManager.setLevel(player, 1);
         SpManager.setSP(player, 0);
-        PowerManager.setPower(player, 0);
         XpManager.setXP(player, 0f);
         player.getData(ExplorationProgression.DATA).resetPlayerData();
     }

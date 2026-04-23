@@ -13,15 +13,13 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.HashMap;
 import java.util.Map;
 
-public record ConfigSyncPayload(boolean refundSys, double refundPer, int traitLevel, boolean traitSys, double maxXP) implements CustomPacketPayload{
+public record ConfigSyncPayload(boolean refundSys, double refundPer, double maxXP) implements CustomPacketPayload{
     public static final Type<ConfigSyncPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "config_sync_payload"));
 
 
     public static final StreamCodec<ByteBuf, ConfigSyncPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.BOOL, ConfigSyncPayload::refundSys,
             ByteBufCodecs.DOUBLE, ConfigSyncPayload::refundPer,
-            ByteBufCodecs.INT, ConfigSyncPayload::traitLevel,
-            ByteBufCodecs.BOOL, ConfigSyncPayload::traitSys,
             ByteBufCodecs.DOUBLE, ConfigSyncPayload::maxXP,
             ConfigSyncPayload::new
     );
@@ -37,11 +35,9 @@ public record ConfigSyncPayload(boolean refundSys, double refundPer, int traitLe
 
             configMap.put(Config.REFUND_SYSTEM_KEY , payload.refundSys());
             configMap.put(Config.REFUND_PERCENTAGE_KEY, payload.refundPer());
-            configMap.put(Config.TRAIT_UNLOCK_LEVEL_KEY, payload.traitLevel());
-            configMap.put(Config.TRAIT_SYSTEM_KEY, payload.traitSys());
             configMap.put(Config.MAX_XP_KEY, payload.maxXP());
 
-            ClientCache.SyncConfig(configMap);
+            ClientCache.syncConfig(configMap);
         });
     }
 

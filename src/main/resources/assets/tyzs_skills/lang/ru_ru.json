@@ -4,7 +4,6 @@
   "gui.tyzs_skills.Lvl" : "Ур.",
   "gui.tyzs_skills.Skills" : "Навыки",
   "gui.tyzs_skills.Quests" : "Квесты",
-  "gui.tyzs_skills.traits" : "Особенности",
   "gui.tyzs_skills.error_value" : "Н/Д",
   "gui.tyzs_skills.level_max" : "Макс. уровень",
   "gui.tyzs_skills.cost" : "Стоимость",
@@ -18,7 +17,6 @@
   "skill.tyzs_skills.unit.blocks" : "блоков",
   "skill.tyzs_skills.unit.half_hearts" : "половин сердец",
   "skill.tyzs_skills.unit.damage" : "ед. урона",
-  "skill.tyzs_skills.unit.trait_power" : "силы особенности",
   "skill.tyzs_skills.unit.block_radius" : "блоков в радиусе",
 
   "overlay.tyzs_skills.level" : "Уровень",
@@ -105,41 +103,13 @@
   "skill.tyzs_skills.magnet.displayName" : "Магнит",
   "skill.tyzs_skills.magnet.description" : "Притягивает предметы в радиусе {block_radius} блоков",
 
-  "skill.tyzs_skills.trait_surge.displayName" : "Всплеск особенностей",
-  "skill.tyzs_skills.trait_surge.description" : "Увеличивает силу особенностей на {value}",
 
-  "skill.tyzs_skills.cinder_blood.displayName" : "Пепельная кровь",
-  "skill.tyzs_skills.cinder_blood.description" : "Дает иммунитет к урону от огня (но ванны из лавы принимать все равно не советую)",
-
-  "skill.tyzs_skills.deep_lode.displayName" : "Глубинная жила",
-  "skill.tyzs_skills.deep_lode.description" : "Добывает рудные жилы целиком за один удар (присядьте, чтобы отменить)",
-
-  "skill.tyzs_skills.root_cleaver.displayName" : "Лесоруб",
-  "skill.tyzs_skills.root_cleaver.description" : "Срубает деревья целиком за один удар (присядьте, чтобы отменить)",
-
-  "skill.tyzs_skills.iron_gut.displayName" : "Железный желудок",
-  "skill.tyzs_skills.iron_gut.description" : "Предотвращает эффект голода при поедании гнилой плоти",
-
-  "skill.tyzs_skills.gilded_aura.displayName" : "Золотая аура",
-  "skill.tyzs_skills.gilded_aura.description" : "Вам больше не нужна золотая броня, чтобы заслужить симпатию пиглинов",
-
-  "skill.tyzs_skills.silver_tongue.displayName" : "Серебряный язык",
-  "skill.tyzs_skills.silver_tongue.description" : "Жители будут следовать за вами, если вы держите в руках изумруды",
+  "skill.tyzs_skills.haggler.displayName" : "Серебряный язык",
+  "skill.tyzs_skills.haggler.description" : "Жители будут следовать за вами, если вы держите в руках изумруды",
 
   "skill.tyzs_skills.keepsake.displayName" : "Сохранность",
   "skill.tyzs_skills.keepsake.description" : "Сохраняет предметы на панели быстрого доступа (хотбаре) после смерти",
 
-  "skill.tyzs_skills.soundless.displayName" : "Беззвучный",
-  "skill.tyzs_skills.soundless.description" : "Враги и сущности больше не могут вас услышать",
-
-  "skill.tyzs_skills.refiner.displayName" : "Переработчик",
-  "skill.tyzs_skills.refiner.description" : "Автоматически переплавляет добытые руды (присядьте, чтобы отменить)",
-
-  "skill.tyzs_skills.deep_sight.displayName" : "Глубинное зрение",
-  "skill.tyzs_skills.deep_sight.description" : "Дает ночное зрение в глубоких пещерах",
-
-  "skill.tyzs_skills.deep_rest.displayName" : "Глубокий сон",
-  "skill.tyzs_skills.deep_rest.description" : "Полностью восстанавливает здоровье и шкалу голода после сна",
 
   "tyzs_skills.configuration.title": "Настройки навыков Tyz",
   "tyzs_skills.configuration.section.tyzs.skills.common.toml": "Общие настройки (Геймплей)",
@@ -152,35 +122,13 @@
   "tyzs_skills.configuration.skill_overlay": "Детали оверлея навыков",
   "tyzs_skills.configuration.debug": "Отладка",
   "tyzs_skills.configuration.accessibility": "Доступность",
-  "tyzs_skills.configuration.Cinder_blood": "Пепельная кровь",
-  "tyzs_skills.configuration.Deep_sight": "Глубинное зрение",
-  "tyzs_skills.configuration.Root_cleaver": "Лесоруб",
-  "tyzs_skills.configuration.Deep_rest": "Глубокий сон",
-  "tyzs_skills.configuration.Deep_lode": "Глубинная жила",
-  "tyzs_skills.configuration.Silver_tongue": "Серебряный язык",
-  "tyzs_skills.configuration.Trait_details": "Детали особенностей",
   "tyzs_skills.configuration.inventory_button": "Кнопка в инвентаре",
   "tyzs_skills.configuration.Limits": "Лимиты",
 
   "config.common.tyzs_skills.refund_system" : "Включить систему сброса навыков",
   "config.common.tyzs_skills.refund_system_per" : "Процент возврата",
-  "config.common.tyzs_skills.trait_unlock_level" : "Уровень разблокировки особенностей",
-  "config.common.tyzs_skills.trait_system" : "Включить систему особенностей",
   "config.common.tyzs_skills.prevent_placed_blocks_xp" : "Не давать опыт за поставленные игроком блоки",
   "config.common..trait.max_ores" : "Макс. размер рудной жилы",
-  "config.common.tyzs_skills.trait.deep_lode_grief" : "Защита от гриферства (Глубинная жила)",
-  "config.common.tyzs_skills.trait.max_logs" : "Макс. количество сломанных бревен",
-  "config.common.tyzs_skills.trait.max_leaves" : "Макс. количество сломанной листвы",
-  "config.common.tyzs_skills.trait.match_type" : "Строгое совпадение типов блоков",
-  "config.common.tyzs_skills.trait.root_cleaver_grief" : "Защита от гриферства (Лесоруб)",
-  "config.common.tyzs_skills.trait.lava_damage" : "Предотвращать урон от лавы",
-  "config.common.tyzs_skills.trait.restores_health" : "Восстанавливать здоровье",
-  "config.common.tyzs_skills.trait.restores_nutrition" : "Восстанавливать голод",
-  "config.common.tyzs_skills.trait.restores_saturation" : "Восстанавливать насыщение",
-  "config.common.tyzs_skills.trait.ambient_threshold" : "Порог освещения (От блоков)",
-  "config.common.tyzs_skills.trait.sky_threshold" : "Порог освещения (От неба)",
-  "config.common.tyzs_skills.trait.attraction_radius" : "Радиус притяжения",
-  "config.common.tyzs_skills.trait.villagers_speed" : "Скорость жителей",
   "config.common.tyzs_skills.earn_creative_xp" : "Получение опыта в творческом режиме",
   "config.common.tyzs_skills.eating_xp_earnings" : "Опыт за еду",
   "config.common.tyzs_skills.sleeping_gain" : "Опыт за сон",

@@ -1,9 +1,7 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
-import com.tyzsskills.Config;
 import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.impl.server.Level.LevelManager;
-import com.tyzsskills.impl.server.model.SkillBehavior;
+import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
@@ -20,19 +18,21 @@ public class KeepsakeEffect extends SkillBehavior {
     public void onPlayerDeath(LivingDeathEvent event, ServerPlayer player, int lvl, ISkill skill) {
         if (player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) return;
 
-        if(LevelManager.getLevel(player) < Config.TRAIT_UNLOCK_LEVEL.get()) return;
-
-
         Map<Integer, ItemStack> keptItems = new HashMap<>();
 
-        for (int i = 0; i < 9; i++) {
+        var values = skill.getValueSet("saved_slots");
+        if(values == null) return;
+
+        var slotAmount = (int)values.getValue(lvl);
+        slotAmount = Math.max(0, Math.min(41, slotAmount));
+
+        for (int i = 0; i < slotAmount; i++) {
             ItemStack stack = player.getInventory().getItem(i);
             if (!stack.isEmpty()) {
                 keptItems.put(i, stack.copy());
                 player.getInventory().setItem(i, ItemStack.EMPTY);
             }
         }
-
 
         SAVED_HOTBARS.put(player.getUUID(), keptItems);
     }

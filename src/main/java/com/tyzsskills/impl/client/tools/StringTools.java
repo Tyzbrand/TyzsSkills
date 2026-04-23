@@ -4,7 +4,6 @@ import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.model.Trait;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -35,15 +34,14 @@ public class StringTools {
 
         if(currentLvl >= skill.getMaximumLevel()) return Component.translatable("gui.tyzs_skills.level_max").withStyle(ChatFormatting.GOLD);
 
-        boolean effectiveMax = isMax && !(skill instanceof Trait);
         int totalSpAmount = 0;
         var prices = skill.getPrices();
         boolean affordable = canBuy;
 
-        if (!effectiveMax) {
+        if (!isMax) {
             if(currentLvl < prices.size()) totalSpAmount = prices.get(currentLvl);
         } else {
-            int availableSp = ClientCache.GetSP();
+            int availableSp = ClientCache.getSP();
             int simulatedSp = availableSp;
             int levelsAffordable = 0;
 
@@ -86,7 +84,6 @@ public class StringTools {
         if(skill == null || client == null) return lines;
 
         boolean isPurchase = type == Enums.TooltipType.PURCHASE;
-        boolean effectiveMax = isMax && !(skill instanceof Trait);
         int targetLvl = currentLvl;
 
         if(isPurchase) {
@@ -97,10 +94,10 @@ public class StringTools {
 
             lines.add(getPriceLine(skill, currentLvl, canBuy, isMax));
 
-            if (!effectiveMax) {
+            if (!isMax) {
                 targetLvl = currentLvl + 1;
             } else {
-                int availableSp = ClientCache.GetSP();
+                int availableSp = ClientCache.getSP();
                 int simulatedSp = availableSp;
                 int levelsAffordable = 0;
                 var prices = skill.getPrices();
@@ -123,7 +120,7 @@ public class StringTools {
             if(currentLvl <= 0) return lines;
             lines.add(getRefundLine(skill, currentLvl, isMax));
 
-            targetLvl = effectiveMax ? 0 : currentLvl - 1;
+            targetLvl = isMax ? 0 : currentLvl - 1;
         }
 
         if (targetLvl == currentLvl) return lines;
@@ -149,11 +146,10 @@ public class StringTools {
     public static MutableComponent getRefundLine(Skill skill, int currentLvl, boolean isMax) {
         if(skill == null || currentLvl <= 0) return Component.empty();
 
-        boolean effectiveMax = isMax && !(skill instanceof Trait);
         int totalSpAmount = 0;
         var prices = skill.getPrices();
 
-        if (!effectiveMax) {
+        if (!isMax) {
             if (currentLvl - 1 < prices.size()) {
                 int p = prices.get(currentLvl - 1);
                 int ref = (int)(p * (Config.REFUND_PERCENTAGE.get() / 100f));
@@ -178,7 +174,7 @@ public class StringTools {
     public static List<MutableComponent> getSkillDescription(Skill skill) {
         List<MutableComponent> lines = new ArrayList<>();
         String rawDesc = Component.translatable(skill.getDescription()).getString();
-        var currentLvl = ClientCache.GetSkillLevel(skill.getID().toLowerCase());
+        var currentLvl = ClientCache.getSkillLevel(skill.getID().toLowerCase());
 
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
             var modifiers = skill.getModifiers();

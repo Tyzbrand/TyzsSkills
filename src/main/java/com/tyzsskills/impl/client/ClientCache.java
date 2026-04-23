@@ -3,6 +3,7 @@ package com.tyzsskills.impl.client;
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
+import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.model.*;
 import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.client.Minecraft;
@@ -15,7 +16,6 @@ public class ClientCache {
     private static int clientLevel = 1;
     private static int clientSP = 0;
     private static float clientXP = 0f;
-    private static int clientPower = 0;
 
     private static float clientXpLimit = 0f;
 
@@ -32,32 +32,24 @@ public class ClientCache {
     private final static Map<String, Object> clientConfigMap = new HashMap<>();
     private final static HashSet<String> clientBookmarks = new HashSet<>();
 
-    private static Enums.ContainerType currentContainerType = Enums.ContainerType.SKILLS;
-    private static Enums.CategoryType currentContainerCategory = Enums.CategoryType.ALL;
 
 
-    public static void UpdateClientCacheLevel(int level){
+
+    public static void updateClientCacheLevel(int level){
         clientLevel = level;
         if(Config.SHOW_DEBUG_MESSAGES.get()){
             Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Level Update: " + level), false);
         }
     }
 
-    public static void UpdateClientCacheSP(int sp){
+    public static void updateClientCacheSP(int sp){
         clientSP = sp;
         if(Config.SHOW_DEBUG_MESSAGES.get()){
             Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP Update: " + sp), false);
         }
     }
 
-    public static void UpdateClientCachePower(int power){
-        clientPower = power;
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Power Update: " + power), false);
-        }
-    }
-
-    public static void UpdateClientCacheXP(float xp, float gained, boolean triggersOverlay, float limit){
+    public static void updateClientCacheXP(float xp, float gained, boolean triggersOverlay, float limit){
         if(gained > 0) {
             XpTriggerOverlay.AddXp(gained, triggersOverlay);
             clientSessionXP += gained;
@@ -70,7 +62,7 @@ public class ClientCache {
         }
     }
 
-    public static void UpdateClientStatXP(float amount){
+    public static void updateClientStatXP(float amount){
         if(amount > 0f)clientAllTimeXP += amount;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
@@ -78,7 +70,7 @@ public class ClientCache {
         }
     }
 
-    public static void UpdateClientStatSpEarned(int amount){
+    public static void updateClientStatSpEarned(int amount){
         if(amount > 0)clientSpEarned += amount;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
@@ -86,7 +78,7 @@ public class ClientCache {
         }
     }
 
-    public static void UpdateClientStatSpSpent(int amount){
+    public static void updateClientStatSpSpent(int amount){
         if(amount > 0)clientSpSpent += amount;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
@@ -94,7 +86,7 @@ public class ClientCache {
         }
     }
 
-    public static void UpdateClientCacheLevelData(XpManager.LevelData data){
+    public static void updateClientCacheLevelData(XpManager.LevelData data){
         clientLevelData = data;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
@@ -102,19 +94,10 @@ public class ClientCache {
         }
     }
 
-    public static void SetContainerType(Enums.ContainerType type){
-        if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true) && type == Enums.ContainerType.TRAITS) return;
-        if(GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20) > clientLevel && type == Enums.ContainerType.TRAITS) return;
-        currentContainerType = type;
-    }
 
-    public static void SetCategoryType(Enums.CategoryType category){
-        if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true) && category == Enums.CategoryType.TRAITS) return;
-        if(GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20) > clientLevel && category == Enums.CategoryType.TRAITS) return;
-        currentContainerCategory = category;
-    }
 
-    public static void UpdateSkills(List<Skill> skills){
+
+    public static void updateSkills(List<Skill> skills){
         clientSkills.clear();
         for(var skill : skills){clientSkills.put(skill.getID(), skill);}
 
@@ -124,12 +107,14 @@ public class ClientCache {
 
     }
 
-    public static void UpdateSkillLevels(String id, int lvl){
-        clientSkillLevels.put(id.toLowerCase(), lvl);
+    public static void updateSkillLevels(String id, int lvl){
+        id = id.toLowerCase();
+
+        if(lvl <= 0) clientSkillLevels.remove(id);
+        else clientSkillLevels.put(id.toLowerCase(), lvl);
 
         int owned = 0;
         for(var skill : clientSkills.values()){
-            if(skill instanceof Trait) continue;
             if(!clientSkillLevels.containsKey(skill.getID().toLowerCase())) continue;
             owned += clientSkillLevels.get(skill.getID().toLowerCase());
         }
@@ -140,7 +125,7 @@ public class ClientCache {
         }
     }
 
-    public static void SyncConfig(Map<String, Object> syncedMap){
+    public static void syncConfig(Map<String, Object> syncedMap){
         clientConfigMap.clear();
         clientConfigMap.putAll(syncedMap);
 
@@ -151,7 +136,7 @@ public class ClientCache {
 
     }
 
-    public static void SyncBookmark(String id, boolean state){
+    public static void syncBookmark(String id, boolean state){
         if(!state) clientBookmarks.remove(id.toLowerCase());
         else clientBookmarks.add(id.toLowerCase());
 
@@ -161,8 +146,7 @@ public class ClientCache {
     }
 
 
-
-
+    //PREDICTIONS
     public static void predictBookmark(Skill skill){
         String id = skill.getID();
         if(isSkillBookmarked(id)) clientBookmarks.remove(id);
@@ -171,106 +155,58 @@ public class ClientCache {
 
     public static void predictBuy(Skill skill) {
         String id = skill.getID().toLowerCase();
-        int currentLvl = GetSkillLevel(id);
+        int currentLvl = getSkillLevel(id);
 
-        if(skill instanceof Trait){
-            if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true)) return;
-            if(clientLevel < GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20)) return;
-        }
-
-        if (currentLvl >= skill.getMaximumLevel()) return;
-
-        var prices = skill.getPrices();
-        if (currentLvl >= prices.size()) return;
-        int price = prices.get(currentLvl);
+        if(!skill.canBuy(currentLvl, clientLevel, clientSP, getPurchasedSkills())) return;
+        int price = skill.getPrices().get(currentLvl);
 
         clientSP -= price;
-        UpdateSkillLevels(id, currentLvl + 1);
-
-        if(skill instanceof Trait trait) clientPower += trait.getPowerWeight();
+        updateSkillLevels(id, currentLvl + 1);
     }
 
     public static void predictBuyMax(Skill skill) {
         String id = skill.getID().toLowerCase();
-        int currentLvl = GetSkillLevel(id);
-        int maxLvl = skill.getMaximumLevel();
+        int currentLvl = getSkillLevel(id);
 
-        if (currentLvl >= maxLvl) return;
+        var bulkResult = skill.checkBulkBuy(currentLvl, clientLevel, clientSP, getPurchasedSkills());
 
-        var prices = skill.getPrices();
-        int simulatedSP = clientSP;
-        int levelsToAdd = 0;
-
-        for (int i = currentLvl; i < maxLvl; i++) {
-            if (i >= prices.size()) break;
-            int price = prices.get(i);
-
-            if (simulatedSP >= price) {
-                simulatedSP -= price;
-                levelsToAdd++;
-            } else break;
-
-        }
-        if (levelsToAdd > 0) {
-            clientSP = simulatedSP;
-            UpdateSkillLevels(id, currentLvl + levelsToAdd);
+        if (bulkResult.levelToAdd() > 0) {
+            clientSP -= bulkResult.spToWithdraw();
+            updateSkillLevels(id, currentLvl + bulkResult.levelToAdd());
         }
     }
 
     public static void predictRefund(Skill skill) {
         String id = skill.getID().toLowerCase();
-        int currentLvl = GetSkillLevel(id);
+        int currentLvl = getSkillLevel(id);
 
-        if(skill instanceof Trait){
-            if(!GetConfigBool(Config.TRAIT_SYSTEM_KEY, true)) return;
-            if(clientLevel < GetConfigInt(Config.TRAIT_UNLOCK_LEVEL_KEY, 20)) return;
-        }
+        if(!skill.canRefund(currentLvl, getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return;
 
-        if (currentLvl <= 0) return;
-
-        UpdateSkillLevels(id, currentLvl - 1);
-
-        double percentage = GetConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
+        updateSkillLevels(id, currentLvl - 1);
+        double percentage = getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
 
         List<Integer> prices = skill.getPrices();
         if (currentLvl - 1 < prices.size()) {
             int initialPrice = prices.get(currentLvl - 1);
             int refundAmount = Math.max(1, (int)(initialPrice * (percentage / 100.0)));
             clientSP += refundAmount;
-            if(skill instanceof Trait trait) clientPower -= trait.getPowerWeight();
         }
     }
 
     public static void predictRefundMax(Skill skill) {
         String id = skill.getID().toLowerCase();
-        int currentLvl = GetSkillLevel(id);
+        int currentLvl = getSkillLevel(id);
 
-        if (currentLvl <= 0) return;
+        var spToRefund = skill.checkBulkRefund(currentLvl,
+                (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), getConfigBool(Config.REFUND_SYSTEM_KEY, false));
 
-        double percentage = GetConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
-        var prices = skill.getPrices();
-
-        int totalRefund = 0;
-        int targetLvl = 0;
-
-        for (int i = currentLvl - 1; i >= targetLvl; i--) {
-            if (i < prices.size()) {
-                int levelPrice = prices.get(i);
-                int levelRefund = (int) (levelPrice * (percentage / 100.0));
-
-                if (levelPrice > 0) {
-                    levelRefund = Math.max(1, levelRefund);
-                }
-                totalRefund += levelRefund;
-            }
+        if (spToRefund > 0) {
+            clientSP += spToRefund;
         }
-        if (totalRefund > 0) {
-            clientSP += totalRefund;
-        }
-        UpdateSkillLevels(id, targetLvl);
+        updateSkillLevels(id, 0);
     }
 
-    public static void ClearCache(Enums.ResetType type){
+    public static void clearCache(Enums.ResetType type){
         switch (type){
             case ALL -> {
                 resetMetadata();
@@ -294,54 +230,78 @@ public class ClientCache {
 
 
     //getters
-    public static float GetXP(){return clientXP;}
-    public static int GetSP(){return clientSP;}
-    public static int GetLvl(){return clientLevel;}
-    public static float GetXPGOAL(){return clientLevelData.goal();}
-    public static int GetReward(){return clientLevelData.reward();}
-    public static Enums.ContainerType GetContainerType(){return currentContainerType;}
-    public static Enums.CategoryType GetCategoryType(){return currentContainerCategory;}
+    public static float getXP(){return clientXP;}
+    public static int getSP(){return clientSP;}
+    public static int getLvl(){return clientLevel;}
+    public static float getXpGoal(){return clientLevelData.goal();}
+    public static int getReward(){return clientLevelData.reward();}
     public static int getLimitPercentage(){return (int)(clientXpLimit * 100);}
 
-    public static List<Skill> GetAllSkills(){return new ArrayList<>(clientSkills.values());}
-    public static List<String> GetAllSkillIDs(){return new ArrayList<>(clientSkills.keySet());}
-    public static List<String> GetAllBookmarkedIDs(){return new ArrayList<>(clientBookmarks);}
-    public static List<String> getPurchasedSkills(){return List.copyOf(clientSkillLevels.keySet());}
+    public static List<Skill> getAllSkills(){return new ArrayList<>(clientSkills.values());}
+    public static List<String> getAllSkillIDs(){return new ArrayList<>(clientSkills.keySet());}
+    public static List<String> getAllBookmarkedIDs(){return new ArrayList<>(clientBookmarks);}
+    public static List<String> getPurchasedSkills(){return clientSkillLevels.keySet().stream().filter(clientSkills::containsKey).toList();}
 
-    public static int GetSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
-    public static Skill GetSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}
+    public static int getSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
+    public static Skill getSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}
     public static boolean isSkillBookmarked(String id){return clientBookmarks.contains(id.toLowerCase());}
-    public static int GetPower(){return clientPower;}
 
-    public static float GetAllTimeXp(){return clientAllTimeXP;}
-    public static float GetSessionXp(){return clientSessionXP;}
-    public static int GetSpEarned(){return clientSpEarned;}
-    public static int GetSpSpent(){return clientSpSpent;}
-    public static int GetUnlockedSkills(){return clientOwnedSkills;}
-    public static int GetSkillCount(){
+    public static float getAllTimeXp(){return clientAllTimeXP;}
+    public static float getSessionXp(){return clientSessionXP;}
+    public static int getSpEarned(){return clientSpEarned;}
+    public static int getSpSpent(){return clientSpSpent;}
+    public static int getUnlockedSkills(){return clientOwnedSkills;}
+    public static int getSkillCount(){
         int count = 0;
         for(var skill : clientSkills.values()){
-            if(skill instanceof Trait) continue;
             count += skill.getMaximumLevel();
         }
         return count;
     }
+    public static float getTotalXpPerHour(){
+        var level = Minecraft.getInstance().level;
+        if(level == null) return 0f;
+
+        var ticks = level.getGameTime();
+
+        var effectiveTicks = Math.max(ticks, 1200f);
+        var exactHours = effectiveTicks / 72000f;
+
+        return clientAllTimeXP / exactHours;
+    }
+
+    private static long sessionStartTick = -1L;
+    public static float getSessionXpPerHour(){
+        var level = Minecraft.getInstance().level;
+        if(level == null) return 0f;
+
+        if (sessionStartTick == -1) {
+            sessionStartTick = level.getGameTime();
+        }
+
+        var sessionTicks = level.getGameTime() - sessionStartTick;
+
+        var effectiveTicks = Math.max(sessionTicks, 1200f);
+        var exactSessionHours = effectiveTicks / 72000f;
+
+        return ClientCache.getSessionXp() / exactSessionHours;
+    }
 
     //getters config
-    public static boolean GetConfigBool(String id, boolean fallback){
+    public static boolean getConfigBool(String id, boolean fallback){
         var value = clientConfigMap.get(id);
         if(value instanceof Boolean bool) return bool;
         else return fallback;
     }
 
-    public static double GetConfigDouble(String id, double fallback){
+    public static double getConfigDouble(String id, double fallback){
         var value = clientConfigMap.get(id);
         if(value instanceof Double dbl) return dbl;
         else if(value instanceof Number nbr) return nbr.doubleValue();
         else return fallback;
     }
 
-    public static int GetConfigInt(String id, int fallback){
+    public static int getConfigInt(String id, int fallback){
         var value = clientConfigMap.get(id);
         if(value instanceof Integer nbr) return nbr;
         else return fallback;
@@ -351,7 +311,7 @@ public class ClientCache {
 
 
     //UTIL
-    public static int ParseColor(String hexString, int fallback) {
+    public static int parseColor(String hexString, int fallback) {
         if (hexString == null || hexString.isEmpty()) return fallback;
         try {
             String clean = hexString.replace("#", "");
@@ -365,7 +325,6 @@ public class ClientCache {
         clientLevel = 1;
         clientSP = 0;
         clientXP = 0f;
-        clientPower = 0;
         clientLevelData = new XpManager.LevelData(100f, 1);
     }
 
@@ -378,6 +337,7 @@ public class ClientCache {
         clientAllTimeXP = 0f;
         clientSpEarned = 0;
         clientSpSpent = 0;
+        sessionStartTick = -1L;
     }
 
     private static void resetLimits(){
@@ -387,8 +347,6 @@ public class ClientCache {
     private static void shutDownReset(){
         clientConfigMap.clear();
         clientBookmarks.clear();
-        currentContainerCategory = Enums.CategoryType.ALL;
-        currentContainerType = Enums.ContainerType.SKILLS;
         clientSkills.clear();
     }
 }

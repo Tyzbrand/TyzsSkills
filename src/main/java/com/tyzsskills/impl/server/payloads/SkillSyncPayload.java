@@ -27,7 +27,7 @@ public record SkillSyncPayload(List<Skill> skills) implements CustomPacketPayloa
     }
 
     public static void Handle(final SkillSyncPayload payload, final IPayloadContext ctx){
-        ctx.enqueueWork(() -> {ClientCache.UpdateSkills(payload.skills());} );
+        ctx.enqueueWork(() -> {ClientCache.updateSkills(payload.skills());} );
     }
 
 }

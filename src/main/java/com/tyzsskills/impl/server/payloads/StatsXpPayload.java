@@ -25,7 +25,7 @@ public record StatsXpPayload(float xpGain) implements CustomPacketPayload{
 
     public static void Handle(final StatsXpPayload payload, final IPayloadContext ctx){
         ctx.enqueueWork(() -> {
-            ClientCache.UpdateClientStatXP(payload.xpGain());
+            ClientCache.updateClientStatXP(payload.xpGain());
         });
     }
 

@@ -26,7 +26,7 @@ public record ResetPayload(Enums.ResetType resetType) implements CustomPacketPay
     }
 
     public static void Handle(final ResetPayload payload, final IPayloadContext ctx){
-        ctx.enqueueWork(() -> {ClientCache.ClearCache(payload.resetType());});
+        ctx.enqueueWork(() -> {ClientCache.clearCache(payload.resetType());});
     }
 
 }

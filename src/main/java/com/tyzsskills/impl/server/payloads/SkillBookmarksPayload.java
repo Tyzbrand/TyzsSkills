@@ -25,7 +25,7 @@ public record SkillBookmarksPayload(String id, boolean state) implements CustomP
     }
 
     public static void Handle(final SkillBookmarksPayload payload, final IPayloadContext ctx){
-        ctx.enqueueWork(() -> {ClientCache.SyncBookmark(payload.id(), payload.state());} );
+        ctx.enqueueWork(() -> {ClientCache.syncBookmark(payload.id(), payload.state());} );
     }
 
 }

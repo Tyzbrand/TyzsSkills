@@ -1,10 +1,11 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.records.Modifier;
-import com.tyzsskills.api.records.ValueSet;
+import com.tyzsskills.api.records.*;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +19,19 @@ public interface ISkill {
     int getMaximumLevel();
 
     /**
-     * @return a list of prices (1st price in the list is the price from lvl 0 to lvl 1)
+     * Gets the skill prices list.
+     * @return a list of prices (1st price in the list is the price from lvl 0 to lvl 1).
      */
-    List<Integer> getPrices();
+    @NotNull List<Integer> getPrices();
+
+    /**
+     * Gets the skill price to buy the specified level.
+     * This represents the price for a single upgrade (from level - 1 to the specified level),
+     * NOT the cumulative total cost from the actual player level to the targeted level.
+     * @param lvl The Targeted level.
+     * @return The SP cost required to unlock the specified level.
+     */
+    int getPrice(int lvl);
 
 
     Enums.SkillType getType();
@@ -67,6 +78,109 @@ public interface ISkill {
      */
     List<Modifier> getModifiers();
 
+    /**
+     * Checks if the player can purchase the next skill level.
+     * @param currentLvl The current skill level of the player.
+     * @param playerLvl The current lvl of the player.
+     * @param currentSP The current amount of SP the player possesses.
+     * @param ownedSkillIds A list containing all skill ids owned by a player. Cannot be null.
+     * @return {@code true} if the player can afford the next skill level, {@code false} otherwise.
+     */
+    boolean canBuy(int currentLvl, int playerLvl, int currentSP, @NotNull List<String> ownedSkillIds);
 
+    /**
+     * Checks if the player can purchase the next skill level, ignoring player level and incompatibility requirements.
+     * Useful for admin commands or overriding standard rules.
+     * @param currentLvl The current skill level of the player.
+     * @param currentSP The current amount of SP the player possesses.
+     * @return {@code true} if the player can afford the next skill level, {@code false} otherwise.
+     */
+    default boolean canBuyLimitless(int currentLvl, int currentSP){
+        return canBuy(currentLvl, -1, currentSP, Collections.emptyList());
+    }
+
+    /**
+     * Checks if the player can refund their current skill level.
+     * @param currentLvl The current skill level of the player.
+     * @param refundEnabled The current state of the refund system configuration.
+     * @return {@code true} if the skill level can be refunded, {@code false} otherwise.
+     */
+    boolean canRefund(int currentLvl, boolean refundEnabled);
+
+
+    /**
+     * Calculates the maximum number of skill levels a player can purchase at once.
+     * @param currentLvl The current skill level of the player.
+     * @param playerLvl The current lvl of the player.
+     * @param availableSp The current amount of SP the player possesses.
+     * @param ownedSkillIds A list containing all skill ids owned by a player. Cannot be null.
+     * @return A {@link BulkPurchaseResult} indicating how many levels can be bought and the total cost. Never null.
+     */
+    BulkPurchaseResult checkBulkBuy(int currentLvl, int playerLvl, int availableSp, @NotNull List<String> ownedSkillIds);
+
+    /**
+     * Calculates the maximum number of skill levels a player can purchase at once, ignoring player level and incompatibility requirements.
+     * @param currentLvl The current skill level of the player.
+     * @param availableSp The current amount of SP the player possesses.
+     * @return A {@link BulkPurchaseResult} indicating how many levels can be bought and the total cost. Never null.
+     */
+    default BulkPurchaseResult checkBulkPurchaseLimitless(int currentLvl, int availableSp){
+        return checkBulkBuy(currentLvl, -1, availableSp, Collections.emptyList());
+    }
+
+    /**
+     * Calculates the total amount of SP returned from a complete skill refund.
+     * @param currentLvl The current skill level of the player.
+     * @param refundPercentage The current value of the refund percentage configuration.
+     * @param refundEnabled The current state of the refund system configuration.
+     * @return The total amount of SP the player will receive from the bulk refund.
+     */
+    int checkBulkRefund(int currentLvl, float refundPercentage, boolean refundEnabled);
+
+    /**
+     * Gets the global player level required to purchase this skill.
+     * @return The level requirement for the skill, {@code -1} if the skill doesn't have one.
+     */
+    int getRequiredLevel();
+
+    /**
+     * Checks if a specified skill is incompatible with this one.
+     * @param skillID Valid id of the targeted skill (in lowercase).
+     * @return {@code true} if the specified skill is marked as incompatible, {@code false} otherwise.
+     */
+    boolean isSkillIncompatible(String skillID);
+
+    /**
+     * Gets all skill incompatibilities.
+     * @return A list containing all incompatible skill ids. If there are no incompatibilities, return an empty list.
+     */
+    @NotNull List<String> getRawIncompatibilities();
+
+
+    /**
+     * Adds an incompatibility to the skill.
+     * @param id Valid id of the targeted incompatible skill (in lowercase).
+     */
+    void addIncompatibility(String id);
+
+
+    /**
+     * Gets all skill that are mutually exclusive with this one (as ids).
+     * Applies only to the skills the player currently possesses.
+     * @param ownedSkillIds A list containing all skill IDs currently owned by the player.
+     * @return A list containing all incompatible skill ids the player possesses. If there are no incompatibilities, return {@code null}.
+     */
+    @Nullable
+    List<String> getIncompatibilities(@NotNull List<String> ownedSkillIds);
+
+    /**
+     * Checks if the player meets the global level requirement for this skill.
+     * @param playerLvl The current lvl of the player. Use -1 to bypass the check.
+     * @return {@code true} if the player's level is equal to or greater than the requirement, {@code false} otherwise.
+     */
+    default boolean meetsLevelRequirement(int playerLvl){
+        if (getRequiredLevel() <= 1 || playerLvl == -1) return true;
+        return playerLvl >= getRequiredLevel();
+    }
 
 }

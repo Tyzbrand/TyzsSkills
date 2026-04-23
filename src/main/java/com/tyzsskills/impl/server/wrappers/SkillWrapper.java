@@ -4,12 +4,13 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.interfaces.ISkillManager;
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.impl.server.active.FileManager;
-import com.tyzsskills.impl.server.model.SkillBehavior;
+import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.impl.server.payloads.SkillTriggerPayload;
 import com.tyzsskills.impl.server.skills.SkillBehaviorRegistry;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -51,13 +52,24 @@ public class SkillWrapper implements ISkillManager {
     }
 
     @Override
-    public List<ISkill> getSkillList(){
-        return SkillManager.get().getAllSkillsInfos();
+    public boolean tryBulkBuy(ServerPlayer player, String id) {
+        return SkillManager.get().tryBulkBuy(player, id);
     }
 
     @Override
+    public boolean tryBulkRefund(ServerPlayer player, String id) {
+        return SkillManager.get().tryBulkRefund(player, id);
+    }
+
+    @Override
+    public List<ISkill> getSkillList(){
+        return SkillManager.get().getAllISkills();
+    }
+
+    @Override
+    @Nullable
     public ISkill getSkill(String id) {
-        return SkillManager.get().getSkillInfos(id);
+        return SkillManager.get().getISkill(id);
     }
 
     @Override
@@ -76,19 +88,8 @@ public class SkillWrapper implements ISkillManager {
     }
 
     @Override
-    public void registerSkillBehavior(String id, SkillBehavior behavior) {
-        SkillBehaviorRegistry.registerCustomBehavior(id, behavior);
-    }
-
-    @Override
     public void triggerSkillActivationOverlay(ServerPlayer player, String id) {
         if(player == null || id == null) return;
         PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(id));
-    }
-
-    @Override
-    public void registerSkillPrefab(SkillPrefab prefab) {
-        FileManager.registerSkillPrefab(prefab);
-
     }
 }
