@@ -35,6 +35,8 @@ _Configurable Properties:_
 |`prices`| Positive integer values | Price for each level. | The list size must match the `maximumLevel` (e.g., [10, 20, 30]). The 1st value = price for level 1. |
 |`category`| ABILITIES, FIGHT, MISC | Determines the GUI tab where the skill appears. | |
 |`purchasable`| true, false | Defines if players can buy or refund the skill normally. | If set to `false`, the only way to purchase/refund the skill will be via commands. |
+|`levelRequirement` |Positive integer values, -1 | Requires the player to reach this level before being able to purchase the skill. |Set to -1 to disable the level requirement.|
+|`incompatibleSkills` | List of skill IDs | Prevents the player from purchasing this skill if they already own any of the specified skills (and vice versa).| Must be formatted as a JSON array of strings (e.g., ["skill_id_1", "skill_id_2"]).|
 |`icon`| Valid asset path | Determines the path to the skill's icon. | Must follow Minecraft asset formatting and come from a loaded Resource Pack or Mod. |
 |`displayName`| Translation key | Determines the skill's display name. | |
 |`description`| Translation key | Determines the description to display. | |
