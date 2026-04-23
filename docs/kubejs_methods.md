@@ -1,4 +1,4 @@
-# Use KubeJS binding to change and access data
+# Use KubeJS binding to change and access data for 6.3+
 
 You can also change and access data (sp amount, xp amount, skill lvl, skill list...) and trigger mechanics (purchase, refund...) by using the `TyzsSkills` global binding.
 
@@ -77,7 +77,12 @@ Access these methods using `TyzsSkills.skills()`
 - `addSkillLevel(player, skillId, amount)` -> Adds level to the player's skill.
 - `removeSkillLevel(player, skillId, amount)` -> Removes level from the player's skill.
 - `setSkillLevel(player, skillId, amount)` -> Sets level to the player's skill.
+  
 - `tryBuySkill(player, skillId)` -> Triggers a purchase for the player (handles sp checks and costs automatically).<br>
 Returns true if the purchase succeeded, false otherwise.
 - `tryRefundSkill(player, skillId)` -> Triggers a refund for the player (handles sp checks and returns points automatically).<br>
 Returns true if the refund succeeded, false otherwise.
+- `tryBulkBuy` -> Triggers a bulk purchase for the player (handles sp checks and costs automatically).<br>
+Returns true if the purchase succeeded, false otherwise.
+- `tryBulkRefund` -> Triggers a bulk refund for the player (handles sp checks and returns points automatically).<br>
+Returns true if the purchase succeeded, false otherwise
