@@ -28,11 +28,14 @@ public class SkillLoader {
 
     private static Map<String, JsonObject> skillQueue = new HashMap<>();
 
-    public static void preLoadSkill(JsonObject source, boolean isDefault){
-        if(source == null) return;
+    public static void preLoadSkill(JsonObject source, @NotNull String filename, boolean isDefault){
+        if(source == null) {
+            ErrorManager.registerSkillError(filename, "file is empty");
+            return;
+        }
 
         var id = getSafeElement(source, "id", JsonPrimitive::getAsString);
-        if(id == null || id.isBlank()) {ErrorManager.registerSkillError("Unknow", "invalid id"); return;}
+        if(id == null || id.isBlank()) {ErrorManager.registerSkillError(filename, "invalid id"); return;}
         id = id.toLowerCase();
 
         if(isDefault) skillQueue.putIfAbsent(id, source);

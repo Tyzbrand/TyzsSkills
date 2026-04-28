@@ -4,10 +4,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@ApiStatus.Internal
 public class ErrorManager {
 
     private static final List<MutableComponent> ERROR_PRINTS = new ArrayList<>();

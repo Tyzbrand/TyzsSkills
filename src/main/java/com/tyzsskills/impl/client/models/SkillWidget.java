@@ -284,7 +284,7 @@ public class SkillWidget {
 
             if (SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS) {
                 if (Minecraft.getInstance().screen instanceof MainGUI gui) {
-                    gui.renderList();
+                    gui.refreshList();
                 }
 
                 return true;

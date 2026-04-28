@@ -20,7 +20,7 @@ public class BloodlustEffect extends SkillBehavior {
         var targetHealth = target.getMaxHealth();
 
         float percentage = values.getValue(lvl) / 100f;
-        float healthAmount = Math.max(percentage * targetHealth, 1f);
+        float healthAmount = percentage * targetHealth;
 
         if (event.getSource().getEntity() instanceof ServerPlayer) {
             player.heal(healthAmount);

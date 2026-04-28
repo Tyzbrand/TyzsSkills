@@ -3,8 +3,7 @@ package com.tyzsskills.impl.server.active;
 import java.io.File;
 import java.io.IOException;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.api.records.SkillPrefab;
@@ -18,8 +17,6 @@ import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
 import com.tyzsskills.impl.server.xp.xpEvents.XpFood;
 import net.minecraft.server.MinecraftServer;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -131,9 +128,13 @@ public class FileManager {
                             try {
                                 var jsonString = Files.readString(path);
                                 var jsonObj = gson.fromJson(jsonString, JsonObject.class);
-                                SkillLoader.preLoadSkill(jsonObj, true);
-                            } catch (IOException ex) {
-                                throw new RuntimeException(ex);
+                                SkillLoader.preLoadSkill(jsonObj, String.valueOf(path.getFileName()), true);
+                            }
+                            catch (JsonSyntaxException ex) {
+                                ErrorManager.registerLoadError("parsing " + path.getFileName(), "JSON Syntax error");
+                            }
+                            catch (Exception ex){
+                                ErrorManager.registerLoadError("loading " + path.getFileName(), ex.getMessage());
                             }
                         });
             }
@@ -148,9 +149,13 @@ public class FileManager {
                             try {
                                 var jsonString = Files.readString(path);
                                 var jsonObj = gson.fromJson(jsonString, JsonObject.class);
-                                SkillLoader.preLoadSkill(jsonObj, false);
-                            } catch (Exception ex) {
-                                System.out.println("Unable to load custom skill: " + path);
+                                SkillLoader.preLoadSkill(jsonObj, String.valueOf(path.getFileName()), false);
+                            }
+                            catch (JsonSyntaxException ex) {
+                                ErrorManager.registerLoadError("parsing " + path.getFileName(), "JSON Syntax error");
+                            }
+                            catch (Exception ex){
+                                ErrorManager.registerLoadError("loading " + path.getFileName(), ex.getMessage());
                             }
                         });
             }

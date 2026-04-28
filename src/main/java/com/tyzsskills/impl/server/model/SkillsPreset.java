@@ -250,7 +250,7 @@ public class SkillsPreset {
                 "skill.tyzs_skills.bloodlust.description",
                 null,
                 Map.of(
-                        "health_percentage", new ValueSet(List.of(7f, 15f, 22f, 30f), "skill.tyzs_skills.unit.percentage")),
+                        "health_percentage", new ValueSet(List.of(2f, 4f, 6f, 8f), "skill.tyzs_skills.unit.percentage")),
                 new BloodlustEffect(),
                 -1, null
         ));

@@ -13,9 +13,17 @@ public class SparePartsEffect extends SkillBehavior {
         var values = skill.getValueSet("refund_chance");
         if (values == null) return;
 
-        var chance = values.getValue(lvl);
-
         var container = event.getInventory();
+
+        int ingredientCount = 0;
+        for(int i = 0; i < container.getContainerSize(); i++) {
+            if(!container.getItem(i).isEmpty()) ingredientCount++;
+        }
+
+        if(ingredientCount <= 1) return;
+
+
+        var chance = values.getValue(lvl);
         var refundedSomething = false;
 
         for(int i = 0; i < container.getContainerSize(); i++){

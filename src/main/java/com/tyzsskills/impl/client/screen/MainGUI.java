@@ -63,8 +63,7 @@ public class MainGUI extends Screen {
         this.addScrollView();
         this.addSearchBar();
 
-        SortingTools.refreshList();
-        renderList();
+        this.refreshList();
     }
 
     @Override
@@ -367,8 +366,7 @@ public class MainGUI extends Screen {
                     }
 
                     SortingTools.SetCategoryType(Enums.CategoryType.ALL);
-                    SortingTools.refreshList();
-                    this.renderList();
+                    this.refreshList();
                 });
         this.addRenderableWidget(this.allBtn);
 
@@ -388,8 +386,7 @@ public class MainGUI extends Screen {
                     }
 
                     SortingTools.SetCategoryType(Enums.CategoryType.ABILITIES);
-                    SortingTools.refreshList();
-                    this.renderList();
+                    this.refreshList();
                 });
         this.addRenderableWidget(this.abilitiesBtn);
 
@@ -409,8 +406,7 @@ public class MainGUI extends Screen {
                     }
 
                     SortingTools.SetCategoryType(Enums.CategoryType.FIGHT);
-                    SortingTools.refreshList();
-                    this.renderList();
+                    this.refreshList();
                 });
         this.addRenderableWidget(this.fightBtn);
 
@@ -430,8 +426,7 @@ public class MainGUI extends Screen {
                     }
 
                     SortingTools.SetCategoryType(Enums.CategoryType.MISC);
-                    SortingTools.refreshList();
-                    this.renderList();
+                    this.refreshList();
                 });
         this.addRenderableWidget(this.miscBtn);
 
@@ -451,8 +446,7 @@ public class MainGUI extends Screen {
                     }
 
                     SortingTools.SetCategoryType(Enums.CategoryType.BOOKMARKS);
-                    SortingTools.refreshList();
-                    this.renderList();
+                    this.refreshList();
                 });
         this.addRenderableWidget(this.bookmarksBtn);
     }
@@ -542,8 +536,7 @@ public class MainGUI extends Screen {
 
         this.searchBar.setResponder((s) -> {
             SortingTools.setSearchQuery(s);
-            SortingTools.refreshList();
-            this.renderList();
+            this.refreshList();
         });
 
         this.addRenderableWidget(this.searchBar);
@@ -551,9 +544,11 @@ public class MainGUI extends Screen {
 
 
     //Actifs
-    public void renderList(){
+    public void refreshList(){
         if(this.scrollView == null) return;
         scrollView.clearEntries();
+
+        SortingTools.refreshList();
 
         int maxPerLine = 3;
 
@@ -634,8 +629,7 @@ public class MainGUI extends Screen {
         //Sort direction Button
         if(button == 0 && isHovering(mX, mY, leftPos + 251, topPos - 10, 15, 8)){
             SortingTools.CycleSortDirection();
-            SortingTools.refreshList();
-            this.renderList();
+            this.refreshList();
 
             var player = Minecraft.getInstance().player;
             if(player != null) SoundPlayer.PlayUIClick();
@@ -644,8 +638,7 @@ public class MainGUI extends Screen {
         //Sort type Button
         if(button == 0 && isHovering(mX, mY,leftPos + 267, topPos - 10, 15, 8)){
             SortingTools.CycleSortType();
-            SortingTools.refreshList();
-            this.renderList();
+            this.refreshList();
 
             var player = Minecraft.getInstance().player;
             if(player != null) SoundPlayer.PlayUIClick();
@@ -654,8 +647,7 @@ public class MainGUI extends Screen {
         //Sort switch unbuyable
         if(button == 0 && isHovering(mX, mY,leftPos + 101, topPos - 9, 13, 7)){
             SortingTools.toggleShowUnbuyable();
-            SortingTools.refreshList();
-            this.renderList();
+            this.refreshList();
 
             var player = Minecraft.getInstance().player;
             if(player != null) SoundPlayer.PlayUIClick();
@@ -664,8 +656,7 @@ public class MainGUI extends Screen {
         //Sort switch maxed
         if(button == 0 && isHovering(mX, mY,leftPos + 118, topPos - 9, 13, 7)){
             SortingTools.toggleShowMaxed();
-            SortingTools.refreshList();
-            this.renderList();
+            this.refreshList();
 
             var player = Minecraft.getInstance().player;
             if(player != null) SoundPlayer.PlayUIClick();
