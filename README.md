@@ -9,7 +9,7 @@ The long-term vision is to provide a fully customizable progression system. I am
 
 ## Documentation
 Here is the official documentation! It is still growing, but it will help you get started.<br>
-_Compatible with: NeoForge 1.21.1 | Mod version: 6.2+_
+_Compatible with: NeoForge 1.21.1 | Mod version: 6.3+_
 
 ### JSON Tweaks
 - [Configure existing skills](docs/configure_skill.md)
@@ -36,7 +36,7 @@ repositories {
 ```
 ```gradle
 dependencies {
-    implementation 'com.github.Tyzbrand:TyzsSkills:6.3.0'
+    implementation 'com.github.Tyzbrand:TyzsSkills:6.3.1'
 }
 ```
 
@@ -45,7 +45,7 @@ Add this to your `neoforge.mods.toml` for the dependency
 [[dependencies.your_mod_id]]
     modId="tyzs_skills"
     mandatory=true
-    versionRange="[6.3.0,)"
+    versionRange="[6.3.1,)"
     ordering="AFTER"
     side="BOTH"
 ```
