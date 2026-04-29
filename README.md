@@ -54,6 +54,12 @@ Add this to your `neoforge.mods.toml` for the dependency
 ## Contributions & Pull Requests
 Contributions and ideas are always welcome! 
 
+<br>
+
+ - Help us make the mod available in more **languages**! You can contribute **translations** on [crowdin](https://crowdin.com/project/tyzs-skills)
+
+ <br>
+
 **Please note:** To maintain perfect architectural consistency as I build an upcoming API, I won't "merge" Pull Requests directly. If you submit a fix or a feature, I will  reimplement/adapt it into the main branch. This ensures I stay 100% familiar with every line of code for future maintenance. 
 
 This is my first major project, so the code might not be the cleanest or most optimized in some places. I am completely open to **tips, tricks, and advice**! If you see something that could be done better, feel free to let me know—I’m here to learn.
