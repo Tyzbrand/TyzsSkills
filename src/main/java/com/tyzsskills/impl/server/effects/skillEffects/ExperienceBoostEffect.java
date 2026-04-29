@@ -17,12 +17,13 @@ public class ExperienceBoostEffect extends SkillBehavior {
 
         float bonusPercentage = values.getValue(lvl) / 100f;
 
-        int bonusValue = (int) Math.ceil(orbValue * bonusPercentage);
+        var exactBonus = orbValue * bonusPercentage;
+        int guaranteedGain = (int)exactBonus;
+        float bonusValue = exactBonus - guaranteedGain;
 
-        if(bonusValue > 0) {
-            player.giveExperiencePoints(bonusValue);
-            notifyClient(player, skill);
-        }
+        if(player.getRandom().nextFloat() < bonusValue) guaranteedGain++;
+
+        if(guaranteedGain > 0) player.giveExperiencePoints(guaranteedGain);
 
     }
 }

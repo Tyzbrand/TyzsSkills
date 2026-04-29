@@ -250,7 +250,7 @@ public class SkillsPreset {
                 "skill.tyzs_skills.bloodlust.description",
                 null,
                 Map.of(
-                        "health_percentage", new ValueSet(List.of(2f, 4f, 6f, 8f), "skill.tyzs_skills.unit.percentage")),
+                        "health_percentage", new ValueSet(List.of(3f, 7f, 11f, 15f), "skill.tyzs_skills.unit.percentage")),
                 new BloodlustEffect(),
                 -1, null
         ));
@@ -467,8 +467,8 @@ public class SkillsPreset {
         finalList.add(new SkillPrefab(
                 true,
                 "experience_boost",
-                4,
-                List.of(6, 8, 12, 16),
+                5,
+                List.of(4, 6, 8, 12, 16),
                 Enums.SkillType.IMMUTABLE,
                 Enums.CategoryType.MISC,
                 true,
@@ -477,7 +477,7 @@ public class SkillsPreset {
                 "skill.tyzs_skills.experience_boost.description",
                 null,
                 Map.of(
-                        "bonus_percentage", new ValueSet(List.of(15f, 30f, 45f, 60f), "skill.tyzs_skills.unit.percentage")),
+                        "bonus_percentage", new ValueSet(List.of(20f, 40f, 60f, 80f, 100f), "skill.tyzs_skills.unit.percentage")),
                 new ExperienceBoostEffect(),
                 -1, null
         ));

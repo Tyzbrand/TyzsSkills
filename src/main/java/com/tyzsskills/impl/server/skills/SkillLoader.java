@@ -43,7 +43,13 @@ public class SkillLoader {
             var type = getSafeElement(source, "type", JsonPrimitive::getAsString);
             boolean isCustom = type != null && type.equalsIgnoreCase(Enums.SkillType.CUSTOM.name());
 
-            if(isCustom || skillQueue.containsKey(id)) skillQueue.put(id, source);
+            if(isCustom) {
+                skillQueue.put(id, source);
+                return;
+            }
+
+            if(skillQueue.containsKey(id)) skillQueue.put(id, source);
+            else  ErrorManager.registerSkillError(filename, "unable to find the skill to overwrite");
         }
     }
 
