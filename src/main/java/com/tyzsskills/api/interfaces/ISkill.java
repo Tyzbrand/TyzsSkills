@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public interface ISkill {
 
-    String getID();
+    @NotNull String getID();
 
     int getMaximumLevel();
 
@@ -45,24 +45,24 @@ public interface ISkill {
     /**
      * @return a resourceLocation path as a string
      */
-    String getIcon();
+    @NotNull String getIcon();
 
     /**
      * @return a localization key
      */
-    String getDisplayName();
+    @NotNull String getDisplayName();
 
     /**
      * @return a localization key
      */
-    String getDescription();
+    @NotNull String getDescription();
 
     /**
      * Retrieves all registered value sets for this skill
      * @return An unmodifiable map where the key is the ValueSet ID
      * and the value is the corresponding {@link ValueSet} object
      */
-    Map<String, ValueSet> getValues();
+    @NotNull Map<String, ValueSet> getValues();
 
     /**
      * Gets a specific value set by its ID
@@ -70,7 +70,7 @@ public interface ISkill {
      * @return The {@link ValueSet} associated with the key if found
      */
     @Nullable
-    ValueSet getValueSet(String key);
+    ValueSet getValueSet(@NotNull String key);
 
     /**
      * Returns a list of all modifiers affected by the skill
@@ -116,7 +116,7 @@ public interface ISkill {
      * @param ownedSkillIds A list containing all skill ids owned by a player. Cannot be null.
      * @return A {@link BulkPurchaseResult} indicating how many levels can be bought and the total cost. Never null.
      */
-    BulkPurchaseResult checkBulkBuy(int currentLvl, int playerLvl, int availableSp, @NotNull List<String> ownedSkillIds);
+    @NotNull BulkPurchaseResult checkBulkBuy(int currentLvl, int playerLvl, int availableSp, @NotNull List<String> ownedSkillIds);
 
     /**
      * Calculates the maximum number of skill levels a player can purchase at once, ignoring player level and incompatibility requirements.
@@ -148,7 +148,7 @@ public interface ISkill {
      * @param skillID Valid id of the targeted skill (in lowercase).
      * @return {@code true} if the specified skill is marked as incompatible, {@code false} otherwise.
      */
-    boolean isSkillIncompatible(String skillID);
+    boolean isSkillIncompatible(@NotNull String skillID);
 
     /**
      * Gets all skill incompatibilities.
@@ -161,17 +161,16 @@ public interface ISkill {
      * Adds an incompatibility to the skill.
      * @param id Valid id of the targeted incompatible skill (in lowercase).
      */
-    void addIncompatibility(String id);
+    void addIncompatibility(@NotNull String id);
 
 
     /**
      * Gets all skill that are mutually exclusive with this one (as ids).
      * Applies only to the skills the player currently possesses.
      * @param ownedSkillIds A list containing all skill IDs currently owned by the player.
-     * @return A list containing all incompatible skill ids the player possesses. If there are no incompatibilities, return {@code null}.
+     * @return A list containing all incompatible skill ids the player possesses. If there are no incompatibilities, return an empty list.
      */
-    @Nullable
-    List<String> getIncompatibilities(@NotNull List<String> ownedSkillIds);
+    @NotNull List<String> getIncompatibilities(@NotNull List<String> ownedSkillIds);
 
     /**
      * Checks if the player meets the global level requirement for this skill.

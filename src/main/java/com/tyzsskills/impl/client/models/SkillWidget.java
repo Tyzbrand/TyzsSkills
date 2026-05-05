@@ -76,7 +76,7 @@ public class SkillWidget {
         this.y = y;
 
         Font font = Minecraft.getInstance().font;
-        boolean isLocked = !skill.meetsLevelRequirement(ClientCache.getLvl()) || skill.getIncompatibilities(ClientCache.getPurchasedSkills()) != null;
+        boolean isLocked = !skill.meetsLevelRequirement(ClientCache.getLvl()) || !skill.getIncompatibilities(ClientCache.getPurchasedSkills()).isEmpty();
 
         int currentU = ClientCache.getSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel() ? U_BACKGROUND_FINAL : U_BACKGROUND;
 
@@ -195,7 +195,7 @@ public class SkillWidget {
         var levelRequired = skill.meetsLevelRequirement(ClientCache.getLvl());
 
 
-        if(incompatibilities != null || !levelRequired){
+        if(!incompatibilities.isEmpty() || !levelRequired){
             if(isMouseOver(mouseX, mouseY, x + 2, y + 2, 60, 26)){
                 if(!levelRequired){
                     var message = Component.empty()

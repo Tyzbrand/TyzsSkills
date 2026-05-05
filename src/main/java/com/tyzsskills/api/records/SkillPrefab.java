@@ -2,6 +2,7 @@ package com.tyzsskills.api.records;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.model.SkillBehavior;
+import com.tyzsskills.api.model.SkillConfiguration;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -14,5 +15,5 @@ public record SkillPrefab(boolean active, String id, int maximumLevel,
                           List<Integer> prices, Enums.SkillType type, Enums.CategoryType category,
                           boolean purchasable, String icon, String displayName, String description,
                           List<Modifier> modifiers, Map<String, ValueSet> customValues, @Nullable SkillBehavior behavior,
-                          int levelRequirement, List<String> incompatibleSkills) {
+                          @Nullable SkillConfiguration config) {
 }

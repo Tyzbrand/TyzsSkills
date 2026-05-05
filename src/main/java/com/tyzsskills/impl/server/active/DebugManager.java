@@ -87,7 +87,7 @@ public class DebugManager {
                 cleanRefund(0, lvl, player, skill);
                 continue;
             }
-            else if(incompatibilities  != null){
+            else if(!incompatibilities.isEmpty()){
                 cleanRefund(0, lvl, player, skill);
 
                 for(var id : incompatibilities){

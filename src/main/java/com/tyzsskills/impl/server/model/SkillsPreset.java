@@ -41,8 +41,8 @@ public class SkillsPreset {
                         AttributeModifier.Operation.ADD_VALUE,
                         List.of(2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f, 18.0f, 20.0f),
                         "skill.tyzs_skills.unit.half_hearts")),
-                null, null,
-                -1, null));
+                null, null, null
+        ));
 
         finalList.add(new SkillPrefab(
                 true,
@@ -59,8 +59,8 @@ public class SkillsPreset {
                         AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
                         List.of(25f, 50f, 75f, 100f),
                         "skill.tyzs_skills.unit.percentage")),
-                null,null,
-                -1, null));
+                null,null, null
+        ));
 
         finalList.add(new SkillPrefab(
                 true,
@@ -77,8 +77,7 @@ public class SkillsPreset {
                         AttributeModifier.Operation.ADD_VALUE,
                         List.of(1f, 2f, 3f, 4f),
                         "skill.tyzs_skills.unit.blocks")),
-                null, null,
-                -1, null
+                null, null, null
         ));
 
         finalList.add(new SkillPrefab(
@@ -96,8 +95,7 @@ public class SkillsPreset {
                         AttributeModifier.Operation.ADD_VALUE,
                         List.of(1f, 2f, 3f),
                         "skill.tyzs_skills.unit.damage")),
-                null, null,
-                -1, null
+                null, null, null
         ));
 
         finalList.add(new SkillPrefab(
@@ -115,8 +113,7 @@ public class SkillsPreset {
                         AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
                         List.of(20f, 40f, 60f, 80f, 100f),
                         "skill.tyzs_skills.unit.percentage")),
-                null, null,
-                -1, null
+                null, null, null
         ));
 
         finalList.add(new SkillPrefab(
@@ -134,8 +131,7 @@ public class SkillsPreset {
                         AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
                         List.of(15f, 30f, 45f, 60f, 75f),
                         "skill.tyzs_skills.unit.percentage")),
-                null, null,
-                -1, null
+                null, null, null
         ));
 
         finalList.add(new SkillPrefab(
@@ -153,8 +149,7 @@ public class SkillsPreset {
                         AttributeModifier.Operation.ADD_VALUE,
                         List.of(0.5f, 1f, 1.5f),
                         "skill.tyzs_skills.unit.blocks")),
-                null, null,
-                -1, null
+                null, null, null
                 ));
 
         finalList.add(new SkillPrefab(
@@ -172,8 +167,7 @@ public class SkillsPreset {
                         AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
                         List.of(15f, 30f, 45f, 60f, 75f),
                         "skill.tyzs_skills.unit.percentage")),
-                null, null,
-                -1, null
+                null, null, null
         ));
 
         return finalList;
@@ -196,8 +190,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(3f, 8f, 14f, 25f, 40f), "skill.tyzs_skills.unit.percentage")),
-                new VenomousAttackEffect(),
-                -1, null
+                new VenomousAttackEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -214,8 +207,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(5f, 10f, 15f, 20f, 25f), "skill.tyzs_skills.unit.percentage")),
-                new CriticalHitEffect(),
-                -1, null
+                new CriticalHitEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -232,8 +224,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(3f, 7f, 11f, 15f, 20f), "skill.tyzs_skills.unit.percentage")),
-                new DamageDealEffect(),
-                -1, null
+                new DamageDealEffect(), null
         ));
 
 
@@ -251,8 +242,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "health_percentage", new ValueSet(List.of(3f, 7f, 11f, 15f), "skill.tyzs_skills.unit.percentage")),
-                new BloodlustEffect(),
-                -1, null
+                new BloodlustEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -269,8 +259,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "damage_resistance", new ValueSet(List.of(7f, 15f, 20f, 30f, 35f, 45f), "skill.tyzs_skills.unit.percentage")),
-                new ResistanceEffect(),
-                -1, null
+                new ResistanceEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -287,8 +276,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "damage_buff", new ValueSet(List.of(5f, 10f, 15f, 20f, 25f), "skill.tyzs_skills.unit.percentage")),
-                new BackstabEffect(),
-                -1, null
+                new BackstabEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -306,8 +294,7 @@ public class SkillsPreset {
                 Map.of(
                         "damage_buff", new ValueSet(List.of(10f, 20f, 30f, 40f, 50f), "skill.tyzs_skills.unit.percentage_damage"),
                         "health_threshold", new ValueSet(List.of(10f, 10f, 20f, 20f, 30f), "skill.tyzs_skills.unit.percentage")),
-                new RageEffect(),
-                -1, null
+                new RageEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -325,8 +312,7 @@ public class SkillsPreset {
                 Map.of(
                         "health_threshold", new ValueSet(List.of(10f, 20f, 30f), "skill.tyzs_skills.unit.percentage"),
                         "effect_duration", new ValueSet(List.of(3f, 5f, 8f), "skill.tyzs_skills.unit.seconds")),
-                new AdrenalineEffect(),
-                -1, null
+                new AdrenalineEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -343,8 +329,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "effect_time_reduction", new ValueSet(List.of(15f, 25f, 35f, 45f, 55f, 65f, 75f, 85f, 95f), "skill.tyzs_skills.unit.percentage")),
-                new ResilienceEffect(),
-                -1, null
+                new ResilienceEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -361,8 +346,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(3f, 5f, 7f), "skill.tyzs_skills.unit.percentage")),
-                new JinxedEffect(),
-                -1, null
+                new JinxedEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -379,8 +363,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(3f, 6f, 9f), "skill.tyzs_skills.unit.percentage")),
-                new TrueStrikeEffect(),
-                -1, null
+                new TrueStrikeEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -398,8 +381,7 @@ public class SkillsPreset {
                 Map.of(
                         "success_probability", new ValueSet(List.of( 3f, 6f, 9f, 12f, 15f), "skill.tyzs_skills.unit.percentage"),
                         "damage_percentage", new ValueSet(List.of(20f, 40f, 60f, 80f, 100f), "skill.tyzs_skills.unit.percentage_damage")),
-                new SunderArmorEffect(),
-                -1, null
+                new SunderArmorEffect(), null
         ));
 
         return finalList;
@@ -423,8 +405,7 @@ public class SkillsPreset {
                         AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
                         List.of(15f, 30f, 45f, 60f),
                         "skill.tyzs_skills.unit.percentage")),
-                null, null,
-                -1, null
+                null, null, null
         ));
 
         finalList.add(new SkillPrefab(
@@ -441,8 +422,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(15f, 30f, 45f, 60f, 75f), "skill.tyzs_skills.unit.percentage")),
-                new GreenThumbEffect(),
-                -1, null
+                new GreenThumbEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -459,8 +439,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "nutrition_bonus", new ValueSet(List.of(5f, 10f, 15f, 20f, 25f), "skill.tyzs_skills.unit.percentage")),
-                new NutritionEffect(),
-                -1, null
+                new NutritionEffect(), null
         ));
 
 
@@ -478,8 +457,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "bonus_percentage", new ValueSet(List.of(20f, 40f, 60f, 80f, 100f), "skill.tyzs_skills.unit.percentage")),
-                new ExperienceBoostEffect(),
-                -1, null
+                new ExperienceBoostEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -497,8 +475,7 @@ public class SkillsPreset {
                         AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
                         List.of(20f, 40f, 60f, 80f, 100f, 120f, 140f, 160f, 180f, 200f),
                         "skill.tyzs_skills.unit.percentage")),
-                null, null,
-                -1, null));
+                null, null, null));
 
         finalList.add(new SkillPrefab(
                 true,
@@ -514,8 +491,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "range_reduction", new ValueSet(List.of(10f, 20f, 30f, 40f, 50f), "skill.tyzs_skills.unit.percentage")),
-                new StealthEffect(),
-                -1, null
+                new StealthEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -532,8 +508,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "block_radius", new ValueSet(List.of(3f, 5f, 7f, 10f), "skill.tyzs_skills.unit.block_radius")),
-                new MagnetEffect(),
-                -1, null
+                new MagnetEffect(), null
         ));
 
 
@@ -551,8 +526,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "growth_speed", new ValueSet(List.of(50f, 100f, 150f, 200f, 250f, 300f, 350f, 400f, 450f, 500f, 550f, 600f, 650f, 700f, 750f), "skill.tyzs_skills.unit.percentage")),
-                new ShepherdsBlessingEffect(),
-                -1, null
+                new ShepherdsBlessingEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -569,8 +543,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "refund_chance", new ValueSet(List.of(4f, 8f, 12f, 16f, 20f), "skill.tyzs_skills.unit.percentage")),
-                new SparePartsEffect(),
-                -1, null
+                new SparePartsEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -587,8 +560,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "loot_multiplier", new ValueSet(List.of(10f, 20f, 30f, 40f, 50f), "skill.tyzs_skills.unit.percentage")),
-                new TwistOfFateEffect(),
-                -1, null
+                new TwistOfFateEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -605,8 +577,7 @@ public class SkillsPreset {
                 null,
                 Map.of(
                         "saved_slots", new ValueSet(List.of(1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f), "skill.tyzs_skills.unit.slot")),
-                new KeepsakeEffect(),
-                -1, null
+                new KeepsakeEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -624,8 +595,7 @@ public class SkillsPreset {
                 Map.of(
                         "block_radius", new ValueSet(List.of(10f, 15f, 20f, 25f), "skill.tyzs_skills.unit.block_radius"),
                         "villager_speed", new ValueSet(List.of(0f, 5f, 5f, 10f), "skill.tyzs_skills.unit.percentage")),
-                new HagglerEffect(),
-                -1, null
+                new HagglerEffect(), null
         ));
 
         return finalList;

@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.model;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.api.records.BulkPurchaseResult;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
@@ -20,7 +21,7 @@ public class Skill implements ISkill {
     public Skill(boolean active, String id, int maximumLevel,
                  List<Integer> prices, Enums.SkillType type, Enums.CategoryType category, boolean purchasable,
                  String icon, String displayName, String description, List<Modifier> modifiers, Map<String, ValueSet> customValues,
-                int levelRequirement, List<String> incompatibleSkills)
+                 SkillConfiguration config)
     {
         this.active = active;
         this.id = id;
@@ -38,8 +39,7 @@ public class Skill implements ISkill {
 
         this.customValues = customValues != null ? new HashMap<>(customValues) : new HashMap<>();
 
-        this.levelRequirement = levelRequirement;
-        this.incompatibleSkills = incompatibleSkills != null ? new HashSet<>(incompatibleSkills) : new HashSet<>();
+        this.config = config != null ? config : new SkillConfiguration(-1, null);
 
         if(category == Enums.CategoryType.ALL || category == Enums.CategoryType.BOOKMARKS) this.category = Enums.CategoryType.MISC;
 
@@ -55,8 +55,6 @@ public class Skill implements ISkill {
     protected Enums.SkillType type;
     protected Enums.CategoryType category;
     protected boolean purchasable;
-    protected int levelRequirement;
-    protected HashSet<String> incompatibleSkills;
 
     //Visual -----------------------
     protected String icon;
@@ -69,11 +67,14 @@ public class Skill implements ISkill {
     //Immutable
     protected Map<String, ValueSet> customValues;
 
+    //Config
+    protected SkillConfiguration config;
+
 
     //Getters
     public boolean isSkillActive(){return active;}
     @Override
-    public String getID() {return id;}
+    public @NotNull String getID() {return id;}
     @Override
     public int getMaximumLevel() {return maximumLevel;}
     @Override
@@ -90,23 +91,23 @@ public class Skill implements ISkill {
     @Override
     public boolean isPurchasable(){return purchasable;}
     @Override
-    public String getIcon(){return icon;}
+    public @NotNull String getIcon(){return icon;}
     @Override
-    public String getDisplayName(){return displayName;}
+    public @NotNull String getDisplayName(){return displayName;}
     @Override
-    public String getDescription(){return description;}
+    public @NotNull String getDescription(){return description;}
     @Override
-    public Map<String, ValueSet> getValues(){return Map.copyOf(customValues);}
+    public @NotNull Map<String, ValueSet> getValues(){return Map.copyOf(customValues);}
     @Override
-    public ValueSet getValueSet(String key){return customValues.getOrDefault(key, null);}
+    public @NotNull ValueSet getValueSet(@NotNull String key){return customValues.getOrDefault(key, null);}
     @Override
-    public List<Modifier> getModifiers(){return List.copyOf(modifiers);}
+    public @NotNull List<Modifier> getModifiers(){return List.copyOf(modifiers);}
     @Override
-    public int getRequiredLevel() {return levelRequirement;}
+    public int getRequiredLevel() {return config.levelRequirement();}
     @Override
-    public boolean isSkillIncompatible(String skillID) {return incompatibleSkills.contains(skillID);}
+    public boolean isSkillIncompatible(@NotNull String skillID) {return config.incompatibleSkills().contains(skillID);}
     @Override
-    public @NotNull List<String> getRawIncompatibilities() {return List.copyOf(incompatibleSkills);}
+    public @NotNull List<String> getRawIncompatibilities() {return config.incompatibleSkills();}
 
 
     public SkillBehavior getBehavior(){return behaviour;}
@@ -117,7 +118,7 @@ public class Skill implements ISkill {
         if(behaviour != null) this.behaviour = behaviour;
     }
     @Override
-    public void addIncompatibility(String id) {if(id != null) incompatibleSkills.add(id);}
+    public void addIncompatibility(@NotNull String id){config.addIncompatibility(id);}
 
     //Behavior
     @Override
@@ -131,19 +132,19 @@ public class Skill implements ISkill {
     public boolean canBuy(int currentLvl, int playerLvl, int currentSP, @NotNull List<String> ownedSkillIds){
         if(!isPurchasable() || currentLvl >= maximumLevel) return false;
 
-        if(!meetsLevelRequirement(playerLvl) || getIncompatibilities(ownedSkillIds) != null) return false;
+        if(!meetsLevelRequirement(playerLvl) || !getIncompatibilities(ownedSkillIds).isEmpty()) return false;
 
         var price = prices.get(currentLvl);
         return price <= currentSP;
     }
 
     @Override
-    public BulkPurchaseResult checkBulkBuy(int currentLvl, int playerLvl, int availableSp, @NotNull List<String> ownedSkillIds){
+    public @NotNull BulkPurchaseResult checkBulkBuy(int currentLvl, int playerLvl, int availableSp, @NotNull List<String> ownedSkillIds){
         var bulkResultFallback = new BulkPurchaseResult(0, 0);
 
         if(!isPurchasable() || currentLvl >= maximumLevel) return bulkResultFallback;
 
-        if(!meetsLevelRequirement(playerLvl) || getIncompatibilities(ownedSkillIds) != null) return bulkResultFallback;
+        if(!meetsLevelRequirement(playerLvl) || !getIncompatibilities(ownedSkillIds).isEmpty()) return bulkResultFallback;
 
         var spToSpend = 0;
         var levelsToAdd = 0;
@@ -181,9 +182,9 @@ public class Skill implements ISkill {
     }
 
     @Override
-    @Nullable
-    public List<String> getIncompatibilities(@NotNull List<String> ownedSkillIds) {
-        if(incompatibleSkills.isEmpty() || ownedSkillIds.isEmpty()) return null;
+    public @NotNull List<String> getIncompatibilities(@NotNull List<String> ownedSkillIds) {
+        var incompatibleSkills = config.incompatibleSkills();
+        if(incompatibleSkills.isEmpty() || ownedSkillIds.isEmpty()) return Collections.emptyList();
 
         var intersections = new ArrayList<String>();
 
@@ -191,7 +192,7 @@ public class Skill implements ISkill {
             if(incompatibleSkills.contains(id)) intersections.add(id);
         }
 
-        return intersections.isEmpty() ? null : intersections;
+        return intersections.isEmpty() ? Collections.emptyList() : intersections;
     }
 
     //Network
@@ -220,8 +221,7 @@ public class Skill implements ISkill {
         buffer.writeCollection(modifiers, (buf, modifier) ->  modifier.writeToBuffer(buf));
         buffer.writeMap(customValues, FriendlyByteBuf::writeUtf, (buf, valueSet) ->  valueSet.writeToBuffer(buf));
 
-        buffer.writeInt(levelRequirement);
-        buffer.writeCollection(incompatibleSkills, FriendlyByteBuf::writeUtf);
+        this.config.writeToBuffer(buffer);
     }
 
     public static @NotNull Skill readSkillFromBuffer(FriendlyByteBuf buffer){
@@ -243,10 +243,9 @@ public class Skill implements ISkill {
         List<Modifier> readModifiers = buffer.readCollection(ArrayList::new, Modifier::readFromBuffer);
         Map<String, ValueSet> readCustomValues = buffer.readMap(FriendlyByteBuf::readUtf, ValueSet::readFromBuffer);
 
-        int levelRequirement = buffer.readInt();
-        List<String> incompatibleSkills = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readUtf);
+        SkillConfiguration config = SkillConfiguration.STREAM_CODEC.decode(buffer);
 
         return new Skill(active, id, maxLevel, prices, type, category, purchasable,
-                            icon, displayName, description, readModifiers, readCustomValues, levelRequirement, incompatibleSkills);
+                            icon, displayName, description, readModifiers, readCustomValues, config);
     }
 }
