@@ -9,6 +9,7 @@ The long-term vision is to provide a fully customizable progression system. I am
 
 ## Documentation
 Here is the official documentation! It is still growing, but it will help you get started.<br>
+
 _Compatible with: NeoForge 1.21.1 | Mod version: 6.3+_
 
 ### JSON Tweaks
@@ -20,6 +21,7 @@ _Compatible with: NeoForge 1.21.1 | Mod version: 6.3+_
 - [KubeJS methods](docs/kubejs_methods.md)
 
 ### Java API
+**The API is currently under development, so it is subject to breaking changes.**
 - _**Coming soon**_
 
 
