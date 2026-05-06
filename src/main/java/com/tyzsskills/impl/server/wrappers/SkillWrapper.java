@@ -2,11 +2,7 @@ package com.tyzsskills.impl.server.wrappers;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.interfaces.ISkillManager;
-import com.tyzsskills.api.records.SkillPrefab;
-import com.tyzsskills.impl.server.active.FileManager;
-import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.impl.server.payloads.SkillTriggerPayload;
-import com.tyzsskills.impl.server.skills.SkillBehaviorRegistry;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;

@@ -2,12 +2,15 @@ package com.tyzsskills.impl.client;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.model.SkillContext;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.model.*;
 import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -157,7 +160,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if(!skill.canBuy(currentLvl, clientLevel, clientSP, getPurchasedSkills())) return;
+        if(!skill.canBuy(getCurrentContext(id))) return;
         int price = skill.getPrices().get(currentLvl);
 
         clientSP -= price;
@@ -168,7 +171,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        var bulkResult = skill.checkBulkBuy(currentLvl, clientLevel, clientSP, getPurchasedSkills());
+        var bulkResult = skill.checkBulkBuy(getCurrentContext(id));
 
         if (bulkResult.levelToAdd() > 0) {
             clientSP -= bulkResult.spToWithdraw();
@@ -180,7 +183,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if(!skill.canRefund(currentLvl, getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return;
+        if(!skill.canRefund(getCurrentContext(id), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return;
 
         updateSkillLevels(id, currentLvl - 1);
         double percentage = getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
@@ -197,7 +200,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        var spToRefund = skill.checkBulkRefund(currentLvl,
+        var spToRefund = skill.checkBulkRefund(getCurrentContext(skill.getID()),
                 (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), getConfigBool(Config.REFUND_SYSTEM_KEY, false));
 
         if (spToRefund > 0) {
@@ -245,6 +248,14 @@ public class ClientCache {
     public static int getSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
     public static Skill getSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}
     public static boolean isSkillBookmarked(String id){return clientBookmarks.contains(id.toLowerCase());}
+
+    @NotNull
+    public static SkillContext getCurrentContext(String skillID){
+        var player = Minecraft.getInstance().player;
+        Objects.requireNonNull(player, "Attempt to access SkillContext with null client.");
+
+        return new SkillContext(player, getSkillLevel(skillID), clientLevel, clientSP, getPurchasedSkills());
+    }
 
     public static float getAllTimeXp(){return clientAllTimeXP;}
     public static float getSessionXp(){return clientSessionXP;}

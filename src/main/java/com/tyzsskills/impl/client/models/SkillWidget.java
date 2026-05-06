@@ -360,11 +360,10 @@ public class SkillWidget {
     }
 
     protected boolean canBuy(){
-        return skill.canBuy(ClientCache.getSkillLevel(skill.getID()), ClientCache.getLvl(),
-                ClientCache.getSP(), ClientCache.getPurchasedSkills());
+        return skill.canBuy(ClientCache.getCurrentContext(skill.getID()));
     }
 
     protected boolean canRefund(){
-        return skill.canRefund(ClientCache.getSkillLevel(skill.getID()), ClientCache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
+        return skill.canRefund(ClientCache.getCurrentContext(skill.getID()), ClientCache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
     }
 }

@@ -11,6 +11,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.SkillActionEvent;
 import com.tyzsskills.api.events.SkillLoadEvent;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.api.model.SkillContext;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
@@ -18,10 +19,12 @@ import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.payloads.*;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @ApiStatus.Internal
@@ -41,8 +44,10 @@ public class SkillManager {
 
         if(preEvent.isCanceled()) return;
 
-        var behaviour = SkillBehaviorRegistry.getBehavior(skill.getID());
+        var behaviour = SkillDataRegistry.getBehavior(skill.getID());
         if(behaviour != null){skill.setBehaviour(behaviour);}
+
+        skill.setConditions(SkillDataRegistry.getConditions(skill.getID()));
 
         skillCollection.put(skill.getID(), skill);
         NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
@@ -80,7 +85,7 @@ public class SkillManager {
 
         int currentLvl = data.getSkillLevel(id);
 
-        if(skill.canBuy(currentLvl, LevelManager.getLevel(player), SpManager.getSP(player), getPlayerOwnedSkillIds(player))){
+        if(skill.canBuy(getSkillContext(player, id))){
             var price = skill.getPrices().get(currentLvl);
 
             SpManager.removeSP(player, price);
@@ -109,7 +114,7 @@ public class SkillManager {
 
         if (currentLvl >= maxLvl) return false;
 
-        var bulkResult = skill.checkBulkBuy(currentLvl, LevelManager.getLevel(player), SpManager.getSP(player), getPlayerOwnedSkillIds(player));
+        var bulkResult = skill.checkBulkBuy(getSkillContext(player, id));
 
         if (bulkResult.levelToAdd() > 0) {
             SpManager.removeSP(player, bulkResult.spToWithdraw());
@@ -138,7 +143,7 @@ public class SkillManager {
 
         int currentLvl = data.getSkillLevel(id);
 
-        if(!skill.canRefund(currentLvl, Config.REFUND_SYSTEM.getAsBoolean())) return false;
+        if(!skill.canRefund(getSkillContext(player, id), Config.REFUND_SYSTEM.getAsBoolean())) return false;
 
         int initialPrice = skill.getPrices().get(currentLvl - 1);
         int finalPrice = Math.max(1, (int)(initialPrice * (Config.REFUND_PERCENTAGE.get() / 100f)));
@@ -166,7 +171,7 @@ public class SkillManager {
         int currentLvl = data.getSkillLevel(id);
         if (currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
-        var spToRefund = skill.checkBulkRefund(currentLvl, (float)Config.REFUND_PERCENTAGE.getAsDouble(), Config.REFUND_SYSTEM.getAsBoolean());
+        var spToRefund = skill.checkBulkRefund(getSkillContext(player, id), (float)Config.REFUND_PERCENTAGE.getAsDouble(), Config.REFUND_SYSTEM.getAsBoolean());
 
         if (spToRefund > 0) {
             SpManager.addSP(player, spToRefund);
@@ -214,7 +219,6 @@ public class SkillManager {
 
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
             if(lvl > 0) GenericEffects.applyEffects(skill, player);
-            else GenericEffects.applyEffects(skill, player);
         }
     }
 
@@ -249,4 +253,9 @@ public class SkillManager {
 
     public boolean isSkillBookmarked(ServerPlayer player,String id) {return player.getData(PlayerData.DATA).isBookmarked(id);}
     public List<String> getAllBookmarkIDs(ServerPlayer player){return player.getData(PlayerData.DATA).getBookmarks();}
+
+    @NotNull
+    public SkillContext getSkillContext(ServerPlayer player, String skillID){
+        return new SkillContext(player, getPlayerSkillLevel(player, skillID), LevelManager.getLevel(player), SpManager.getSP(player), getPlayerOwnedSkillIds(player));
+    }
 }

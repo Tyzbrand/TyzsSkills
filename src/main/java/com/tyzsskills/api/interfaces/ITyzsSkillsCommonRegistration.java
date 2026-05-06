@@ -2,8 +2,15 @@ package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.api.model.SkillBehavior;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Interface used to register your custom mod elements on the server side.
@@ -17,5 +24,21 @@ public interface ITyzsSkillsCommonRegistration {
      * @param prefab A {@link SkillPrefab} containing all the skill's definitions, including its optional behavior.
      */
     void registerSkill(@NotNull SkillPrefab prefab);
+
+    /**
+     * Registers a condition that a skill must meet to be unlocked.
+     * @param skillID A valid skill ID (in lower case).
+     * @param condition A {@link  Predicate} containing the condition.
+     */
+    default void registerSkillUnlockCondition(@NotNull String skillID, @NotNull Predicate<Player> condition){
+        this.registerSkillUnlockCondition(skillID, new ArrayList<>(List.of(condition)));
+    }
+
+    /**
+     * Registers conditions that a skill must meet to be unlocked.
+     * @param skillID A valid skill ID (in lower case).
+     * @param conditions A list containing all conditions as {@link  Predicate}.
+     */
+     void registerSkillUnlockCondition(@NotNull String skillID, @NotNull List<Predicate<Player>> conditions);
 
 }

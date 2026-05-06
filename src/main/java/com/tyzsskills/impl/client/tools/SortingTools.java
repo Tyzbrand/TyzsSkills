@@ -52,7 +52,7 @@ public class SortingTools {
         }
 
         if(!showUnbuyable) listToSort.removeIf(s ->
-                !s.canBuy(ClientCache.getSkillLevel(s.getID()), ClientCache.getLvl(), ClientCache.getSP(), ClientCache.getPurchasedSkills()));
+                !s.canBuy(ClientCache.getCurrentContext(s.getID())));
 
         if(!showMaxed) listToSort.removeIf(s -> ClientCache.getSkillLevel(s.getID()) >= s.getMaximumLevel());
 

@@ -3,16 +3,21 @@ package com.tyzsskills.impl.server.model;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillConfiguration;
+import com.tyzsskills.api.model.SkillContext;
 import com.tyzsskills.api.records.BulkPurchaseResult;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
 import com.tyzsskills.api.model.SkillBehavior;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 
 public class Skill implements ISkill {
@@ -39,6 +44,7 @@ public class Skill implements ISkill {
         this.customValues = customValues != null ? new HashMap<>(customValues) : new HashMap<>();
 
         this.config = config != null ? config : new SkillConfiguration();
+        this.conditions = new ArrayList<>();
 
         if(category == Enums.CategoryType.ALL || category == Enums.CategoryType.BOOKMARKS) this.category = Enums.CategoryType.MISC;
 
@@ -67,6 +73,8 @@ public class Skill implements ISkill {
 
     //Config
     protected SkillConfiguration config;
+    protected List<Predicate<Player>> conditions;
+
 
 
     //Getters
@@ -116,14 +124,17 @@ public class Skill implements ISkill {
     public @NotNull List<String> getRawPrerequisites() {return config.skillPrerequisites();}
 
 
-
+    @Nullable
     public SkillBehavior getBehavior(){return behaviour;}
     public boolean hasBehaviour(){return behaviour != null;}
+
+    public List<Predicate<Player>> getConditions(){return List.copyOf(conditions);}
 
     //Setters
     public void setBehaviour(SkillBehavior behaviour){
         if(behaviour != null) this.behaviour = behaviour;
     }
+    public void setConditions(@NotNull List<Predicate<Player>> conditions) {this.conditions.addAll(conditions);}
     @Override
     public void addIncompatibility(@NotNull String id){config.addIncompatibility(id);}
     @Override
@@ -133,36 +144,37 @@ public class Skill implements ISkill {
 
     //Behavior
     @Override
-    public boolean canRefund(int currentLvl, boolean refundEnabled){
-        if(!refundEnabled || !isRefundable() || currentLvl <= 0) return false;
+    public boolean canRefund(@NotNull SkillContext ctx, boolean refundEnabled){
+        if(!refundEnabled || !isRefundable() || ctx.skillLvl() <= 0) return false;
 
-        return currentLvl <= prices.size();
+        return ctx.skillLvl() <= prices.size();
     }
 
     @Override
-    public boolean canBuy(int currentLvl, int playerLvl, int currentSP, @NotNull List<String> ownedSkillIds){
-        if(!isPurchasable() || currentLvl >= maximumLevel) return false;
+    public boolean canBuy(@NotNull SkillContext ctx){
+        if(!isPurchasable() || ctx.skillLvl() >= maximumLevel) return false;
 
-        if(!meetsLevelRequirement(playerLvl)) return false;
-        if(!getPrerequisites(ownedSkillIds).isEmpty() || !getIncompatibilities(ownedSkillIds).isEmpty()) return false;
+        if(!meetsLevelRequirement(ctx.playerLvl())) return false;
+        if(!getPrerequisites(ctx.ownedSkillIds()).isEmpty() || !getIncompatibilities(ctx.ownedSkillIds()).isEmpty()) return false;
 
-        var price = prices.get(currentLvl);
-        return price <= currentSP;
+        var price = prices.get(ctx.skillLvl());
+        return price <= ctx.playerSP();
     }
 
     @Override
-    public @NotNull BulkPurchaseResult checkBulkBuy(int currentLvl, int playerLvl, int availableSp, @NotNull List<String> ownedSkillIds){
+    public @NotNull BulkPurchaseResult checkBulkBuy(@NotNull SkillContext ctx){
         var bulkResultFallback = new BulkPurchaseResult(0, 0);
 
-        if(!isPurchasable() || currentLvl >= maximumLevel) return bulkResultFallback;
+        if(!isPurchasable() || ctx.skillLvl() >= maximumLevel) return bulkResultFallback;
 
-        if(!meetsLevelRequirement(playerLvl)) return bulkResultFallback;
-        if(!getPrerequisites(ownedSkillIds).isEmpty() || !getIncompatibilities(ownedSkillIds).isEmpty()) return bulkResultFallback;
+        if(!meetsLevelRequirement(ctx.playerLvl())) return bulkResultFallback;
+        if(!getPrerequisites(ctx.ownedSkillIds()).isEmpty() || !getIncompatibilities(ctx.ownedSkillIds()).isEmpty()) return bulkResultFallback;
 
         var spToSpend = 0;
         var levelsToAdd = 0;
+        var availableSp = ctx.playerSP();
 
-        for (int i = currentLvl; i < maximumLevel; i++) {
+        for (int i = ctx.skillLvl(); i < maximumLevel; i++) {
             if (i >= prices.size()) break;
             var price = prices.get(i);
 
@@ -177,12 +189,12 @@ public class Skill implements ISkill {
     }
 
     @Override
-    public int checkBulkRefund(int currentLvl, float refundPercentage, boolean refundEnabled){
-        if(!refundEnabled || !isRefundable() || currentLvl <= 0) return 0;
+    public int checkBulkRefund(@NotNull SkillContext ctx, float refundPercentage, boolean refundEnabled){
+        if(!refundEnabled || !isRefundable() || ctx.skillLvl() <= 0) return 0;
 
         var finalRefund = 0;
 
-        for (int i = currentLvl - 1; i >= 0; i--) {
+        for (int i = ctx.skillLvl() - 1; i >= 0; i--) {
             if (i < prices.size()) {
                 int levelPrice = prices.get(i);
                 int levelRefund = (int) (levelPrice * (refundPercentage / 100f));
