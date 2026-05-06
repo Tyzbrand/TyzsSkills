@@ -82,6 +82,7 @@ public class DebugManager {
             var lvl = manager.getPlayerSkillLevel(player, skillId);
 
             var incompatibilities = skill.getIncompatibilities(manager.getPlayerOwnedSkillIds(player));
+            var prerequisites = skill.getPrerequisites(manager.getPlayerOwnedSkillIds(player));
 
             if(!skill.meetsLevelRequirement(LevelManager.getLevel(player))){
                 cleanRefund(0, lvl, player, skill);
@@ -96,7 +97,10 @@ public class DebugManager {
                 }
                 continue;
             }
-
+            else if (!prerequisites.isEmpty()){
+                cleanRefund(0, lvl, player, skill);
+                continue;
+            }
 
             if(!manager.isSkillLoaded(skill.getID())) continue;
 

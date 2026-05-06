@@ -223,6 +223,7 @@
 
   "gui.tyzs_skills.level_lock" : "Requires Level",
   "gui.tyzs_skills.conlict" : "Conflicts with",
+  "gui.tyzs_skills.prerequisite" : "Prerequisites",
   "gui.tyzs_skills.locked" : "Locked",
   "gui.tyzs_skills.incompatibilities" : "Incompatibilities",
 
@@ -240,4 +241,5 @@
   "gui.tuzs_skills.sorting_tooltip.body" : "Advanced prefixes",
   "gui.tuzs_skills.sorting_tooltip.prefix_description" : "Search in description",
   "gui.tuzs_skills.sorting_tooltip.prefix_id" : "Search strictly by ID"
+
 }

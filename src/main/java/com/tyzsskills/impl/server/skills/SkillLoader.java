@@ -57,13 +57,27 @@ public class SkillLoader {
 
         for(var skill : SkillManager.get().getAllSkills()){
             var incompatibilities = skill.getRawIncompatibilities();
-            for (var id : incompatibilities){
-                var conflict = SkillManager.get().getSkill(id);
-                var sourceId = skill.getID();
+            var skillID = skill.getID();
 
+            for (var id : incompatibilities){
+                if(!SkillManager.get().isSkillLoaded(id)){
+                    ErrorManager.registerSkillError(skillID, "incompatibility : [" + id + "] does not exist.");
+                    skill.removeIncompatibility(id);
+                    continue;
+                }
+
+                var conflict = SkillManager.get().getSkill(id);
                 if(conflict == null) continue;
 
-                if(!conflict.isSkillIncompatible(sourceId)) conflict.addIncompatibility(sourceId);
+                if(!conflict.isSkillIncompatible(skillID)) conflict.addIncompatibility(skillID);
+            }
+
+            var prerequisites = skill.getRawPrerequisites();
+            for (var prerequisite : prerequisites){
+                if(!SkillManager.get().isSkillLoaded(prerequisite)) {
+                    ErrorManager.registerSkillError(skillID, "prerequisite : [" + prerequisite + "] does not exist.");
+                    skill.removePrerequisite(prerequisite);
+                }
             }
         }
     }
@@ -104,7 +118,7 @@ public class SkillLoader {
         if(description == null) description = "Missing description";
 
         SkillConfiguration config = getSafeObject(source, "config", SkillLoader::parseConfig);
-        if(config == null) config = new SkillConfiguration(-1, null);
+        if(config == null) config = new SkillConfiguration();
 
 
         if(type == Enums.SkillType.CUSTOM || type == Enums.SkillType.GENERIC){
@@ -143,7 +157,7 @@ public class SkillLoader {
 
             if(modifiers.isEmpty()) {ErrorManager.registerSkillError(id, "one modifier is required"); return;}
 
-            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
+            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category,
                     icon, displayName, description, modifiers, null, config));
             return;
 
@@ -176,7 +190,7 @@ public class SkillLoader {
 
             if(valueSet.isEmpty()){ErrorManager.registerSkillError(id, "one value set is required");return;}
 
-            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
+            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category,
                     icon, displayName, description, null, valueSet, config));
             return;
         }
@@ -239,12 +253,19 @@ public class SkillLoader {
 
     //Utils
     private static SkillConfiguration parseConfig(JsonObject obj){
+
+        var purchasable = getSafeElement(obj, "purchasable", JsonPrimitive::getAsBoolean);
+        var refundable = getSafeElement(obj, "refundable", JsonPrimitive::getAsBoolean);
+        var visible = getSafeElement(obj, "visible", JsonPrimitive::getAsBoolean);
+
+        var customTooltip = getSafeElement(obj, "customTooltip", JsonPrimitive::getAsString);
+
         var levelRequirement = getSafeElement(obj, "levelRequirement", JsonPrimitive::getAsInt);
-        if(levelRequirement == null) levelRequirement = -1;
 
         var incompatibleSkills = getSafeList(obj, "incompatibleSkills", JsonElement::getAsString);
+        var skillPrerequisites = getSafeList(obj, "skillPrerequisites", JsonElement::getAsString);
 
-        return new SkillConfiguration(levelRequirement, incompatibleSkills);
+        return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites, refundable, purchasable, visible, customTooltip);
     }
 
 }

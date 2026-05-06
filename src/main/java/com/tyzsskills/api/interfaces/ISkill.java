@@ -42,6 +42,10 @@ public interface ISkill {
 
     boolean isPurchasable();
 
+    boolean isRefundable();
+
+    boolean isVisible();
+
     /**
      * @return a resourceLocation path as a string
      */
@@ -56,6 +60,11 @@ public interface ISkill {
      * @return a localization key
      */
     @NotNull String getDescription();
+
+    /**
+     * @return a localization key
+     */
+    @NotNull String getCustomTooltip();
 
     /**
      * Retrieves all registered value sets for this skill
@@ -163,6 +172,9 @@ public interface ISkill {
      */
     void addIncompatibility(@NotNull String id);
 
+    void removeIncompatibility(@NotNull String id);
+
+
 
     /**
      * Gets all skill that are mutually exclusive with this one (as ids).
@@ -171,6 +183,11 @@ public interface ISkill {
      * @return A list containing all incompatible skill ids the player possesses. If there are no incompatibilities, return an empty list.
      */
     @NotNull List<String> getIncompatibilities(@NotNull List<String> ownedSkillIds);
+
+    @NotNull List<String> getRawPrerequisites();
+    @NotNull List<String> getPrerequisites(@NotNull List<String> ownedSkillIds);
+    void removePrerequisite(@NotNull String id);
+
 
     /**
      * Checks if the player meets the global level requirement for this skill.

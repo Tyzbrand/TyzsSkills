@@ -73,7 +73,7 @@ public class FileManager {
     public void writeDefaultSkills(MinecraftServer server) throws IOException {
         for (var prefab : prefabQueue){
             Skill skillToSave = new Skill(prefab.active(), prefab.id(), prefab.maximumLevel(),
-                        prefab.prices(), prefab.type(), prefab.category(), prefab.purchasable(),
+                        prefab.prices(), prefab.type(), prefab.category(),
                         prefab.icon(), prefab.displayName(), prefab.description(), prefab.modifiers(), prefab.customValues(),
                         prefab.config()
             );

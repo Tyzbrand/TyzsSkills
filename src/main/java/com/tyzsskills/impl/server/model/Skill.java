@@ -19,7 +19,7 @@ public class Skill implements ISkill {
 
 
     public Skill(boolean active, String id, int maximumLevel,
-                 List<Integer> prices, Enums.SkillType type, Enums.CategoryType category, boolean purchasable,
+                 List<Integer> prices, Enums.SkillType type, Enums.CategoryType category,
                  String icon, String displayName, String description, List<Modifier> modifiers, Map<String, ValueSet> customValues,
                  SkillConfiguration config)
     {
@@ -29,7 +29,6 @@ public class Skill implements ISkill {
         this.prices = prices != null ?  new ArrayList<>(prices) : new ArrayList<>();
         this.type = type;
         this.category = category;
-        this.purchasable = purchasable;
 
         this.icon = icon;
         this.displayName = displayName;
@@ -39,7 +38,7 @@ public class Skill implements ISkill {
 
         this.customValues = customValues != null ? new HashMap<>(customValues) : new HashMap<>();
 
-        this.config = config != null ? config : new SkillConfiguration(-1, null);
+        this.config = config != null ? config : new SkillConfiguration();
 
         if(category == Enums.CategoryType.ALL || category == Enums.CategoryType.BOOKMARKS) this.category = Enums.CategoryType.MISC;
 
@@ -54,7 +53,6 @@ public class Skill implements ISkill {
     protected List<Integer> prices;
     protected Enums.SkillType type;
     protected Enums.CategoryType category;
-    protected boolean purchasable;
 
     //Visual -----------------------
     protected String icon;
@@ -89,13 +87,19 @@ public class Skill implements ISkill {
     @Override
     public Enums.CategoryType getCategory(){return category;}
     @Override
-    public boolean isPurchasable(){return purchasable;}
+    public boolean isPurchasable(){return config.purchasable();}
+    @Override
+    public boolean isRefundable(){return config.refundable();}
+    @Override
+    public boolean isVisible(){return config.visible();}
     @Override
     public @NotNull String getIcon(){return icon;}
     @Override
     public @NotNull String getDisplayName(){return displayName;}
     @Override
     public @NotNull String getDescription(){return description;}
+    @Override
+    public @NotNull String getCustomTooltip() {return config.customTooltip();}
     @Override
     public @NotNull Map<String, ValueSet> getValues(){return Map.copyOf(customValues);}
     @Override
@@ -108,6 +112,9 @@ public class Skill implements ISkill {
     public boolean isSkillIncompatible(@NotNull String skillID) {return config.incompatibleSkills().contains(skillID);}
     @Override
     public @NotNull List<String> getRawIncompatibilities() {return config.incompatibleSkills();}
+    @Override
+    public @NotNull List<String> getRawPrerequisites() {return config.skillPrerequisites();}
+
 
 
     public SkillBehavior getBehavior(){return behaviour;}
@@ -119,11 +126,15 @@ public class Skill implements ISkill {
     }
     @Override
     public void addIncompatibility(@NotNull String id){config.addIncompatibility(id);}
+    @Override
+    public void removeIncompatibility(@NotNull String id) {config.removeIncompatibility(id);}
+    @Override
+    public void removePrerequisite(@NotNull String id) {config.removePrerequisite(id);}
 
     //Behavior
     @Override
     public boolean canRefund(int currentLvl, boolean refundEnabled){
-        if(!refundEnabled || !isPurchasable() || currentLvl <= 0) return false;
+        if(!refundEnabled || !isRefundable() || currentLvl <= 0) return false;
 
         return currentLvl <= prices.size();
     }
@@ -132,7 +143,8 @@ public class Skill implements ISkill {
     public boolean canBuy(int currentLvl, int playerLvl, int currentSP, @NotNull List<String> ownedSkillIds){
         if(!isPurchasable() || currentLvl >= maximumLevel) return false;
 
-        if(!meetsLevelRequirement(playerLvl) || !getIncompatibilities(ownedSkillIds).isEmpty()) return false;
+        if(!meetsLevelRequirement(playerLvl)) return false;
+        if(!getPrerequisites(ownedSkillIds).isEmpty() || !getIncompatibilities(ownedSkillIds).isEmpty()) return false;
 
         var price = prices.get(currentLvl);
         return price <= currentSP;
@@ -144,7 +156,8 @@ public class Skill implements ISkill {
 
         if(!isPurchasable() || currentLvl >= maximumLevel) return bulkResultFallback;
 
-        if(!meetsLevelRequirement(playerLvl) || !getIncompatibilities(ownedSkillIds).isEmpty()) return bulkResultFallback;
+        if(!meetsLevelRequirement(playerLvl)) return bulkResultFallback;
+        if(!getPrerequisites(ownedSkillIds).isEmpty() || !getIncompatibilities(ownedSkillIds).isEmpty()) return bulkResultFallback;
 
         var spToSpend = 0;
         var levelsToAdd = 0;
@@ -165,7 +178,7 @@ public class Skill implements ISkill {
 
     @Override
     public int checkBulkRefund(int currentLvl, float refundPercentage, boolean refundEnabled){
-        if(!refundEnabled || !isPurchasable() || currentLvl <= 0) return 0;
+        if(!refundEnabled || !isRefundable() || currentLvl <= 0) return 0;
 
         var finalRefund = 0;
 
@@ -195,6 +208,22 @@ public class Skill implements ISkill {
         return intersections.isEmpty() ? Collections.emptyList() : intersections;
     }
 
+    @Override
+    public @NotNull List<String> getPrerequisites(@NotNull List<String> ownedSkillIds) {
+        var prerequisites = config.skillPrerequisites();
+
+        if(prerequisites.isEmpty()) return Collections.emptyList();
+
+        var stillPrerequisites = new ArrayList<String>();
+
+        for(var prerequisite : prerequisites){
+            if(!ownedSkillIds.contains(prerequisite)) stillPrerequisites.add(prerequisite);
+        }
+
+        return stillPrerequisites.isEmpty() ? Collections.emptyList() : stillPrerequisites;
+    }
+
+
     //Network
     public static final StreamCodec<FriendlyByteBuf, Skill> STREAM_CODEC = StreamCodec.ofMember(
             Skill::writeToBuffer,
@@ -211,8 +240,6 @@ public class Skill implements ISkill {
 
         buffer.writeEnum(type);
         buffer.writeEnum(category);
-
-        buffer.writeBoolean(purchasable);
 
         buffer.writeUtf(icon);
         buffer.writeUtf(displayName);
@@ -234,7 +261,6 @@ public class Skill implements ISkill {
         Enums.SkillType type = buffer.readEnum(Enums.SkillType.class);
         Enums.CategoryType category = buffer.readEnum(Enums.CategoryType.class);
 
-        boolean purchasable = buffer.readBoolean();
 
         String icon = buffer.readUtf();
         String displayName = buffer.readUtf();
@@ -245,7 +271,7 @@ public class Skill implements ISkill {
 
         SkillConfiguration config = SkillConfiguration.STREAM_CODEC.decode(buffer);
 
-        return new Skill(active, id, maxLevel, prices, type, category, purchasable,
+        return new Skill(active, id, maxLevel, prices, type, category,
                             icon, displayName, description, readModifiers, readCustomValues, config);
     }
 }

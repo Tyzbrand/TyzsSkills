@@ -1,25 +1,53 @@
 package com.tyzsskills.api.model;
 
-import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class SkillConfiguration {
-    public SkillConfiguration (int levelRequirement, List<String> incompatibilities){
+    public SkillConfiguration(){this(null, null, null, null, null, null, null);}
+
+    public SkillConfiguration (Integer levelRequirement,
+                               List<String> incompatibilities, List<String> prerequisites,
+                               Boolean refundable, Boolean purchasable, Boolean visible,
+                               String customTooltip){
+
+
+        this.refundable = refundable;
+        this.purchasable = purchasable;
+        this.visible = visible;
+
+        this.customTooltip = customTooltip;
+
         this.levelRequirement = levelRequirement;
+
         this.incompatibleSkills = incompatibilities == null ? null : new HashSet<>(incompatibilities);
+        this.skillPrerequisites = prerequisites == null ? null : new HashSet<>(prerequisites);
     }
 
 
-    //Level Requirement
-    private final int levelRequirement;
-    public int levelRequirement(){return levelRequirement;}
+    //Bools
+    private final Boolean refundable;
+    public boolean refundable(){return refundable == null || refundable;}
 
-    //Incompatibilities
+    private final Boolean purchasable;
+    public boolean purchasable(){return purchasable == null || purchasable;}
+
+    private final Boolean visible;
+    public boolean visible(){return visible == null || visible;}
+
+    //Strings
+    private final String customTooltip;
+    public @NotNull String customTooltip(){return customTooltip == null ? "" : customTooltip;}
+
+
+    //Ints
+    private final Integer levelRequirement;
+    public int levelRequirement(){return levelRequirement == null ? 0 : levelRequirement;}
+
+    //Lists
     private Set<String> incompatibleSkills;
     @NotNull
     public List<String> incompatibleSkills(){return incompatibleSkills == null ? Collections.emptyList() :  List.copyOf(incompatibleSkills);}
@@ -27,6 +55,12 @@ public class SkillConfiguration {
         if(incompatibleSkills == null) incompatibleSkills = new HashSet<>();
         incompatibleSkills.add(skillID);
     }
+    public void removeIncompatibility(String skillID){if(incompatibleSkills != null) incompatibleSkills.remove(skillID);}
+
+    private Set<String> skillPrerequisites;
+    @NotNull
+    public List<String> skillPrerequisites(){return skillPrerequisites == null ? Collections.emptyList() :  List.copyOf(skillPrerequisites);}
+    public void removePrerequisite(String skillID){if(skillPrerequisites != null) skillPrerequisites.remove(skillID);}
 
 
 
@@ -37,17 +71,38 @@ public class SkillConfiguration {
     );
 
     public void writeToBuffer(FriendlyByteBuf buffer){
-        buffer.writeInt(levelRequirement);
+        buffer.writeBoolean(purchasable());
+        buffer.writeBoolean(refundable());
+        buffer.writeBoolean(visible());
 
-        List<String> toWrite = incompatibleSkills == null ? Collections.emptyList() : List.copyOf(incompatibleSkills);
-        buffer.writeCollection(toWrite, FriendlyByteBuf::writeUtf);
+        buffer.writeUtf(customTooltip());
+
+        buffer.writeInt(levelRequirement());
+
+        buffer.writeCollection(incompatibleSkills(), FriendlyByteBuf::writeUtf);
+        buffer.writeCollection(skillPrerequisites(), FriendlyByteBuf::writeUtf);
     }
 
     public static @NotNull SkillConfiguration readConfigFromBuffer(FriendlyByteBuf buffer){
-        int levelRequirement = buffer.readInt();
+        var purchasableToRead = buffer.readBoolean();
+        Boolean purchasable = purchasableToRead ? null : false;
+
+        var refundableToRead = buffer.readBoolean();
+        Boolean refundable = refundableToRead ? null : false;
+
+        var visibleToRead = buffer.readBoolean();
+        Boolean visible = visibleToRead ? null : false;
+
+        var tooltipToRead = buffer.readUtf();
+        String tooltip = tooltipToRead.isEmpty() ? null : tooltipToRead;
+
+        var intToRead = buffer.readInt();
+        Integer levelRequirement =  intToRead <= 0 ? null : intToRead;
 
         List<String> incompatibleSkills = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readUtf);
 
-        return new SkillConfiguration(levelRequirement, incompatibleSkills);
+        List<String> skillPrerequisites = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readUtf);
+
+        return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites,refundable, purchasable, visible, tooltip);
     }
 }

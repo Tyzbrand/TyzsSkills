@@ -45,6 +45,7 @@ public class SortingTools {
     public static List<Skill> refreshList(){
         List<Skill> listToSort =  new ArrayList<>(ClientCache.getAllSkills());
 
+
         if(!currentSearchQuery.isBlank()){
             var query = currentSearchQuery.trim().toLowerCase(Locale.ROOT);
             listToSort.removeIf(s -> queryCheck(query, s));
@@ -58,6 +59,8 @@ public class SortingTools {
 
         if(currentSkillCategory == Enums.CategoryType.BOOKMARKS) listToSort.removeIf(s -> !ClientCache.isSkillBookmarked(s.getID()));
         else if(currentSkillCategory != Enums.CategoryType.ALL) listToSort.removeIf(s -> s.getCategory() != currentSkillCategory);
+
+        listToSort.removeIf(s -> !s.isVisible() && ClientCache.getSkillLevel(s.getID()) < 1);
 
         if(!activeSortTypes.isEmpty()){
             var currentSortType = activeSortTypes.get(currentSortTypeIndex);
