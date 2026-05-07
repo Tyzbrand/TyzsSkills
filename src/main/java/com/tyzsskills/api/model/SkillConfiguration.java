@@ -7,19 +7,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class SkillConfiguration {
-    public SkillConfiguration(){this(null, null, null, null, null, null, null);}
+    public SkillConfiguration(){this(null, null, null, null, null, null);}
 
     public SkillConfiguration (Integer levelRequirement,
                                List<String> incompatibilities, List<String> prerequisites,
-                               Boolean refundable, Boolean purchasable, Boolean visible,
-                               String customTooltip){
+                               Boolean refundable, Boolean purchasable, Boolean visible){
 
 
         this.refundable = refundable;
         this.purchasable = purchasable;
         this.visible = visible;
-
-        this.customTooltip = customTooltip;
 
         this.levelRequirement = levelRequirement;
 
@@ -37,10 +34,6 @@ public class SkillConfiguration {
 
     private final Boolean visible;
     public boolean visible(){return visible == null || visible;}
-
-    //Strings
-    private final String customTooltip;
-    public @NotNull String customTooltip(){return customTooltip == null ? "" : customTooltip;}
 
 
     //Ints
@@ -75,8 +68,6 @@ public class SkillConfiguration {
         buffer.writeBoolean(refundable());
         buffer.writeBoolean(visible());
 
-        buffer.writeUtf(customTooltip());
-
         buffer.writeInt(levelRequirement());
 
         buffer.writeCollection(incompatibleSkills(), FriendlyByteBuf::writeUtf);
@@ -93,9 +84,6 @@ public class SkillConfiguration {
         var visibleToRead = buffer.readBoolean();
         Boolean visible = visibleToRead ? null : false;
 
-        var tooltipToRead = buffer.readUtf();
-        String tooltip = tooltipToRead.isEmpty() ? null : tooltipToRead;
-
         var intToRead = buffer.readInt();
         Integer levelRequirement =  intToRead <= 0 ? null : intToRead;
 
@@ -103,6 +91,6 @@ public class SkillConfiguration {
 
         List<String> skillPrerequisites = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readUtf);
 
-        return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites,refundable, purchasable, visible, tooltip);
+        return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites,refundable, purchasable, visible);
     }
 }

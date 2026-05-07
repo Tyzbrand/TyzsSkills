@@ -15,27 +15,17 @@ import java.util.function.Predicate;
 @ApiStatus.Internal
 public class SkillDataRegistry {
     private static final Map<String, SkillBehavior> behaviors = new HashMap<>();
-    private static final Map<String, List<Predicate<Player>>> conditions = new HashMap<>();
 
 
     //Behaviors
-    public static void registerCustomBehavior(String id, SkillBehavior behavior){
-        if(id == null || id.isBlank()) return;
-        if(behavior == null) return;
+    public static void registerCustomBehavior(String id, SkillBehavior behavior) {
+        if (id == null || id.isBlank()) return;
+        if (behavior == null) return;
 
         behaviors.put(id.toLowerCase(), behavior);
     }
 
-    public static SkillBehavior getBehavior(String id){
+    public static SkillBehavior getBehavior(String id) {
         return behaviors.getOrDefault(id.toLowerCase(), null);
     }
-
-
-    //Conditions
-    public static void registerConditions(String id, List<Predicate<Player>> predicates){
-        if(id == null || predicates == null || predicates.isEmpty()) return;
-        conditions.put(id, predicates);
-    }
-
-    public static @NotNull List<Predicate<Player>> getConditions(String id){return conditions.getOrDefault(id, Collections.emptyList());}
 }

@@ -263,17 +263,6 @@ public class SkillWidget {
                 else tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy()));
                 return tooltip;
             }
-
-            if(!skill.getCustomTooltip().isEmpty() && isMouseOver(mouseX, mouseY, x + 2, y + 2, 60, 26)){
-                String rawText = Component.translatable(skill.getCustomTooltip()).getString();
-                String[] lines = rawText.split("\n");
-
-                for (String line : lines) {
-                    tooltip.add(Component.literal(line));
-                }
-                return tooltip;
-            }
-
         }
 
         return tooltip;

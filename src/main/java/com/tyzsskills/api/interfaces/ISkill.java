@@ -62,10 +62,6 @@ public interface ISkill {
      */
     @NotNull String getDescription();
 
-    /**
-     * @return a localization key
-     */
-    @NotNull String getCustomTooltip();
 
     /**
      * Retrieves all registered value sets for this skill

@@ -258,14 +258,12 @@ public class SkillLoader {
         var refundable = getSafeElement(obj, "refundable", JsonPrimitive::getAsBoolean);
         var visible = getSafeElement(obj, "visible", JsonPrimitive::getAsBoolean);
 
-        var customTooltip = getSafeElement(obj, "customTooltip", JsonPrimitive::getAsString);
-
         var levelRequirement = getSafeElement(obj, "levelRequirement", JsonPrimitive::getAsInt);
 
         var incompatibleSkills = getSafeList(obj, "incompatibleSkills", JsonElement::getAsString);
         var skillPrerequisites = getSafeList(obj, "skillPrerequisites", JsonElement::getAsString);
 
-        return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites, refundable, purchasable, visible, customTooltip);
+        return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites, refundable, purchasable, visible);
     }
 
 }

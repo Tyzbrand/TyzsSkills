@@ -44,7 +44,6 @@ public class Skill implements ISkill {
         this.customValues = customValues != null ? new HashMap<>(customValues) : new HashMap<>();
 
         this.config = config != null ? config : new SkillConfiguration();
-        this.conditions = new ArrayList<>();
 
         if(category == Enums.CategoryType.ALL || category == Enums.CategoryType.BOOKMARKS) this.category = Enums.CategoryType.MISC;
 
@@ -73,8 +72,6 @@ public class Skill implements ISkill {
 
     //Config
     protected SkillConfiguration config;
-    protected List<Predicate<Player>> conditions;
-
 
 
     //Getters
@@ -107,8 +104,6 @@ public class Skill implements ISkill {
     @Override
     public @NotNull String getDescription(){return description;}
     @Override
-    public @NotNull String getCustomTooltip() {return config.customTooltip();}
-    @Override
     public @NotNull Map<String, ValueSet> getValues(){return Map.copyOf(customValues);}
     @Override
     public @NotNull ValueSet getValueSet(@NotNull String key){return customValues.getOrDefault(key, null);}
@@ -128,13 +123,11 @@ public class Skill implements ISkill {
     public SkillBehavior getBehavior(){return behaviour;}
     public boolean hasBehaviour(){return behaviour != null;}
 
-    public List<Predicate<Player>> getConditions(){return List.copyOf(conditions);}
 
     //Setters
-    public void setBehaviour(SkillBehavior behaviour){
-        if(behaviour != null) this.behaviour = behaviour;
+    public void setBehaviour(@NotNull SkillBehavior behaviour){
+        this.behaviour = behaviour;
     }
-    public void setConditions(@NotNull List<Predicate<Player>> conditions) {this.conditions.addAll(conditions);}
     @Override
     public void addIncompatibility(@NotNull String id){config.addIncompatibility(id);}
     @Override

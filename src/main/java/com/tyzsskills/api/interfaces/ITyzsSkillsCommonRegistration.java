@@ -25,20 +25,5 @@ public interface ITyzsSkillsCommonRegistration {
      */
     void registerSkill(@NotNull SkillPrefab prefab);
 
-    /**
-     * Registers a condition that a skill must meet to be unlocked.
-     * @param skillID A valid skill ID (in lower case).
-     * @param condition A {@link  Predicate} containing the condition.
-     */
-    default void registerSkillUnlockCondition(@NotNull String skillID, @NotNull Predicate<Player> condition){
-        this.registerSkillUnlockCondition(skillID, new ArrayList<>(List.of(condition)));
-    }
-
-    /**
-     * Registers conditions that a skill must meet to be unlocked.
-     * @param skillID A valid skill ID (in lower case).
-     * @param conditions A list containing all conditions as {@link  Predicate}.
-     */
-     void registerSkillUnlockCondition(@NotNull String skillID, @NotNull List<Predicate<Player>> conditions);
 
 }

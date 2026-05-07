@@ -20,8 +20,4 @@ public class TyzsSkillsCommonRegistrationWrapper implements ITyzsSkillsCommonReg
         if(prefab.behavior() != null) SkillDataRegistry.registerCustomBehavior(prefab.id(), prefab.behavior());
     }
 
-    @Override
-    public void registerSkillUnlockCondition(@NotNull String skillID, @NotNull List<Predicate<Player>> conditions) {
-        SkillDataRegistry.registerConditions(skillID, conditions);
-    }
 }
