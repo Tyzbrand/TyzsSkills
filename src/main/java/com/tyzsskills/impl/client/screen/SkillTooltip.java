@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client.screen;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -9,6 +10,7 @@ import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.records.SkillTooltipData;
 import com.tyzsskills.impl.client.tools.StringTools;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -73,6 +75,8 @@ public class SkillTooltip implements ClientTooltipComponent {
     @Override
     public void renderImage(@NotNull Font font, int x, int y, GuiGraphics guiGraphics) {
         renderSkillIcon(guiGraphics, x, y);
+
+        renderGlint(guiGraphics, x, y);
 
         renderTitle(guiGraphics, x, y, font);
 
@@ -184,5 +188,39 @@ public class SkillTooltip implements ClientTooltipComponent {
 
         BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
         RenderSystem.disableBlend();
+    }
+
+    private void renderGlint(GuiGraphics gui, int x, int y){
+        long time = Util.getMillis();
+
+        var loopInterval = 4000L;
+        var animDuration = 1250L;
+
+        var currentTimeInLoop = time % loopInterval;
+
+
+        if (currentTimeInLoop <= animDuration) {
+
+            var t = currentTimeInLoop / (float)animDuration;
+            var offset = (float)Math.pow(t, 2.5f);
+
+            RenderSystem.enableBlend();
+            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, .2f);
+
+            gui.enableScissor(x, y, x + 22, y + 22);
+
+            var glintX = (int)(x + 22 - (44 * offset));
+            var glintY = (int)(y + 22 - (44 * offset));
+
+            ResourceLocation glintTexture = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/glint_sweep.png");
+            gui.blit(glintTexture, glintX, glintY, 0, 0, 22, 22, 22, 22);
+
+            gui.disableScissor();
+
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.disableBlend();
+        }
     }
 }
