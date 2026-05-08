@@ -1,7 +1,0 @@
-site_name: Te dont pay attention
-theme:
-  name: material
-
-nav:
-  - Accueil: java_api_get_started.md
-  - Ma première page: mapage.md
