@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client.screen;
 
+import com.mojang.datafixers.util.Either;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
@@ -15,10 +16,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.joml.Quaternionf;
@@ -222,15 +227,16 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, finalText, mouseX, mouseY);
         }
 
-        if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)){
+        if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)) {
             SkillWidget hoveredWidget = this.scrollView.getHoveredWidget(mouseX, mouseY);
 
-            if(hoveredWidget != null){
-                List<Component> lines = hoveredWidget.getTooltip(mouseX, mouseY);
-                if(!lines.isEmpty()){
-                    gui.renderComponentTooltip(this.font, lines, mouseX, mouseY);
-                }
+            if (hoveredWidget != null) {
+                List<Either<FormattedText, TooltipComponent>> lines = hoveredWidget.getTooltip(mouseX, mouseY);
+                    if (!lines.isEmpty()) {
+                        gui.renderComponentTooltipFromElements(this.font, lines, mouseX, mouseY, ItemStack.EMPTY);
+                    }
             }
+
         }
 
         if(isHovering(mouseX, mouseY, leftPos + 56, topPos + 58, 12, 14)){ //Stats

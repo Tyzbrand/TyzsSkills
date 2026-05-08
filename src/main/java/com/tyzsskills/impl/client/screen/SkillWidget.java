@@ -1,12 +1,13 @@
-package com.tyzsskills.impl.client.models;
+package com.tyzsskills.impl.client.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.datafixers.util.Either;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.SoundPlayer;
-import com.tyzsskills.impl.client.screen.MainGUI;
+import com.tyzsskills.impl.client.records.SkillTooltipData;
 import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.server.model.Skill;
@@ -16,8 +17,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
@@ -36,7 +39,7 @@ public class SkillWidget {
     protected static final int U_BACKGROUND = 166, V_BACKGROUND = 142;
     protected static final int U_BACKGROUND_FINAL = 230;
 
-    protected static final int WIDTH = 64, HEIGHT = 30; //Widget Size on screen
+    public static final int WIDTH = 64, HEIGHT = 30; //Widget Size on screen
 
     protected static final int BTN_W = 9, BTN_H = 9;
 
@@ -100,7 +103,6 @@ public class SkillWidget {
             gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_NEUTRAL, V_BOOK_ACTIVE, 9, 9, TEXTURE_W, TEXTURE_H);
             gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
         }
-
 
 
         MutableComponent text = !isLocked ?
@@ -170,101 +172,42 @@ public class SkillWidget {
        }
     }
 
-    public List<Component> getTooltip(int mouseX, int mouseY){
-        List<Component> tooltip = new ArrayList<>();
+
+
+    public List<Either<FormattedText, TooltipComponent>> getTooltip(int mouseX, int mouseY){
+        List<Either<FormattedText, TooltipComponent>> tooltip = new ArrayList<>();
         int currentLevel = ClientCache.getSkillLevel(this.skill.getID().toLowerCase());
 
+
         if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)) {
-            tooltip.add(Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE));
-            tooltip.addAll(StringTools.getSkillDescription(skill));
+            tooltip.add(Either.right(new SkillTooltipData(this.skill)));
+            return tooltip;
+        }
 
 
-            var incompatibilities = skill.getRawIncompatibilities();
-            if(!incompatibilities.isEmpty()){
-                tooltip.add(Component.empty());
-
-                tooltip.add(Component.translatable("gui.tyzs_skills.incompatibilities").append(Component.literal(":")).withStyle(ChatFormatting.BLUE));
-                for(var id : incompatibilities){
-                    var conflict = ClientCache.getSkill(id);
-                    if(conflict == null) continue;
-                    tooltip.add(Component.literal("- ").append(Component.translatable(conflict.getDisplayName())).withStyle(ChatFormatting.DARK_GRAY));
-                }
+        if(canRefund() && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
+            if(isShiftPressed()) {
+                for (var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, true))
+                    tooltip.add(Either.left(line));
+            }
+            else {
+                for(var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false))
+                    tooltip.add(Either.left(line));
             }
             return tooltip;
         }
 
-        var incompatibilities = skill.getIncompatibilities(ClientCache.getPurchasedSkills());
-        var prerequisites = skill.getPrerequisites(ClientCache.getPurchasedSkills());
-        var levelRequired = skill.meetsLevelRequirement(ClientCache.getLvl());
-
-
-        if(!incompatibilities.isEmpty() || !levelRequired ||!prerequisites.isEmpty()){
-            if(isMouseOver(mouseX, mouseY, x + 2, y + 2, 60, 26)){
-                if(!levelRequired){
-                    var message = Component.empty()
-                            .append(Component.translatable("gui.tyzs_skills.level_lock").withStyle(ChatFormatting.BLUE))
-                            .append(Component.literal(": ").withStyle(ChatFormatting.BLUE))
-                            .append(Component.literal(String.valueOf(skill.getRequiredLevel())).withStyle(ChatFormatting.RED));
-
-                    tooltip.add(message);
-                    return tooltip;
-                }
-
-                if(!incompatibilities.isEmpty()){
-                    var message = Component.empty()
-                            .append(Component.translatable("gui.tyzs_skills.conlict").withStyle(ChatFormatting.BLUE))
-                            .append(Component.literal(": ").withStyle(ChatFormatting.BLUE));
-
-                    tooltip.add(message);
-
-                    for (var id : incompatibilities) {
-                        var incompSkill = ClientCache.getSkill(id);
-
-                        message = Component.literal("- ")
-                                .append(Component.translatable(incompSkill.getDisplayName()).withStyle(ChatFormatting.RED));
-
-                        if(isShiftPressed()) message = message.append(Component.literal(" [" + id + "]").withStyle(ChatFormatting.DARK_GRAY));
-
-                        tooltip.add(message);
-                    }
-                }
-
-                if(!prerequisites.isEmpty()){
-                    var message = Component.empty()
-                            .append(Component.translatable("gui.tyzs_skills.prerequisite").withStyle(ChatFormatting.BLUE))
-                            .append(Component.literal(": ").withStyle(ChatFormatting.BLUE));
-
-                    tooltip.add(message);
-
-                    for (var prerequisite : prerequisites){
-                        var prereqSkill = ClientCache.getSkill(prerequisite);
-
-                        message = Component.literal("- ")
-                                .append(Component.translatable(prereqSkill.getDisplayName()).withStyle(ChatFormatting.RED));
-
-                        if(isShiftPressed()) message = message.append(Component.literal(" [" + prerequisite + "]").withStyle(ChatFormatting.DARK_GRAY));
-
-                        tooltip.add(message);
-                    }
-                }
-                return tooltip;
+        if(skill.isPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
+            if(isShiftPressed()){
+                for (var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy(), true))
+                    tooltip.add(Either.left(line));
             }
+            else {
+                for(var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy()))
+                    tooltip.add(Either.left(line));
+            }
+            return tooltip;
         }
-        else{
-
-            if(canRefund() && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
-                if(isShiftPressed()) tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, true));
-                else tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false));
-                return tooltip;
-            }
-
-            if(skill.isPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
-                if(isShiftPressed()) tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy(), true));
-                else tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy()));
-                return tooltip;
-            }
-        }
-
         return tooltip;
     }
 

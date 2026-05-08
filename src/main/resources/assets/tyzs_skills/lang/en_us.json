@@ -13,6 +13,7 @@
   "gui.tyzs_skills.power" : "Power",
   "gui.tyzs_skills.power_needed" : "Power required",
   "gui.tyzs_skills.gain" : "Gain",
+  "gui.tyzs_skills.requirements" : "Hold [shift] for requirements",
 
   "skill.tyzs_skills.unit.percentage" : "%",
   "skill.tyzs_skills.unit.blocks" : "blocks",
@@ -204,7 +205,7 @@
 
 
   "skill.tyzs_skills.haggler.displayName" : "Haggler",
-  "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius.\nThey will follow you with a {villager_speed}% speed bonus",
+  "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius.\n\nThey will follow you with a {villager_speed}% speed bonus",
 
   "skill.tyzs_skills.keepsake.displayName" : "Safekept",
   "skill.tyzs_skills.keepsake.description" : "Safeguards the first {saved_slots} slot(s) of your inventory upon death",

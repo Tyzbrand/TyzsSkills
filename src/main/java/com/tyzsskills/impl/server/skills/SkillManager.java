@@ -47,8 +47,6 @@ public class SkillManager {
         var behaviour = SkillDataRegistry.getBehavior(skill.getID());
         if(behaviour != null){skill.setBehaviour(behaviour);}
 
-        skill.setConditions(SkillDataRegistry.getConditions(skill.getID()));
-
         skillCollection.put(skill.getID(), skill);
         NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
     }

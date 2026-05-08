@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client.models;
 
+import com.tyzsskills.impl.client.screen.SkillWidget;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
