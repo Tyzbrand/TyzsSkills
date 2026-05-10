@@ -167,4 +167,6 @@ public interface ISkill {
         return playerLvl >= getRequiredLevel();
     }
 
+    boolean isAvailable(@NotNull SkillContext ctx);
+
 }

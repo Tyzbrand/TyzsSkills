@@ -8,6 +8,7 @@ import com.tyzsskills.api.records.BulkPurchaseResult;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
 import com.tyzsskills.api.model.SkillBehavior;
+import com.tyzsskills.impl.client.ClientCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -117,6 +118,12 @@ public class Skill implements ISkill {
     public @NotNull List<String> getRawIncompatibilities() {return config.incompatibleSkills();}
     @Override
     public @NotNull List<String> getRawPrerequisites() {return config.skillPrerequisites();}
+    @Override
+    public boolean isAvailable(@NotNull SkillContext ctx){
+        return meetsLevelRequirement(ctx.playerLvl())
+                && getPrerequisites(ctx.ownedSkillIds()).isEmpty()
+                && getIncompatibilities(ctx.ownedSkillIds()).isEmpty();
+    }
 
 
     @Nullable
@@ -147,8 +154,7 @@ public class Skill implements ISkill {
     public boolean canBuy(@NotNull SkillContext ctx){
         if(!isPurchasable() || ctx.skillLvl() >= maximumLevel) return false;
 
-        if(!meetsLevelRequirement(ctx.playerLvl())) return false;
-        if(!getPrerequisites(ctx.ownedSkillIds()).isEmpty() || !getIncompatibilities(ctx.ownedSkillIds()).isEmpty()) return false;
+        if(!isAvailable(ctx)) return false;
 
         var price = prices.get(ctx.skillLvl());
         return price <= ctx.playerSP();
@@ -160,8 +166,7 @@ public class Skill implements ISkill {
 
         if(!isPurchasable() || ctx.skillLvl() >= maximumLevel) return bulkResultFallback;
 
-        if(!meetsLevelRequirement(ctx.playerLvl())) return bulkResultFallback;
-        if(!getPrerequisites(ctx.ownedSkillIds()).isEmpty() || !getIncompatibilities(ctx.ownedSkillIds()).isEmpty()) return bulkResultFallback;
+        if(!isAvailable(ctx)) return bulkResultFallback;
 
         var spToSpend = 0;
         var levelsToAdd = 0;

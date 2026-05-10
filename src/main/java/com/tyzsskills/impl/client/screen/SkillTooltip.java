@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SkillTooltip implements ClientTooltipComponent {
@@ -37,6 +36,8 @@ public class SkillTooltip implements ClientTooltipComponent {
 
     private final ISkill skill;
     protected static final ResourceLocation DEFAULT_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/default.png");
+    protected static final ResourceLocation LOCK_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/locked.png");
+
 
     private final Component displayName;
     private final List<FormattedCharSequence> descriptionLines;
@@ -93,12 +94,11 @@ public class SkillTooltip implements ClientTooltipComponent {
     public ISkill getSkill(){return  skill;}
     private boolean isMaxed(){return ClientCache.getSkillLevel(skill.getID()) >= skill.getMaximumLevel();}
     private boolean isShiftPressed(){return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);}
-    private boolean hasInfos(){
+    private boolean hasInfos() {
         return skill.getRequiredLevel() != 0
                 || !skill.getRawIncompatibilities().isEmpty()
                 || !skill.getRawPrerequisites().isEmpty();
     }
-
 
     //UTILS
     private void renderTitle(GuiGraphics gui, int x, int y, Font font) {
@@ -124,8 +124,8 @@ public class SkillTooltip implements ClientTooltipComponent {
     }
 
     private void renderSkillIcon(GuiGraphics gui, int x, int y){
-        var icon = ResourceLocation.tryParse(skill.getIcon());
-        icon = icon == null ? DEFAULT_ICON : icon;
+        ResourceLocation icon = skill.isAvailable(ClientCache.getCurrentContext(skill.getID())) ? ResourceLocation.tryParse(skill.getIcon()) : LOCK_ICON;
+        if(icon == null) icon = DEFAULT_ICON;
 
         var borderColor = isMaxed() ? 0xFFD6AD55 : 0xFFD6D6D6;
 

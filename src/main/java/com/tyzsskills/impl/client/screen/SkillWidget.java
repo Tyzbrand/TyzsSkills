@@ -31,7 +31,6 @@ import java.util.List;
 public class SkillWidget {
 
     protected static final ResourceLocation DEFAULT_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/default.png");
-    protected static final ResourceLocation LOCKED_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/locked.png");
 
     protected static final ResourceLocation REF_TEXTURE = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png");
     protected static final int TEXTURE_W = 325, TEXTURE_H = 325;
@@ -79,9 +78,7 @@ public class SkillWidget {
         this.y = y;
 
         Font font = Minecraft.getInstance().font;
-        boolean isLocked = !skill.meetsLevelRequirement(ClientCache.getLvl())
-                || !skill.getIncompatibilities(ClientCache.getPurchasedSkills()).isEmpty()
-                || !skill.getPrerequisites(ClientCache.getPurchasedSkills()).isEmpty();
+        boolean isLocked = !skill.isAvailable(ClientCache.getCurrentContext(skill.getID()));
 
         int currentU = ClientCache.getSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel() ? U_BACKGROUND_FINAL : U_BACKGROUND;
 
@@ -91,12 +88,6 @@ public class SkillWidget {
                 gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_NEUTRAL, V_BOOK_ACTIVE, 9, 9, TEXTURE_W, TEXTURE_H);
                 gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
             });
-
-            gui.pose().pushPose();
-            gui.pose().translate(x + 15, y + 15, 10);
-            gui.pose().scale(0.7f, 0.7f, 1.0f);
-            gui.blit(LOCKED_ICON, -8, -8, 0, 0, 16, 16, 16, 16);
-            gui.pose().popPose();
         }
         else {
             gui.blit(REF_TEXTURE, x, y, currentU, V_BACKGROUND, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
@@ -109,7 +100,7 @@ public class SkillWidget {
                 Component.translatable("gui.tyzs_skills.Lvl")
                 .append(": " + ClientCache.getSkillLevel(skill.getID()) + "/" + skill.getMaximumLevel())
                 :
-                Component.translatable("gui.tyzs_skills.locked").withStyle(ChatFormatting.RED);
+                Component.translatable("gui.tyzs_skills.locked");
 
 
 
@@ -178,6 +169,7 @@ public class SkillWidget {
         List<Either<FormattedText, TooltipComponent>> tooltip = new ArrayList<>();
         int currentLevel = ClientCache.getSkillLevel(this.skill.getID().toLowerCase());
 
+        boolean isLocked = !skill.isAvailable(ClientCache.getCurrentContext(skill.getID()));
 
         if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)) {
             tooltip.add(Either.right(new SkillTooltipData(this.skill)));
@@ -185,7 +177,7 @@ public class SkillWidget {
         }
 
 
-        if(canRefund() && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
+        if(canRefund() && !isLocked && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
             if(isShiftPressed()) {
                 for (var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, true))
                     tooltip.add(Either.left(line));
@@ -197,7 +189,7 @@ public class SkillWidget {
             return tooltip;
         }
 
-        if(skill.isPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
+        if(canBuy() && !isLocked && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
             if(isShiftPressed()){
                 for (var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy(), true))
                     tooltip.add(Either.left(line));
