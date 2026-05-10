@@ -1,9 +1,28 @@
+---
+layout:
+  width: wide
+  title:
+    visible: true
+  description:
+    visible: true
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
+  tags:
+    visible: true
+---
+
 # Use KubeJS events to react to the mod for 6.2+
 
-You can catch events to cancel, modify or react to them by using `TyzsSkillsEvents`.
-When an event is cancelable, you can use `event.cancel()`.
+You can catch events to cancel, modify or react to them by using `TyzsSkillsEvents`. When an event is cancelable, you can use `event.cancel()`.
 
 _Examples of usage:_
+
 ```js
 // Canceling an event
 TyzsSkillsEvents.skill_purchase_pre(event => {
@@ -13,6 +32,7 @@ TyzsSkillsEvents.skill_purchase_pre(event => {
   }
 })
 ```
+
 <br>
 
 ```js
@@ -28,99 +48,112 @@ TyzsSkillsEvents.xp_change(event => {
   }
 })
 ```
-<br>
+
+\
 <br>
 
 ## EVENTS
+
 ### Technical
 
-- `skill_load_pre` -> At the start of the server, just before a skill is loaded. **[Cancelable]**
+* `skill_load_pre` -> At the start of the server, just before a skill is loaded. **\[Cancelable]**
+
 > Skill: `event.getSkill()`
 
-<br>
+\
 <br>
 
-- `skill_load_post` -> At the start of the server, just after a skill is loaded and added to the server list.
+* `skill_load_post` -> At the start of the server, just after a skill is loaded and added to the server list.
+
 > Skill: `event.getSkill()`
 
-<br>
-<br>
-
-- `skill_reload` -> When server skill list is reloaded (/skills reload).
-
-<br>
+\
 <br>
 
-- `player_reset` -> When a player gets their data reset (/skills reset).
+* `skill_reload` -> When server skill list is reloaded (/skills reload).
+
+\
+<br>
+
+* `player_reset` -> When a player gets their data reset (/skills reset).
+
 > Player: `event.getPlayer()`
 
-<br>
+\
 <br>
 
 ### Metadata
 
-- `sp_change` -> When the SP amount of a player changes. **[Cancelable]**
-> Player: `event.getPlayer()`<br>
-> Amount: `event.getNewAmount()`,  `event.getOldAmount()`,  `event.setNewAmount(amount)`
+* `sp_change` -> When the SP amount of a player changes. **\[Cancelable]**
 
-<br>
-<br>
+> Player: `event.getPlayer()`\
+> Amount: `event.getNewAmount()`, `event.getOldAmount()`, `event.setNewAmount(amount)`
 
-
-- `power_change` -> When the power amount of a player changes. **[Cancelable]**
-> Player: `event.getPlayer()`<br>
-> Amount: `event.getNewPower()`,  `event.getOldPower()`,  `event.setNewPower(power)`
-
-<br>
+\
 <br>
 
-- `xp_change` -> When the XP amount of a player changes. **[Cancelable]**
-> Player: `event.getPlayer()`<br>
-> Amount: `event.getNewAmount()`,  `event.getOldAmount()`,  `event.setNewAmount(amount)`
+* `power_change` -> When the power amount of a player changes. **\[Cancelable]**
 
-<br>
+> Player: `event.getPlayer()`\
+> Amount: `event.getNewPower()`, `event.getOldPower()`, `event.setNewPower(power)`
+
+\
 <br>
 
-- `skill_level_change` -> When a player's level changes.  **[Cancelable]**
-> Player: `event.getPlayer()`<br>
-> Amount: `event.getNewLevel()`,  `event.getOldLevel()`,  `event.setNewLevel(level)`
+* `xp_change` -> When the XP amount of a player changes. **\[Cancelable]**
 
+> Player: `event.getPlayer()`\
+> Amount: `event.getNewAmount()`, `event.getOldAmount()`, `event.setNewAmount(amount)`
+
+\
 <br>
+
+* `skill_level_change` -> When a player's level changes. **\[Cancelable]**
+
+> Player: `event.getPlayer()`\
+> Amount: `event.getNewLevel()`, `event.getOldLevel()`, `event.setNewLevel(level)`
+
+\
 <br>
 
 ### Specific Actions
 
-- `skill_purchase_pre` -> Just before a skill is bought by a player. **[Cancelable]**
-> Player: `event.getPlayer()`<br>
+* `skill_purchase_pre` -> Just before a skill is bought by a player. **\[Cancelable]**
+
+> Player: `event.getPlayer()`\
 > Skill: `event.getSkill()`
 
-<br>
+\
 <br>
 
-- `skill_purchase_post` ->  Just after a skill is bought by a player. 
-> Player: `event.getPlayer()`<br>
+* `skill_purchase_post` -> Just after a skill is bought by a player.
+
+> Player: `event.getPlayer()`\
 > Skill: `event.getSkill()`
 
-<br>
+\
 <br>
 
-- `skill_refund_pre` -> Just before a skill is refunded by a player. **[Cancelable]**
-> Player: `event.getPlayer()`<br>
+* `skill_refund_pre` -> Just before a skill is refunded by a player. **\[Cancelable]**
+
+> Player: `event.getPlayer()`\
 > Skill: `event.getSkill()`
 
-<br>
+\
 <br>
 
-- `skill_refund_post` -> Just after a skill is refunded by a player. 
-> Player: `event.getPlayer()`<br>
+* `skill_refund_post` -> Just after a skill is refunded by a player.
+
+> Player: `event.getPlayer()`\
 > Skill: `event.getSkill()`
 
-<br>
+\
 <br>
 
-- `skill_bookmark` -> When a player bookmarks a skill. 
-> Player: `event.getPlayer()`<br>
+* `skill_bookmark` -> When a player bookmarks a skill.
+
+> Player: `event.getPlayer()`\
 > Skill: `event.getSkill()`
 
-<br>
+\
 <br>
