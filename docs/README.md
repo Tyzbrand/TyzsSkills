@@ -41,8 +41,9 @@ Therefore, to modify an existing skill, simply copy the original file (from `def
 
 We will now look at how to properly modify a skill's data to avoid bugs or weird behaviors.
 
-> **🛑 If the ID does not match a skill in the default folder, the overwrite will not be applied.**\
-> **🛑 Do not modify properties that are not explained below, as this could corrupt your data and break the skills.**
+**🛑 If the ID does not match a skill in the default folder, the overwrite will not be applied.**
+
+**🛑 Do not modify properties that are not explained below, as this could corrupt your data and break the skills.**
 
 _Configurable Properties:_
 
@@ -73,8 +74,8 @@ _A modifier consists of the following properties:_
 * It can come from another mod.
 * e.g., **"minecraft:generic.movement\_speed"**
 
-> **🛑 If the modifier is missing, the skill will not be loaded.**\
-> **🛑 If the modifier is incorrect, the skill will have no effect in game.**
+**🛑 If the modifier is missing, the skill will not be loaded.**\
+**🛑 If the modifier is incorrect, the skill will have no effect in game.**
 
 `operation`
 
