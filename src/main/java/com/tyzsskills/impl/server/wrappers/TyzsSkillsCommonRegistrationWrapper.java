@@ -4,12 +4,7 @@ import com.tyzsskills.api.interfaces.ITyzsSkillsCommonRegistration;
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.impl.server.active.FileManager;
 import com.tyzsskills.impl.server.skills.SkillDataRegistry;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.function.Predicate;
 
 
 public class TyzsSkillsCommonRegistrationWrapper implements ITyzsSkillsCommonRegistration {

@@ -1,4 +1,4 @@
-package com.tyzsskills.api.model;
+package com.tyzsskills.api.records;
 
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;

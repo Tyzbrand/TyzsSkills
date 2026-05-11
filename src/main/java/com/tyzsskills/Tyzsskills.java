@@ -6,16 +6,14 @@ import com.tyzsskills.impl.server.active.*;
 import com.tyzsskills.impl.server.attachments.*;
 import com.tyzsskills.impl.server.events.SkillEffectsEvents;
 import com.tyzsskills.impl.server.events.XpGainsEvents;
-import com.tyzsskills.impl.server.model.SkillsPreset;
+import com.tyzsskills.impl.server.skills.SkillPresets;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.commands.MainCommand;
 import com.tyzsskills.impl.server.events.RuntimeEvents;
 import com.tyzsskills.impl.server.payloads.*;
 import com.tyzsskills.impl.server.wrappers.*;
+import com.tyzsskills.impl.server.xp.XpGainRegistry;
 import com.tyzsskills.impl.server.xp.XpManager;
-import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
-import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
-import com.tyzsskills.impl.server.xp.xpEvents.XpFood;
 import com.tyzsskills.integration.kubejs.JsEventsDelegate;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -243,35 +241,38 @@ public class Tyzsskills {
     }
 
     private void onTyzsSkillsCommonSetup(TyzsSkillsCommonSetupEvent event){
-        for(var prefab : SkillsPreset.getDefaultSkills()){
+        for(var prefab : SkillPresets.getDefaultSkills()){
             event.wrapper().registerSkill(prefab);
         }
     }
 
     @SubscribeEvent
-    public void onServerBeforeStart(ServerAboutToStartEvent event) throws IOException {
-        var fileManager = FileManager.get();
+    public void onServerBeforeStart(ServerAboutToStartEvent event) {
         var server = event.getServer();
 
-        fileManager.backupCustomFiles(server);
-        fileManager.cleanPaths(server);
-        fileManager.initPath(server);
-        fileManager.writeDefaultSkills(server);
-        fileManager.writeDefaultXpValues(server);
-        fileManager.writeDefaultLevelPool(server);
+        try{
+            FileManager.init(server);
 
-        fileManager.readJsons(server);
-        fileManager.readXpValues(server);
-        fileManager.readLevelPool(server);
+            FileManager.writeDefaultSkills(server);
+            FileManager.writeDefaultData(server);
+
+            FileManager.readSkills(server);
+            FileManager.readData(server);
+        }
+        catch (IOException e) {
+        ErrorManager.registerLoadError("Loading json files", "Check the logs for more details");
+        System.err.println("[Tyz's Skills] CRITICAL ERROR: Unable to load files during server start");
+        e.printStackTrace();
+        }
     }
 
     @SubscribeEvent
     public void onServerStop(ServerStoppingEvent event){
         SkillManager.get().clearSkills();
-        XpBlock.clearValues();
-        XpEntity.clearValues();
-        XpFood.clearValues();
+        XpGainRegistry.clearAll();
         XpManager.clearPool();
+
+        FileManager.clearPrefab();
 
         ErrorManager.clearErrors();
     }

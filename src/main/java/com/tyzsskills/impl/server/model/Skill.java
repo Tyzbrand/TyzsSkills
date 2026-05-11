@@ -3,7 +3,7 @@ package com.tyzsskills.impl.server.model;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillConfiguration;
-import com.tyzsskills.api.model.SkillContext;
+import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.api.records.BulkPurchaseResult;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;

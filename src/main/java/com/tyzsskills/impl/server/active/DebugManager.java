@@ -12,21 +12,18 @@ import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.payloads.ResetPayload;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
+import com.tyzsskills.impl.server.xp.XpGainRegistry;
 import com.tyzsskills.impl.server.xp.XpManager;
-import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
-import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
-import com.tyzsskills.impl.server.xp.xpEvents.XpFood;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 @ApiStatus.Internal
 public class DebugManager {
@@ -36,14 +33,18 @@ public class DebugManager {
         ErrorManager.clearErrors();
 
         SkillManager.get().clearSkills();
-        XpBlock.clearValues();
-        XpEntity.clearValues();
-        XpFood.clearValues();
+        XpGainRegistry.clearAll();
         XpManager.clearPool();
 
-        FileManager.get().readJsons(server);
-        FileManager.get().readLevelPool(server);
-        FileManager.get().readXpValues(server);
+        try {
+            FileManager.readSkills(server);
+            FileManager.readData(server);
+        } catch (Exception e) {
+            ErrorManager.registerLoadError("Loading json files", "Check the logs for more details");
+            System.err.println("[Tyz's Skills] CRITICAL ERROR: Unable to load files during server start");
+            e.printStackTrace();
+            return;
+        }
 
         for(var player : server.getPlayerList().getPlayers()){
             checkForInconsistencies(player);

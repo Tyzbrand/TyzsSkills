@@ -1,12 +1,11 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.model.SkillContext;
+import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.api.records.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

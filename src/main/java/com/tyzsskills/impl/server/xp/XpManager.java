@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.SkillXPChangeEvent;
+import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.LimitsTracker;
@@ -24,9 +25,6 @@ import java.util.Map;
 
 @ApiStatus.Internal
 public class XpManager {
-
-    public record LevelData(float goal, int reward) {}
-
     private static final LevelData FALLBACK = new LevelData(Float.MAX_VALUE, 0);
 
     private static final Map<Integer, LevelData> POOL = new HashMap<>();

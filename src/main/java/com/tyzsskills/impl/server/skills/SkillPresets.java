@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.model;
+package com.tyzsskills.impl.server.skills;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.Modifier;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SkillsPreset {
+public class SkillPresets {
 
     public static List<SkillPrefab> getDefaultSkills(){
         List<SkillPrefab> finalList = new ArrayList<>();

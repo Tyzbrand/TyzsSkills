@@ -2,15 +2,14 @@ package com.tyzsskills.impl.client;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.model.SkillContext;
+import com.tyzsskills.api.records.LevelData;
+import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
-import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.model.*;
 import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -28,7 +27,7 @@ public class ClientCache {
     private static int clientSpSpent = 0;
     private static int clientOwnedSkills = 0;
 
-    private static XpManager.LevelData clientLevelData = new XpManager.LevelData(100f, 1);
+    private static LevelData clientLevelData = new LevelData(100f, 1);
 
     private final static Map<String, Skill> clientSkills = new HashMap<>();
     private final static Map<String, Integer> clientSkillLevels = new HashMap<>();
@@ -89,7 +88,7 @@ public class ClientCache {
         }
     }
 
-    public static void updateClientCacheLevelData(XpManager.LevelData data){
+    public static void updateClientCacheLevelData(LevelData data){
         clientLevelData = data;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
@@ -336,7 +335,7 @@ public class ClientCache {
         clientLevel = 1;
         clientSP = 0;
         clientXP = 0f;
-        clientLevelData = new XpManager.LevelData(100f, 1);
+        clientLevelData = new LevelData(100f, 1);
     }
 
     private static void resetSkills(){

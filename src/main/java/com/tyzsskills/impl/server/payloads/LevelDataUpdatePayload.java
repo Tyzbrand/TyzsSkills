@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.payloads;
 
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.server.xp.XpManager;
 import io.netty.buffer.ByteBuf;
@@ -10,7 +11,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public record LevelDataUpdatePayload(XpManager.LevelData data) implements CustomPacketPayload {
+public record LevelDataUpdatePayload(LevelData data) implements CustomPacketPayload {
 
     public static final Type<LevelDataUpdatePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "level_data_update_payload"));
 
@@ -18,7 +19,7 @@ public record LevelDataUpdatePayload(XpManager.LevelData data) implements Custom
     public static final StreamCodec<ByteBuf, LevelDataUpdatePayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.FLOAT, (payload) -> payload.data.goal(),
             ByteBufCodecs.INT, (payload) -> payload.data.reward(),
-            (goal, reward) -> new LevelDataUpdatePayload(new XpManager.LevelData(goal, reward))
+            (goal, reward) -> new LevelDataUpdatePayload(new LevelData(goal, reward))
 
     );
 
