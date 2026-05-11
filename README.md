@@ -11,18 +11,9 @@ The long-term vision is to provide a fully customizable progression system. I am
 Here is the official documentation! It is still growing, but it will help you get started.<br>
 
 _Compatible with: NeoForge 1.21.1 | Mod version: 6.3+_
-
-### JSON Tweaks
-- [Configure existing skills](docs/configure_skill.md)
-- [Create custom skills](docs/create_skill.md)
-
-### KubeJS
-- [KubeJS events](docs/kubejs_events.md)
-- [KubeJS methods](docs/kubejs_methods.md)
-
-### Java API
-**The API is currently under development, so it is subject to breaking changes.**
-- _**Coming soon**_
+<br>
+<br>
+[Access Documentation](https://tyzbrand.gitbook.io/docs.tyzs_skills/)
 
 
 ## Integration 
