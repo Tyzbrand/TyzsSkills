@@ -88,7 +88,7 @@ public interface ISkill {
      * Checks if the player can purchase the next skill level.
      * @return {@code true} if the player can afford the next skill level, {@code false} otherwise.
      */
-    boolean canBuy(@NotNull SkillContext ctx);
+    boolean canBuy(@NotNull SkillContext ctx, boolean purchaseEnabled);
 
 
     /**
@@ -103,7 +103,7 @@ public interface ISkill {
      * Calculates the maximum number of skill levels a player can purchase at once.
      * @return A {@link BulkPurchaseResult} indicating how many levels can be bought and the total cost. Never null.
      */
-    @NotNull BulkPurchaseResult checkBulkBuy(@NotNull SkillContext ctx);
+    @NotNull BulkPurchaseResult checkBulkBuy(@NotNull SkillContext ctx, boolean purchaseEnabled);
 
 
     /**

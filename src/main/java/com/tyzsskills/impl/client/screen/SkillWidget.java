@@ -284,7 +284,7 @@ public class SkillWidget {
     }
 
     protected boolean canBuy(){
-        return skill.canBuy(ClientCache.getCurrentContext(skill.getID()));
+        return skill.canBuy(ClientCache.getCurrentContext(skill.getID()), ClientCache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
     }
 
     protected boolean canRefund(){

@@ -160,7 +160,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if(!skill.canBuy(getCurrentContext(id))) return;
+        if(!skill.canBuy(getCurrentContext(id), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return;
         int price = skill.getPrices().get(currentLvl);
 
         clientSP -= price;
@@ -171,7 +171,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        var bulkResult = skill.checkBulkBuy(getCurrentContext(id));
+        var bulkResult = skill.checkBulkBuy(getCurrentContext(id), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
 
         if (bulkResult.levelToAdd() > 0) {
             clientSP -= bulkResult.spToWithdraw();

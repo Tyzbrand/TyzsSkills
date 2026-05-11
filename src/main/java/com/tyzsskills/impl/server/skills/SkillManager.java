@@ -83,7 +83,7 @@ public class SkillManager {
 
         int currentLvl = data.getSkillLevel(id);
 
-        if(skill.canBuy(getSkillContext(player, id))){
+        if(skill.canBuy(getSkillContext(player, id), Config.PURCHASE_SYSTEM.get())){
             var price = skill.getPrices().get(currentLvl);
 
             SpManager.removeSP(player, price);
@@ -112,7 +112,7 @@ public class SkillManager {
 
         if (currentLvl >= maxLvl) return false;
 
-        var bulkResult = skill.checkBulkBuy(getSkillContext(player, id));
+        var bulkResult = skill.checkBulkBuy(getSkillContext(player, id), Config.PURCHASE_SYSTEM.get());
 
         if (bulkResult.levelToAdd() > 0) {
             SpManager.removeSP(player, bulkResult.spToWithdraw());

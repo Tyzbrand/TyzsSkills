@@ -152,8 +152,9 @@
   "tyzs_skills.configuration.Limits": "Limits",
   "tyzs_skills.configuration.Death_penalties":"Death Penalties",
 
-  "config.common.tyzs_skills.refund_system" : "Enable Refund System",
+  "config.common.tyzs_skills.refund_system" : "Refundable skills",
   "config.common.tyzs_skills.refund_system_per" : "Refund percentage",
+  "config.common.tyzs_skills.purchase_system" : "Purchasable skills",
   "config.common.tyzs_skills.prevent_placed_blocks_xp" : "Prevent placed blocks xp",
   "config.common..trait.max_ores" : "Max Vein Size",
   "config.common.tyzs_skills.earn_creative_xp" : "XP in Creative Mode",

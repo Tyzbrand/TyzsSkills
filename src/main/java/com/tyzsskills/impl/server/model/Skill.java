@@ -8,17 +8,12 @@ import com.tyzsskills.api.records.BulkPurchaseResult;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
 import com.tyzsskills.api.model.SkillBehavior;
-import com.tyzsskills.impl.client.ClientCache;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 
 public class Skill implements ISkill {
@@ -151,8 +146,8 @@ public class Skill implements ISkill {
     }
 
     @Override
-    public boolean canBuy(@NotNull SkillContext ctx){
-        if(!isPurchasable() || ctx.skillLvl() >= maximumLevel) return false;
+    public boolean canBuy(@NotNull SkillContext ctx, boolean purchaseEnabled){
+        if(!isPurchasable() || !purchaseEnabled || ctx.skillLvl() >= maximumLevel) return false;
 
         if(!isAvailable(ctx)) return false;
 
@@ -161,10 +156,10 @@ public class Skill implements ISkill {
     }
 
     @Override
-    public @NotNull BulkPurchaseResult checkBulkBuy(@NotNull SkillContext ctx){
+    public @NotNull BulkPurchaseResult checkBulkBuy(@NotNull SkillContext ctx, boolean purchaseEnabled){
         var bulkResultFallback = new BulkPurchaseResult(0, 0);
 
-        if(!isPurchasable() || ctx.skillLvl() >= maximumLevel) return bulkResultFallback;
+        if(!purchaseEnabled || !isPurchasable() || ctx.skillLvl() >= maximumLevel) return bulkResultFallback;
 
         if(!isAvailable(ctx)) return bulkResultFallback;
 
