@@ -291,22 +291,22 @@ public class ClientCache {
         }
         return count;
     }
-    public static float getTotalXpPerHour(){
+    public static int getTotalXpPerHour(){
         var level = Minecraft.getInstance().level;
-        if(level == null) return 0f;
+        if(level == null) return 0;
 
         var ticks = level.getGameTime();
 
         var effectiveTicks = Math.max(ticks, 1200f);
         var exactHours = effectiveTicks / 72000f;
 
-        return clientAllTimeXP / exactHours;
+        return (int)(clientAllTimeXP / exactHours);
     }
 
     private static long sessionStartTick = -1L;
-    public static float getSessionXpPerHour(){
+    public static int getSessionXpPerHour(){
         var level = Minecraft.getInstance().level;
-        if(level == null) return 0f;
+        if(level == null) return 0;
 
         if (sessionStartTick == -1) {
             sessionStartTick = level.getGameTime();
@@ -317,7 +317,7 @@ public class ClientCache {
         var effectiveTicks = Math.max(sessionTicks, 1200f);
         var exactSessionHours = effectiveTicks / 72000f;
 
-        return ClientCache.getSessionXp() / exactSessionHours;
+        return (int)(ClientCache.getSessionXp() / exactSessionHours);
     }
 
     //getters config

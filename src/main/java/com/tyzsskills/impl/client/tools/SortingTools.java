@@ -48,8 +48,6 @@ public class SortingTools {
     public static void registerCategories(@NotNull List<String> categories){
         rawCategories.clear();
         rawCategories.addAll(categories);
-
-        currentCategory = categories.isEmpty() ? "" : categories.getFirst();
     }
 
 

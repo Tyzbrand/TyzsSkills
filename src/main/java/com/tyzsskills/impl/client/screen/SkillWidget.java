@@ -145,7 +145,7 @@ public class SkillWidget {
 
            int currentBuyU;
 
-           if(isShiftPressed()) currentBuyU = isHoverBuyBtn ? U_BUY_ALL_BTN_HOVER : U_BUY_ALL_BTN;
+           if(isShiftPressed() && isMouseOver(mouseX, mouseY, x + 38, y + 17, BTN_W, BTN_H)) currentBuyU = isHoverBuyBtn ? U_BUY_ALL_BTN_HOVER : U_BUY_ALL_BTN;
            else currentBuyU = isHoverBuyBtn ? U_BUY_BTN_HOVER : U_BUY_BTN;
 
            if(isLocked) drawWithShade(gui, () -> gui.blit(REF_TEXTURE, x+38, y+17, currentBuyU, V_BUY_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H));
@@ -155,7 +155,7 @@ public class SkillWidget {
            boolean isHoverRefundBtn = isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H);
 
            int currentRefundU;
-           if(isShiftPressed()) currentRefundU = isHoverRefundBtn ? U_REFUND_ALL_BTN_HOVER : U_REFUND_ALL_BTN;
+           if(isShiftPressed() && isMouseOver(mouseX, mouseY, x + 27, y + 17, BTN_W, BTN_H)) currentRefundU = isHoverRefundBtn ? U_REFUND_ALL_BTN_HOVER : U_REFUND_ALL_BTN;
            else currentRefundU = isHoverRefundBtn? U_REFUND_BTN_HOVER : U_REFUND_BTN;
 
            if(isLocked) drawWithShade(gui, () -> gui.blit(REF_TEXTURE, x+27, y+17, currentRefundU, V_REFUND_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H));
@@ -240,6 +240,9 @@ public class SkillWidget {
             SoundPlayer.PlayUIClick();
             ClientCache.predictBookmark(skill);
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 2));
+
+            var mc = Minecraft.getInstance();
+            if(mc.screen instanceof MainGUI gui) gui.refreshList();
         }
 
         return false;
