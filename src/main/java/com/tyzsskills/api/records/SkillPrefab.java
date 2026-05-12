@@ -13,7 +13,7 @@ import java.util.Map;
  * Data container to register default JSON generation for custom skills
  */
 public record SkillPrefab(boolean active, @NotNull String id, int maximumLevel,
-                          @NotNull List<Integer> prices, @NotNull Enums.SkillType type, @NotNull Enums.CategoryType category,
+                          @NotNull List<Integer> prices, @NotNull Enums.SkillType type, @NotNull String category,
                           @NotNull String icon, @NotNull String displayName, @NotNull String description,
                           @Nullable List<Modifier> modifiers, @Nullable Map<String, ValueSet> customValues, @Nullable SkillBehavior behavior,
                           @Nullable SkillConfiguration config) {

@@ -4,6 +4,7 @@ import com.tyzsskills.Config;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
+import com.tyzsskills.impl.server.categories.CategoryLoader;
 import com.tyzsskills.impl.server.payloads.*;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
@@ -13,7 +14,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public class AutoSyncClient {
+public class ClientSynchronizer {
     public static void syncSkillList(ServerPlayer player){
         PacketDistributor.sendToPlayer(player, new SkillSyncPayload(SkillManager.get().getAllSkills()));
     }
@@ -55,6 +56,10 @@ public class AutoSyncClient {
         PacketDistributor.sendToPlayer(player, new StatsXpPayload(data.getAllTimeXp()));
         PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(data.getTotalSpEarned()));
         PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(data.getTotalSpSpent()));
+    }
+
+    public static void syncCategories(ServerPlayer player){
+        PacketDistributor.sendToPlayer(player, new CategoriesPayload(CategoryLoader.getCategories()));
     }
 
 

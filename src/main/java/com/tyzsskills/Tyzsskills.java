@@ -4,6 +4,7 @@ import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.events.TyzsSkillsCommonSetupEvent;
 import com.tyzsskills.impl.server.active.*;
 import com.tyzsskills.impl.server.attachments.*;
+import com.tyzsskills.impl.server.categories.CategoryLoader;
 import com.tyzsskills.impl.server.events.SkillEffectsEvents;
 import com.tyzsskills.impl.server.events.XpGainsEvents;
 import com.tyzsskills.impl.server.skills.SkillPresets;
@@ -129,7 +130,7 @@ public class Tyzsskills {
         var server = ServerLifecycleHooks.getCurrentServer();
         if(server == null) return;
 
-        for(var player : server.getPlayerList().getPlayers()) AutoSyncClient.syncConfig(player);
+        for(var player : server.getPlayerList().getPlayers()) ClientSynchronizer.syncConfig(player);
     }
 
     private void registerPayloads(final RegisterPayloadHandlersEvent event){
@@ -232,6 +233,12 @@ public class Tyzsskills {
                 ExportPayload::Handle
         );
 
+        registrar.playToClient(
+                CategoriesPayload.TYPE,
+                CategoriesPayload.STREAM_CODEC,
+                CategoriesPayload::Handle
+        );
+
     }
 
 
@@ -269,8 +276,10 @@ public class Tyzsskills {
     @SubscribeEvent
     public void onServerStop(ServerStoppingEvent event){
         SkillManager.get().clearSkills();
+
         XpGainRegistry.clearAll();
         XpManager.clearPool();
+        CategoryLoader.clearCategories();
 
         FileManager.clearPrefab();
 

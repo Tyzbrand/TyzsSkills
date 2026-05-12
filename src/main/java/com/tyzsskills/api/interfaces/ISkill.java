@@ -37,7 +37,7 @@ public interface ISkill {
     Enums.SkillType getType();
 
 
-    Enums.CategoryType getCategory();
+    String getCategory();
 
 
     boolean isPurchasable();

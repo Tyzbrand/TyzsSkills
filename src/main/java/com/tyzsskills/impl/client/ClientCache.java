@@ -2,14 +2,16 @@ package com.tyzsskills.impl.client;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.model.Category;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
+import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.server.model.*;
-import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -28,6 +30,8 @@ public class ClientCache {
     private static int clientOwnedSkills = 0;
 
     private static LevelData clientLevelData = new LevelData(100f, 1);
+
+    private final static Map<String, Category> clientCategories = new HashMap<>();
 
     private final static Map<String, Skill> clientSkills = new HashMap<>();
     private final static Map<String, Integer> clientSkillLevels = new HashMap<>();
@@ -97,6 +101,23 @@ public class ClientCache {
     }
 
 
+    public static void updateClientCacheCategories(Map<String, Category> map){
+        clientCategories.clear();
+        clientCategories.putAll(map);
+
+        var sortedCategories = new ArrayList<>(map.values());
+        sortedCategories.sort(Comparator.comparingInt(Category::order));
+
+        var sortedIds = sortedCategories.stream()
+                .map(Category::id)
+                .toList();
+
+        SortingTools.registerCategories(sortedIds);
+
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client categories Update: " + clientCategories.size() + " loaded."), false);
+        }
+    }
 
 
     public static void updateSkills(List<Skill> skills){
@@ -197,7 +218,6 @@ public class ClientCache {
 
     public static void predictRefundMax(Skill skill) {
         String id = skill.getID().toLowerCase();
-        int currentLvl = getSkillLevel(id);
 
         var spToRefund = skill.checkBulkRefund(getCurrentContext(skill.getID()),
                 (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), getConfigBool(Config.REFUND_SYSTEM_KEY, false));
@@ -247,6 +267,9 @@ public class ClientCache {
     public static int getSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
     public static Skill getSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}
     public static boolean isSkillBookmarked(String id){return clientBookmarks.contains(id.toLowerCase());}
+
+    @Nullable
+    public static Category getCategory(@NotNull String id){return clientCategories.getOrDefault(id, null);}
 
     @NotNull
     public static SkillContext getCurrentContext(String skillID){
@@ -358,5 +381,7 @@ public class ClientCache {
         clientConfigMap.clear();
         clientBookmarks.clear();
         clientSkills.clear();
+
+        clientCategories.clear();
     }
 }

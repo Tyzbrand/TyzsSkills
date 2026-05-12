@@ -26,12 +26,13 @@ public class RuntimeEvents {
         CompatibilityManager.processMigrationV2(player);
         CompatibilityManager.processMigrationV3(player);
 
-        AutoSyncClient.syncMainData(player);
-        AutoSyncClient.syncSkillList(player);
-        AutoSyncClient.syncSkillLevels(player);
-        AutoSyncClient.syncConfig(player);
-        AutoSyncClient.syncSkillBookmarks(player);
-        AutoSyncClient.syncStats(player);
+        ClientSynchronizer.syncMainData(player);
+        ClientSynchronizer.syncSkillList(player);
+        ClientSynchronizer.syncSkillLevels(player);
+        ClientSynchronizer.syncConfig(player);
+        ClientSynchronizer.syncSkillBookmarks(player);
+        ClientSynchronizer.syncStats(player);
+        ClientSynchronizer.syncCategories(player);
 
         DebugManager.checkForInconsistencies(player);
 

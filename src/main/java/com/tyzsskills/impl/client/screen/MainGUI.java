@@ -16,7 +16,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
@@ -45,12 +44,6 @@ public class MainGUI extends Screen {
 
     private int leftPos;
     private int topPos;
-
-    private CustomTabButton allBtn;
-    private CustomTabButton abilitiesBtn;
-    private CustomTabButton fightBtn;
-    private CustomTabButton miscBtn;
-    private CustomTabButton bookmarksBtn;
 
 
     public MainGUI(){super(Component.translatable("gui.tyzs_skills.title"));}
@@ -135,17 +128,6 @@ public class MainGUI extends Screen {
         gui.pose().scale(scale, scale, 1.0f);
         gui.drawString(this.font, spValue, -text2W, 0, color2, false);
         gui.pose().popPose();
-
-
-        if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS) return;
-
-        String localizationKey = "gui.tyzs_skills.Tab." + SortingTools.getCurrentSkillCategory().toString().toLowerCase();
-        MutableComponent enumDisplayName = Component.translatable(localizationKey);
-        int text3W = this.font.width(enumDisplayName);
-        int rightLimit3 = leftPos+293;
-        int textW = font.width(enumDisplayName); int textH = font.lineHeight; int padding = 3;
-        renderBackdrop(gui, (rightLimit3 -text3W) - padding, (topPos+12) - padding, textW + (padding*2), textH + (padding*2), 0xD5000000);
-        gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+13, 0xFFFFFFFF, false);
     }
 
     private void renderXpBar(GuiGraphics gui){
@@ -284,26 +266,6 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, Component.translatable("button.tyzs_skills.config_btn"), mouseX, mouseY);
         }
 
-        if(isHovering(mouseX, mouseY, leftPos + 92, topPos + 7, 29, 20)){ //All tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 123, topPos + 7, 29, 20)){ //Abilities tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.abilities"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 154, topPos + 7, 29, 20)){ //Fight tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.fight"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 185, topPos + 7, 29, 20)){ //Misc tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.misc"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 216, topPos + 7, 29, 20)){ //Bookmarks tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.bookmarks"), mouseX, mouseY);
-        }
-
         if(isHovering(mouseX, mouseY,leftPos + 251, topPos - 10, 15, 9)){ //Sort direction
             var message = SortingTools.getCurrentSortingDirection() == Enums.SortingDirection.ASCENDING ?
                     Component.translatable("gui.tyzs_skills.sorting_type.ascending")
@@ -356,105 +318,28 @@ public class MainGUI extends Screen {
     }
 
     private void addButtons(){
-        this.allBtn = new CustomTabButton(
-                leftPos + 92, topPos + 7,
-                29, 20,
-                82, 187,
-                82, 227,
-                82, 207,
-                325, 325,
-                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.ALL,
-                background,
-                (b) -> {
-                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.ALL){
-                        this.scrollView.setScrollAmount(0);
-                        return;
-                    }
+        var categories = SortingTools.getVisibleCategories();
+        var xStartPos = leftPos + 166;
 
-                    SortingTools.SetCategoryType(Enums.CategoryType.ALL);
-                    this.refreshList();
-                });
-        this.addRenderableWidget(this.allBtn);
+        for(int i = 0; i < categories.length; i++){
+            var category = categories[i];
+            if(category == null) continue;
 
-        this.abilitiesBtn = new CustomTabButton(
-                leftPos + 123, topPos + 7,
-                29, 20,
-                140, 187,
-                140, 227,
-                140, 207,
-                325, 325,
-                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.ABILITIES,
-                background,
-                (b) -> {
-                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.ABILITIES){
-                        this.scrollView.setScrollAmount(0);
-                        return;
-                    }
+            var btn = new CustomTabButton(
+                xStartPos, topPos + 7,
+                    () -> SortingTools.getCurrentCategory().equals(category.id()),
+                    (b) -> {
+                        SortingTools.setCategory(category.id());
+                        this.refreshList();
+                        this.rebuildWidgets();
+                    },
+                    category.icon()
+            );
 
-                    SortingTools.SetCategoryType(Enums.CategoryType.ABILITIES);
-                    this.refreshList();
-                });
-        this.addRenderableWidget(this.abilitiesBtn);
+            this.addRenderableWidget(btn);
 
-        this.fightBtn = new CustomTabButton(
-                leftPos + 154, topPos + 7,
-                29, 20,
-                111, 187,
-                111, 227,
-                111, 207,
-                325, 325,
-                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.FIGHT,
-                background,
-                (b) -> {
-                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.FIGHT){
-                        this.scrollView.setScrollAmount(0);
-                        return;
-                    }
-
-                    SortingTools.SetCategoryType(Enums.CategoryType.FIGHT);
-                    this.refreshList();
-                });
-        this.addRenderableWidget(this.fightBtn);
-
-        this.miscBtn = new CustomTabButton(
-                leftPos + 185, topPos + 7,
-                29, 20,
-                169, 187,
-                169, 227,
-                169, 207,
-                325, 325,
-                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.MISC,
-                background,
-                (b) -> {
-                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.MISC){
-                        this.scrollView.setScrollAmount(0);
-                        return;
-                    }
-
-                    SortingTools.SetCategoryType(Enums.CategoryType.MISC);
-                    this.refreshList();
-                });
-        this.addRenderableWidget(this.miscBtn);
-
-        this.bookmarksBtn = new CustomTabButton(
-                leftPos + 216, topPos + 7,
-                29, 20,
-                198, 187,
-                198, 227,
-                198, 207,
-                325, 325,
-                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS,
-                background,
-                (b) -> {
-                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS){
-                        this.scrollView.setScrollAmount(0);
-                        return;
-                    }
-
-                    SortingTools.SetCategoryType(Enums.CategoryType.BOOKMARKS);
-                    this.refreshList();
-                });
-        this.addRenderableWidget(this.bookmarksBtn);
+            xStartPos += 30;
+        }
     }
 
     private void renderIcons(GuiGraphics gui, int mouseX, int mouseY){

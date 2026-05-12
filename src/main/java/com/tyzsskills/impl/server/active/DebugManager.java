@@ -14,7 +14,6 @@ import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpGainRegistry;
 import com.tyzsskills.impl.server.xp.XpManager;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -57,12 +56,13 @@ public class DebugManager {
 
             PacketDistributor.sendToPlayer(player, new ResetPayload(Enums.ResetType.ALL));
 
-            AutoSyncClient.syncSkillList(player);
-            AutoSyncClient.syncConfig(player);
-            AutoSyncClient.syncMainData(player);
-            AutoSyncClient.syncStats(player);
-            AutoSyncClient.syncSkillBookmarks(player);
-            AutoSyncClient.syncSkillLevels(player);
+            ClientSynchronizer.syncSkillList(player);
+            ClientSynchronizer.syncConfig(player);
+            ClientSynchronizer.syncMainData(player);
+            ClientSynchronizer.syncStats(player);
+            ClientSynchronizer.syncSkillBookmarks(player);
+            ClientSynchronizer.syncSkillLevels(player);
+            ClientSynchronizer.syncCategories(player);
 
             if (player.hasPermissions(2) && ErrorManager.hasErrors()) {
                 ErrorManager.printErrors(player);

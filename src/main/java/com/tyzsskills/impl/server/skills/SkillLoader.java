@@ -101,12 +101,8 @@ public class SkillLoader {
         Enums.SkillType type = getSafeEnum(source, "type", Enums.SkillType.class);
         if(type == null) {ErrorManager.registerSkillError(id, "invalid skill type"); return;}
 
-        Enums.CategoryType category = getSafeEnum(source, "category", Enums.CategoryType.class);
-        if(category == null) category = Enums.CategoryType.MISC;
-
-        Boolean purchasable = getSafeElement(source,"purchasable", JsonPrimitive::getAsBoolean);
-        if(purchasable == null) purchasable = true;
-
+        String category = getSafeElement(source, "category", JsonPrimitive::getAsString);
+        if(category == null) category = "";
 
         String icon = getSafeElement(source, "icon", JsonPrimitive::getAsString);
         if(icon == null) icon = "tyzs_skills:textures/gui/skills/default.png";
@@ -192,7 +188,6 @@ public class SkillLoader {
 
             SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category,
                     icon, displayName, description, null, valueSet, config));
-            return;
         }
     }
 

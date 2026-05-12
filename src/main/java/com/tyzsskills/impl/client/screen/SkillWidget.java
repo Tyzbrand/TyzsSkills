@@ -240,14 +240,6 @@ public class SkillWidget {
             SoundPlayer.PlayUIClick();
             ClientCache.predictBookmark(skill);
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 2));
-
-            if (SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS) {
-                if (Minecraft.getInstance().screen instanceof MainGUI gui) {
-                    gui.refreshList();
-                }
-
-                return true;
-            }
         }
 
         return false;

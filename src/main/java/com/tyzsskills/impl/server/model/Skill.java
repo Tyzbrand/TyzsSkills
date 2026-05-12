@@ -20,7 +20,7 @@ public class Skill implements ISkill {
 
 
     public Skill(boolean active, String id, int maximumLevel,
-                 List<Integer> prices, Enums.SkillType type, Enums.CategoryType category,
+                 List<Integer> prices, Enums.SkillType type, String category,
                  String icon, String displayName, String description, List<Modifier> modifiers, Map<String, ValueSet> customValues,
                  SkillConfiguration config)
     {
@@ -40,9 +40,6 @@ public class Skill implements ISkill {
         this.customValues = customValues != null ? new HashMap<>(customValues) : new HashMap<>();
 
         this.config = config != null ? config : new SkillConfiguration();
-
-        if(category == Enums.CategoryType.ALL || category == Enums.CategoryType.BOOKMARKS) this.category = Enums.CategoryType.MISC;
-
     }
 
     protected transient SkillBehavior behaviour;
@@ -53,7 +50,7 @@ public class Skill implements ISkill {
     protected int maximumLevel;
     protected List<Integer> prices;
     protected Enums.SkillType type;
-    protected Enums.CategoryType category;
+    protected String category;
 
     //Visual -----------------------
     protected String icon;
@@ -86,7 +83,7 @@ public class Skill implements ISkill {
     @Override
     public Enums.SkillType getType(){return type;}
     @Override
-    public Enums.CategoryType getCategory(){return category;}
+    public String getCategory(){return category;}
     @Override
     public boolean isPurchasable(){return config.purchasable();}
     @Override
@@ -244,7 +241,7 @@ public class Skill implements ISkill {
         buffer.writeCollection(prices, FriendlyByteBuf::writeInt);
 
         buffer.writeEnum(type);
-        buffer.writeEnum(category);
+        buffer.writeUtf(category);
 
         buffer.writeUtf(icon);
         buffer.writeUtf(displayName);
@@ -264,7 +261,7 @@ public class Skill implements ISkill {
         List<Integer> prices = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readInt);
 
         Enums.SkillType type = buffer.readEnum(Enums.SkillType.class);
-        Enums.CategoryType category = buffer.readEnum(Enums.CategoryType.class);
+        String category = buffer.readUtf();
 
 
         String icon = buffer.readUtf();

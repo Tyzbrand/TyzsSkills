@@ -3,6 +3,8 @@ package com.tyzsskills.impl.server.active;
 import com.google.gson.*;
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.impl.server.Level.LevelPoolPreset;
+import com.tyzsskills.impl.server.categories.CategoryLoader;
+import com.tyzsskills.impl.server.categories.CategoryPreset;
 import com.tyzsskills.impl.server.model.*;
 import com.tyzsskills.impl.server.skills.SkillLoader;
 import com.tyzsskills.impl.server.xp.XpGainRegistry;
@@ -35,6 +37,7 @@ public class FileManager {
     public static final String ENTITY_VALUES_KEY = "entity-xp-values";
     public static final String FOOD_VALUES_KEY = "food-xp-values";
     public static final String LEVEL_POOL_KEY = "level-pool";
+    public static final String CATEGORIES_KEY = "categories";
 
 
     //PATHS
@@ -95,6 +98,8 @@ public class FileManager {
         writeFile(XpValuePresets.getFoodValuesPreset(), targetPath, FOOD_VALUES_KEY);
 
         writeFile(LevelPoolPreset.getLevelDataPreset(), targetPath, LEVEL_POOL_KEY);
+
+        writeFile(CategoryPreset.getCategoryPreset(), targetPath, CATEGORIES_KEY);
     }
 
     //READING
@@ -110,16 +115,19 @@ public class FileManager {
         var customPath = getCustomDataPath(server);
 
         var blockFile = Path.of(BLOCK_VALUES_KEY + ".json");
-        readExclusiveMap(customPath.resolve(blockFile), defaultPath.resolve(blockFile), XpGainRegistry::loadBlockMap);
+        readExclusiveData(customPath.resolve(blockFile), defaultPath.resolve(blockFile), XpGainRegistry::loadBlockMap);
 
         var entityFile = Path.of(ENTITY_VALUES_KEY + ".json");
-        readExclusiveMap(customPath.resolve(entityFile), defaultPath.resolve(entityFile), XpGainRegistry::loadEntityMap);
+        readExclusiveData(customPath.resolve(entityFile), defaultPath.resolve(entityFile), XpGainRegistry::loadEntityMap);
 
         var foodFile = Path.of(FOOD_VALUES_KEY + ".json");
-        readExclusiveMap(customPath.resolve(foodFile), defaultPath.resolve(foodFile), XpGainRegistry::loadFoodMap);
+        readExclusiveData(customPath.resolve(foodFile), defaultPath.resolve(foodFile), XpGainRegistry::loadFoodMap);
 
         var levelFile = Path.of(LEVEL_POOL_KEY + ".json");
-        readExclusiveMap(customPath.resolve(levelFile), defaultPath.resolve(levelFile), XpManager::loadPool);
+        readExclusiveData(customPath.resolve(levelFile), defaultPath.resolve(levelFile), XpManager::loadPool);
+
+        var categoryFile = Path.of(CATEGORIES_KEY + ".json");
+        readExclusiveData(customPath.resolve(categoryFile), defaultPath.resolve(categoryFile), CategoryLoader::loadCategories);
     }
 
 
@@ -158,7 +166,7 @@ public class FileManager {
             }
     }
 
-    private static void readExclusiveMap(@NotNull Path customFile, @NotNull Path defaultFile, @NotNull Consumer<JsonObject> action) throws IOException {
+    private static void readExclusiveData(@NotNull Path customFile, @NotNull Path defaultFile, @NotNull Consumer<JsonObject> action) throws IOException {
         var source = Files.exists(customFile) ? readFile(customFile) : readFile(defaultFile);
         if(source != null) action.accept(source);
     }
