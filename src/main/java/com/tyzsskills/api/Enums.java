@@ -8,4 +8,5 @@ public class Enums {
     public enum TooltipType {REFUND, PURCHASE}
 
     public enum SortingDirection {ASCENDING, DESCENDING}
+    public enum SortingCategory {ALL, BOOKMARKS}
 }

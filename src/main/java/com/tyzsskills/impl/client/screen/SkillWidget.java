@@ -30,7 +30,7 @@ import java.util.List;
 
 public class SkillWidget {
 
-    protected static final ResourceLocation DEFAULT_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/default.png");
+    protected static final ResourceLocation DEFAULT_ICON = ResourceLocation.parse("minecraft:textures/item/barrier.png");
 
     protected static final ResourceLocation REF_TEXTURE = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png");
     protected static final int TEXTURE_W = 325, TEXTURE_H = 325;

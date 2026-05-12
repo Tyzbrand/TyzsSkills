@@ -39,6 +39,7 @@ public class MainGUI extends Screen {
     private static final ResourceLocation mainFont = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID,
             "main_font");
 
+
     private final int imageWidth = 301;
     private final int imageHeight = 142;
 
@@ -315,14 +316,34 @@ public class MainGUI extends Screen {
 
             gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
         }
+
+        var categories = SortingTools.getVisibleCategories(); //Categories
+        var xStartPos = leftPos + 164;
+
+        for (var category : categories) {
+            if (category == null) continue;
+
+            if (isHovering(mouseX, mouseY, xStartPos, topPos + 7, 29, 20)) {
+                gui.renderTooltip(font, Component.translatable(category.displayName()), mouseX, mouseY);
+            }
+
+            xStartPos += 30;
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 90, topPos + 7, 29, 20)){ //Button ALL
+            gui.renderTooltip(font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 120, topPos + 7, 29, 20)){ //Button BOOK
+            gui.renderTooltip(font, Component.translatable("gui.tyzs_skills.Tab.bookmarks"), mouseX, mouseY);
+        }
     }
 
     private void addButtons(){
         var categories = SortingTools.getVisibleCategories();
-        var xStartPos = leftPos + 166;
+        var xStartPos = leftPos + 164;
 
-        for(int i = 0; i < categories.length; i++){
-            var category = categories[i];
+        for(var category : categories){
             if(category == null) continue;
 
             var btn = new CustomTabButton(
@@ -330,16 +351,48 @@ public class MainGUI extends Screen {
                     () -> SortingTools.getCurrentCategory().equals(category.id()),
                     (b) -> {
                         SortingTools.setCategory(category.id());
+                        SortingTools.setMainCategory(null);
+
                         this.refreshList();
                         this.rebuildWidgets();
                     },
                     category.icon()
             );
-
             this.addRenderableWidget(btn);
 
             xStartPos += 30;
         }
+
+        var allBtn = new CustomTabButton(
+                leftPos + 90, topPos + 7,
+                () -> SortingTools.getMainCategory() == Enums.SortingCategory.ALL,
+                (b) -> {
+                    SortingTools.setMainCategory(Enums.SortingCategory.ALL);
+                    SortingTools.setCategory("");
+
+                    this.refreshList();
+                    this.rebuildWidgets();
+                },
+                "tyzs_skills:textures/gui/icons/all_icon.png"
+        );
+
+        this.addRenderableWidget(allBtn);
+
+        var bookBtn = new CustomTabButton(
+                leftPos + 120, topPos + 7,
+                () -> SortingTools.getMainCategory() == Enums.SortingCategory.BOOKMARKS,
+                (b) -> {
+                    SortingTools.setMainCategory(Enums.SortingCategory.BOOKMARKS);
+                    SortingTools.setCategory("");
+
+                    this.refreshList();
+                    this.rebuildWidgets();
+                },
+                "tyzs_skills:textures/gui/icons/bookmark_icon.png",
+                1.4f
+        );
+
+        this.addRenderableWidget(bookBtn);
     }
 
     private void renderIcons(GuiGraphics gui, int mouseX, int mouseY){
@@ -399,6 +452,19 @@ public class MainGUI extends Screen {
             if(isHoverMaxed) gui.blit(background, leftPos + 117, topPos - 10, 58, 158, 15, 9, 325, 325);
             else gui.blit(background, leftPos + 118, topPos - 9, 59, 150, 13, 7, 325, 325);
         }
+
+        //Category Arrow right
+        if(SortingTools.isRightCatOverlaps()){
+            var u = isHovering(mouseX, mouseY, leftPos + 283, topPos + 14, 10, 13) ? 229 : 219;
+            gui.blit(background, leftPos + 283, topPos + 14, u, 240, 10, 13, 325, 325);
+        }
+
+        //Category Arrow left
+        if(SortingTools.isLeftCatOverlaps()){
+            var u = isHovering(mouseX, mouseY, leftPos + 154, topPos + 14, 10, 13) ? 112 : 122;
+            gui.blit(background, leftPos + 154, topPos + 14, u, 240, 10, 13, 325, 325);
+        }
+
     }
 
     private void renderBacks(GuiGraphics gui){
@@ -551,6 +617,28 @@ public class MainGUI extends Screen {
 
             var player = Minecraft.getInstance().player;
             if(player != null) SoundPlayer.PlayUIClick();
+        }
+
+        //Right arrow
+        if(button == 0 && isHovering(mX, mY,leftPos + 283, topPos + 14, 10, 13)){
+            if(SortingTools.isRightCatOverlaps()){
+                SortingTools.incrCatOffset();
+                this.rebuildWidgets();
+
+                var player = Minecraft.getInstance().player;
+                if(player != null) SoundPlayer.PlayUIClick();
+            }
+        }
+
+        //Left arrow
+        if(button == 0 && isHovering(mX, mY,leftPos + 154, topPos + 14, 10, 13)){
+            if(SortingTools.isLeftCatOverlaps()){
+                SortingTools.decrCatOffset();
+                this.rebuildWidgets();
+
+                var player = Minecraft.getInstance().player;
+                if(player != null) SoundPlayer.PlayUIClick();
+            }
         }
 
 

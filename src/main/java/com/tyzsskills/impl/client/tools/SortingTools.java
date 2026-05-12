@@ -9,6 +9,7 @@ import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -27,6 +28,8 @@ public class SortingTools {
     private static String currentCategory = "";
     private static int catOffset = 0;
     private static final int MAX_CATEGORIES = 4;
+
+    private static Enums.SortingCategory mainCategory = Enums.SortingCategory.ALL;
 
     //BOOLS
     private static boolean showMaxed = true;
@@ -64,7 +67,10 @@ public class SortingTools {
 
         if(!showMaxed) listToSort.removeIf(s -> ClientCache.getSkillLevel(s.getID()) >= s.getMaximumLevel());
 
-        listToSort.removeIf(s -> !s.getCategory().equals(currentCategory));
+        if(mainCategory != null){
+            if(mainCategory == Enums.SortingCategory.BOOKMARKS) listToSort.removeIf(s -> !ClientCache.getAllBookmarkedIDs().contains(s.getID()));
+        }
+        else listToSort.removeIf(s -> !s.getCategory().equals(currentCategory));
 
         listToSort.removeIf(s -> !s.isVisible() && ClientCache.getSkillLevel(s.getID()) < 1);
 
@@ -108,11 +114,17 @@ public class SortingTools {
     }
 
     public static void incrCatOffset(){
-        catOffset = Math.min(Math.max(0, rawCategories.size() - MAX_CATEGORIES), catOffset + 1);
+        if (catOffset + MAX_CATEGORIES < rawCategories.size()) catOffset += MAX_CATEGORIES;
     }
-    public static void decrCatOffset(){catOffset = Math.max(0, catOffset - 1);}
+
+    public static void decrCatOffset(){
+        if (catOffset - MAX_CATEGORIES >= 0) catOffset -= MAX_CATEGORIES;
+        else catOffset = 0;
+    }
 
     public static void setCategory(@NotNull String cat){currentCategory = cat;}
+
+    public static void setMainCategory(Enums.SortingCategory cat){mainCategory = cat;}
 
     public static void clearData(){
         currentSortTypeIndex = 0;
@@ -146,8 +158,17 @@ public class SortingTools {
 
     public static boolean getShowUnbuyableState() {return showUnbuyable;}
 
+    public static boolean isRightCatOverlaps(){return catOffset + MAX_CATEGORIES < rawCategories.size();}
+
+    public static boolean isLeftCatOverlaps(){return catOffset > 0;}
+
+    @Nullable
+    public static Enums.SortingCategory getMainCategory(){return mainCategory;}
+
     @NotNull
     public static String getCurrentCategory(){return currentCategory;}
+
+
 
     @NotNull
     public static Category[] getVisibleCategories(){

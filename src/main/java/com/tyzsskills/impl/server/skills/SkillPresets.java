@@ -19,6 +19,7 @@ public class SkillPresets {
         finalList.addAll(getAbilitySkills());
         finalList.addAll(getFightSkills());
         finalList.addAll(getMiscSkills());
+        finalList.addAll(getNatureSkills());
 
         return finalList;
     }
@@ -161,6 +162,22 @@ public class SkillPresets {
                         "skill.tyzs_skills.unit.percentage")),
                 null, null, null
         ));
+
+        finalList.add(new SkillPrefab(
+                true,
+                "excavation",
+                10,
+                List.of(2, 2, 3, 3, 4, 4, 5, 5, 6, 6),
+                Enums.SkillType.GENERIC,
+                "abilities",
+                "tyzs_skills:textures/gui/skills/excavation.png",
+                "skill.tyzs_skills.excavation.displayName",
+                "skill.tyzs_skills.excavation.description",
+                List.of(new Modifier("minecraft:player.block_break_speed",
+                        AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
+                        List.of(20f, 40f, 60f, 80f, 100f, 120f, 140f, 160f, 180f, 200f),
+                        "skill.tyzs_skills.unit.percentage")),
+                null, null, null));
 
         return finalList;
     }
@@ -389,22 +406,6 @@ public class SkillPresets {
 
         finalList.add(new SkillPrefab(
                 true,
-                "green_thumb",
-                5,
-                List.of(2, 2, 3, 3, 4),
-                Enums.SkillType.IMMUTABLE,
-                "misc",
-                "tyzs_skills:textures/gui/skills/green_thumb.png",
-                "skill.tyzs_skills.green_thumb.displayName",
-                "skill.tyzs_skills.green_thumb.description",
-                null,
-                Map.of(
-                        "success_probability", new ValueSet(List.of(15f, 30f, 45f, 60f, 75f), "skill.tyzs_skills.unit.percentage")),
-                new GreenThumbEffect(), null
-        ));
-
-        finalList.add(new SkillPrefab(
-                true,
                 "nutrition",
                 5,
                 List.of(2, 3, 4, 5, 7),
@@ -438,22 +439,6 @@ public class SkillPresets {
 
         finalList.add(new SkillPrefab(
                 true,
-                "excavation",
-                10,
-                List.of(2, 2, 3, 3, 4, 4, 5, 5, 6, 6),
-                Enums.SkillType.GENERIC,
-                "misc",
-                "tyzs_skills:textures/gui/skills/excavation.png",
-                "skill.tyzs_skills.excavation.displayName",
-                "skill.tyzs_skills.excavation.description",
-                List.of(new Modifier("minecraft:player.block_break_speed",
-                        AttributeModifier.Operation.ADD_MULTIPLIED_BASE,
-                        List.of(20f, 40f, 60f, 80f, 100f, 120f, 140f, 160f, 180f, 200f),
-                        "skill.tyzs_skills.unit.percentage")),
-                null, null, null));
-
-        finalList.add(new SkillPrefab(
-                true,
                 "stealth",
                 5,
                 List.of(4, 6, 8, 12, 16),
@@ -482,23 +467,6 @@ public class SkillPresets {
                 Map.of(
                         "block_radius", new ValueSet(List.of(3f, 5f, 7f, 10f), "skill.tyzs_skills.unit.block_radius")),
                 new MagnetEffect(), null
-        ));
-
-
-        finalList.add(new SkillPrefab(
-                true,
-                "shepherd_s_blessing",
-                15,
-                List.of(2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9),
-                Enums.SkillType.IMMUTABLE,
-                "misc",
-                "tyzs_skills:textures/gui/skills/shepherd_s_blessing.png",
-                "skill.tyzs_skills.shepherd_s_blessing.displayName",
-                "skill.tyzs_skills.shepherd_s_blessing.description",
-                null,
-                Map.of(
-                        "growth_speed", new ValueSet(List.of(50f, 100f, 150f, 200f, 250f, 300f, 350f, 400f, 450f, 500f, 550f, 600f, 650f, 700f, 750f), "skill.tyzs_skills.unit.percentage")),
-                new ShepherdsBlessingEffect(), null
         ));
 
         finalList.add(new SkillPrefab(
@@ -566,6 +534,44 @@ public class SkillPresets {
                 new HagglerEffect(), null
         ));
 
+        return finalList;
+    }
+
+    private static List<SkillPrefab> getNatureSkills(){
+        List<SkillPrefab> finalList = new ArrayList<>();
+
+        finalList.add(new SkillPrefab(
+                true,
+                "green_thumb",
+                5,
+                List.of(2, 2, 3, 3, 4),
+                Enums.SkillType.IMMUTABLE,
+                "nature",
+                "tyzs_skills:textures/gui/skills/green_thumb.png",
+                "skill.tyzs_skills.green_thumb.displayName",
+                "skill.tyzs_skills.green_thumb.description",
+                null,
+                Map.of(
+                        "success_probability", new ValueSet(List.of(15f, 30f, 45f, 60f, 75f), "skill.tyzs_skills.unit.percentage")),
+                new GreenThumbEffect(), null
+        ));
+
+
+        finalList.add(new SkillPrefab(
+                true,
+                "shepherd_s_blessing",
+                15,
+                List.of(2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9),
+                Enums.SkillType.IMMUTABLE,
+                "nature",
+                "tyzs_skills:textures/gui/skills/shepherd_s_blessing.png",
+                "skill.tyzs_skills.shepherd_s_blessing.displayName",
+                "skill.tyzs_skills.shepherd_s_blessing.description",
+                null,
+                Map.of(
+                        "growth_speed", new ValueSet(List.of(50f, 100f, 150f, 200f, 250f, 300f, 350f, 400f, 450f, 500f, 550f, 600f, 650f, 700f, 750f), "skill.tyzs_skills.unit.percentage")),
+                new ShepherdsBlessingEffect(), null
+        ));
         return finalList;
     }
 

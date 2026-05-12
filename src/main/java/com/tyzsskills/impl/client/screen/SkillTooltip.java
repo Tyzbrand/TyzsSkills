@@ -35,8 +35,8 @@ public class SkillTooltip implements ClientTooltipComponent {
     }
 
     private final ISkill skill;
-    protected static final ResourceLocation DEFAULT_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/default.png");
-    protected static final ResourceLocation LOCK_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/locked.png");
+    protected static final ResourceLocation DEFAULT_ICON = ResourceLocation.parse("minecraft:textures/item/barrier.png");
+    protected static final ResourceLocation LOCK_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/lock_icon.png");
 
 
     private final Component displayName;
