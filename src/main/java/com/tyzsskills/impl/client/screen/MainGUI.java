@@ -10,6 +10,7 @@ import com.tyzsskills.impl.client.key.MainKeybind;
 import com.tyzsskills.impl.client.models.*;
 import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.client.tools.StringTools;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -324,7 +325,8 @@ public class MainGUI extends Screen {
             if (category == null) continue;
 
             if (isHovering(mouseX, mouseY, xStartPos, topPos + 7, 29, 20)) {
-                gui.renderTooltip(font, Component.translatable(category.displayName()), mouseX, mouseY);
+                var tooltipElement = Either.<FormattedText, TooltipComponent>right(new CategoryTooltipData(category));
+                gui.renderComponentTooltipFromElements(this.font, List.of(tooltipElement), mouseX, mouseY, ItemStack.EMPTY);
             }
 
             xStartPos += 30;

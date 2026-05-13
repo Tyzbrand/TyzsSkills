@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.client.screen;
+package com.tyzsskills.impl.client.tooltips;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.*;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.client.records.SkillTooltipData;
 import com.tyzsskills.impl.client.tools.StringTools;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;

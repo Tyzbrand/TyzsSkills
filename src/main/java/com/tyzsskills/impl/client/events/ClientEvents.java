@@ -3,7 +3,10 @@ package com.tyzsskills.impl.client.events;
 
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.screen.MainGUI;
-import com.tyzsskills.impl.client.screen.SkillTooltip;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltip;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
+import com.tyzsskills.impl.client.tooltips.SkillTooltip;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
@@ -29,14 +32,9 @@ public class ClientEvents {
 
                 break;
             }
-            else{
-                event.setBorderStart(0xFFFFFFFF);
-                event.setBorderEnd(0xFFFFFFFF);
-            }
+
 
         }
-
-
 
         }
     }

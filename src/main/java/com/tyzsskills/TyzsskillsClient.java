@@ -9,7 +9,10 @@ import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.events.ClientEvents;
 import com.tyzsskills.impl.client.key.MainKeybind;
 import com.tyzsskills.impl.client.models.InventoryButton;
-import com.tyzsskills.impl.client.records.SkillTooltipData;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltip;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
+import com.tyzsskills.impl.client.tooltips.SkillTooltip;
+import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.impl.client.screen.*;
 import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.client.wrappers.ClientCacheWrapper;
@@ -113,6 +116,7 @@ public class TyzsskillsClient {
     @SubscribeEvent
     public static void registerCustomTooltip(RegisterClientTooltipComponentFactoriesEvent event){
         event.register(SkillTooltipData.class, SkillTooltip::new);
+        event.register(CategoryTooltipData.class, CategoryTooltip::new);
     }
 
     @SubscribeEvent
