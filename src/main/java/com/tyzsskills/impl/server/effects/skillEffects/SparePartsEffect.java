@@ -4,6 +4,7 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
@@ -15,13 +16,23 @@ public class SparePartsEffect extends SkillBehavior {
 
         var container = event.getInventory();
 
-        int ingredientCount = 0;
-        for(int i = 0; i < container.getContainerSize(); i++) {
-            if(!container.getItem(i).isEmpty()) ingredientCount++;
+        var ingredientCount = 0;
+        Item firstIngredientType = null;
+        var allIdentical = true;
+
+        for (int i = 0; i < container.getContainerSize(); i++) {
+            var ingredient = container.getItem(i);
+
+            if (ingredient.isEmpty()) continue;
+
+            ingredientCount++;
+
+            if (firstIngredientType == null) firstIngredientType = ingredient.getItem();
+            else if (firstIngredientType != ingredient.getItem()) allIdentical = false;
         }
 
         if(ingredientCount <= 1) return;
-
+        if ((ingredientCount == 4 || ingredientCount == 9) && allIdentical) return;
 
         var chance = values.getValue(lvl);
         var refundedSomething = false;
