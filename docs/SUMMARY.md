@@ -2,8 +2,8 @@
 
 ## JSON Tweaks
 
-* [Configure an existing skill for Tyz's Skills 6.2+](README.md "Configure Skill")
-* [Create your own skill for 6.2+](json-tweaks/create_skill.md "Create Skill")
+* [Configure an existing skill for Tyz's Skills 6.2.0](README.md "Configure Skill")
+* [Create your own skill for 6.2.0](json-tweaks/create_skill.md "Create Skill")
 
 ## KubeJS
 

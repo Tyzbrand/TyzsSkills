@@ -17,7 +17,11 @@ layout:
     visible: true
 ---
 
-# Create your own skill for 6.2+
+# Create your own skill for 6.2.0
+
+{% hint style="warning" %}
+This page is **out of date** and applies **ONLY** to the version **6.2.0**
+{% endhint %}
 
 I will explain step by step how to properly create your own skill.
 

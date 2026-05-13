@@ -17,7 +17,11 @@ layout:
     visible: true
 ---
 
-# Configure an existing skill for Tyz's Skills 6.2+
+# Configure an existing skill for Tyz's Skills 6.2.0
+
+{% hint style="warning" %}
+This page is **out of date** and applies **ONLY** to the version **6.2.0**
+{% endhint %}
 
 I will explain how to properly modify an existing skill.&#x20;
 
