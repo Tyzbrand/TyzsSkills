@@ -240,7 +240,7 @@ public class FileManager {
 
                             if (category.has("blocks")) category.add("id", category.remove("blocks"));
                             if (category.has("entities")) category.add("id", category.remove("entities"));
-                            if (category.has("foods")) category.add("id", category.remove("foods"));
+                            if (category.has("food")) category.add("id", category.remove("food"));
                         }
                     }
 

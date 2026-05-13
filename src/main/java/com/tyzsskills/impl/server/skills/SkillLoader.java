@@ -231,7 +231,7 @@ public class SkillLoader {
     }
 
     private static <T> T getSafeObject(JsonObject obj, String key, Function<JsonObject, T> mapper){
-        if(obj == null ||key == null) return null;
+        if(obj == null ||key == null || !obj.has(key)) return null;
 
         var element = obj.get(key);
         if (!element.isJsonObject()) return null;

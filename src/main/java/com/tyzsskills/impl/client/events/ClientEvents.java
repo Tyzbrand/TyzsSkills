@@ -29,6 +29,11 @@ public class ClientEvents {
 
                 break;
             }
+            else{
+                event.setBorderStart(0xFFFFFFFF);
+                event.setBorderEnd(0xFFFFFFFF);
+            }
+
         }
 
 
