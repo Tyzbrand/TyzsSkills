@@ -4,10 +4,8 @@ import com.tyzsskills.Config;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.impl.server.attachments.ExplorationProgression;
+import com.tyzsskills.impl.server.xp.XpGainRegistry;
 import com.tyzsskills.impl.server.xp.XpManager;
-import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
-import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
-import com.tyzsskills.impl.server.xp.xpEvents.XpFood;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -42,7 +40,9 @@ public class XpGainsEvents {
         if(playerPlaced) BlockMarker.RemoveBlock(level, pos);
 
         if(Config.PREVENT_PLACED_BLOCK_XP.get() && playerPlaced) return;
-        XpBlock.blockBreakProfit(event.getState(), player);
+
+        var value = XpGainRegistry.getBlockValue(event.getState(), player);
+        if(value > 0) XpManager.addXP(player, value);
     }
 
     @SubscribeEvent
@@ -52,7 +52,8 @@ public class XpGainsEvents {
         if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
         if(!Config.EARN_XP_BY_KILLING.getAsBoolean()) return;
 
-        XpEntity.entityKillProfit(event.getEntity(), player);
+        var value = XpGainRegistry.getEntityValue(event.getEntity(), player);
+        if(value > 0) XpManager.addXP(player, value);
     }
 
     @SubscribeEvent
@@ -98,8 +99,8 @@ public class XpGainsEvents {
         if(!Config.EARN_XP_BY_EATING.get()) return;
         if(event.getItem().getFoodProperties(player) == null) return;
 
-
-        XpFood.foodEatProfit(event.getItem(), player);
+        var value = XpGainRegistry.getFoodValue(event.getItem(), player);
+        if(value > 0) XpManager.addXP(player, value);
     }
 
     @SubscribeEvent

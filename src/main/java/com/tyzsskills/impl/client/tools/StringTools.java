@@ -2,6 +2,7 @@ package com.tyzsskills.impl.client.tools;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.ChatFormatting;
@@ -11,6 +12,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -171,7 +173,7 @@ public class StringTools {
                 .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.BLUE));
     }
 
-    public static List<MutableComponent> getSkillDescription(Skill skill) {
+    public static List<FormattedCharSequence> getSkillDescription(ISkill skill) {
         List<MutableComponent> lines = new ArrayList<>();
         String rawDesc = Component.translatable(skill.getDescription()).getString();
         var currentLvl = ClientCache.getSkillLevel(skill.getID().toLowerCase());
@@ -215,17 +217,74 @@ public class StringTools {
         Font font = Minecraft.getInstance().font;
         MutableComponent fullDesc = Component.literal(rawDesc).withStyle(ChatFormatting.GRAY);
 
-        List<FormattedCharSequence> splitLines = font.split(fullDesc, 152);
+        return font.split(fullDesc, 122);
+    }
 
-        for (FormattedCharSequence line : splitLines) {
-            MutableComponent lineComponent = Component.empty();
+    @NotNull
+    public static Component getSkillFormattedName(ISkill skill){
+        return Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE);
+    }
 
-            line.accept((index, style, codePoint) -> {
-                lineComponent.append(Component.literal(String.valueOf((char) codePoint)).withStyle(style));
-                return true;
-            });
+    @NotNull
+    public static List<Component> getSkillRequirements(ISkill skill){
+        var lines = new ArrayList<Component>();
 
-            lines.add(lineComponent);
+        var requiredLvl = skill.getRequiredLevel();
+        var incompatibilities = skill.getRawIncompatibilities();
+        var prerequisites = skill.getRawPrerequisites();
+
+        if(requiredLvl != 0) {
+            var color = requiredLvl <= ClientCache.getLvl() ? ChatFormatting.GREEN : ChatFormatting.RED;
+            var message = Component.empty()
+                    .append(Component.literal("◆").withStyle(ChatFormatting.BLUE))
+                    .append(Component.translatable("gui.tyzs_skills.level_lock").withStyle(ChatFormatting.BLUE))
+                    .append(Component.literal(": ").withStyle(ChatFormatting.BLUE))
+                    .append(Component.literal(String.valueOf(requiredLvl)).withStyle(color));
+
+            lines.add(message);
+        }
+
+        if(!incompatibilities.isEmpty()){
+            var header = Component.empty()
+                    .append(Component.literal("◆").withStyle(ChatFormatting.BLUE))
+                    .append(Component.translatable("gui.tyzs_skills.incompatibilities"))
+                    .append(Component.literal(":")).withStyle(ChatFormatting.BLUE);
+
+            lines.add(header);
+
+            for(var conflict : incompatibilities){
+                var conflictSkill = ClientCache.getSkill(conflict);
+                if (conflictSkill == null) continue;
+
+                var color = ClientCache.getSkillLevel(conflict) > 0 ? ChatFormatting.RED : ChatFormatting.DARK_GRAY;
+
+                var message = Component.empty()
+                        .append(Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY))
+                        .append(Component.translatable(conflictSkill.getDisplayName()).withStyle(color));
+
+                lines.add(message);
+            }
+        }
+
+        if(!prerequisites.isEmpty()){
+            var header = Component.empty()
+                    .append(Component.literal("◆").withStyle(ChatFormatting.BLUE))
+                    .append(Component.translatable("gui.tyzs_skills.prerequisite"))
+                    .append(Component.literal(":")).withStyle(ChatFormatting.BLUE);
+
+            lines.add(header);
+
+            for(var prerequisite : prerequisites){
+                var prerequisiteSkill = ClientCache.getSkill(prerequisite);
+                if (prerequisiteSkill == null) continue;
+
+                var color = ClientCache.getSkillLevel(prerequisite) <= 0 ? ChatFormatting.RED : ChatFormatting.GREEN;
+                var message = Component.empty()
+                        .append(Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY))
+                        .append(Component.translatable(prerequisiteSkill.getDisplayName()).withStyle(color));
+
+                lines.add(message);
+            }
         }
 
         return lines;
@@ -253,13 +312,4 @@ public class StringTools {
         format.setRoundingMode(RoundingMode.DOWN);
         return format;
     });
-
-
-
-
-
-
-
-
-
 }

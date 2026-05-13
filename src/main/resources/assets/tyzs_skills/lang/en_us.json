@@ -13,6 +13,7 @@
   "gui.tyzs_skills.power" : "Power",
   "gui.tyzs_skills.power_needed" : "Power required",
   "gui.tyzs_skills.gain" : "Gain",
+  "gui.tyzs_skills.requirements" : "Hold [shift] for requirements",
 
   "skill.tyzs_skills.unit.percentage" : "%",
   "skill.tyzs_skills.unit.blocks" : "blocks",
@@ -31,6 +32,7 @@
   "gui.tyzs_skills.Tab.abilities" : "Abilities",
   "gui.tyzs_skills.Tab.fight" : "Combat",
   "gui.tyzs_skills.Tab.misc" : "Misc",
+  "gui.tyzs_skills.Tab.nature" : "Nature",
   "gui.tyzs_skills.Tab.bookmarks" : "Bookmarks",
 
   "gui.tyzs_skills.stats.session_xp" : "Session xp",
@@ -151,8 +153,9 @@
   "tyzs_skills.configuration.Limits": "Limits",
   "tyzs_skills.configuration.Death_penalties":"Death Penalties",
 
-  "config.common.tyzs_skills.refund_system" : "Enable Refund System",
+  "config.common.tyzs_skills.refund_system" : "Refundable skills",
   "config.common.tyzs_skills.refund_system_per" : "Refund percentage",
+  "config.common.tyzs_skills.purchase_system" : "Purchasable skills",
   "config.common.tyzs_skills.prevent_placed_blocks_xp" : "Prevent placed blocks xp",
   "config.common..trait.max_ores" : "Max Vein Size",
   "config.common.tyzs_skills.earn_creative_xp" : "XP in Creative Mode",
@@ -204,7 +207,7 @@
 
 
   "skill.tyzs_skills.haggler.displayName" : "Haggler",
-  "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius.\nThey will follow you with a {villager_speed}% speed bonus",
+  "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius.\n\nThey will follow you with a {villager_speed}% speed bonus",
 
   "skill.tyzs_skills.keepsake.displayName" : "Safekept",
   "skill.tyzs_skills.keepsake.description" : "Safeguards the first {saved_slots} slot(s) of your inventory upon death",
@@ -223,6 +226,7 @@
 
   "gui.tyzs_skills.level_lock" : "Requires Level",
   "gui.tyzs_skills.conlict" : "Conflicts with",
+  "gui.tyzs_skills.prerequisite" : "Prerequisites",
   "gui.tyzs_skills.locked" : "Locked",
   "gui.tyzs_skills.incompatibilities" : "Incompatibilities",
 
@@ -240,4 +244,5 @@
   "gui.tuzs_skills.sorting_tooltip.body" : "Advanced prefixes",
   "gui.tuzs_skills.sorting_tooltip.prefix_description" : "Search in description",
   "gui.tuzs_skills.sorting_tooltip.prefix_id" : "Search strictly by ID"
+
 }

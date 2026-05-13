@@ -6,12 +6,14 @@ import com.tyzsskills.api.events.TyzsSkillsClientSetupEvent;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.records.SortType;
 import com.tyzsskills.impl.client.ClientCache;
+import com.tyzsskills.impl.client.events.ClientEvents;
 import com.tyzsskills.impl.client.key.MainKeybind;
 import com.tyzsskills.impl.client.models.InventoryButton;
-import com.tyzsskills.impl.client.screen.LevelTriggerOverlay;
-import com.tyzsskills.impl.client.screen.MainGUI;
-import com.tyzsskills.impl.client.screen.SkillTriggerOverlay;
-import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltip;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
+import com.tyzsskills.impl.client.tooltips.SkillTooltip;
+import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
+import com.tyzsskills.impl.client.screen.*;
 import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.client.wrappers.ClientCacheWrapper;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
@@ -31,6 +33,7 @@ import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.util.Comparator;
 
@@ -44,6 +47,8 @@ public class TyzsskillsClient {
 
     public TyzsskillsClient(ModContainer container) {
         MOD_BUS = container.getEventBus();
+
+        NeoForge.EVENT_BUS.register(ClientEvents.class);
 
         //API client side
         TyzsSkillsAPI.registerPlayerCacheManager(new ClientCacheWrapper());
@@ -106,6 +111,12 @@ public class TyzsskillsClient {
         event.registerAbove(VanillaGuiLayers.CROSSHAIR,
                 ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "level_notification"),
                 new LevelTriggerOverlay());
+    }
+
+    @SubscribeEvent
+    public static void registerCustomTooltip(RegisterClientTooltipComponentFactoriesEvent event){
+        event.register(SkillTooltipData.class, SkillTooltip::new);
+        event.register(CategoryTooltipData.class, CategoryTooltip::new);
     }
 
     @SubscribeEvent

@@ -1,11 +1,11 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.api.records.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public interface ISkill {
 
-    String getID();
+    @NotNull String getID();
 
     int getMaximumLevel();
 
@@ -37,32 +37,37 @@ public interface ISkill {
     Enums.SkillType getType();
 
 
-    Enums.CategoryType getCategory();
+    String getCategory();
 
 
     boolean isPurchasable();
 
+    boolean isRefundable();
+
+    boolean isVisible();
+
     /**
      * @return a resourceLocation path as a string
      */
-    String getIcon();
+    @NotNull String getIcon();
 
     /**
      * @return a localization key
      */
-    String getDisplayName();
+    @NotNull String getDisplayName();
 
     /**
      * @return a localization key
      */
-    String getDescription();
+    @NotNull String getDescription();
+
 
     /**
      * Retrieves all registered value sets for this skill
      * @return An unmodifiable map where the key is the ValueSet ID
      * and the value is the corresponding {@link ValueSet} object
      */
-    Map<String, ValueSet> getValues();
+    @NotNull Map<String, ValueSet> getValues();
 
     /**
      * Gets a specific value set by its ID
@@ -70,7 +75,7 @@ public interface ISkill {
      * @return The {@link ValueSet} associated with the key if found
      */
     @Nullable
-    ValueSet getValueSet(String key);
+    ValueSet getValueSet(@NotNull String key);
 
     /**
      * Returns a list of all modifiers affected by the skill
@@ -80,62 +85,33 @@ public interface ISkill {
 
     /**
      * Checks if the player can purchase the next skill level.
-     * @param currentLvl The current skill level of the player.
-     * @param playerLvl The current lvl of the player.
-     * @param currentSP The current amount of SP the player possesses.
-     * @param ownedSkillIds A list containing all skill ids owned by a player. Cannot be null.
      * @return {@code true} if the player can afford the next skill level, {@code false} otherwise.
      */
-    boolean canBuy(int currentLvl, int playerLvl, int currentSP, @NotNull List<String> ownedSkillIds);
+    boolean canBuy(@NotNull SkillContext ctx, boolean purchaseEnabled);
 
-    /**
-     * Checks if the player can purchase the next skill level, ignoring player level and incompatibility requirements.
-     * Useful for admin commands or overriding standard rules.
-     * @param currentLvl The current skill level of the player.
-     * @param currentSP The current amount of SP the player possesses.
-     * @return {@code true} if the player can afford the next skill level, {@code false} otherwise.
-     */
-    default boolean canBuyLimitless(int currentLvl, int currentSP){
-        return canBuy(currentLvl, -1, currentSP, Collections.emptyList());
-    }
 
     /**
      * Checks if the player can refund their current skill level.
-     * @param currentLvl The current skill level of the player.
      * @param refundEnabled The current state of the refund system configuration.
      * @return {@code true} if the skill level can be refunded, {@code false} otherwise.
      */
-    boolean canRefund(int currentLvl, boolean refundEnabled);
+    boolean canRefund(@NotNull SkillContext ctx, boolean refundEnabled);
 
 
     /**
      * Calculates the maximum number of skill levels a player can purchase at once.
-     * @param currentLvl The current skill level of the player.
-     * @param playerLvl The current lvl of the player.
-     * @param availableSp The current amount of SP the player possesses.
-     * @param ownedSkillIds A list containing all skill ids owned by a player. Cannot be null.
      * @return A {@link BulkPurchaseResult} indicating how many levels can be bought and the total cost. Never null.
      */
-    BulkPurchaseResult checkBulkBuy(int currentLvl, int playerLvl, int availableSp, @NotNull List<String> ownedSkillIds);
+    @NotNull BulkPurchaseResult checkBulkBuy(@NotNull SkillContext ctx, boolean purchaseEnabled);
 
-    /**
-     * Calculates the maximum number of skill levels a player can purchase at once, ignoring player level and incompatibility requirements.
-     * @param currentLvl The current skill level of the player.
-     * @param availableSp The current amount of SP the player possesses.
-     * @return A {@link BulkPurchaseResult} indicating how many levels can be bought and the total cost. Never null.
-     */
-    default BulkPurchaseResult checkBulkPurchaseLimitless(int currentLvl, int availableSp){
-        return checkBulkBuy(currentLvl, -1, availableSp, Collections.emptyList());
-    }
 
     /**
      * Calculates the total amount of SP returned from a complete skill refund.
-     * @param currentLvl The current skill level of the player.
      * @param refundPercentage The current value of the refund percentage configuration.
      * @param refundEnabled The current state of the refund system configuration.
      * @return The total amount of SP the player will receive from the bulk refund.
      */
-    int checkBulkRefund(int currentLvl, float refundPercentage, boolean refundEnabled);
+    int checkBulkRefund(@NotNull SkillContext ctx, float refundPercentage, boolean refundEnabled);
 
     /**
      * Gets the global player level required to purchase this skill.
@@ -148,7 +124,7 @@ public interface ISkill {
      * @param skillID Valid id of the targeted skill (in lowercase).
      * @return {@code true} if the specified skill is marked as incompatible, {@code false} otherwise.
      */
-    boolean isSkillIncompatible(String skillID);
+    boolean isSkillIncompatible(@NotNull String skillID);
 
     /**
      * Gets all skill incompatibilities.
@@ -161,17 +137,24 @@ public interface ISkill {
      * Adds an incompatibility to the skill.
      * @param id Valid id of the targeted incompatible skill (in lowercase).
      */
-    void addIncompatibility(String id);
+    void addIncompatibility(@NotNull String id);
+
+    void removeIncompatibility(@NotNull String id);
+
 
 
     /**
      * Gets all skill that are mutually exclusive with this one (as ids).
      * Applies only to the skills the player currently possesses.
      * @param ownedSkillIds A list containing all skill IDs currently owned by the player.
-     * @return A list containing all incompatible skill ids the player possesses. If there are no incompatibilities, return {@code null}.
+     * @return A list containing all incompatible skill ids the player possesses. If there are no incompatibilities, return an empty list.
      */
-    @Nullable
-    List<String> getIncompatibilities(@NotNull List<String> ownedSkillIds);
+    @NotNull List<String> getIncompatibilities(@NotNull List<String> ownedSkillIds);
+
+    @NotNull List<String> getRawPrerequisites();
+    @NotNull List<String> getPrerequisites(@NotNull List<String> ownedSkillIds);
+    void removePrerequisite(@NotNull String id);
+
 
     /**
      * Checks if the player meets the global level requirement for this skill.
@@ -182,5 +165,7 @@ public interface ISkill {
         if (getRequiredLevel() <= 1 || playerLvl == -1) return true;
         return playerLvl >= getRequiredLevel();
     }
+
+    boolean isAvailable(@NotNull SkillContext ctx);
 
 }

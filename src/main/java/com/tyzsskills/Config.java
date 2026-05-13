@@ -15,6 +15,9 @@ public class Config {
     public static final String REFUND_SYSTEM_KEY = "refund_system";
     public static final ModConfigSpec.BooleanValue REFUND_SYSTEM;
 
+    public static final String PURCHASE_SYSTEM_KEY = "purchase_system";
+    public static final ModConfigSpec.BooleanValue PURCHASE_SYSTEM;
+
     public static final String REFUND_PERCENTAGE_KEY = "refund_percentage";
     public static final ModConfigSpec.DoubleValue REFUND_PERCENTAGE;
 
@@ -110,14 +113,19 @@ public class Config {
         commonBuilder.comment("General Gameplay Settings").push("general");
 
         REFUND_SYSTEM = commonBuilder
-                .comment("Enable or disable the skill refund system")
+                .comment("Allows players to refund skills")
                 .translation("config.common.tyzs_skills.refund_system")
                 .define("refund_system", true);
 
         REFUND_PERCENTAGE = commonBuilder
                 .comment("Percentage of the initial skill point cost refunded")
                 .translation("config.common.tyzs_skills.refund_system_per")
-                .defineInRange("refund_percentage", 30.0, 1.0, 100.0);
+                .defineInRange("refund_percentage", 30.0, 0.0, 100.0);
+
+        PURCHASE_SYSTEM = commonBuilder
+                .comment("Allows players to purchase skills")
+                .translation("config.common.tyzs_skills.purchase_system")
+                .define("purchase_system", true);
 
 
         PREVENT_PLACED_BLOCK_XP = commonBuilder

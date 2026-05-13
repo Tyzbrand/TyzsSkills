@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.HashMap;
 import java.util.Map;
 
-public record ConfigSyncPayload(boolean refundSys, double refundPer, double maxXP) implements CustomPacketPayload{
+public record ConfigSyncPayload(boolean refundSys, double refundPer, double maxXP, boolean purchaseSys) implements CustomPacketPayload{
     public static final Type<ConfigSyncPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "config_sync_payload"));
 
 
@@ -21,6 +21,7 @@ public record ConfigSyncPayload(boolean refundSys, double refundPer, double maxX
             ByteBufCodecs.BOOL, ConfigSyncPayload::refundSys,
             ByteBufCodecs.DOUBLE, ConfigSyncPayload::refundPer,
             ByteBufCodecs.DOUBLE, ConfigSyncPayload::maxXP,
+            ByteBufCodecs.BOOL, ConfigSyncPayload::purchaseSys,
             ConfigSyncPayload::new
     );
 
@@ -36,6 +37,7 @@ public record ConfigSyncPayload(boolean refundSys, double refundPer, double maxX
             configMap.put(Config.REFUND_SYSTEM_KEY , payload.refundSys());
             configMap.put(Config.REFUND_PERCENTAGE_KEY, payload.refundPer());
             configMap.put(Config.MAX_XP_KEY, payload.maxXP());
+            configMap.put(Config.PURCHASE_SYSTEM_KEY, payload.purchaseSys());
 
             ClientCache.syncConfig(configMap);
         });

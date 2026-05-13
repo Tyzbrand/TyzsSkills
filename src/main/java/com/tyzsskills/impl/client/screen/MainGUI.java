@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client.screen;
 
+import com.mojang.datafixers.util.Either;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
@@ -9,6 +10,7 @@ import com.tyzsskills.impl.client.key.MainKeybind;
 import com.tyzsskills.impl.client.models.*;
 import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.client.tools.StringTools;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,9 +18,12 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.joml.Quaternionf;
@@ -35,17 +40,12 @@ public class MainGUI extends Screen {
     private static final ResourceLocation mainFont = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID,
             "main_font");
 
+
     private final int imageWidth = 301;
     private final int imageHeight = 142;
 
     private int leftPos;
     private int topPos;
-
-    private CustomTabButton allBtn;
-    private CustomTabButton abilitiesBtn;
-    private CustomTabButton fightBtn;
-    private CustomTabButton miscBtn;
-    private CustomTabButton bookmarksBtn;
 
 
     public MainGUI(){super(Component.translatable("gui.tyzs_skills.title"));}
@@ -130,17 +130,6 @@ public class MainGUI extends Screen {
         gui.pose().scale(scale, scale, 1.0f);
         gui.drawString(this.font, spValue, -text2W, 0, color2, false);
         gui.pose().popPose();
-
-
-        if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS) return;
-
-        String localizationKey = "gui.tyzs_skills.Tab." + SortingTools.getCurrentSkillCategory().toString().toLowerCase();
-        MutableComponent enumDisplayName = Component.translatable(localizationKey);
-        int text3W = this.font.width(enumDisplayName);
-        int rightLimit3 = leftPos+293;
-        int textW = font.width(enumDisplayName); int textH = font.lineHeight; int padding = 3;
-        renderBackdrop(gui, (rightLimit3 -text3W) - padding, (topPos+12) - padding, textW + (padding*2), textH + (padding*2), 0xD5000000);
-        gui.drawString(this.font, enumDisplayName, rightLimit3 -text3W, topPos+13, 0xFFFFFFFF, false);
     }
 
     private void renderXpBar(GuiGraphics gui){
@@ -222,15 +211,16 @@ public class MainGUI extends Screen {
             gui.renderTooltip(this.font, finalText, mouseX, mouseY);
         }
 
-        if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)){
+        if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)) {
             SkillWidget hoveredWidget = this.scrollView.getHoveredWidget(mouseX, mouseY);
 
-            if(hoveredWidget != null){
-                List<Component> lines = hoveredWidget.getTooltip(mouseX, mouseY);
-                if(!lines.isEmpty()){
-                    gui.renderComponentTooltip(this.font, lines, mouseX, mouseY);
-                }
+            if (hoveredWidget != null) {
+                List<Either<FormattedText, TooltipComponent>> lines = hoveredWidget.getTooltip(mouseX, mouseY);
+                    if (!lines.isEmpty()) {
+                        gui.renderComponentTooltipFromElements(this.font, lines, mouseX, mouseY, ItemStack.EMPTY);
+                    }
             }
+
         }
 
         if(isHovering(mouseX, mouseY, leftPos + 56, topPos + 58, 12, 14)){ //Stats
@@ -276,26 +266,6 @@ public class MainGUI extends Screen {
 
         if(isHovering(mouseX, mouseY, leftPos + 56, topPos + 44, 12, 12)){ //Config
             gui.renderTooltip(this.font, Component.translatable("button.tyzs_skills.config_btn"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 92, topPos + 7, 29, 20)){ //All tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 123, topPos + 7, 29, 20)){ //Abilities tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.abilities"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 154, topPos + 7, 29, 20)){ //Fight tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.fight"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 185, topPos + 7, 29, 20)){ //Misc tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.misc"), mouseX, mouseY);
-        }
-
-        if(isHovering(mouseX, mouseY, leftPos + 216, topPos + 7, 29, 20)){ //Bookmarks tab
-            gui.renderTooltip(this.font, Component.translatable("gui.tyzs_skills.Tab.bookmarks"), mouseX, mouseY);
         }
 
         if(isHovering(mouseX, mouseY,leftPos + 251, topPos - 10, 15, 9)){ //Sort direction
@@ -347,108 +317,84 @@ public class MainGUI extends Screen {
 
             gui.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
         }
+
+        var categories = SortingTools.getVisibleCategories(); //Categories
+        var xStartPos = leftPos + 164;
+
+        for (var category : categories) {
+            if (category == null) continue;
+
+            if (isHovering(mouseX, mouseY, xStartPos, topPos + 7, 29, 20)) {
+                var tooltipElement = Either.<FormattedText, TooltipComponent>right(new CategoryTooltipData(category));
+                gui.renderComponentTooltipFromElements(this.font, List.of(tooltipElement), mouseX, mouseY, ItemStack.EMPTY);
+            }
+
+            xStartPos += 30;
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 90, topPos + 7, 29, 20)){ //Button ALL
+            gui.renderTooltip(font, Component.translatable("gui.tyzs_skills.Tab.all"), mouseX, mouseY);
+        }
+
+        if(isHovering(mouseX, mouseY, leftPos + 120, topPos + 7, 29, 20)){ //Button BOOK
+            gui.renderTooltip(font, Component.translatable("gui.tyzs_skills.Tab.bookmarks"), mouseX, mouseY);
+        }
     }
 
     private void addButtons(){
-        this.allBtn = new CustomTabButton(
-                leftPos + 92, topPos + 7,
-                29, 20,
-                82, 187,
-                82, 227,
-                82, 207,
-                325, 325,
-                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.ALL,
-                background,
+        var categories = SortingTools.getVisibleCategories();
+        var xStartPos = leftPos + 164;
+
+        for(var category : categories){
+            if(category == null) continue;
+
+            var btn = new CustomTabButton(
+                xStartPos, topPos + 7,
+                    () -> SortingTools.getCurrentCategory().equals(category.id()),
+                    (b) -> {
+                        SortingTools.setCategory(category.id());
+                        SortingTools.setMainCategory(null);
+
+                        this.refreshList();
+                        this.rebuildWidgets();
+                    },
+                    category.icon()
+            );
+            this.addRenderableWidget(btn);
+
+            xStartPos += 30;
+        }
+
+        var allBtn = new CustomTabButton(
+                leftPos + 90, topPos + 7,
+                () -> SortingTools.getMainCategory() == Enums.SortingCategory.ALL,
                 (b) -> {
-                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.ALL){
-                        this.scrollView.setScrollAmount(0);
-                        return;
-                    }
+                    SortingTools.setMainCategory(Enums.SortingCategory.ALL);
+                    SortingTools.setCategory("");
 
-                    SortingTools.SetCategoryType(Enums.CategoryType.ALL);
                     this.refreshList();
-                });
-        this.addRenderableWidget(this.allBtn);
+                    this.rebuildWidgets();
+                },
+                "tyzs_skills:textures/gui/icons/all_icon.png"
+        );
 
-        this.abilitiesBtn = new CustomTabButton(
-                leftPos + 123, topPos + 7,
-                29, 20,
-                140, 187,
-                140, 227,
-                140, 207,
-                325, 325,
-                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.ABILITIES,
-                background,
+        this.addRenderableWidget(allBtn);
+
+        var bookBtn = new CustomTabButton(
+                leftPos + 120, topPos + 7,
+                () -> SortingTools.getMainCategory() == Enums.SortingCategory.BOOKMARKS,
                 (b) -> {
-                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.ABILITIES){
-                        this.scrollView.setScrollAmount(0);
-                        return;
-                    }
+                    SortingTools.setMainCategory(Enums.SortingCategory.BOOKMARKS);
+                    SortingTools.setCategory("");
 
-                    SortingTools.SetCategoryType(Enums.CategoryType.ABILITIES);
                     this.refreshList();
-                });
-        this.addRenderableWidget(this.abilitiesBtn);
+                    this.rebuildWidgets();
+                },
+                "tyzs_skills:textures/gui/icons/bookmark_icon.png",
+                1.4f
+        );
 
-        this.fightBtn = new CustomTabButton(
-                leftPos + 154, topPos + 7,
-                29, 20,
-                111, 187,
-                111, 227,
-                111, 207,
-                325, 325,
-                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.FIGHT,
-                background,
-                (b) -> {
-                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.FIGHT){
-                        this.scrollView.setScrollAmount(0);
-                        return;
-                    }
-
-                    SortingTools.SetCategoryType(Enums.CategoryType.FIGHT);
-                    this.refreshList();
-                });
-        this.addRenderableWidget(this.fightBtn);
-
-        this.miscBtn = new CustomTabButton(
-                leftPos + 185, topPos + 7,
-                29, 20,
-                169, 187,
-                169, 227,
-                169, 207,
-                325, 325,
-                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.MISC,
-                background,
-                (b) -> {
-                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.MISC){
-                        this.scrollView.setScrollAmount(0);
-                        return;
-                    }
-
-                    SortingTools.SetCategoryType(Enums.CategoryType.MISC);
-                    this.refreshList();
-                });
-        this.addRenderableWidget(this.miscBtn);
-
-        this.bookmarksBtn = new CustomTabButton(
-                leftPos + 216, topPos + 7,
-                29, 20,
-                198, 187,
-                198, 227,
-                198, 207,
-                325, 325,
-                () -> SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS,
-                background,
-                (b) -> {
-                    if(SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS){
-                        this.scrollView.setScrollAmount(0);
-                        return;
-                    }
-
-                    SortingTools.SetCategoryType(Enums.CategoryType.BOOKMARKS);
-                    this.refreshList();
-                });
-        this.addRenderableWidget(this.bookmarksBtn);
+        this.addRenderableWidget(bookBtn);
     }
 
     private void renderIcons(GuiGraphics gui, int mouseX, int mouseY){
@@ -508,6 +454,19 @@ public class MainGUI extends Screen {
             if(isHoverMaxed) gui.blit(background, leftPos + 117, topPos - 10, 58, 158, 15, 9, 325, 325);
             else gui.blit(background, leftPos + 118, topPos - 9, 59, 150, 13, 7, 325, 325);
         }
+
+        //Category Arrow right
+        if(SortingTools.isRightCatOverlaps()){
+            var u = isHovering(mouseX, mouseY, leftPos + 283, topPos + 14, 10, 13) ? 229 : 219;
+            gui.blit(background, leftPos + 283, topPos + 14, u, 240, 10, 13, 325, 325);
+        }
+
+        //Category Arrow left
+        if(SortingTools.isLeftCatOverlaps()){
+            var u = isHovering(mouseX, mouseY, leftPos + 154, topPos + 14, 10, 13) ? 112 : 122;
+            gui.blit(background, leftPos + 154, topPos + 14, u, 240, 10, 13, 325, 325);
+        }
+
     }
 
     private void renderBacks(GuiGraphics gui){
@@ -660,6 +619,28 @@ public class MainGUI extends Screen {
 
             var player = Minecraft.getInstance().player;
             if(player != null) SoundPlayer.PlayUIClick();
+        }
+
+        //Right arrow
+        if(button == 0 && isHovering(mX, mY,leftPos + 283, topPos + 14, 10, 13)){
+            if(SortingTools.isRightCatOverlaps()){
+                SortingTools.incrCatOffset();
+                this.rebuildWidgets();
+
+                var player = Minecraft.getInstance().player;
+                if(player != null) SoundPlayer.PlayUIClick();
+            }
+        }
+
+        //Left arrow
+        if(button == 0 && isHovering(mX, mY,leftPos + 154, topPos + 14, 10, 13)){
+            if(SortingTools.isLeftCatOverlaps()){
+                SortingTools.decrCatOffset();
+                this.rebuildWidgets();
+
+                var player = Minecraft.getInstance().player;
+                if(player != null) SoundPlayer.PlayUIClick();
+            }
         }
 
 

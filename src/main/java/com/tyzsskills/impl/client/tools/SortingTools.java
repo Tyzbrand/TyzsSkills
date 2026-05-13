@@ -2,17 +2,16 @@ package com.tyzsskills.impl.client.tools;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.model.Category;
 import com.tyzsskills.api.records.SortType;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @ApiStatus.Internal
 public class SortingTools {
@@ -24,8 +23,13 @@ public class SortingTools {
     //SENS
     private static Enums.SortingDirection currentSortingDirection = Enums.SortingDirection.ASCENDING;
 
-    //CATEGORY
-    private static Enums.CategoryType currentSkillCategory = Enums.CategoryType.ALL;
+    //CATEGORIES
+    private static final List<String> rawCategories = new ArrayList<>();
+    private static String currentCategory = "";
+    private static int catOffset = 0;
+    private static final int MAX_CATEGORIES = 4;
+
+    private static Enums.SortingCategory mainCategory = Enums.SortingCategory.ALL;
 
     //BOOLS
     private static boolean showMaxed = true;
@@ -41,9 +45,15 @@ public class SortingTools {
     public static void registerSortingType(@NotNull SortType sortType){
         activeSortTypes.add(sortType);}
 
+    public static void registerCategories(@NotNull List<String> categories){
+        rawCategories.clear();
+        rawCategories.addAll(categories);
+    }
+
 
     public static List<Skill> refreshList(){
         List<Skill> listToSort =  new ArrayList<>(ClientCache.getAllSkills());
+
 
         if(!currentSearchQuery.isBlank()){
             var query = currentSearchQuery.trim().toLowerCase(Locale.ROOT);
@@ -51,13 +61,16 @@ public class SortingTools {
         }
 
         if(!showUnbuyable) listToSort.removeIf(s ->
-                !s.canBuy(ClientCache.getSkillLevel(s.getID()), ClientCache.getLvl(), ClientCache.getSP(), ClientCache.getPurchasedSkills()));
+                !s.canBuy(ClientCache.getCurrentContext(s.getID()), ClientCache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true)));
 
         if(!showMaxed) listToSort.removeIf(s -> ClientCache.getSkillLevel(s.getID()) >= s.getMaximumLevel());
 
+        if(mainCategory != null){
+            if(mainCategory == Enums.SortingCategory.BOOKMARKS) listToSort.removeIf(s -> !ClientCache.getAllBookmarkedIDs().contains(s.getID()));
+        }
+        else listToSort.removeIf(s -> !s.getCategory().equals(currentCategory));
 
-        if(currentSkillCategory == Enums.CategoryType.BOOKMARKS) listToSort.removeIf(s -> !ClientCache.isSkillBookmarked(s.getID()));
-        else if(currentSkillCategory != Enums.CategoryType.ALL) listToSort.removeIf(s -> s.getCategory() != currentSkillCategory);
+        listToSort.removeIf(s -> !s.isVisible() && ClientCache.getSkillLevel(s.getID()) < 1);
 
         if(!activeSortTypes.isEmpty()){
             var currentSortType = activeSortTypes.get(currentSortTypeIndex);
@@ -86,9 +99,6 @@ public class SortingTools {
                 Enums.SortingDirection.DESCENDING : Enums.SortingDirection.ASCENDING;
     }
 
-    public static void SetCategoryType(Enums.CategoryType category){
-        currentSkillCategory = category;
-    }
 
     public static void toggleShowMaxed(){
         showMaxed = !showMaxed;
@@ -101,13 +111,29 @@ public class SortingTools {
         currentSearchQuery = searchQuery.toLowerCase();
     }
 
+    public static void incrCatOffset(){
+        if (catOffset + MAX_CATEGORIES < rawCategories.size()) catOffset += MAX_CATEGORIES;
+    }
+
+    public static void decrCatOffset(){
+        if (catOffset - MAX_CATEGORIES >= 0) catOffset -= MAX_CATEGORIES;
+        else catOffset = 0;
+    }
+
+    public static void setCategory(@NotNull String cat){currentCategory = cat;}
+
+    public static void setMainCategory(Enums.SortingCategory cat){mainCategory = cat;}
+
     public static void clearData(){
         currentSortTypeIndex = 0;
         currentSortingDirection = Enums.SortingDirection.ASCENDING;
-        currentSkillCategory = Enums.CategoryType.ALL;
         showMaxed = true;
         showUnbuyable = true;
         currentSearchQuery = "";
+
+        catOffset = 0;
+        currentCategory = "";
+        rawCategories.clear();
     }
 
 
@@ -120,10 +146,6 @@ public class SortingTools {
         return activeSortTypes.get(currentSortTypeIndex);
     }
 
-    public static Enums.CategoryType getCurrentSkillCategory(){
-        return currentSkillCategory;
-    }
-
     public static Enums.SortingDirection getCurrentSortingDirection(){return currentSortingDirection;}
 
     public static String getCurrentSearchQuery(){
@@ -131,7 +153,33 @@ public class SortingTools {
     }
 
     public static boolean getShowMaxedState() {return showMaxed;}
+
     public static boolean getShowUnbuyableState() {return showUnbuyable;}
+
+    public static boolean isRightCatOverlaps(){return catOffset + MAX_CATEGORIES < rawCategories.size();}
+
+    public static boolean isLeftCatOverlaps(){return catOffset > 0;}
+
+    @Nullable
+    public static Enums.SortingCategory getMainCategory(){return mainCategory;}
+
+    @NotNull
+    public static String getCurrentCategory(){return currentCategory;}
+
+
+
+    @NotNull
+    public static Category[] getVisibleCategories(){
+        var categories = new Category[MAX_CATEGORIES];
+
+        for(int i = 0; i < MAX_CATEGORIES; i++){
+            var index = catOffset + i;
+
+            if(index >= rawCategories.size()) categories[i] = null;
+            else categories[i] = ClientCache.getCategory(rawCategories.get(index));
+        }
+        return categories;
+    }
 
     //Util
     private static boolean queryCheck(String query, Skill skill){

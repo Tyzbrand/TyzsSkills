@@ -2,23 +2,19 @@ package com.tyzsskills;
 
 import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.events.TyzsSkillsCommonSetupEvent;
-import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.impl.server.active.*;
 import com.tyzsskills.impl.server.attachments.*;
-import com.tyzsskills.impl.server.effects.skillEffects.*;
+import com.tyzsskills.impl.server.categories.CategoryLoader;
 import com.tyzsskills.impl.server.events.SkillEffectsEvents;
 import com.tyzsskills.impl.server.events.XpGainsEvents;
-import com.tyzsskills.impl.server.model.SkillsPreset;
-import com.tyzsskills.impl.server.skills.SkillBehaviorRegistry;
+import com.tyzsskills.impl.server.skills.SkillPresets;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.commands.MainCommand;
 import com.tyzsskills.impl.server.events.RuntimeEvents;
 import com.tyzsskills.impl.server.payloads.*;
 import com.tyzsskills.impl.server.wrappers.*;
+import com.tyzsskills.impl.server.xp.XpGainRegistry;
 import com.tyzsskills.impl.server.xp.XpManager;
-import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
-import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
-import com.tyzsskills.impl.server.xp.xpEvents.XpFood;
 import com.tyzsskills.integration.kubejs.JsEventsDelegate;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -43,8 +39,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.common.NeoForge;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Tyzsskills.MODID)
@@ -136,7 +130,7 @@ public class Tyzsskills {
         var server = ServerLifecycleHooks.getCurrentServer();
         if(server == null) return;
 
-        for(var player : server.getPlayerList().getPlayers()) AutoSyncClient.syncConfig(player);
+        for(var player : server.getPlayerList().getPlayers()) ClientSynchronizer.syncConfig(player);
     }
 
     private void registerPayloads(final RegisterPayloadHandlersEvent event){
@@ -239,6 +233,12 @@ public class Tyzsskills {
                 ExportPayload::Handle
         );
 
+        registrar.playToClient(
+                CategoriesPayload.TYPE,
+                CategoriesPayload.STREAM_CODEC,
+                CategoriesPayload::Handle
+        );
+
     }
 
 
@@ -248,35 +248,40 @@ public class Tyzsskills {
     }
 
     private void onTyzsSkillsCommonSetup(TyzsSkillsCommonSetupEvent event){
-        for(var prefab : SkillsPreset.getDefaultSkills()){
+        for(var prefab : SkillPresets.getDefaultSkills()){
             event.wrapper().registerSkill(prefab);
         }
     }
 
     @SubscribeEvent
-    public void onServerBeforeStart(ServerAboutToStartEvent event) throws IOException {
-        var fileManager = FileManager.get();
+    public void onServerBeforeStart(ServerAboutToStartEvent event) {
         var server = event.getServer();
 
-        fileManager.backupCustomFiles(server);
-        fileManager.cleanPaths(server);
-        fileManager.initPath(server);
-        fileManager.writeDefaultSkills(server);
-        fileManager.writeDefaultXpValues(server);
-        fileManager.writeDefaultLevelPool(server);
+        try{
+            FileManager.init(server);
 
-        fileManager.readJsons(server);
-        fileManager.readXpValues(server);
-        fileManager.readLevelPool(server);
+            FileManager.writeDefaultSkills(server);
+            FileManager.writeDefaultData(server);
+
+            FileManager.readSkills(server);
+            FileManager.readData(server);
+        }
+        catch (IOException e) {
+        ErrorManager.registerLoadError("Loading json files", "Check the logs for more details");
+        System.err.println("[Tyz's Skills] CRITICAL ERROR: Unable to load files during server start");
+        e.printStackTrace();
+        }
     }
 
     @SubscribeEvent
     public void onServerStop(ServerStoppingEvent event){
         SkillManager.get().clearSkills();
-        XpBlock.clearValues();
-        XpEntity.clearValues();
-        XpFood.clearValues();
+
+        XpGainRegistry.clearAll();
         XpManager.clearPool();
+        CategoryLoader.clearCategories();
+
+        FileManager.clearPrefab();
 
         ErrorManager.clearErrors();
     }

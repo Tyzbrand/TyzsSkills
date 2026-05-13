@@ -1,23 +1,24 @@
-package com.tyzsskills.impl.client.models;
+package com.tyzsskills.impl.client.screen;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.datafixers.util.Either;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.SoundPlayer;
-import com.tyzsskills.impl.client.screen.MainGUI;
-import com.tyzsskills.impl.client.tools.SortingTools;
+import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
@@ -27,8 +28,7 @@ import java.util.List;
 
 public class SkillWidget {
 
-    protected static final ResourceLocation DEFAULT_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/default.png");
-    protected static final ResourceLocation LOCKED_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/skills/locked.png");
+    protected static final ResourceLocation DEFAULT_ICON = ResourceLocation.parse("minecraft:textures/item/barrier.png");
 
     protected static final ResourceLocation REF_TEXTURE = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png");
     protected static final int TEXTURE_W = 325, TEXTURE_H = 325;
@@ -36,7 +36,7 @@ public class SkillWidget {
     protected static final int U_BACKGROUND = 166, V_BACKGROUND = 142;
     protected static final int U_BACKGROUND_FINAL = 230;
 
-    protected static final int WIDTH = 64, HEIGHT = 30; //Widget Size on screen
+    public static final int WIDTH = 64, HEIGHT = 30; //Widget Size on screen
 
     protected static final int BTN_W = 9, BTN_H = 9;
 
@@ -76,7 +76,7 @@ public class SkillWidget {
         this.y = y;
 
         Font font = Minecraft.getInstance().font;
-        boolean isLocked = !skill.meetsLevelRequirement(ClientCache.getLvl()) || skill.getIncompatibilities(ClientCache.getPurchasedSkills()) != null;
+        boolean isLocked = !skill.isAvailable(ClientCache.getCurrentContext(skill.getID()));
 
         int currentU = ClientCache.getSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel() ? U_BACKGROUND_FINAL : U_BACKGROUND;
 
@@ -86,12 +86,6 @@ public class SkillWidget {
                 gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_NEUTRAL, V_BOOK_ACTIVE, 9, 9, TEXTURE_W, TEXTURE_H);
                 gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
             });
-
-            gui.pose().pushPose();
-            gui.pose().translate(x + 15, y + 15, 10);
-            gui.pose().scale(0.7f, 0.7f, 1.0f);
-            gui.blit(LOCKED_ICON, -8, -8, 0, 0, 16, 16, 16, 16);
-            gui.pose().popPose();
         }
         else {
             gui.blit(REF_TEXTURE, x, y, currentU, V_BACKGROUND, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
@@ -100,12 +94,11 @@ public class SkillWidget {
         }
 
 
-
         MutableComponent text = !isLocked ?
                 Component.translatable("gui.tyzs_skills.Lvl")
                 .append(": " + ClientCache.getSkillLevel(skill.getID()) + "/" + skill.getMaximumLevel())
                 :
-                Component.translatable("gui.tyzs_skills.locked").withStyle(ChatFormatting.RED);
+                Component.translatable("gui.tyzs_skills.locked");
 
 
 
@@ -150,7 +143,7 @@ public class SkillWidget {
 
            int currentBuyU;
 
-           if(isShiftPressed()) currentBuyU = isHoverBuyBtn ? U_BUY_ALL_BTN_HOVER : U_BUY_ALL_BTN;
+           if(isShiftPressed() && isMouseOver(mouseX, mouseY, x + 38, y + 17, BTN_W, BTN_H)) currentBuyU = isHoverBuyBtn ? U_BUY_ALL_BTN_HOVER : U_BUY_ALL_BTN;
            else currentBuyU = isHoverBuyBtn ? U_BUY_BTN_HOVER : U_BUY_BTN;
 
            if(isLocked) drawWithShade(gui, () -> gui.blit(REF_TEXTURE, x+38, y+17, currentBuyU, V_BUY_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H));
@@ -160,7 +153,7 @@ public class SkillWidget {
            boolean isHoverRefundBtn = isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H);
 
            int currentRefundU;
-           if(isShiftPressed()) currentRefundU = isHoverRefundBtn ? U_REFUND_ALL_BTN_HOVER : U_REFUND_ALL_BTN;
+           if(isShiftPressed() && isMouseOver(mouseX, mouseY, x + 27, y + 17, BTN_W, BTN_H)) currentRefundU = isHoverRefundBtn ? U_REFUND_ALL_BTN_HOVER : U_REFUND_ALL_BTN;
            else currentRefundU = isHoverRefundBtn? U_REFUND_BTN_HOVER : U_REFUND_BTN;
 
            if(isLocked) drawWithShade(gui, () -> gui.blit(REF_TEXTURE, x+27, y+17, currentRefundU, V_REFUND_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H));
@@ -168,79 +161,43 @@ public class SkillWidget {
        }
     }
 
-    public List<Component> getTooltip(int mouseX, int mouseY){
-        List<Component> tooltip = new ArrayList<>();
+
+
+    public List<Either<FormattedText, TooltipComponent>> getTooltip(int mouseX, int mouseY){
+        List<Either<FormattedText, TooltipComponent>> tooltip = new ArrayList<>();
         int currentLevel = ClientCache.getSkillLevel(this.skill.getID().toLowerCase());
 
+        boolean isLocked = !skill.isAvailable(ClientCache.getCurrentContext(skill.getID()));
+
         if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)) {
-            tooltip.add(Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE));
-            tooltip.addAll(StringTools.getSkillDescription(skill));
+            tooltip.add(Either.right(new SkillTooltipData(this.skill)));
+            return tooltip;
+        }
 
 
-            var incompatibilities = skill.getRawIncompatibilities();
-            if(!incompatibilities.isEmpty()){
-                tooltip.add(Component.empty());
-
-                tooltip.add(Component.translatable("gui.tyzs_skills.incompatibilities").append(Component.literal(":")).withStyle(ChatFormatting.BLUE));
-                for(var id : incompatibilities){
-                    var conflict = ClientCache.getSkill(id);
-                    if(conflict == null) continue;
-                    tooltip.add(Component.literal("- ").append(Component.translatable(conflict.getDisplayName())).withStyle(ChatFormatting.DARK_GRAY));
-                }
+        if(canRefund() && !isLocked && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
+            if(isShiftPressed()) {
+                for (var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, true))
+                    tooltip.add(Either.left(line));
+            }
+            else {
+                for(var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false))
+                    tooltip.add(Either.left(line));
             }
             return tooltip;
         }
 
-        var incompatibilities = skill.getIncompatibilities(ClientCache.getPurchasedSkills());
-        var levelRequired = skill.meetsLevelRequirement(ClientCache.getLvl());
-
-
-        if(incompatibilities != null || !levelRequired){
-            if(isMouseOver(mouseX, mouseY, x + 2, y + 2, 60, 26)){
-                if(!levelRequired){
-                    var message = Component.empty()
-                            .append(Component.translatable("gui.tyzs_skills.level_lock").withStyle(ChatFormatting.BLUE))
-                            .append(Component.literal(": ").withStyle(ChatFormatting.BLUE))
-                            .append(Component.literal(String.valueOf(skill.getRequiredLevel())).withStyle(ChatFormatting.RED));
-
-                    tooltip.add(message);
-                    return tooltip;
-                }
-
-
-                var message = Component.empty()
-                        .append(Component.translatable("gui.tyzs_skills.conlict").withStyle(ChatFormatting.BLUE))
-                        .append(Component.literal(": ").withStyle(ChatFormatting.BLUE));
-
-                tooltip.add(message);
-
-                for (var id : incompatibilities) {
-                    var skill = ClientCache.getSkill(id);
-
-                    message = Component.literal("- ")
-                            .append(Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.RED));
-
-                    if(isShiftPressed()) message = message.append(Component.literal(" [" + id + "]").withStyle(ChatFormatting.DARK_GRAY));
-
-                    tooltip.add(message);
-                }
-                return tooltip;
+        if(canBuy() && !isLocked && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
+            if(isShiftPressed()){
+                for (var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy(), true))
+                    tooltip.add(Either.left(line));
             }
+            else {
+                for(var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy()))
+                    tooltip.add(Either.left(line));
+            }
+            return tooltip;
         }
-        else{
-            if(canRefund() && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
-                if(isShiftPressed()) tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, true));
-                else tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false));
-                return tooltip;
-            }
-
-            if(skill.isPurchasable() && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
-                if(isShiftPressed()) tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy(), true));
-                else tooltip.addAll(StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy()));
-                return tooltip;
-            }
-        }
-
         return tooltip;
     }
 
@@ -282,13 +239,8 @@ public class SkillWidget {
             ClientCache.predictBookmark(skill);
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 2));
 
-            if (SortingTools.getCurrentSkillCategory() == Enums.CategoryType.BOOKMARKS) {
-                if (Minecraft.getInstance().screen instanceof MainGUI gui) {
-                    gui.refreshList();
-                }
-
-                return true;
-            }
+            var mc = Minecraft.getInstance();
+            if(mc.screen instanceof MainGUI gui) gui.refreshList();
         }
 
         return false;
@@ -325,11 +277,10 @@ public class SkillWidget {
     }
 
     protected boolean canBuy(){
-        return skill.canBuy(ClientCache.getSkillLevel(skill.getID()), ClientCache.getLvl(),
-                ClientCache.getSP(), ClientCache.getPurchasedSkills());
+        return skill.canBuy(ClientCache.getCurrentContext(skill.getID()), ClientCache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
     }
 
     protected boolean canRefund(){
-        return skill.canRefund(ClientCache.getSkillLevel(skill.getID()), ClientCache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
+        return skill.canRefund(ClientCache.getCurrentContext(skill.getID()), ClientCache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
     }
 }

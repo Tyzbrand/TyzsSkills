@@ -2,12 +2,16 @@ package com.tyzsskills.impl.client;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.model.Category;
+import com.tyzsskills.api.records.LevelData;
+import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
-import com.tyzsskills.impl.server.attachments.PlayerData;
+import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.server.model.*;
-import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -25,7 +29,9 @@ public class ClientCache {
     private static int clientSpSpent = 0;
     private static int clientOwnedSkills = 0;
 
-    private static XpManager.LevelData clientLevelData = new XpManager.LevelData(100f, 1);
+    private static LevelData clientLevelData = new LevelData(100f, 1);
+
+    private final static Map<String, Category> clientCategories = new HashMap<>();
 
     private final static Map<String, Skill> clientSkills = new HashMap<>();
     private final static Map<String, Integer> clientSkillLevels = new HashMap<>();
@@ -86,7 +92,7 @@ public class ClientCache {
         }
     }
 
-    public static void updateClientCacheLevelData(XpManager.LevelData data){
+    public static void updateClientCacheLevelData(LevelData data){
         clientLevelData = data;
 
         if(Config.SHOW_DEBUG_MESSAGES.get()){
@@ -95,6 +101,23 @@ public class ClientCache {
     }
 
 
+    public static void updateClientCacheCategories(Map<String, Category> map){
+        clientCategories.clear();
+        clientCategories.putAll(map);
+
+        var sortedCategories = new ArrayList<>(map.values());
+        sortedCategories.sort(Comparator.comparingInt(Category::order));
+
+        var sortedIds = sortedCategories.stream()
+                .map(Category::id)
+                .toList();
+
+        SortingTools.registerCategories(sortedIds);
+
+        if(Config.SHOW_DEBUG_MESSAGES.get()){
+            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client categories Update: " + clientCategories.size() + " loaded."), false);
+        }
+    }
 
 
     public static void updateSkills(List<Skill> skills){
@@ -157,7 +180,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if(!skill.canBuy(currentLvl, clientLevel, clientSP, getPurchasedSkills())) return;
+        if(!skill.canBuy(getCurrentContext(id), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return;
         int price = skill.getPrices().get(currentLvl);
 
         clientSP -= price;
@@ -168,7 +191,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        var bulkResult = skill.checkBulkBuy(currentLvl, clientLevel, clientSP, getPurchasedSkills());
+        var bulkResult = skill.checkBulkBuy(getCurrentContext(id), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
 
         if (bulkResult.levelToAdd() > 0) {
             clientSP -= bulkResult.spToWithdraw();
@@ -180,7 +203,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if(!skill.canRefund(currentLvl, getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return;
+        if(!skill.canRefund(getCurrentContext(id), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return;
 
         updateSkillLevels(id, currentLvl - 1);
         double percentage = getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
@@ -195,9 +218,8 @@ public class ClientCache {
 
     public static void predictRefundMax(Skill skill) {
         String id = skill.getID().toLowerCase();
-        int currentLvl = getSkillLevel(id);
 
-        var spToRefund = skill.checkBulkRefund(currentLvl,
+        var spToRefund = skill.checkBulkRefund(getCurrentContext(skill.getID()),
                 (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), getConfigBool(Config.REFUND_SYSTEM_KEY, false));
 
         if (spToRefund > 0) {
@@ -246,6 +268,17 @@ public class ClientCache {
     public static Skill getSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}
     public static boolean isSkillBookmarked(String id){return clientBookmarks.contains(id.toLowerCase());}
 
+    @Nullable
+    public static Category getCategory(@NotNull String id){return clientCategories.getOrDefault(id, null);}
+
+    @NotNull
+    public static SkillContext getCurrentContext(String skillID){
+        var player = Minecraft.getInstance().player;
+        Objects.requireNonNull(player, "Attempt to access SkillContext with null client.");
+
+        return new SkillContext(player, getSkillLevel(skillID), clientLevel, clientSP, getPurchasedSkills());
+    }
+
     public static float getAllTimeXp(){return clientAllTimeXP;}
     public static float getSessionXp(){return clientSessionXP;}
     public static int getSpEarned(){return clientSpEarned;}
@@ -258,22 +291,22 @@ public class ClientCache {
         }
         return count;
     }
-    public static float getTotalXpPerHour(){
+    public static int getTotalXpPerHour(){
         var level = Minecraft.getInstance().level;
-        if(level == null) return 0f;
+        if(level == null) return 0;
 
         var ticks = level.getGameTime();
 
         var effectiveTicks = Math.max(ticks, 1200f);
         var exactHours = effectiveTicks / 72000f;
 
-        return clientAllTimeXP / exactHours;
+        return (int)(clientAllTimeXP / exactHours);
     }
 
     private static long sessionStartTick = -1L;
-    public static float getSessionXpPerHour(){
+    public static int getSessionXpPerHour(){
         var level = Minecraft.getInstance().level;
-        if(level == null) return 0f;
+        if(level == null) return 0;
 
         if (sessionStartTick == -1) {
             sessionStartTick = level.getGameTime();
@@ -284,7 +317,7 @@ public class ClientCache {
         var effectiveTicks = Math.max(sessionTicks, 1200f);
         var exactSessionHours = effectiveTicks / 72000f;
 
-        return ClientCache.getSessionXp() / exactSessionHours;
+        return (int)(ClientCache.getSessionXp() / exactSessionHours);
     }
 
     //getters config
@@ -325,7 +358,7 @@ public class ClientCache {
         clientLevel = 1;
         clientSP = 0;
         clientXP = 0f;
-        clientLevelData = new XpManager.LevelData(100f, 1);
+        clientLevelData = new LevelData(100f, 1);
     }
 
     private static void resetSkills(){
@@ -348,5 +381,7 @@ public class ClientCache {
         clientConfigMap.clear();
         clientBookmarks.clear();
         clientSkills.clear();
+
+        clientCategories.clear();
     }
 }

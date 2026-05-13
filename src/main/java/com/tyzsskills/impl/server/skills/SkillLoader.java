@@ -5,17 +5,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.model.SkillBehavior;
-import com.tyzsskills.api.records.SkillPrefab;
+import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.api.records.Modifier;
-import com.tyzsskills.impl.server.active.FileManager;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,13 +57,27 @@ public class SkillLoader {
 
         for(var skill : SkillManager.get().getAllSkills()){
             var incompatibilities = skill.getRawIncompatibilities();
-            for (var id : incompatibilities){
-                var conflict = SkillManager.get().getSkill(id);
-                var sourceId = skill.getID();
+            var skillID = skill.getID();
 
+            for (var id : incompatibilities){
+                if(!SkillManager.get().isSkillLoaded(id)){
+                    ErrorManager.registerSkillError(skillID, "incompatibility : [" + id + "] does not exist.");
+                    skill.removeIncompatibility(id);
+                    continue;
+                }
+
+                var conflict = SkillManager.get().getSkill(id);
                 if(conflict == null) continue;
 
-                if(!conflict.isSkillIncompatible(sourceId)) conflict.addIncompatibility(sourceId);
+                if(!conflict.isSkillIncompatible(skillID)) conflict.addIncompatibility(skillID);
+            }
+
+            var prerequisites = skill.getRawPrerequisites();
+            for (var prerequisite : prerequisites){
+                if(!SkillManager.get().isSkillLoaded(prerequisite)) {
+                    ErrorManager.registerSkillError(skillID, "prerequisite : [" + prerequisite + "] does not exist.");
+                    skill.removePrerequisite(prerequisite);
+                }
             }
         }
     }
@@ -90,12 +101,8 @@ public class SkillLoader {
         Enums.SkillType type = getSafeEnum(source, "type", Enums.SkillType.class);
         if(type == null) {ErrorManager.registerSkillError(id, "invalid skill type"); return;}
 
-        Enums.CategoryType category = getSafeEnum(source, "category", Enums.CategoryType.class);
-        if(category == null) category = Enums.CategoryType.MISC;
-
-        Boolean purchasable = getSafeElement(source,"purchasable", JsonPrimitive::getAsBoolean);
-        if(purchasable == null) purchasable = true;
-
+        String category = getSafeElement(source, "category", JsonPrimitive::getAsString);
+        if(category == null) category = "";
 
         String icon = getSafeElement(source, "icon", JsonPrimitive::getAsString);
         if(icon == null) icon = "tyzs_skills:textures/gui/skills/default.png";
@@ -106,10 +113,9 @@ public class SkillLoader {
         String description = getSafeElement(source, "description", JsonPrimitive::getAsString);
         if(description == null) description = "Missing description";
 
-        Integer levelRequirement = getSafeElement(source, "levelRequirement", JsonPrimitive::getAsInt);
-        if(levelRequirement == null) levelRequirement = -1;
+        SkillConfiguration config = getSafeObject(source, "config", SkillLoader::parseConfig);
+        if(config == null) config = new SkillConfiguration();
 
-        List<String> incompatibilities = getSafeList(source, "incompatibleSkills", JsonElement::getAsString);
 
         if(type == Enums.SkillType.CUSTOM || type == Enums.SkillType.GENERIC){
             if(!source.has("modifiers")) {
@@ -147,8 +153,8 @@ public class SkillLoader {
 
             if(modifiers.isEmpty()) {ErrorManager.registerSkillError(id, "one modifier is required"); return;}
 
-            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
-                    icon, displayName, description, modifiers, null, levelRequirement, incompatibilities));
+            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category,
+                    icon, displayName, description, modifiers, null, config));
             return;
 
         }
@@ -180,9 +186,8 @@ public class SkillLoader {
 
             if(valueSet.isEmpty()){ErrorManager.registerSkillError(id, "one value set is required");return;}
 
-            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category, purchasable,
-                    icon, displayName, description, null, valueSet, levelRequirement, incompatibilities));
-            return;
+            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category,
+                    icon, displayName, description, null, valueSet, config));
         }
     }
 
@@ -223,6 +228,37 @@ public class SkillLoader {
 
         try {return Enum.valueOf(enumClass, element.getAsString().toUpperCase());}
         catch (IllegalArgumentException e) {return null;}
+    }
+
+    private static <T> T getSafeObject(JsonObject obj, String key, Function<JsonObject, T> mapper){
+        if(obj == null ||key == null || !obj.has(key)) return null;
+
+        var element = obj.get(key);
+        if (!element.isJsonObject()) return null;
+
+        try {
+            return mapper.apply(element.getAsJsonObject());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
+
+
+    //Utils
+    private static SkillConfiguration parseConfig(JsonObject obj){
+
+        var purchasable = getSafeElement(obj, "purchasable", JsonPrimitive::getAsBoolean);
+        var refundable = getSafeElement(obj, "refundable", JsonPrimitive::getAsBoolean);
+        var visible = getSafeElement(obj, "visible", JsonPrimitive::getAsBoolean);
+
+        var levelRequirement = getSafeElement(obj, "levelRequirement", JsonPrimitive::getAsInt);
+
+        var incompatibleSkills = getSafeList(obj, "incompatibleSkills", JsonElement::getAsString);
+        var skillPrerequisites = getSafeList(obj, "skillPrerequisites", JsonElement::getAsString);
+
+        return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites, refundable, purchasable, visible);
     }
 
 }

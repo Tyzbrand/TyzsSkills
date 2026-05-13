@@ -12,21 +12,17 @@ import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.payloads.ResetPayload;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
+import com.tyzsskills.impl.server.xp.XpGainRegistry;
 import com.tyzsskills.impl.server.xp.XpManager;
-import com.tyzsskills.impl.server.xp.xpEvents.XpBlock;
-import com.tyzsskills.impl.server.xp.xpEvents.XpEntity;
-import com.tyzsskills.impl.server.xp.xpEvents.XpFood;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 @ApiStatus.Internal
 public class DebugManager {
@@ -36,14 +32,18 @@ public class DebugManager {
         ErrorManager.clearErrors();
 
         SkillManager.get().clearSkills();
-        XpBlock.clearValues();
-        XpEntity.clearValues();
-        XpFood.clearValues();
+        XpGainRegistry.clearAll();
         XpManager.clearPool();
 
-        FileManager.get().readJsons(server);
-        FileManager.get().readLevelPool(server);
-        FileManager.get().readXpValues(server);
+        try {
+            FileManager.readSkills(server);
+            FileManager.readData(server);
+        } catch (Exception e) {
+            ErrorManager.registerLoadError("Loading json files", "Check the logs for more details");
+            System.err.println("[Tyz's Skills] CRITICAL ERROR: Unable to load files during server start");
+            e.printStackTrace();
+            return;
+        }
 
         for(var player : server.getPlayerList().getPlayers()){
             checkForInconsistencies(player);
@@ -56,12 +56,13 @@ public class DebugManager {
 
             PacketDistributor.sendToPlayer(player, new ResetPayload(Enums.ResetType.ALL));
 
-            AutoSyncClient.syncSkillList(player);
-            AutoSyncClient.syncConfig(player);
-            AutoSyncClient.syncMainData(player);
-            AutoSyncClient.syncStats(player);
-            AutoSyncClient.syncSkillBookmarks(player);
-            AutoSyncClient.syncSkillLevels(player);
+            ClientSynchronizer.syncSkillList(player);
+            ClientSynchronizer.syncConfig(player);
+            ClientSynchronizer.syncMainData(player);
+            ClientSynchronizer.syncStats(player);
+            ClientSynchronizer.syncSkillBookmarks(player);
+            ClientSynchronizer.syncSkillLevels(player);
+            ClientSynchronizer.syncCategories(player);
 
             if (player.hasPermissions(2) && ErrorManager.hasErrors()) {
                 ErrorManager.printErrors(player);
@@ -82,12 +83,13 @@ public class DebugManager {
             var lvl = manager.getPlayerSkillLevel(player, skillId);
 
             var incompatibilities = skill.getIncompatibilities(manager.getPlayerOwnedSkillIds(player));
+            var prerequisites = skill.getPrerequisites(manager.getPlayerOwnedSkillIds(player));
 
             if(!skill.meetsLevelRequirement(LevelManager.getLevel(player))){
                 cleanRefund(0, lvl, player, skill);
                 continue;
             }
-            else if(incompatibilities  != null){
+            else if(!incompatibilities.isEmpty()){
                 cleanRefund(0, lvl, player, skill);
 
                 for(var id : incompatibilities){
@@ -96,7 +98,10 @@ public class DebugManager {
                 }
                 continue;
             }
-
+            else if (!prerequisites.isEmpty()){
+                cleanRefund(0, lvl, player, skill);
+                continue;
+            }
 
             if(!manager.isSkillLoaded(skill.getID())) continue;
 
