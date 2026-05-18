@@ -109,7 +109,7 @@ public class XpGainRegistry {
         if(foodValues.containsKey(itemId)) {cacheValue = foodValues.get(itemId);}
         else {
             var itemStats = item.getFoodProperties(itemStack, player);
-            if(itemStats == null) return 1f;
+            if(itemStats == null) return 0f;
 
             var itemNutrition = itemStats.nutrition();
             var itemSaturation = itemStats.saturation();
