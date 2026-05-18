@@ -134,6 +134,7 @@ public class SortingTools {
         catOffset = 0;
         currentCategory = "";
         rawCategories.clear();
+        mainCategory = Enums.SortingCategory.ALL;
     }
 
 

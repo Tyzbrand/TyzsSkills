@@ -281,8 +281,6 @@ public class Tyzsskills {
         XpManager.clearPool();
         CategoryLoader.clearCategories();
 
-        FileManager.clearPrefab();
-
         ErrorManager.clearErrors();
     }
 

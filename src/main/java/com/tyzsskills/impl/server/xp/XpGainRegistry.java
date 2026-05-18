@@ -64,7 +64,7 @@ public class XpGainRegistry {
         if(state.getBlock() instanceof CropBlock crop && !crop.isMaxAge(state)) return 0f;
         else if (state.getBlock() instanceof NetherWartBlock && state.getValue(NetherWartBlock.AGE) < 3) return 0f;
 
-        if(blockCacheValues.containsKey(block)){return blockCacheValues.get(block);}
+        if(blockCacheValues.containsKey(block)) return blockCacheValues.get(block) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
 
         var blockID = BuiltInRegistries.BLOCK.getKey(block).toString();
         var cacheValue = 0f;
@@ -82,7 +82,7 @@ public class XpGainRegistry {
 
     public static float getEntityValue(@NotNull Entity entity, @NotNull ServerPlayer player){
         var type = entity.getType();
-        if(entityCacheValues.containsKey(type)){return entityCacheValues.get(type);}
+        if(entityCacheValues.containsKey(type)) return entityCacheValues.get(type) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
 
         var entityID = BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
         var cacheValue = 0f;
@@ -101,7 +101,7 @@ public class XpGainRegistry {
     public static float getFoodValue(@NotNull ItemStack itemStack, @NotNull ServerPlayer player){
         var item = itemStack.getItem();
 
-        if(foodCacheValues.containsKey(item)){return foodCacheValues.get(item);}
+        if(foodCacheValues.containsKey(item)) return foodCacheValues.get(item) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
 
         var itemId = BuiltInRegistries.ITEM.getKey(item).toString();
         var cacheValue = 0f;

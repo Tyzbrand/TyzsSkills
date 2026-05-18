@@ -31,7 +31,6 @@ public class FileManager {
 
     private static final List<SkillPrefab> prefabQueue = new ArrayList<>();
     public static void registerPrefab(@NotNull SkillPrefab prefab){prefabQueue.add(prefab);}
-    public static void clearPrefab(){prefabQueue.clear();}
 
     public static final String BLOCK_VALUES_KEY = "block-xp-values";
     public static final String ENTITY_VALUES_KEY = "entity-xp-values";

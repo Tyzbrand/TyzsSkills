@@ -215,7 +215,7 @@ public class SkillManager {
 
 
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
-            if(lvl > 0) GenericEffects.applyEffects(skill, player);
+            GenericEffects.applyEffects(skill, player);
         }
     }
 
