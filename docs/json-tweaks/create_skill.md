@@ -17,15 +17,9 @@ layout:
     visible: true
 ---
 
-# Create your own skill for 6.2.0
-
-{% hint style="warning" %}
-This page is **out of date** and applies **ONLY** to the version **6.2.0**
-{% endhint %}
+# Create your own skill for 6.4+
 
 I will explain step by step how to properly create your own skill.
-
-<br>
 
 ## Disclaimer
 
@@ -33,16 +27,16 @@ I will explain step by step how to properly create your own skill.
 * If you intend to create skills using Java/JS code, you are in the wrong place. This guide only covers skill creation using JSON files.
 * You can only create custom skills that modify player attributes.
 
-\
-<br>
+***
 
 ## How it works
 
-A quick reminder on how this works! Skill files are located in the `GAMEDIRECTORY/config/tyzs_skills/skills` folder. The folder we are interested in is `custom`. For every skill you place inside it, the game will attempt to load it.\
+A quick reminder on how this works! Skill files are located in the `GAMEDIRECTORY/config/tyzs_skills/skills` folder. The folder we are interested in is `custom`.&#x20;
+
+For every skill you place inside it, the game will attempt to load it.\
 [More details here](../#how-it-works)
 
-\
-<br>
+***
 
 ## Create a custom skill
 
@@ -51,7 +45,7 @@ A quick reminder on how this works! Skill files are located in the `GAMEDIRECTOR
 * Go to `GAMEDIRECTORY/config/tyzs_skills/skills/custom`.
 * Create a file ending with `.json` (e.g., `my_custom_skill.json`).
 
-<br>
+
 
 ### 2- Use the template
 
@@ -63,20 +57,20 @@ A quick reminder on how this works! Skill files are located in the `GAMEDIRECTOR
   "id": "my_custom_skill",
   "maximumLevel": 4,
   "prices": [4, 6, 8, 12],
-  "type": "CUSTOM",
-  "category": "ABILITIES",
-  "purchasable": true,
-  "icon": "tyzs_skills:textures/gui/skills/my_custom_skill.png",
-  "displayName": "skill.tyzs_skills.my_custom_skill.displayName",
-  "description": "skill.tyzs_skills.my_custom_skill.description",
+  "type": "GENERIC",
+  "category": "abilities",
+  "icon": "tyzs_skills:textures/gui/skills/block_reach.png",
+  "displayName": "skill.tyzs_skills.block_reach.displayName",
+  "description": "skill.tyzs_skills.block_reach.description",
   "modifiers": [],
-  "customValues": {}
+  "customValues": {},
+  "config": {}
 }
 ```
 
 * Now we are going to change all the properties
 
-<br>
+
 
 ### 3- Choose a unique ID
 
@@ -84,11 +78,15 @@ This is the most important part, this is like your first name. It lets the mod r
 
 * Choose a unique id in lower case, without spaces and with only underscores (e.g., `my_custom_skill`)
 
-<br>
+
 
 ### 4- Setup your skill properties
 
-> **🛑 I will only cover specific properties. For details on how to set up general information, please refer to** [**Configure Skills**](../#configuration)
+{% hint style="info" %}
+I will only cover specific properties.&#x20;
+
+For details on how to set up general information, please refer to [Configure Skills](../#configuration)
+{% endhint %}
 
 The JSON file contains a `modifiers` property. This property holds "modifiers", which we will use to apply in-game effects.
 
@@ -112,8 +110,10 @@ _A modifier follows this format:_
 * It can come from another mod.
 * In the template I use "minecraft:generic.movement\_speed", but you can use the one you want [Full vanilla attribute list](https://minecraft.wiki/w/Attribute).
 
-> **🛑 If the modifier is missing, the skill will not be loaded.**\
-> **🛑 If the modifier is incorrect, the skill will have no effect in game.**
+{% hint style="warning" %}
+If the modifier is missing, the skill will not be loaded.\
+If the modifier is incorrect, the skill will have no effect in game.
+{% endhint %}
 
 `operation`
 
@@ -133,7 +133,7 @@ _A modifier follows this format:_
 * This is a translation key for the unit to be displayed in the purchase/refund tooltip.
 * This field can be empty, in which case no unit will be displayed.
 
-<br>
+
 
 ### 5- Finalizing
 
@@ -146,8 +146,7 @@ Before trying it in game, make sure these conditions are met:
 
 Now you can try your skill and continue to add custom skills!
 
-\
-<br>
+***
 
 ## Tips
 
