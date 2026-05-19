@@ -1,0 +1,8 @@
+- tag: json
+  label: JSON
+  icon: file-brackets-curly
+  color: blue
+- tag: js
+  label: JS
+  icon: square-js
+  color: $warning

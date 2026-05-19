@@ -16,6 +16,8 @@ layout:
     visible: true
   tags:
     visible: true
+tags:
+  - json
 ---
 
 # Create Create a Custom Skill for Tyz's Skills 6.4+

@@ -15,9 +15,11 @@ layout:
     visible: true
   tags:
     visible: true
+tags:
+  - js
 ---
 
-# Use KubeJS events to react to the mod for 6.2+
+# Use KubeJS events to react to Tyz's Skills 6.2+
 
 You can catch events to cancel, modify or react to them by using `TyzsSkillsEvents`. When an event is cancelable, you can use `event.cancel()`.
 

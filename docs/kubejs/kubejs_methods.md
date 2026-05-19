@@ -15,9 +15,11 @@ layout:
     visible: true
   tags:
     visible: true
+tags:
+  - js
 ---
 
-# Use KubeJS binding to change and access data
+# Use KubeJS binding to change and access data for Tyz's Skills 6.2+
 
 You can also change and access data (sp amount, xp amount, skill lvl, skill list...) and trigger mechanics (purchase, refund...) by using the `TyzsSkills` global binding.
 

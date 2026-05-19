@@ -16,6 +16,8 @@ layout:
     visible: true
   tags:
     visible: true
+tags:
+  - json
 ---
 
 # Skill Structure on Tyz's Skills 6.4+

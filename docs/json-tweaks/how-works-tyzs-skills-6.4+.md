@@ -16,6 +16,8 @@ layout:
     visible: true
   tags:
     visible: true
+tags:
+  - json
 ---
 
 # How  Works Tyz's Skills 6.4+
