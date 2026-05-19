@@ -1,4 +1,5 @@
 ---
+description: I will explain how to properly modify an existing skill.
 layout:
   width: wide
   title:
@@ -18,8 +19,6 @@ layout:
 ---
 
 # Configure an existing skill for Tyz's Skills 6.4+
-
-I will explain how to properly modify an existing skill.&#x20;
 
 ## How it works
 
@@ -239,4 +238,3 @@ _Custom values consist of the following properties:_
 ```
 
 </details>
-
