@@ -1,9 +1,12 @@
 # Table of contents
 
+* [Get Started](README.md)
+
 ## JSON Tweaks
 
-* [Configure an existing skill for Tyz's Skills 6.4+](README.md "Configure Skill")
-* [Create your own skill for 6.4+](json-tweaks/create_skill.md "Create Skill")
+* [How  Works Tyz's Skills 6.4+](json-tweaks/how-works-tyzs-skills-6.4+.md "How it Works")
+* [Skill Structure on Tyz's Skills 6.4+](<README (1).md> "Skill Structure")
+* [Create Create a Custom Skill for Tyz's Skills 6.4+](json-tweaks/create_skill.md "Custom Skill")
 
 ## KubeJS
 

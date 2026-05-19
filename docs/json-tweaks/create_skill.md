@@ -1,4 +1,5 @@
 ---
+description: This guide explains step by step how to properly create your own custom skill.
 layout:
   width: wide
   title:
@@ -17,37 +18,30 @@ layout:
     visible: true
 ---
 
-# Create your own skill for 6.4+
-
-I will explain step by step how to properly create your own skill.
+# Create Create a Custom Skill for Tyz's Skills 6.4+
 
 ## Disclaimer
 
-* I will not cover every detail for each property here, as that is already explained [here](../).
+* I will not cover every detail for each property here, as that is already explained [here](<../README (1).md>).
 * If you intend to create skills using Java/JS code, you are in the wrong place. This guide only covers skill creation using JSON files.
 * You can only create custom skills that modify player attributes.
 
 ***
 
-## How it works
-
-A quick reminder on how this works! Skill files are located in the `GAMEDIRECTORY/config/tyzs_skills/skills` folder. The folder we are interested in is `custom`.&#x20;
-
-For every skill you place inside it, the game will attempt to load it.\
-[More details here](../#how-it-works)
-
-***
-
 ## Create a custom skill
 
-### 1- Create the file
+{% stepper %}
+{% step %}
+### Create the file
 
-* Go to `GAMEDIRECTORY/config/tyzs_skills/skills/custom`.
+* Go to `GAMEDIRECTORY/config/tyzs_skills/custom/skills/`.
 * Create a file ending with `.json` (e.g., `my_custom_skill.json`).
 
 
+{% endstep %}
 
-### 2- Use the template
+{% step %}
+### Use the template
 
 * Copy and paste the template below into your file:
 
@@ -57,7 +51,7 @@ For every skill you place inside it, the game will attempt to load it.\
   "id": "my_custom_skill",
   "maximumLevel": 4,
   "prices": [4, 6, 8, 12],
-  "type": "GENERIC",
+  "type": "CUSTOM",
   "category": "abilities",
   "icon": "tyzs_skills:textures/gui/skills/block_reach.png",
   "displayName": "skill.tyzs_skills.block_reach.displayName",
@@ -71,22 +65,21 @@ For every skill you place inside it, the game will attempt to load it.\
 * Now we are going to change all the properties
 
 
+{% endstep %}
 
-### 3- Choose a unique ID
+{% step %}
+### Choose a unique ID
 
-This is the most important part, this is like your first name. It lets the mod recognize and manage it.
+This is the most important part. It lets the mod recognize and manage it.
 
-* Choose a unique id in lower case, without spaces and with only underscores (e.g., `my_custom_skill`)
+* Choose a unique id in lower case, without spaces and with only underscores (e.g., `my_custom_skill`).
+* Make sure the id matches your file name for consistency.
 
 
+{% endstep %}
 
-### 4- Setup your skill properties
-
-{% hint style="info" %}
-I will only cover specific properties.&#x20;
-
-For details on how to set up general information, please refer to [Configure Skills](../#configuration)
-{% endhint %}
+{% step %}
+### Setup Your Modifiers
 
 The JSON file contains a `modifiers` property. This property holds "modifiers", which we will use to apply in-game effects.
 
@@ -106,14 +99,16 @@ _A modifier follows this format:_
 
 `attribute`
 
-* This is the player attribute you are going to modify.
+* The player attribute you want to modify.
 * It can come from another mod.
 * In the template I use "minecraft:generic.movement\_speed", but you can use the one you want [Full vanilla attribute list](https://minecraft.wiki/w/Attribute).
 
 {% hint style="warning" %}
-If the modifier is missing, the skill will not be loaded.\
-If the modifier is incorrect, the skill will have no effect in game.
+- If the `modifier` property is missing, the skill will not load.&#x20;
+- If the attribute name is incorrect, the skill will have no effect in-game.
 {% endhint %}
+
+
 
 `operation`
 
@@ -122,11 +117,15 @@ If the modifier is incorrect, the skill will have no effect in game.
   -> If it's the first case then write **"ADD\_VALUE".**\
   -> Otherwise, write **"ADD\_MULTIPLIED\_BASE".**
 
+
+
 `values`
 
 * This is the list of values for the modifier.
 * Values can be negative or positive.
 * The size of the list must match the maximumLevel (1st value = attribute value at skill level 1).
+
+
 
 `unit`
 
@@ -134,17 +133,21 @@ If the modifier is incorrect, the skill will have no effect in game.
 * This field can be empty, in which case no unit will be displayed.
 
 
+{% endstep %}
 
-### 5- Finalizing
+{% step %}
+### Finalizing
 
 Before trying it in game, make sure these conditions are met:
 
 * The skill ID is unique and without spaces.
 * The price list size matches the maximum level.
-* The field "type" is clearly defined on "CUSTOM".
-* The modifier(s) exists.
+* The field `type` is is strictly set to "CUSTOM".
+* At least one valid modifier object exists inside the "modifiers" array.
 
-Now you can try your skill and continue to add custom skills!
+If everything looks correct, you are ready to test your skill!
+{% endstep %}
+{% endstepper %}
 
 ***
 
@@ -152,8 +155,8 @@ Now you can try your skill and continue to add custom skills!
 
 **Values**
 
-* You can use negative values to simulate a penalty or debuff (e.g., `"values": [-1.0, -2.0, -3.0, -4.0]`).
-* If you want your skill to work on top of existing effects (potions or other modifiers), you can use "ADD\_MULTIPLIED\_TOTAL" as the operation.
+* You can use negative values to simulate a penalties or debuffs (e.g., `"values": [-1.0, -2.0, -3.0, -4.0]`).
+* If you want your skill to work on top of existing effects (like potions or other modifiers), you can use "ADD\_MULTIPLIED\_TOTAL" as the `operation`.
 
 <br>
 
@@ -162,7 +165,6 @@ Now you can try your skill and continue to add custom skills!
 * You can use minecraft item/block textures as an icon (example with stick:`minecraft:textures/item/stick.png`).
 * You can use icons already used (example with the one for Health Boost: `tyzs_skills:textures/gui/skills/health_boost.png`).
 * I've added few unused icons you can use (e.g., `tyzs_skills:textures/gui/skills/unused_icon_set/FILENAME.png`).
-* You are not forced to set an icon, it will display a default one.
 
 <br>
 
