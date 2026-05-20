@@ -20,11 +20,11 @@ tags:
   - json
 ---
 
-# Create Create a Custom Skill for Tyz's Skills 6.4+
+# Create a Custom Skill for Tyz's Skills 6.4+
 
 ## Disclaimer
 
-* I will not cover every detail for each property here, as that is already explained [here](<../README (1).md>).
+* I will not cover every detail for each property here, as that is already explained [here](skill-structure-on-tyzs-skills-6.4+.md).
 * If you intend to create skills using Java/JS code, you are in the wrong place. This guide only covers skill creation using JSON files.
 * You can only create custom skills that modify player attributes.
 

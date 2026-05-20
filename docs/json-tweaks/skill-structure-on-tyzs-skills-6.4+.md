@@ -32,7 +32,7 @@ A skill file possesses numerous configurable properties.
 
 _Configurable Properties:_
 
-<table><thead><tr><th width="204">Property</th><th width="269" align="center">Possible Values</th><th width="340">Description</th><th width="340">Notes</th></tr></thead><tbody><tr><td><code>active</code></td><td align="center"><code>true</code>,  <code>false</code></td><td>Defines if the skill is loaded.</td><td>This is the only way to disable a skill.</td></tr><tr><td><code>maximumLevel</code></td><td align="center">Values between <code>1</code> and <code>99</code></td><td>Determines the maximum level of the skill.</td><td></td></tr><tr><td><code>prices</code></td><td align="center">Positive integer values</td><td>Price for each level.</td><td>The list size must match the <code>maximumLevel</code> (e.g., [10, 20, 30]). The 1st value = price for level 1.</td></tr><tr><td><code>category</code></td><td align="center">Valid category ID</td><td>Determines the GUI tab where the skill appears.</td><td>Can be found in the config folder. Default are: abilities, combat, misc and nature.</td></tr><tr><td><code>icon</code></td><td align="center">Valid asset path</td><td>Determines the path to the skill's icon.</td><td>Must follow Minecraft asset formatting and come from a loaded Resource Pack or Mod.</td></tr><tr><td><code>displayName</code></td><td align="center">Translation key or plain text</td><td>Determines the skill's display name.</td><td></td></tr><tr><td><code>description</code></td><td align="center">Translation key or plain text</td><td>Determines the description to display.</td><td></td></tr><tr><td><code>modifiers</code></td><td align="center"><a href="README (1).md#modifier">Modifier</a>, empty <code>[]</code></td><td>Determines the data related to the attributes affected by the skill.</td><td>For <code>IMMUTABLE</code> or <code>TRAIT</code> type skills, this field must be left empty.</td></tr><tr><td><code>customValues</code></td><td align="center"><a href="README (1).md#custom-values">Custom value</a>, empty <code>{}</code></td><td>Determines the data related to the skill's specific values.</td><td>For non-<code>IMMUTABLE</code> type skills, this field can be left empty.</td></tr><tr><td><code>config</code></td><td align="center"><a href="README (1).md#behavior-settings">Behavior settings</a>, empty <code>{}</code></td><td>Optional settings defining the skill's in-game mechanics and restrictions.</td><td>This field can be left empty.</td></tr></tbody></table>
+<table><thead><tr><th width="204">Property</th><th width="269" align="center">Possible Values</th><th width="340">Description</th><th width="340">Notes</th></tr></thead><tbody><tr><td><code>active</code></td><td align="center"><code>true</code>, <code>false</code></td><td>Defines if the skill is loaded.</td><td>This is the only way to disable a skill.</td></tr><tr><td><code>maximumLevel</code></td><td align="center">Values between <code>1</code> and <code>99</code></td><td>Determines the maximum level of the skill.</td><td></td></tr><tr><td><code>prices</code></td><td align="center">Positive integer values</td><td>Price for each level.</td><td>The list size must match the <code>maximumLevel</code> (e.g., [10, 20, 30]). The 1st value = price for level 1.</td></tr><tr><td><code>category</code></td><td align="center">Valid category ID</td><td>Determines the GUI tab where the skill appears.</td><td>Can be found in the config folder. Default are: abilities, combat, misc and nature.</td></tr><tr><td><code>icon</code></td><td align="center">Valid asset path</td><td>Determines the path to the skill's icon.</td><td>Must follow Minecraft asset formatting and come from a loaded Resource Pack or Mod.</td></tr><tr><td><code>displayName</code></td><td align="center">Translation key or plain text</td><td>Determines the skill's display name.</td><td></td></tr><tr><td><code>description</code></td><td align="center">Translation key or plain text</td><td>Determines the description to display.</td><td></td></tr><tr><td><code>modifiers</code></td><td align="center"><a href="README%20(1).md#modifier">Modifier</a>, empty <code>[]</code></td><td>Determines the data related to the attributes affected by the skill.</td><td>For <code>IMMUTABLE</code> or <code>TRAIT</code> type skills, this field must be left empty.</td></tr><tr><td><code>customValues</code></td><td align="center"><a href="README%20(1).md#custom-values">Custom value</a>, empty <code>{}</code></td><td>Determines the data related to the skill's specific values.</td><td>For non-<code>IMMUTABLE</code> type skills, this field can be left empty.</td></tr><tr><td><code>config</code></td><td align="center"><a href="README%20(1).md#behavior-settings">Behavior settings</a>, empty <code>{}</code></td><td>Optional settings defining the skill's in-game mechanics and restrictions.</td><td>This field can be left empty.</td></tr></tbody></table>
 
 <details>
 
@@ -96,11 +96,11 @@ _Configurable Properties:_
 
 ## Behavior Settings
 
-You can add parameters inside the `config` object to modify how skills behave in-game.&#x20;
+You can add parameters inside the `config` object to modify how skills behave in-game.
 
 These parameters are optional and will fall back to their default values if omitted.\
 \
-&#xNAN;_&#x45;xisting Settings:_
+&#xNAN;_&#x41;vailable Settings:_
 
 <table><thead><tr><th width="191">Property</th><th width="200">Possible Values</th><th width="146">Default Value</th><th width="340">Description</th><th width="340">Notes</th></tr></thead><tbody><tr><td><code>levelRequirement</code></td><td>Positive integer</td><td><code>0</code></td><td>Prevents the skill from being purchased if the player's level requirement is not met.</td><td>A value of <code>0</code> means no level requirement.</td></tr><tr><td><code>visible</code></td><td><code>true</code>, <code>false</code></td><td><code>true</code></td><td>Determines if the skill is visible in the Menu.</td><td>Only applies when the player's skill level is <code>0</code>.</td></tr><tr><td><code>purchasable</code></td><td><code>true</code>, <code>false</code></td><td><code>true</code></td><td>Determines if the skill can be purchased from the menu.</td><td>Only applies if the <code>PURCHASE_SYSTEM</code> common config is <code>true</code>.</td></tr><tr><td><code>refundable</code></td><td><code>true</code>, <code>false</code></td><td><code>true</code></td><td>Determines if the skill can be refunded from the menu.</td><td>Only applies if the <code>REFUND_SYSTEM</code> common config is <code>true</code>.</td></tr><tr><td><code>incompatibleSkills</code></td><td>Array of skill IDs</td><td>Empty list</td><td>Defines a list of skills that cannot be owned simultaneously with this one.</td><td></td></tr><tr><td><code>skillPrerequisites</code></td><td>Array of skill IDs</td><td>Empty list</td><td>Defines a list of skills the player must own before buying this one.</td><td></td></tr></tbody></table>
 
@@ -125,7 +125,7 @@ These parameters are optional and will fall back to their default values if omit
 
 ## Modifier
 
-A modifier is an object that a skill can possess only if it is of type `GENERIC` or `CUSTOM`.&#x20;
+A modifier is an object that a skill can possess only if it is of type `GENERIC` or `CUSTOM`.
 
 It contains all the information related to the modification of an attribute. A skill can have multiple modifiers for different attributes.
 
@@ -186,7 +186,7 @@ _A modifier consists of the following properties:_
 Custom values are an object that a skill can possess, only if it is of type `IMMUTABLE`. It contains all the information regarding the specific values the skill uses in gameplay.
 
 {% hint style="danger" %}
-You will **only need** to touch the values list. If you modify the value key, the skill will **break**.&#x20;
+You will **only need** to touch the values list. If you modify the value key, the skill will **break**.
 
 Only change the key if **you know** exactly **what you are doing**.
 {% endhint %}
