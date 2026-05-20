@@ -130,7 +130,8 @@ public class SkillManager {
     public boolean tryRefundSkill(ServerPlayer player, String id)
     {
         var skill = getSkill(id);
-        if(player == null || skill == null || !Config.REFUND_SYSTEM.get()) return false;
+        if(player == null || skill == null) return false;
+        if(!skill.canRefund(getSkillContext(player, id), Config.REFUND_SYSTEM.getAsBoolean())) return false;
 
         var event = new SkillActionEvent.RefundPre(skill, player);
         NeoForge.EVENT_BUS.post(event);
@@ -140,14 +141,18 @@ public class SkillManager {
 
         int currentLvl = data.getSkillLevel(id);
 
-        if(!skill.canRefund(getSkillContext(player, id), Config.REFUND_SYSTEM.getAsBoolean())) return false;
-
         int initialPrice = skill.getPrices().get(currentLvl - 1);
-        int finalPrice = Math.max(1, (int)(initialPrice * (Config.REFUND_PERCENTAGE.get() / 100f)));
+        float refundRate = (float)(Config.REFUND_PERCENTAGE.get() / 100f);
+        int finalPrice;
 
-        SpManager.addSP(player, finalPrice);
-        PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(finalPrice));
-        player.getData(StatsTracker.DATA).addSpEarned(finalPrice);
+        if(initialPrice == 0) finalPrice = 0;
+        else finalPrice = Math.round(initialPrice * refundRate);
+
+        if(finalPrice > 0){
+            SpManager.addSP(player, finalPrice);
+            PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(finalPrice));
+            player.getData(StatsTracker.DATA).addSpEarned(finalPrice);
+        }
 
         setSkillLevel(player, id, currentLvl - 1);
 

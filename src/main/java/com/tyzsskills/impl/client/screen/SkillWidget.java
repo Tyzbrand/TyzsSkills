@@ -138,7 +138,7 @@ public class SkillWidget {
         }
 
 
-       if(canBuy()){
+       if(canAffordPurchase()){
            boolean isHoverBuyBtn = isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H);
 
            int currentBuyU;
@@ -149,7 +149,7 @@ public class SkillWidget {
            if(isLocked) drawWithShade(gui, () -> gui.blit(REF_TEXTURE, x+38, y+17, currentBuyU, V_BUY_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H));
            else gui.blit(REF_TEXTURE, x+38, y+17, currentBuyU, V_BUY_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
        }
-       if(canRefund()) {
+       if(canAffordRefund()) {
            boolean isHoverRefundBtn = isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H);
 
            int currentRefundU;
@@ -175,7 +175,7 @@ public class SkillWidget {
         }
 
 
-        if(canRefund() && !isLocked && isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H)) {
+        if(isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H) && canRefund() && !isLocked) {
             if(isShiftPressed()) {
                 for (var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, true))
                     tooltip.add(Either.left(line));
@@ -187,13 +187,13 @@ public class SkillWidget {
             return tooltip;
         }
 
-        if(canBuy() && !isLocked && isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H)){ //BUY
+        if(isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H) && canBuy() && !isLocked){ //BUY
             if(isShiftPressed()){
-                for (var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy(), true))
+                for (var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canAffordPurchase(), true))
                     tooltip.add(Either.left(line));
             }
             else {
-                for(var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canBuy()))
+                for(var line : StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canAffordPurchase()))
                     tooltip.add(Either.left(line));
             }
             return tooltip;
@@ -207,7 +207,7 @@ public class SkillWidget {
 
     public boolean mouseClicked(double mouseX, double mouseY, int button){
         if(isMouseOver((int)mouseX, (int)mouseY, x+38, y+17, BTN_W, BTN_H)){
-            if(!canBuy()) return false;
+            if(!canAffordPurchase()) return false;
 
             SoundPlayer.PlayUIClick();
 
@@ -221,7 +221,7 @@ public class SkillWidget {
         }
 
         if(isMouseOver((int)mouseX, (int)mouseY, x+27, y+17, BTN_W, BTN_H)){
-            if(!canRefund()) return false;
+            if(!canAffordRefund()) return false;
 
             SoundPlayer.PlayUIClick();
 
@@ -276,11 +276,19 @@ public class SkillWidget {
         gui.fill(x + width - 1, y + 1, x + width, y + height - 1, COLOR_BORDER); // Droite
     }
 
-    protected boolean canBuy(){
+    protected boolean canAffordPurchase(){
         return skill.canBuy(ClientCache.getCurrentContext(skill.getID()), ClientCache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
     }
 
-    protected boolean canRefund(){
+    protected boolean canAffordRefund(){
         return skill.canRefund(ClientCache.getCurrentContext(skill.getID()), ClientCache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
+    }
+
+    protected boolean canBuy(){
+        return ClientCache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true) && skill.isPurchasable();
+    }
+
+    protected boolean canRefund(){
+        return ClientCache.getConfigBool(Config.REFUND_SYSTEM_KEY, true) && skill.isRefundable();
     }
 }

@@ -481,7 +481,8 @@ public class SkillPresets {
                 "skill.tyzs_skills.spare_parts.description",
                 null,
                 Map.of(
-                        "refund_chance", new ValueSet(List.of(4f, 8f, 12f, 16f, 20f), "skill.tyzs_skills.unit.percentage")),
+                        "refund_chance", new ValueSet(List.of(4f, 8f, 12f, 16f, 20f), "skill.tyzs_skills.unit.percentage"),
+                    "max_materials", new ValueSet(List.of(1f, 1f, 2f, 2f, 3f), "skill.tyzs_skills.unit.item")),
                 new SparePartsEffect(), null
         ));
 

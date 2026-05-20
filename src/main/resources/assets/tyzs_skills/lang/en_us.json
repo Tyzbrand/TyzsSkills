@@ -22,6 +22,7 @@
   "skill.tyzs_skills.unit.block_radius" : "block radius",
   "skill.tyzs_skills.unit.seconds" : "sec",
   "skill.tyzs_skills.unit.percentage_damage" : "% (dmg)",
+  "skill.tyzs_skills.unit.item" : "item(s)",
 
 
   "overlay.tyzs_skills.level" : "Level",
@@ -130,7 +131,7 @@
   "skill.tyzs_skills.shepherd_s_blessing.description" : "Baby animals grow {growth_speed}% faster",
 
   "skill.tyzs_skills.spare_parts.displayName" : "Spare Parts",
-  "skill.tyzs_skills.spare_parts.description" : "Provides a {refund_chance}% chance to recover materials when crafting",
+  "skill.tyzs_skills.spare_parts.description" : "Grants a {refund_chance}% chance for each ingredient to be recovered when crafting.\nUp to {max_materials} item(s) per craft",
 
   "skill.tyzs_skills.twist_of_fate.displayName" : "Twist Of Fate",
   "skill.tyzs_skills.twist_of_fate.description" : "Increases the quantity of items found in structure loot chests by {loot_multiplier}%",

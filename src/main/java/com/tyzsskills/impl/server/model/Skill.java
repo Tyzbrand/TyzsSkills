@@ -183,14 +183,13 @@ public class Skill implements ISkill {
         if(!refundEnabled || !isRefundable() || ctx.skillLvl() <= 0) return 0;
 
         var finalRefund = 0;
+        var refundRate = refundPercentage / 100f;
 
         for (int i = ctx.skillLvl() - 1; i >= 0; i--) {
             if (i < prices.size()) {
                 int levelPrice = prices.get(i);
-                int levelRefund = (int) (levelPrice * (refundPercentage / 100f));
 
-                if (levelPrice > 0) levelRefund = Math.max(1, levelRefund);
-                finalRefund += levelRefund;
+                if (levelPrice > 0) finalRefund += Math.round(levelPrice * refundRate);
             }
         }
         return finalRefund;

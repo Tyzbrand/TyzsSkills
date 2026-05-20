@@ -206,20 +206,26 @@ public class ClientCache {
         if(!skill.canRefund(getCurrentContext(id), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return;
 
         updateSkillLevels(id, currentLvl - 1);
-        double percentage = getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
+        float percentage = (float)getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
 
         List<Integer> prices = skill.getPrices();
         if (currentLvl - 1 < prices.size()) {
             int initialPrice = prices.get(currentLvl - 1);
-            int refundAmount = Math.max(1, (int)(initialPrice * (percentage / 100.0)));
-            clientSP += refundAmount;
+            float refundPercentage = percentage / 100f;
+            int refundAmount = (initialPrice <= 0) ? 0 : Math.round(initialPrice * refundPercentage);
+
+            if (refundAmount > 0) {
+                clientSP += refundAmount;
+            }
         }
     }
 
     public static void predictRefundMax(Skill skill) {
         String id = skill.getID().toLowerCase();
 
-        var spToRefund = skill.checkBulkRefund(getCurrentContext(skill.getID()),
+        if(getSkillLevel(id) <= 0) return;
+
+        var spToRefund = skill.checkBulkRefund(getCurrentContext(id),
                 (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), getConfigBool(Config.REFUND_SYSTEM_KEY, false));
 
         if (spToRefund > 0) {

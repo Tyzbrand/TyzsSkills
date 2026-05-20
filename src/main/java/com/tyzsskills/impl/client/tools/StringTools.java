@@ -151,18 +151,20 @@ public class StringTools {
         int totalSpAmount = 0;
         var prices = skill.getPrices();
 
+        float refundRate = (float)(ClientCache.getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D) / 100f);
+
         if (!isMax) {
             if (currentLvl - 1 < prices.size()) {
                 int p = prices.get(currentLvl - 1);
-                int ref = (int)(p * (Config.REFUND_PERCENTAGE.get() / 100f));
-                totalSpAmount = p > 0 ? Math.max(1, ref) : 0;
+                totalSpAmount = (p <= 0) ? 0 : Math.round(p * refundRate);
             }
         } else {
             for (int i = currentLvl - 1; i >= 0; i--) {
                 if (i < prices.size()) {
                     int p = prices.get(i);
-                    int ref = (int)(p * (Config.REFUND_PERCENTAGE.get() / 100f));
-                    totalSpAmount += p > 0 ? Math.max(1, ref) : 0;
+                    if (p > 0) {
+                        totalSpAmount += Math.round(p * refundRate);
+                    }
                 }
             }
         }
