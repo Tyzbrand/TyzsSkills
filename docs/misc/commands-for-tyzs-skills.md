@@ -66,7 +66,7 @@ This action is **irreversible**. All reset data will be **permanently lost.**
 
 <i class="fa-arrow-turn-down-right">:arrow-turn-down-right:</i> Available Actions:
 
-* `set`: Sets the player's level to the specied level.
+* `set`: Sets the player's level to the specified level.
 * `add`: Adds the specified amount of levels to the player.
 * `remove`: Subtracts the specified amount of levels from the player.
 

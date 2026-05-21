@@ -16,3 +16,6 @@
 ## Misc
 
 * [Commands for Tyz's Skills](misc/commands-for-tyzs-skills.md "Commands")
+* [Roadmap](misc/roadmap.md)
+* [Changelogs](misc/changelogs.md)
+* [FAQ](misc/faq.md)
