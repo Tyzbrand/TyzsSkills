@@ -43,7 +43,7 @@ public class CompatibilityManager {
         if(oldLevel > 1) LevelManager.setLevel(player, (int)oldLevel);
 
         double oldXp = legacy.getOldValue("Skill_XP");
-        if(oldXp > 0) XpManager.setXP(player, (float)oldXp);
+        if(oldXp > 0) XpManager.setXp(player, (float)oldXp, false);
 
         double oldSp = legacy.getOldValue("researchpoints");
         if(oldSp > 0) SpManager.setSp(player, (int)oldSp);
@@ -146,7 +146,7 @@ public class CompatibilityManager {
 
             if(oldData.contains("SKILL_POINT")) SpManager.setSp(player, oldData.getInt("SKILL_POINT"));
 
-            if(oldData.contains("SKILL_XP")) XpManager.setXP(player, oldData.getFloat("SKILL_XP"));
+            if(oldData.contains("SKILL_XP")) XpManager.setXp(player, oldData.getFloat("SKILL_XP"), false);
 
 
             for (var skill : SkillManager.get().getAllSkills()){

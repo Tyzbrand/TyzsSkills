@@ -6,7 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface used to manage player level.
- * Client sync is handled automatically when not specified.
+ * Client Sync is handled automatically when not specified.
+ * Client Overlay is handled automatically when not specified.
  */
 public interface ILevelManager {
 
@@ -31,12 +32,13 @@ public interface ILevelManager {
 
     /**
      * @param newLevel New level to overwrite the current one (must be >= {@code 1}).
+     * @implNote Overlay is not affected.
      */
     void setLevel(@NotNull ServerPlayer player, int newLevel);
 
     /**
      * Resets the player's level back to {@code 1}.
-     * @implNote Client is not synchronized.
+     * @implNote Client is not synchronized. Overlay is not affected.
      */
     void resetLevel(@NotNull ServerPlayer player);
 

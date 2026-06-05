@@ -138,9 +138,9 @@ public class DebugManager {
     }
 
     private static void resetMetaData(ServerPlayer player){
-        LevelManager.setLevel(player, 1);
-        SpManager.setSp(player, 0);
-        XpManager.setXP(player, 0f);
+        LevelManager.resetLevel(player);
+        SpManager.resetSp(player);
+        XpManager.resetXp(player);
         player.getData(ExplorationProgression.DATA).resetPlayerData();
     }
 

@@ -85,7 +85,7 @@ public class SkillManager {
         if(skill.canBuy(getSkillContext(player, id), Config.PURCHASE_SYSTEM.get())){
             var price = skill.getPrices().get(currentLvl);
 
-            SpManager.removeSP(player, price);
+            SpManager.tryRemoveSp(player, price);
             player.getData(StatsTracker.DATA).addSpSpent(price);
 
             setSkillLevel(player, id, currentLvl + 1);
@@ -113,7 +113,7 @@ public class SkillManager {
         var bulkResult = skill.checkBulkBuy(getSkillContext(player, id), Config.PURCHASE_SYSTEM.get());
 
         if (bulkResult.levelToAdd() > 0) {
-            SpManager.removeSP(player, bulkResult.spToWithdraw());
+            SpManager.tryRemoveSp(player, bulkResult.spToWithdraw());
 
             player.getData(StatsTracker.DATA).addSpSpent(bulkResult.spToWithdraw());
 
@@ -147,7 +147,7 @@ public class SkillManager {
         else finalPrice = Math.round(initialPrice * refundRate);
 
         if(finalPrice > 0){
-            SpManager.addSP(player, finalPrice);
+            SpManager.tryAddSp(player, finalPrice);
             player.getData(StatsTracker.DATA).addSpEarned(finalPrice);
         }
 
@@ -173,7 +173,7 @@ public class SkillManager {
         var spToRefund = skill.checkBulkRefund(getSkillContext(player, id), (float)Config.REFUND_PERCENTAGE.getAsDouble(), Config.REFUND_SYSTEM.getAsBoolean());
 
         if (spToRefund > 0) {
-            SpManager.addSP(player, spToRefund);
+            SpManager.tryAddSp(player, spToRefund);
             player.getData(StatsTracker.DATA).addSpEarned(spToRefund);
         }
 

@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.events;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.impl.server.attachments.ExplorationProgression;
@@ -42,7 +43,7 @@ public class XpGainsEvents {
         if(Config.PREVENT_PLACED_BLOCK_XP.get() && playerPlaced) return;
 
         var value = XpGainRegistry.getBlockValue(event.getState(), player);
-        if(value > 0) XpManager.addXP(player, value);
+        if(value > 0) TyzsSkillsAPI.xp().tryAddXp(player, value);
     }
 
     @SubscribeEvent
@@ -53,7 +54,7 @@ public class XpGainsEvents {
         if(!Config.EARN_XP_BY_KILLING.getAsBoolean()) return;
 
         var value = XpGainRegistry.getEntityValue(event.getEntity(), player);
-        if(value > 0) XpManager.addXP(player, value);
+        if(value > 0) TyzsSkillsAPI.xp().tryAddXp(player, value);
     }
 
     @SubscribeEvent
@@ -75,7 +76,7 @@ public class XpGainsEvents {
         if(!data.hasAlreadySlept(currentDay)){
             data.setSleepDay(currentDay);
             sleepValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-            XpManager.addXP(player, (float)sleepValue, true, true);
+            TyzsSkillsAPI.xp().tryAddXp(player, (float)sleepValue);
         }
     }
 
@@ -89,7 +90,7 @@ public class XpGainsEvents {
         if(value <= 0) return;
 
         value *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-        XpManager.addXP(player, value, true, true);
+        TyzsSkillsAPI.xp().tryAddXp(player, value);
     }
 
     @SubscribeEvent
@@ -100,7 +101,7 @@ public class XpGainsEvents {
         if(event.getItem().getFoodProperties(player) == null) return;
 
         var value = XpGainRegistry.getFoodValue(event.getItem(), player);
-        if(value > 0) XpManager.addXP(player, value);
+        if(value > 0) TyzsSkillsAPI.xp().tryAddXp(player, value);
     }
 
     @SubscribeEvent
@@ -112,7 +113,7 @@ public class XpGainsEvents {
         if(value <= 0) return;
 
         value *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-        XpManager.addXP(player, value, true, true);
+        TyzsSkillsAPI.xp().tryAddXp(player, value);
     }
 
     @SubscribeEvent
@@ -124,7 +125,7 @@ public class XpGainsEvents {
         if(value <= 0) return;
 
         value *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-        XpManager.addXP(player, value, true, true);
+        TyzsSkillsAPI.xp().tryAddXp(player, value);
     }
 
     @SubscribeEvent
@@ -147,7 +148,7 @@ public class XpGainsEvents {
             if(finalValue <= 0) return;
 
             finalValue *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-            XpManager.addXP(player, finalValue, true, true);
+            TyzsSkillsAPI.xp().tryAddXp(player, finalValue);
         });
     }
 
@@ -172,7 +173,7 @@ public class XpGainsEvents {
                 if(!data.hasDiscoveredBiome(biomeID)){
                     data.addBiome(biomeID);
                     biomeValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-                    XpManager.addXP(player, (float)biomeValue, true, true);
+                    TyzsSkillsAPI.xp().tryAddXp(player, (float)biomeValue);
                 }
             }
         }
@@ -188,7 +189,7 @@ public class XpGainsEvents {
             if(!data.hasDiscoveredDimension(dimensionID)){
                 data.addDimension(dimensionID);
                 dimensionValue *= player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
-                XpManager.addXP(player, (float)dimensionValue, true, true);
+                TyzsSkillsAPI.xp().tryAddXp(player, (float)dimensionValue);
             }
         }
     }

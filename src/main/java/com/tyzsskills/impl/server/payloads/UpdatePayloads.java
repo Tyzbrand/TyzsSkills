@@ -122,14 +122,13 @@ public class UpdatePayloads {
             ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateSp(payload);} );
         }
     }
-    public record XpPayload(float xp, float gained, boolean triggersOverlay, float limit) implements CustomPacketPayload{
+    public record XpPayload(float xp, float gained, boolean triggersOverlay) implements CustomPacketPayload{
             public static final Type<XpPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "xp_update_payload"));
 
             public static final StreamCodec<ByteBuf, XpPayload> STREAM_CODEC = StreamCodec.composite(
                     ByteBufCodecs.FLOAT, XpPayload::xp,
                     ByteBufCodecs.FLOAT, XpPayload::gained,
                     ByteBufCodecs.BOOL, XpPayload::triggersOverlay,
-                    ByteBufCodecs.FLOAT, XpPayload::limit,
                     XpPayload::new
             );
 

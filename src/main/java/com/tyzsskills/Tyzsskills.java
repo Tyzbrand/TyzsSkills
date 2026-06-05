@@ -17,7 +17,7 @@ import com.tyzsskills.impl.server.payloads.*;
 import com.tyzsskills.impl.server.sp.SpWrapper;
 import com.tyzsskills.impl.server.wrappers.*;
 import com.tyzsskills.impl.server.xp.XpGainRegistry;
-import com.tyzsskills.impl.server.xp.XpManager;
+import com.tyzsskills.impl.server.xp.XpWrapper;
 import com.tyzsskills.integration.kubejs.JsEventsDelegate;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.fml.event.config.ModConfigEvent;

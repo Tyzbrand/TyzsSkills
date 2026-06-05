@@ -25,7 +25,7 @@ public class DeathPenalties {
         if(xpPercentage <= 0) return;
 
         float xpToRemove = (float)(XpManager.getXP(player) * xpPercentage) / 100f;
-        XpManager.removeXP(player, xpToRemove);
+        XpManager.tryRemoveXp(player, xpToRemove);
     }
 
     public static void applySpPenalty(ServerPlayer player){

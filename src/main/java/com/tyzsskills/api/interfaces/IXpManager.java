@@ -1,47 +1,41 @@
 package com.tyzsskills.api.interfaces;
 
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Interface used to manage player skill xp
- * Client sync is handled automatically
+ * Interface used to manage player xp.
+ * Client Sync is handled automatically when not specified.
+ * Client Overlay is handled automatically when not specified.
+ * Client Statistics is handled automatically when not specified.
  */
 public interface IXpManager {
 
     /**
-     * @return current player skill xp
+     * @return The player's xp.
      */
-    float getXP(ServerPlayer player);
+    float getXp(@NotNull ServerPlayer player);
 
     /**
-     * @param amount amount to add (must be > 0f)
-     * NOTE: This will trigger client overlay
+     * @param amount Amount of xp to add (must be > {@code 0f}).
      */
-    void addXP(ServerPlayer player, float amount);
+    boolean tryAddXp(@NotNull ServerPlayer player, float amount);
 
     /**
-     * @param amount amount to add (must be > 0f)
-     * @param showOverlay if true, the visual xp gain overlay will be triggered on client
-     * @param applyLimits if true, the addition will be affected by limits
+     * @param amount Amount of xp to add (must be > {@code 0f}).
      */
-    void addXP(ServerPlayer player, float amount, boolean showOverlay, boolean applyLimits);
-
+    boolean tryRemoveXp(@NotNull ServerPlayer player, float amount);
 
 
     /**
-     * @param amount amount to remove (works if the player can afford, must be > 0f)
-     * NOTE: The player skill xp can't go below 0
+     * @param newAmount New amount to overwrite the current one (must be >= {@code 0})
+     * @param triggerOverlay Determines if an overlay will display the gain of the change.
      */
-    void removeXP(ServerPlayer player, float amount);
+    void setXp(@NotNull ServerPlayer player, float newAmount, boolean triggerOverlay);
 
     /**
-     * @param amount amount to set (must be >= 0)
+     * Resets the player's xp amount back to {@code 0}.
+     * @implNote Client is not synchronized. Player's stats are not affected. Overlay is not affected.
      */
-    void setXP(ServerPlayer player, float amount);
-
-    /**
-     * @param amount amount to set (must be >= 0)
-     * @param applyLimits if true, the change will be affected by limits
-     */
-    void setXP(ServerPlayer player, float amount, boolean applyLimits);
+    void resetXp(@NotNull ServerPlayer player);
 }

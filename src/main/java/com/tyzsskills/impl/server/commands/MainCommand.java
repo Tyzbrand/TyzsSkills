@@ -45,7 +45,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = FloatArgumentType.getFloat(ctx, "amount");
-                                            XpManager.addXP(player, amount, true, true);
+                                            TyzsSkillsAPI.xp().tryAddXp(player, amount);
                                             return 1;})))
 
                         .then(Commands.literal("remove")
@@ -53,7 +53,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = FloatArgumentType.getFloat(ctx, "amount");
-                                            XpManager.removeXP(player, amount);
+                                            TyzsSkillsAPI.xp().tryRemoveXp(player, amount);
                                             return 1;})))
 
                         .then(Commands.literal("set")
@@ -61,7 +61,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = FloatArgumentType.getFloat(ctx, "amount");
-                                            XpManager.setXP(player, amount);
+                                            TyzsSkillsAPI.xp().setXp(player, amount, false);
                                             return 1;})))
                 );
 
