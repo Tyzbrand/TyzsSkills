@@ -1,7 +1,6 @@
-package com.tyzsskills.impl.server.wrappers;
+package com.tyzsskills.impl.server.sp;
 
 import com.tyzsskills.api.interfaces.ISpManager;
-import com.tyzsskills.impl.server.sp.SpManager;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 

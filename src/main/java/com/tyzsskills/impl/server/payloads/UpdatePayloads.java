@@ -221,7 +221,7 @@ public class UpdatePayloads {
 
                         Map.of(Config.REFUND_PERCENTAGE_KEY, Config.REFUND_PERCENTAGE.get())),
 
-                XpManager.getLevelData(LevelManager.getLevel(player)));
+                LevelManager.getCurrentLevelData(player));
     }
 }
 

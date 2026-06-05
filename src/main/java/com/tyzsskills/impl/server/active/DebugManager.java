@@ -33,7 +33,7 @@ public class DebugManager {
 
         SkillManager.get().clearSkills();
         XpGainRegistry.clearAll();
-        XpManager.clearPool();
+        LevelManager.clearPool();
 
         try {
             FileManager.readSkills(server);
@@ -45,12 +45,7 @@ public class DebugManager {
             return;
         }
 
-        for(var player : server.getPlayerList().getPlayers()){
-            checkForInconsistencies(player);
-
-            XpManager.levelUpCheck(player);
-            GenericEffects.restoreEffects(player);
-        }
+        for(var player : server.getPlayerList().getPlayers()){checkForInconsistencies(player);}
 
         for(var player : server.getPlayerList().getPlayers()){
 
@@ -66,6 +61,9 @@ public class DebugManager {
 
     //------------CHECKS------------
     public static void checkForInconsistencies(@NotNull ServerPlayer player){
+        LevelManager.checkForLevelUp(player, XpManager.getXP(player));
+        GenericEffects.restoreEffects(player);
+
         var manager = SkillManager.get();
         for (var skillId : manager.getPlayerOwnedSkillIds(player)){
 

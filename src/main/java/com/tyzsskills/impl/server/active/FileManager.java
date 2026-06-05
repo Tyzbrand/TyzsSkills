@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.active;
 
 import com.google.gson.*;
 import com.tyzsskills.api.records.SkillPrefab;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.Level.LevelPoolPreset;
 import com.tyzsskills.impl.server.categories.CategoryLoader;
 import com.tyzsskills.impl.server.categories.CategoryPreset;
@@ -123,7 +124,7 @@ public class FileManager {
         readExclusiveData(customPath.resolve(foodFile), defaultPath.resolve(foodFile), XpGainRegistry::loadFoodMap);
 
         var levelFile = Path.of(LEVEL_POOL_KEY + ".json");
-        readExclusiveData(customPath.resolve(levelFile), defaultPath.resolve(levelFile), XpManager::loadPool);
+        readExclusiveData(customPath.resolve(levelFile), defaultPath.resolve(levelFile), LevelManager::parsePool);
 
         var categoryFile = Path.of(CATEGORIES_KEY + ".json");
         readExclusiveData(customPath.resolve(categoryFile), defaultPath.resolve(categoryFile), CategoryLoader::loadCategories);

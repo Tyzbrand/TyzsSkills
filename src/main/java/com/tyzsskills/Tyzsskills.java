@@ -2,6 +2,8 @@ package com.tyzsskills;
 
 import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.events.TyzsSkillsCommonSetupEvent;
+import com.tyzsskills.impl.server.Level.LevelManager;
+import com.tyzsskills.impl.server.Level.LevelWrapper;
 import com.tyzsskills.impl.server.active.*;
 import com.tyzsskills.impl.server.attachments.*;
 import com.tyzsskills.impl.server.categories.CategoryLoader;
@@ -12,6 +14,7 @@ import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.commands.MainCommand;
 import com.tyzsskills.impl.server.events.RuntimeEvents;
 import com.tyzsskills.impl.server.payloads.*;
+import com.tyzsskills.impl.server.sp.SpWrapper;
 import com.tyzsskills.impl.server.wrappers.*;
 import com.tyzsskills.impl.server.xp.XpGainRegistry;
 import com.tyzsskills.impl.server.xp.XpManager;
@@ -243,7 +246,7 @@ public class Tyzsskills {
         SkillManager.get().clearSkills();
 
         XpGainRegistry.clearAll();
-        XpManager.clearPool();
+        LevelManager.clearPool();
         CategoryLoader.clearCategories();
 
         ErrorManager.clearErrors();

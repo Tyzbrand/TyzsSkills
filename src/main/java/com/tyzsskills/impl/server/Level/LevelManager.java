@@ -1,90 +1,126 @@
 package com.tyzsskills.impl.server.Level;
 
-import com.tyzsskills.Config;
+import com.google.gson.JsonObject;
 import com.tyzsskills.api.events.SkillLevelChangeEvent;
+import com.tyzsskills.api.records.LevelData;
+import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.attachments.PlayerData;
+import com.tyzsskills.impl.server.payloads.LevelToastPayload;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
+import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @ApiStatus.Internal
 public class LevelManager {
 
+    private static final LevelData FALLBACK = new LevelData(Float.MAX_VALUE, 0);
+
+    private static final Map<Integer, LevelData> POOL = new HashMap<>();
+    public static void clearPool() {POOL.clear();}
+
     //CORE
-    private static void setLevelInternal(ServerPlayer player, int level, boolean applyLimits){
+    private static boolean setLevelInternal(@NotNull ServerPlayer player, int newLevel, boolean syncClient){
         int oldLevel = getLevel(player);
+        if(oldLevel == newLevel) return false;
 
-        var event = new SkillLevelChangeEvent(player, oldLevel, level);
+        var event = new SkillLevelChangeEvent(player, oldLevel, newLevel);
         NeoForge.EVENT_BUS.post(event);
+        if(event.isCanceled()) return false;
 
-        if(event.isCanceled()) return;
+        int finalLevel = event.getNewLevel();
+        if(finalLevel == oldLevel) return false;
 
-        int targetedLvl = event.getNewLevel();
-        if(targetedLvl == oldLevel) return;
+        player.getData(PlayerData.DATA).setLevel(finalLevel);
 
-        int gain = targetedLvl - oldLevel;
+        if(syncClient) updateClient(player);
 
-        if(gain > 0 && applyLimits){
-            var allowedGain = checkLimit(player, gain);
-            if(allowedGain <= 0) return;
-            targetedLvl = oldLevel + allowedGain;
-        }
-
-        var playerData = player.getData(PlayerData.DATA);
-        playerData.setLevel(targetedLvl);
-
-        updateClient(player);
+        return true;
     }
+
 
     //PUBLIC
-    public static void setLevel(ServerPlayer player, int level, boolean applyLimits){
-        setLevelInternal(player, level, applyLimits);
-    }
-    public static void setLevel(ServerPlayer player, int level){
-        setLevel(player, level, false);
+    public static boolean tryAddLevel(@NotNull ServerPlayer player, int amount){
+        if(amount <= 0) return false;
+        return setLevelInternal(player, getLevel(player) + amount, true);
     }
 
-    public static void addLevel(ServerPlayer player, int level, boolean applyLimits){
-        if(level <= 0) return;
-        setLevelInternal(player, level + getLevel(player), applyLimits);
-    }
-    public static void addLevel(ServerPlayer player, int level){
-        addLevel(player, level, true);
+    public static boolean tryRemoveLevel(@NotNull ServerPlayer player, int amount){
+        if(amount <= 0 || getLevel(player) <= amount) return false;
+        return setLevelInternal(player, getLevel(player) - amount, true);
     }
 
-    public static void removeLevel(ServerPlayer player, int level){
-        if(level <= 0) return;
-        var result = Math.max(1, getLevel(player) - level);
-        setLevelInternal(player, result, false);
+    public static void setLevel(@NotNull ServerPlayer player, int newLevel){
+        if(newLevel >= 1) setLevelInternal(player, newLevel, true);
+    }
+
+    public static void resetLevel(@NotNull ServerPlayer player){setLevelInternal(player, 1, false);}
+
+    public static float checkForLevelUp(@NotNull ServerPlayer player, float currentXp){
+        var currentLevel = getLevel(player);
+
+        int spBuffer = 0;
+        int levelBuffer = 0;
+        var multiplicator = player.getAttributeValue(AttributeRegistry.SP_MULTIPLIER);
+
+        while (true){
+            var data = getLevelData(currentLevel);
+
+            if(currentXp >= data.goal()){
+                currentXp -= data.goal();
+                spBuffer += (int)(data.reward() * multiplicator);
+                currentLevel++;
+                levelBuffer++;
+            }
+            else break;
+        }
+
+        if(spBuffer > 0) SpManager.tryAddSp(player, spBuffer);
+        if(levelBuffer > 0) {
+            tryAddLevel(player, levelBuffer);
+            PacketDistributor.sendToPlayer(player, new LevelToastPayload(currentLevel, spBuffer));
+        }
+
+        return currentXp;
     }
 
     //Util
-    private static void updateClient(ServerPlayer player){
+    private static void updateClient(@NotNull ServerPlayer player){
         PacketDistributor.sendToPlayer(player, new UpdatePayloads.LevelPayload(getLevel(player)));
-        PacketDistributor.sendToPlayer(player, new UpdatePayloads.LevelDataPayload(XpManager.getLevelData(getLevel(player))));
-    }
-
-    private static int checkLimit(ServerPlayer player, int amount){
-        int currentLvl = getLevel(player);
-        int finalAmount = amount;
-        int limit = Config.MAX_LEVEL.get();
-
-        if(limit != -1){
-            var remaining = limit - currentLvl;
-            finalAmount = Math.min(finalAmount, Math.max(0, remaining));
-        }
-
-        return finalAmount;
+        PacketDistributor.sendToPlayer(player, new UpdatePayloads.LevelDataPayload(getCurrentLevelData(player)));
     }
 
     //Getter
-    public static int getLevel(ServerPlayer player){return Math.max(1, player.getData(PlayerData.DATA).getLevel());}
-    public static boolean isLevelMax(ServerPlayer player){
-        int limit = Config.MAX_LEVEL.get();
-        return limit != -1 && getLevel(player) >= limit;
+    public static int getLevel(@NotNull ServerPlayer player){return Math.max(1, player.getData(PlayerData.DATA).getLevel());}
+    public static @NotNull LevelData getLevelData(int level){
+        if(POOL.containsKey(level)) return POOL.get(level);
+        if(POOL.containsKey(-1)) return POOL.get(-1);
+        return FALLBACK;
     }
+    public static @NotNull LevelData getCurrentLevelData(@NotNull ServerPlayer player){return getLevelData(getLevel(player));}
+
+    //UTILS
+    public static void parsePool(@NotNull JsonObject obj) {
+        for (var key : obj.keySet()) {
+            try {
+                int level = Integer.parseInt(key);
+                var data = obj.getAsJsonObject(key);
+
+                float goal = data.has("goal") ? data.get("goal").getAsFloat() : FALLBACK.goal();
+                int reward = data.has("reward") ? data.get("reward").getAsInt() : FALLBACK.reward();
+
+                if (goal <= 0 || reward < 0 || level < -1) continue;
+                POOL.put(level, new LevelData(goal, reward));
+            } catch (Exception ex) {ex.printStackTrace();}
+        }
+    }
+
 
 }

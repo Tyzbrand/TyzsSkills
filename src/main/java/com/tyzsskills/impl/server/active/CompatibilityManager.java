@@ -107,7 +107,7 @@ public class CompatibilityManager {
         }
 
         data.putTag(MIGRATION_TAG);
-        XpManager.levelUpCheck(player);
+        LevelManager.checkForLevelUp(player, XpManager.getXP(player));
     }
 
     private static void migrateSkill(ServerPlayer player, LegacyData data, String oldKey, String newId){

@@ -15,7 +15,7 @@ public class DeathPenalties {
         int lvlToDeduce = Config.LVL_LOSS.get();
         if(lvlToDeduce <= 0) return;
 
-        LevelManager.removeLevel(player, lvlToDeduce);
+        LevelManager.tryRemoveLevel(player, lvlToDeduce);
     }
 
     public static void applyXpPenalty(ServerPlayer player){

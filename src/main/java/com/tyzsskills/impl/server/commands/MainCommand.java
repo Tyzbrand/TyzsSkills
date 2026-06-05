@@ -76,7 +76,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            LevelManager.addLevel(player, amount);
+                                            TyzsSkillsAPI.level().tryAddLevel(player, amount);
                                             return 1;})))
 
                         .then(Commands.literal("remove")
@@ -84,7 +84,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            LevelManager.removeLevel(player, amount);
+                                            TyzsSkillsAPI.level().tryRemoveLevel(player, amount);
                                             return 1;})))
 
                         .then(Commands.literal("set")
@@ -92,7 +92,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            LevelManager.setLevel(player, amount);
+                                            TyzsSkillsAPI.level().setLevel(player, amount);
                                             return 1;})))
                 );
 
