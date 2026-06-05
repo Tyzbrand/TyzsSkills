@@ -1,10 +1,7 @@
 package com.tyzsskills;
 
-import com.tyzsskills.api.Enums;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-import java.util.List;
 
 
 public class Config {
@@ -23,18 +20,6 @@ public class Config {
 
     public static final ModConfigSpec.BooleanValue PREVENT_PLACED_BLOCK_XP;
 
-
-    //Limits
-    public static final ModConfigSpec.IntValue MAX_LEVEL;
-    public static final ModConfigSpec.IntValue MAX_SP;
-    public static final ModConfigSpec.IntValue MAX_SP_GAIN;
-
-    public static final String MAX_XP_KEY = "max_xp";
-    public static final ModConfigSpec.DoubleValue XP_LIMIT;
-
-
-    public static final ModConfigSpec.LongValue CYCLE_DURATION;
-    public static final ModConfigSpec.EnumValue<Enums.LimitType> LIMIT_TYPE;
 
     //Death penalties
     public static final ModConfigSpec.BooleanValue DEATH_PENALTIES;
@@ -132,41 +117,6 @@ public class Config {
                 .comment("Prevent manually placed block from providing xp")
                 .translation("config.common.tyzs_skills.prevent_placed_blocks_xp")
                 .define("prevent_placed_block_xp", true);
-
-
-        commonBuilder.pop();
-        commonBuilder.push("Limits");
-
-        MAX_LEVEL = commonBuilder
-                .comment("Maximum level a player can reach (-1 to disable limit)")
-                .translation("config.common.tyzs_skills.max_lvl")
-                .defineInRange("max_lvl", -1, -1, Integer.MAX_VALUE);
-
-        MAX_SP = commonBuilder
-                .comment("Maximum SP a player can hold (-1 to disable limit)")
-                .translation("config.common.tyzs_skills.max_sp")
-                .defineInRange("max_sp", -1, -1, Integer.MAX_VALUE);
-
-        MAX_SP_GAIN = commonBuilder
-                .comment("Maximum SP a player can earn (-1 to disable limit)")
-                .translation("config.common.tyzs_skills.max_sp_gain")
-                .defineInRange("max_sp_gain", -1, -1, Integer.MAX_VALUE);
-
-        XP_LIMIT = commonBuilder
-                .comment("Maximum XP a player can earn within a defined period of time (-1 to disable limit)")
-                .translation("config.common.tyzs_skills.xp_daily")
-                .defineInRange("xp_daily", -1, -1, Double.MAX_VALUE);
-
-        CYCLE_DURATION = commonBuilder
-                .comment("Time that must elapse before the XP limit reset (in sec)")
-                .translation("config.common.tyzs_skills.cycle_duration")
-                .defineInRange("cycle_duration", 1200, 1, Long.MAX_VALUE);
-
-        LIMIT_TYPE = commonBuilder
-                .comment("Change de limit type (FIXED = literal limit of xp, PERCENTAGE = percentage of the xp goal for the current level)")
-                .translation("config.common.tyzs_skills.limit_type")
-                .defineEnum("limit_type", Enums.LimitType.FIXED);
-
 
 
         commonBuilder.pop();

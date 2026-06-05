@@ -11,8 +11,6 @@ public class TyzsSkillsAPI {
     private static IXpManager xpManager;
     private static ISkillManager skillManager;
 
-    private static IClientDataManager clientDataManager;
-
     @ApiStatus.Internal
     public static void  registerSpManager(ISpManager manager){spManager = manager;}
     @ApiStatus.Internal
@@ -22,8 +20,6 @@ public class TyzsSkillsAPI {
     @ApiStatus.Internal
     public static void registerSkillManager(ISkillManager manager){skillManager = manager;}
 
-    @ApiStatus.Internal
-    public static void registerPlayerCacheManager(IClientDataManager manager){clientDataManager = manager;}
 
 
     public static ISpManager sp(){
@@ -46,10 +42,6 @@ public class TyzsSkillsAPI {
         return skillManager;
     }
 
-    public static IClientDataManager client(){
-        if(clientDataManager == null) ex("ClientDataManager");
-        return clientDataManager;
-    }
 
     //Util
     private static void ex(@NotNull String id){throw new RuntimeException("TyzsSkillsAPI Error: " + id + " is not registered! " +

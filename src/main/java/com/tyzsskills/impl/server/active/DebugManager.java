@@ -115,7 +115,7 @@ public class DebugManager {
         SkillManager.get().setSkillLevel(player, skill.getID(), targetLvl);
 
         if(spToRefund <= 0) return;
-        SpManager.addSP(player, spToRefund);
+        SpManager.tryAddSp(player, spToRefund);
         player.sendSystemMessage(Component.literal("Skill §9[" + skill.getID() + "] §rrules changed. §6" + spToRefund + " §rSP refunded."));
     }
 
@@ -141,7 +141,7 @@ public class DebugManager {
 
     private static void resetMetaData(ServerPlayer player){
         LevelManager.setLevel(player, 1);
-        SpManager.setSP(player, 0);
+        SpManager.setSp(player, 0);
         XpManager.setXP(player, 0f);
         player.getData(ExplorationProgression.DATA).resetPlayerData();
     }

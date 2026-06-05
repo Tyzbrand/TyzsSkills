@@ -35,7 +35,7 @@ public class DeathPenalties {
         if(spPercentage <= 0) return;
 
         int spToRemove = (int)Math.floor((SpManager.getSP(player) * spPercentage) / 100f);
-        SpManager.removeSP(player, spToRemove);
+        SpManager.tryRemoveSp(player, spToRemove);
     }
 
     public static void applySkillPenalty(ServerPlayer player){

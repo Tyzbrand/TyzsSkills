@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.impl.server.active.DebugManager;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.Skill;
@@ -106,7 +107,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            SpManager.addSP(player, amount);
+                                            TyzsSkillsAPI.sp().tryAddSp(player, amount);
                                             return 1;})))
 
                         .then(Commands.literal("remove")
@@ -114,7 +115,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            SpManager.removeSP(player, amount);
+                                            TyzsSkillsAPI.sp().tryRemoveSp(player, amount);
                                             return 1;})))
 
                         .then(Commands.literal("set")
@@ -122,7 +123,7 @@ public class MainCommand {
                                         .executes(ctx ->{
                                             var player = EntityArgument.getPlayer(ctx, "player");
                                             var amount = IntegerArgumentType.getInteger(ctx, "amount");
-                                            SpManager.setSP(player, amount);
+                                            TyzsSkillsAPI.sp().setSp(player, amount);
                                             return 1;})))
                 );
 

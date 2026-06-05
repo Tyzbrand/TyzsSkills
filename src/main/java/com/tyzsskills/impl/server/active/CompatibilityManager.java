@@ -46,7 +46,7 @@ public class CompatibilityManager {
         if(oldXp > 0) XpManager.setXP(player, (float)oldXp);
 
         double oldSp = legacy.getOldValue("researchpoints");
-        if(oldSp > 0) SpManager.setSP(player, (int)oldSp);
+        if(oldSp > 0) SpManager.setSp(player, (int)oldSp);
 
 
         //Stat data
@@ -101,7 +101,7 @@ public class CompatibilityManager {
         totalRefund += checkRefund(legacy, "harvester_lvl", 14);
 
         if(totalRefund > 0){
-            SpManager.addSP(player, totalRefund);
+            SpManager.tryAddSp(player, totalRefund);
             player.sendSystemMessage(Component.literal("§e[Tyzs Skills] §rObsolete skills converted to points: §6+" + totalRefund + " SP"));
             player.level().playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.5f, 1.0f);
         }
@@ -144,7 +144,7 @@ public class CompatibilityManager {
         if(!didMigrate){
             if(oldData.contains("SKILL_LEVEL")) LevelManager.setLevel(player, oldData.getInt("SKILL_LEVEL"));
 
-            if(oldData.contains("SKILL_POINT")) SpManager.setSP(player, oldData.getInt("SKILL_POINT"));
+            if(oldData.contains("SKILL_POINT")) SpManager.setSp(player, oldData.getInt("SKILL_POINT"));
 
             if(oldData.contains("SKILL_XP")) XpManager.setXP(player, oldData.getFloat("SKILL_XP"));
 
@@ -196,7 +196,7 @@ public class CompatibilityManager {
                     var price = prices[i];
 
                     totalRefund += price;
-                    SpManager.addSP(player, price);
+                    SpManager.tryAddSp(player, price);
                 }
             }
 
@@ -209,7 +209,7 @@ public class CompatibilityManager {
         var manager = SkillManager.get();
         if(manager.getPlayerSkillLevel(player, id) > 0) {
             manager.setSkillLevel(player, id, 0);
-            SpManager.addSP(player, price);
+            SpManager.tryAddSp(player, price);
 
             return price;
         }
