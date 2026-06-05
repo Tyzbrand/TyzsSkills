@@ -25,119 +25,120 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 @ApiStatus.Internal
 public class SkillManager {
 
-    private static final SkillManager INSTANCE = new SkillManager();
-    public static SkillManager get() {return INSTANCE;}
 
-    private final Map<String, Skill> skillCollection = new HashMap<>();
-    private final List<Skill> sortedBehaviorSkills = new ArrayList<>();
+    private static final Map<String, Skill> skillCollection = new HashMap<>();
+    private static final List<Skill> sortedBehaviorSkills = new ArrayList<>();
 
+    //CORE
+    private static boolean setSkillLevelInternal(@NotNull ServerPlayer player, @NotNull Skill skill, int newLevel, boolean syncClient){
+        if(newLevel < 0 || newLevel > skill.getMaximumLevel()) return false;
+        int oldLvl = getPlayerSkillLevel(player, skill.getID());
 
-    public void registerSkill(Skill skill)
-    {
-        var preEvent = new SkillLoadEvent.Pre(skill);
-        NeoForge.EVENT_BUS.post(preEvent);
+        if(oldLvl == newLevel) return false;
 
-        if(preEvent.isCanceled()) return;
+        player.getData(PlayerData.DATA).setSkillLevel(skill.getID(), newLevel);
 
-        var behaviour = SkillDataRegistry.getBehavior(skill.getID());
-        if(behaviour != null){skill.setBehaviour(behaviour);}
+        NeoForge.EVENT_BUS.post(new SkillActionEvent.LevelChange(skill, player, oldLvl, newLevel));
 
-        skillCollection.put(skill.getID(), skill);
-        NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
-    }
+        if(syncClient) PacketDistributor.sendToPlayer(player, new UpdatePayloads.SkillLevelPayload(skill.getID(), newLevel));
 
-    public void buildSortedBehaviors() {
-        sortedBehaviorSkills.clear();
-        for (Skill skill : skillCollection.values()) {
-            if (skill.hasBehaviour()) {
-                sortedBehaviorSkills.add(skill);
-            }
+        if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
+            GenericEffects.applyEffects(skill, player);
         }
-        sortedBehaviorSkills.sort((s1, s2) -> Integer.compare(
-                s2.getBehavior().getPriority(),
-                s1.getBehavior().getPriority()
-        ));
+
+        return true;
     }
 
-    public void clearSkills(){
-        skillCollection.clear();
-        sortedBehaviorSkills.clear();
+    //PUBLIC
+    public static boolean tryAddSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int amount){
+        var skill = getSkill(skillId.toLowerCase()); if(skill == null) return false;
+        return setSkillLevelInternal(player, skill, getPlayerSkillLevel(player, skillId) + amount, true);
     }
 
+    public static boolean tryRemoveSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int amount){
+        var skill = getSkill(skillId.toLowerCase()); if(skill == null) return false;
+        return setSkillLevelInternal(player, skill, getPlayerSkillLevel(player, skillId) - amount, true);
+    }
 
-    public boolean tryBuySkill(ServerPlayer player, String id)
+    public static void setSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int newLevel){
+        var skill = getSkill(skillId.toLowerCase());
+        if(skill != null) setSkillLevelInternal(player, skill, newLevel, true);
+    }
+
+    public static void resetSkillLevels(@NotNull ServerPlayer player){
+        for(var skill : skillCollection.values()) setSkillLevelInternal(player, skill, 0, false);
+    }
+
+    public static boolean tryBuySkill(@NotNull ServerPlayer player, @NotNull String skillId)
     {
-        var skill = getSkill(id);
-        if(player == null || skill == null) return false;
+        skillId = skillId.toLowerCase();
+        var skill = getSkill(skillId);
+        if(skill == null) return false;
 
         var event = new SkillActionEvent.PurchasePre(skill, player);
         NeoForge.EVENT_BUS.post(event);
         if(event.isCanceled()) return false;
 
-        var data = player.getData(PlayerData.DATA);
+        int currentLvl = getPlayerSkillLevel(player, skillId);
 
-        int currentLvl = data.getSkillLevel(id);
-
-        if(skill.canBuy(getSkillContext(player, id), Config.PURCHASE_SYSTEM.get())){
+        if(skill.canBuy(getSkillContext(player, skillId), Config.PURCHASE_SYSTEM.get())){
             var price = skill.getPrices().get(currentLvl);
 
-            SpManager.tryRemoveSp(player, price);
-            player.getData(StatsTracker.DATA).addSpSpent(price);
-
-            setSkillLevel(player, id, currentLvl + 1);
-
-            NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
-            return true;
+            if(setSkillLevelInternal(player, skill, currentLvl + 1, true)) {
+                SpManager.tryRemoveSp(player, price);
+                NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
+                return true;
+            }
         }
         return false;
     }
 
-    public boolean tryBulkBuy(ServerPlayer player, String id){
-        var skill = getSkill(id);
-        if (player == null || skill == null) return false;
+    public static boolean tryBulkBuy(@NotNull ServerPlayer player, @NotNull String skillId){
+
+        skillId = skillId.toLowerCase();
+        var skill = getSkill(skillId);
+        if (skill == null) return false;
 
         var event = new SkillActionEvent.PurchasePre(skill, player);
         NeoForge.EVENT_BUS.post(event);
         if (event.isCanceled()) return false;
 
-        var data = player.getData(PlayerData.DATA);
-        var currentLvl = data.getSkillLevel(id);
+        var currentLvl = player.getData(PlayerData.DATA).getSkillLevel(skillId);
         var maxLvl = skill.getMaximumLevel();
 
         if (currentLvl >= maxLvl) return false;
 
-        var bulkResult = skill.checkBulkBuy(getSkillContext(player, id), Config.PURCHASE_SYSTEM.get());
+        var bulkResult = skill.checkBulkBuy(getSkillContext(player, skillId), Config.PURCHASE_SYSTEM.get());
 
         if (bulkResult.levelToAdd() > 0) {
-            SpManager.tryRemoveSp(player, bulkResult.spToWithdraw());
+            if(setSkillLevelInternal(player, skill, currentLvl + bulkResult.levelToAdd(), true)){
+                SpManager.tryRemoveSp(player, bulkResult.spToWithdraw());
+                NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
 
-            player.getData(StatsTracker.DATA).addSpSpent(bulkResult.spToWithdraw());
-
-            setSkillLevel(player, id, currentLvl + bulkResult.levelToAdd());
-
-            NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
-            return true;
+                return true;
+            }
         }
         return false;
     }
 
-    public boolean tryRefundSkill(ServerPlayer player, String id)
+    public static boolean tryRefundSkill(@NotNull ServerPlayer player, @NotNull String skillId)
     {
-        var skill = getSkill(id);
-        if(player == null || skill == null) return false;
-        if(!skill.canRefund(getSkillContext(player, id), Config.REFUND_SYSTEM.getAsBoolean())) return false;
+        skillId = skillId.toLowerCase();
+        var skill = getSkill(skillId);
+
+        if(skill == null) return false;
+        if(!skill.canRefund(getSkillContext(player, skillId), Config.REFUND_SYSTEM.getAsBoolean())) return false;
 
         var event = new SkillActionEvent.RefundPre(skill, player);
         NeoForge.EVENT_BUS.post(event);
         if(event.isCanceled()) return false;
 
-        var data = player.getData(PlayerData.DATA);
-
-        int currentLvl = data.getSkillLevel(id);
+        int currentLvl = player.getData(PlayerData.DATA).getSkillLevel(skillId);
 
         int initialPrice = skill.getPrices().get(currentLvl - 1);
         float refundRate = (float)(Config.REFUND_PERCENTAGE.get() / 100f);
@@ -146,119 +147,108 @@ public class SkillManager {
         if(initialPrice == 0) finalPrice = 0;
         else finalPrice = Math.round(initialPrice * refundRate);
 
-        if(finalPrice > 0){
-            SpManager.tryAddSp(player, finalPrice);
-            player.getData(StatsTracker.DATA).addSpEarned(finalPrice);
+        if(setSkillLevelInternal(player, skill, currentLvl - 1, true)) {
+            if(finalPrice > 0) SpManager.tryAddSp(player, finalPrice);
+            NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
+            return true;
         }
 
-        setSkillLevel(player, id, currentLvl - 1);
-
-        NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
-
-        return true;
+        return false;
     }
 
-    public boolean tryBulkRefund(ServerPlayer player, String id){
-        var skill = getSkill(id);
-        if (player == null || skill == null || !Config.REFUND_SYSTEM.get()) return false;
+    public static boolean tryBulkRefund(@NotNull ServerPlayer player, @NotNull String skillId){
+        skillId = skillId.toLowerCase();
+        var skill = getSkill(skillId);
+        if (skill == null || !Config.REFUND_SYSTEM.get()) return false;
 
         var event = new SkillActionEvent.RefundPre(skill, player);
         NeoForge.EVENT_BUS.post(event);
         if (event.isCanceled()) return false;
 
-        var data = player.getData(PlayerData.DATA);
-        int currentLvl = data.getSkillLevel(id);
+        int currentLvl = player.getData(PlayerData.DATA).getSkillLevel(skillId);
         if (currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
-        var spToRefund = skill.checkBulkRefund(getSkillContext(player, id), (float)Config.REFUND_PERCENTAGE.getAsDouble(), Config.REFUND_SYSTEM.getAsBoolean());
+        var spToRefund = skill.checkBulkRefund(getSkillContext(player, skillId), (float)Config.REFUND_PERCENTAGE.getAsDouble(), Config.REFUND_SYSTEM.getAsBoolean());
 
-        if (spToRefund > 0) {
-            SpManager.tryAddSp(player, spToRefund);
-            player.getData(StatsTracker.DATA).addSpEarned(spToRefund);
+        if(setSkillLevelInternal(player, skill, 0, true)) {
+            if (spToRefund > 0) SpManager.tryAddSp(player, spToRefund);
+            NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
+            return true;
         }
 
-        setSkillLevel(player, id, 0);
-
-        NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
-
-        return true;
+        return false;
     }
 
 
-    public void bookmarkSkill(ServerPlayer player, String id){
-        if(player == null || getSkill(id.toLowerCase()) == null) return;
-
-        var data = player.getData(PlayerData.DATA);
-
-        var isCurrentlyBookmarked = data.isBookmarked(id);
-        var newValue = !isCurrentlyBookmarked;
-
-        data.triggerBookmark(id);
-        NeoForge.EVENT_BUS.post(new SkillActionEvent.Bookmark(getSkill(id), player));
-        PacketDistributor.sendToPlayer(player, new UpdatePayloads.BookmarksPayload(id.toLowerCase(), newValue));
-    }
-
-    public void setSkillLevel(ServerPlayer player, String id, int lvl){
-        if(player == null || lvl < 0 || lvl > Constants.SKILL_MAX_LEVEL) return;
-
-        var skill = getSkill(id.toLowerCase());
+    public static void bookmarkSkill(@NotNull ServerPlayer player, @NotNull String skillId){
+        skillId = skillId.toLowerCase();
+        var skill = getSkill(skillId);
         if(skill == null) return;
 
         var data = player.getData(PlayerData.DATA);
 
-        lvl = Math.max(0, Math.min(lvl, skill.getMaximumLevel()));
-        int oldLvl = getPlayerSkillLevel(player, id);
+        var isCurrentlyBookmarked = data.isBookmarked(skillId);
+        var newValue = !isCurrentlyBookmarked;
 
-        data.setSkillLevel(id, lvl);
-        NeoForge.EVENT_BUS.post(new SkillActionEvent.LevelChange(skill, player, oldLvl, lvl));
+        data.triggerBookmark(skillId);
+        NeoForge.EVENT_BUS.post(new SkillActionEvent.Bookmark(skill, player));
+        PacketDistributor.sendToPlayer(player, new UpdatePayloads.BookmarksPayload(skillId, newValue));
+    }
 
-        PacketDistributor.sendToPlayer(player, new UpdatePayloads.SkillLevelPayload(id, lvl));
 
 
-        if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
-            GenericEffects.applyEffects(skill, player);
+    //API
+    public static void registerSkill(@NotNull Skill skill) {
+        var preEvent = new SkillLoadEvent.Pre(skill);
+        NeoForge.EVENT_BUS.post(preEvent);
+        if(preEvent.isCanceled()) return;
+
+        var behaviour = SkillDataRegistry.getBehavior(skill.getID());
+        if(behaviour != null){skill.setBehaviour(behaviour);}
+
+        skillCollection.put(skill.getID().toLowerCase(), skill);
+
+        NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
+    }
+
+    public static void buildSortedBehaviors() {
+        sortedBehaviorSkills.clear();
+        for (Skill skill : skillCollection.values()) {
+            if (skill.hasBehaviour()) {
+                sortedBehaviorSkills.add(skill);
+            }
         }
+        sortedBehaviorSkills.sort((s1, s2) -> Integer.compare(s2.getBehavior().getPriority(), s1.getBehavior().getPriority()));
     }
 
-    public void addSKillLevel(ServerPlayer player, String id, int amount){
-        int current = getPlayerSkillLevel(player, id);
-        setSkillLevel(player, id, current + amount);
-    }
-
-    public void removeSkillLevel(ServerPlayer player, String id, int amount){
-        int current = getPlayerSkillLevel(player, id);
-        setSkillLevel(player, id, current - amount);
-    }
-
+    public static void clearSkills() {skillCollection.clear(); sortedBehaviorSkills.clear();}
 
     //getters
-    @Nullable
-    public Skill getSkill(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}
-    public List<Skill> getAllSkills() {return new ArrayList<>(skillCollection.values());}
-    public boolean isSkillLoaded(String id){return skillCollection.containsKey(id);}
-    public List<Skill> getSortedBehaviorSkills() {return sortedBehaviorSkills;}
+    public static @Nullable Skill getSkill(@NotNull String skillId){return skillCollection.getOrDefault(skillId.toLowerCase(), null);}
+    public static boolean isSkillLoaded(String id){return skillCollection.containsKey(id);}
+    public static boolean isSkillBookmarked(@NotNull ServerPlayer player,@NotNull String skillId) {return player.getData(PlayerData.DATA).isBookmarked(skillId.toLowerCase());}
 
-    public int getPlayerSkillLevel(ServerPlayer player, String id) {return player.getData(PlayerData.DATA).getSkillLevel(id);}
-    public List<String> getPlayerOwnedSkillIds(ServerPlayer player){
-        var data = player.getData(PlayerData.DATA).getOwnedSkillIds();
-        return data.stream().filter(this::isSkillLoaded).toList();
+    public static @NotNull SkillContext getSkillContext(@NotNull ServerPlayer player, @NotNull String skillId){
+        return new SkillContext(player, getPlayerSkillLevel(player, skillId.toLowerCase()), LevelManager.getLevel(player), SpManager.getSP(player), getPlayerOwnedSkillIds(player));
     }
-    public Map<String, Integer> getPlayerSkillLevels(ServerPlayer player){
+
+    public static int getPlayerSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId) {
+        return player.getData(PlayerData.DATA).getSkillLevel(skillId.toLowerCase());}
+
+    public static @NotNull List<String> getPlayerOwnedSkillIds(@NotNull ServerPlayer player){
+        return player.getData(PlayerData.DATA).getOwnedSkillIds().stream().filter(SkillManager::isSkillLoaded).toList();
+    }
+
+    public static @NotNull Map<String, Integer> getPlayerSkillLevels(@NotNull ServerPlayer player){
         var ownedSkills = new HashMap<String, Integer>();
         for(var id : getPlayerOwnedSkillIds(player)) ownedSkills.put(id, getPlayerSkillLevel(player, id));
         return ownedSkills;
     }
 
-    //API
-    public List<ISkill> getAllISkills(){return List.copyOf(skillCollection.values());}
-    @Nullable
-    public ISkill getISkill(String id){return skillCollection.getOrDefault(id.toLowerCase(), null);}
+    public static @NotNull @Unmodifiable List<String> getAllBookmarkIDs(@NotNull ServerPlayer player){return player.getData(PlayerData.DATA).getBookmarks();}
 
-    public boolean isSkillBookmarked(ServerPlayer player,String id) {return player.getData(PlayerData.DATA).isBookmarked(id);}
-    public List<String> getAllBookmarkIDs(ServerPlayer player){return player.getData(PlayerData.DATA).getBookmarks();}
+    //CORE
+    @ApiStatus.Internal public static @NotNull List<Skill> getAllSkills() {return new ArrayList<>(skillCollection.values());}
+    @ApiStatus.Internal public static @NotNull List<Skill> getSortedBehaviors() {return new ArrayList<>(sortedBehaviorSkills);}
 
-    @NotNull
-    public SkillContext getSkillContext(ServerPlayer player, String skillID){
-        return new SkillContext(player, getPlayerSkillLevel(player, skillID), LevelManager.getLevel(player), SpManager.getSP(player), getPlayerOwnedSkillIds(player));
-    }
 }

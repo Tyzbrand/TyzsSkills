@@ -7,6 +7,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.TyzsSkillsAPI;
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.active.DebugManager;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.Skill;
@@ -135,38 +136,47 @@ public class MainCommand {
                         .then(Commands.literal("set")
                                 .then(Commands.argument("skill_id", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                SkillManager.get().getAllSkills().stream().map(Skill::getID), builder
+                                                TyzsSkillsAPI.skills().getSkillList().stream().map(ISkill::getID), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(0, Constants.SKILL_MAX_LEVEL))
                                             .executes(ctx -> {
                                                 var player = EntityArgument.getPlayer(ctx, "player");
                                                 var id = StringArgumentType.getString(ctx, "skill_id");
-                                                var level = IntegerArgumentType.getInteger(ctx, "level");
-                                                SkillManager.get().setSkillLevel(player, id, level);
+                                                var skill = TyzsSkillsAPI.skills().getSkill(id);
+                                                if(skill == null) return 0;
+
+                                                var level = Math.min(IntegerArgumentType.getInteger(ctx, "level"), skill.getMaximumLevel());
+                                                TyzsSkillsAPI.skills().setSkillLevel(player, id, level);
                                                 return 1;}))))
+
                         .then(Commands.literal("add")
                                 .then(Commands.argument("skill_id", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                SkillManager.get().getAllSkills().stream().map(Skill::getID), builder
+                                                TyzsSkillsAPI.skills().getSkillList().stream().map(ISkill::getID), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, Constants.SKILL_MAX_LEVEL))
                                                 .executes(ctx -> {
                                                     var player = EntityArgument.getPlayer(ctx, "player");
                                                     var id = StringArgumentType.getString(ctx, "skill_id");
-                                                    var level = IntegerArgumentType.getInteger(ctx, "level");
-                                                    SkillManager.get().addSKillLevel(player, id, level);
+                                                    var skill = TyzsSkillsAPI.skills().getSkill(id);
+                                                    if(skill == null) return 0;
+
+                                                    var level = Math.min(IntegerArgumentType.getInteger(ctx, "level"),
+                                                            skill.getMaximumLevel() - TyzsSkillsAPI.skills().getSkillLevel(player, id));
+                                                    TyzsSkillsAPI.skills().tryAddSkillLevel(player, id, level);
                                                     return 1;}))))
+
                         .then(Commands.literal("remove")
                                 .then(Commands.argument("skill_id", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                SkillManager.get().getAllSkills().stream().map(Skill::getID), builder
+                                                TyzsSkillsAPI.skills().getSkillList().stream().map(ISkill::getID), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, Constants.SKILL_MAX_LEVEL))
                                                 .executes(ctx -> {
                                                     var player = EntityArgument.getPlayer(ctx, "player");
                                                     var id = StringArgumentType.getString(ctx, "skill_id");
-                                                    var level = IntegerArgumentType.getInteger(ctx, "level");
-                                                    SkillManager.get().removeSkillLevel(player, id, level);
+                                                    var level = Math.min(IntegerArgumentType.getInteger(ctx, "level"), TyzsSkillsAPI.skills().getSkillLevel(player, id));
+                                                    TyzsSkillsAPI.skills().tryRemoveSkillLevel(player, id, level);
                                                     return 1;})))));
     }
 

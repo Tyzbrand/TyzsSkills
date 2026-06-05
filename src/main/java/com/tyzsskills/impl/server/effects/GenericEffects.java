@@ -25,7 +25,7 @@ public class GenericEffects {
 
         var healthSnapshot = player.getHealth();
         var attributeChanged = false;
-        var currentLvl = SkillManager.get().getPlayerSkillLevel(player, skill.getID());
+        var currentLvl = SkillManager.getPlayerSkillLevel(player, skill.getID());
 
         var expectedAttributes = new HashSet<Holder<Attribute>>();
         if(currentLvl > 0) {
@@ -112,7 +112,7 @@ public class GenericEffects {
 
 
     public static void restoreEffects(ServerPlayer newPlayer){
-        for(var skill : SkillManager.get().getAllSkills()){
+        for(var skill : SkillManager.getAllSkills()){
             if(skill.getType() != Enums.SkillType.GENERIC && skill.getType() != Enums.SkillType.CUSTOM) continue;
             applyEffects(skill, newPlayer);
         }

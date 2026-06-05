@@ -14,6 +14,7 @@ import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.commands.MainCommand;
 import com.tyzsskills.impl.server.events.RuntimeEvents;
 import com.tyzsskills.impl.server.payloads.*;
+import com.tyzsskills.impl.server.skills.SkillWrapper;
 import com.tyzsskills.impl.server.sp.SpWrapper;
 import com.tyzsskills.impl.server.wrappers.*;
 import com.tyzsskills.impl.server.xp.XpGainRegistry;
@@ -243,7 +244,7 @@ public class Tyzsskills {
 
     @SubscribeEvent
     public void onServerStop(ServerStoppingEvent event){
-        SkillManager.get().clearSkills();
+        SkillManager.clearSkills();
 
         XpGainRegistry.clearAll();
         LevelManager.clearPool();

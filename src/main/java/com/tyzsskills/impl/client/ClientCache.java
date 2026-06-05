@@ -172,6 +172,8 @@ public class ClientCache {
             var diff = sp - old;
             if(diff < 0) spSpent += Math.abs(diff);
             else if(diff > 0) spEarned += diff;
+
+            logUpdate("Sp Synced: New Cached Sp Value [" + sp + "]");
         }
 
         public void updateXp(@NotNull UpdatePayloads.XpPayload payload) {

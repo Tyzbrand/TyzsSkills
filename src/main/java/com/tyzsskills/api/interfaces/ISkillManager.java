@@ -3,134 +3,133 @@ package com.tyzsskills.api.interfaces;
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Interface used to manage player and server skills
- * Client sync is handled automatically
+ * Interface used to manage player and server skills.
+ * Client sync is handled automatically when not specified.
  */
 public interface ISkillManager {
 
+    //======================SKILL ACTIONS======================
     /**
-     * @param id Skill id to check
-     * @return true if the server skill list contains the skill for the specified id, false otherwise
+     * @param skillId Valid id of the targeted skill (in lower case).
+     * @param newLevel New level to overwrite the current one (must be >= {@code 0})
+     * @implNote If the new level exceeds the skill's max level, the change will fail.
      */
-    boolean isSkillLoaded(String id);
+    void setSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int newLevel);
 
     /**
-     * @param id Valid id of the targeted skill (in lowercase)
-     * @return targeted skill level (returns 0 if the skill is invalid)
+     * Resets all the player skills back to level {@code 0}.
+     * @implNote Works only for loaded skills. Client is not synchronized.
      */
-    int getSkillLevel(ServerPlayer player, String id);
+    void resetSkillLevels(@NotNull ServerPlayer player);
 
     /**
-     * @param id Valid id of the targeted skill (in lowercase)
-     * @param amount The amount to add (must be > 0)
-     * NOTE: if the new level exceeds the skill's max level, extra levels will not be added
+     * @param skillId Valid id of the targeted skill (in lowercase).
+     * @param amount The amount of levels to add (must be > {@code 0}).
+     * @return {@code true} if the addition is successful, {@code false} otherwise.
+     * @implNote If the new level exceeds the skill's max level, the addition will fail.
      */
-    void addSkillLevel(ServerPlayer player, String id, int amount);
+    boolean tryAddSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int amount);
 
     /**
-     * @param id Valid id of the targeted skill (in lowercase)
-     * @param amount The amount to remove (works if the player has sufficient levels, must be > 0)
+     * @param skillId Valid id of the targeted skill (in lowercase).
+     * @param amount The amount of levels to remove (must be > {@code 0}).
+     * @return {@code true} if the withdrawal is successful, {@code false} otherwise.
+     * @implNote The player must have sufficient level for the skill.
      */
-    void removeSkillLevel(ServerPlayer player, String id, int amount);
+    boolean tryRemoveSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int amount);
+
 
     /**
-     * @param id Valid id of the targeted skill (in lower case)
-     * @param amount The amount to set (must be >= 0)
-     * NOTE: if the new level exceeds the skill's max level, extra levels will not be added
+     * Tries to buy a skill according to the rules of the mod (not only a verification).
+     * @param skillId Valid id of the targeted skill (in lowercase).
+     * @return {@code true} if the skill has been purchased, {@code false} otherwise.
+     * @implNote If the process is successful data are handled automatically (sp, skill lvl and stats).
      */
-    void setSkillLevel(ServerPlayer player, String id, int amount);
+    boolean tryBuySkill(@NotNull ServerPlayer player, @NotNull String skillId);
+
 
     /**
-     * @deprecated For namespace consistency
-     * Use {@link #tryBuySkill(ServerPlayer, String)} instead
+     * Tries to refund a skill according to the rules of the mod (not only a verification).
+     * @param skillId Valid id of the targeted skill (in lowercase).
+     * @return {@code true} if the skill has been refunded, {@code false} otherwise.
+     * @implNote If the process is successful data are handled automatically (sp, skill lvl, and stats).
      */
-    @Deprecated(since = "6.2.0", forRemoval = true)
-    default boolean buySkill(ServerPlayer player, String id){
-        return this.tryBuySkill(player, id);
-    }
-
-    /**
-     * Tries to buy a skill according to the rules of the mod (not only a verification)
-     * @param id Valid id of the targeted skill (in lowercase)
-     * @return true if the skill has been purchased, false otherwise
-     * NOTE: if the process is successful data are handled automatically (sp, skill lvl and stats)
-     */
-    boolean tryBuySkill(ServerPlayer player, String id);
-
-    /**
-     *  @deprecated For namespace consistency
-     *  Use {@link #tryRefundSkill(ServerPlayer, String)} instead
-     */
-    @Deprecated(since = "6.2.0", forRemoval = true)
-    default boolean refundSkill(ServerPlayer player, String id){
-        return this.tryRefundSkill(player, id);
-    }
-
-    /**
-     * Tries to refund a skill according to the rules of the mod (not only a verification)
-     * @param id Valid id of the targeted skill (in lowercase)
-     * @return true if the skill has been refunded, false otherwise
-     * NOTE: if the process is successful data are handled automatically (sp, skill lvl, and stats)
-     */
-    boolean tryRefundSkill(ServerPlayer player, String id);
+    boolean tryRefundSkill(@NotNull ServerPlayer player, @NotNull String skillId);
 
     /**
      * Tries to buy the maximum levels a player can afford, according to the rules of the mod (not only a verification).
-     * @param id Valid id of the targeted skill (in lowercase)
+     * @param skillId Valid id of the targeted skill (in lowercase).
      * @return {@code true} if the bulk has succeeded, {@code false} otherwise.
-     * NOTE: if the process is successful data are handled automatically (sp, skill lvl, and stats)
+     * @implNote If the process is successful data are handled automatically (sp, skill lvl, and stats).
      */
-    boolean tryBulkBuy(ServerPlayer player, String id);
+    boolean tryBulkBuy(@NotNull ServerPlayer player, @NotNull String skillId);
 
     /**
      * Tries to refund the skill levels to 0, according to the rules of the mod (not only a verification).
-     * @param id Valid id of the targeted skill (in lowercase).
+     * @param skillId Valid id of the targeted skill (in lowercase).
      * @return {@code true} if the bulk has succeeded, {@code false} otherwise.
      * NOTE: if the process is successful data are handled automatically (sp, skill lvl, and stats).
      */
-    boolean tryBulkRefund(ServerPlayer player, String id);
+    boolean tryBulkRefund(@NotNull ServerPlayer player, @NotNull String skillId);
+
+
+    //======================SKILL DATA======================
+    /**
+     * @param skillId Skill id to check.
+     * @return {@code true} if the server skill list contains the skill for the specified id, {@code false} otherwise.
+     */
+    boolean isSkillLoaded(@NotNull String skillId);
 
     /**
-     * @return a copy of the server skill list (contains all loaded skills)
+     * @param skillId Valid id of the targeted skill (in lowercase).
+     * @return Targeted skill's level (returns {@code 0} if the skill is invalid).
      */
-    List<ISkill> getSkillList();
+    int getSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId);
 
     /**
-     * @param id Valid id of the targeted skill (in lowercase)
-     * @return the skill linked to the specified id, or null if it doesn't exist
+     * @return A copy of the server skill list (contains all loaded skills).
      */
-    @Nullable
-    ISkill getSkill(String id);
+    @NotNull List<ISkill> getSkillList();
 
     /**
-     * @param id Valid id of the targeted skill (in lowercase)
-     * NOTE: if the skill is already bookmarked, it will be removed from bookmarks and vice versa
+     * @param skillId Valid id of the targeted skill (in lowercase).
+     * @return The {@link ISkill} linked to the specified id, or {@code null} if it doesn't exist.
      */
-    void triggerSkillBookmark(ServerPlayer player, String id);
+    @Nullable ISkill getSkill(@NotNull String skillId);
+
+
+    //======================BOOKMARKS======================
+    /**
+     * Triggers a bookmark if the skill isn't already bookmarked and vice versa.
+     * @param skillID Valid id of the targeted skill (in lowercase).
+     */
+    void triggerSkillBookmark(@NotNull ServerPlayer player, @NotNull String skillID);
 
     /**
-     * @param id Valid id of the targeted skill (in lowercase)
-     * @return true if the skill is bookmarked by the player, false otherwise
+     * @param skillID Valid id of the targeted skill (in lowercase).
+     * @return {@code true} if the skill is bookmarked by the player, {@code false} otherwise.
      */
-    boolean isSkillBookmarked(ServerPlayer player, String id);
+    boolean isSkillBookmarked(@NotNull ServerPlayer player, @NotNull String skillID);
 
     /**
-     * @return a copy of player's bookmarks (as a list of skill IDs)
+     * @return A copy of player's bookmarks (as a read-only list of skill IDs).
      */
-    List<String> getBookmarkedSkillIDs(ServerPlayer player);
+    @NotNull @Unmodifiable List<String> getBookmarkedSkillIDs(@NotNull ServerPlayer player);
 
-
+    //======================MISC======================
     /**
-     * Triggers the skill activation overlay on the client side
-     * Useful for custom events handled outside of standard SkillBehaviors
-     * @param id The valid ID of the targeted skill used as ref icon (in lowercase)
+     * Triggers the skill activation overlay on the client side.
+     * Useful for custom events handled outside of standard SkillBehaviors.
+     * @param skillId The valid ID of the targeted skill used as ref icon (in lowercase).
      */
-    void triggerSkillActivationOverlay(ServerPlayer player, String id);
+    void triggerSkillActivationOverlay(@NotNull ServerPlayer player, @NotNull String skillId);
 
 
 }

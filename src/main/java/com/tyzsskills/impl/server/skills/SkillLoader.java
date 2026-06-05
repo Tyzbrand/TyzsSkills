@@ -23,7 +23,7 @@ import java.util.function.Function;
 @ApiStatus.Internal
 public class SkillLoader {
 
-    private static Map<String, JsonObject> skillQueue = new HashMap<>();
+    private final static Map<String, JsonObject> skillQueue = new HashMap<>();
 
     public static void preLoadSkill(JsonObject source, @NotNull String filename, boolean isDefault){
         if(source == null) {
@@ -52,21 +52,21 @@ public class SkillLoader {
 
     public static void finalizePreLoading() {
         for (var kvp : skillQueue.entrySet()) loadSkill(kvp.getKey(), kvp.getValue());
-        SkillManager.get().buildSortedBehaviors();
+        SkillManager.buildSortedBehaviors();
         skillQueue.clear();
 
-        for(var skill : SkillManager.get().getAllSkills()){
+        for(var skill : SkillManager.getAllSkills()){
             var incompatibilities = skill.getRawIncompatibilities();
             var skillID = skill.getID();
 
             for (var id : incompatibilities){
-                if(!SkillManager.get().isSkillLoaded(id)){
+                if(!SkillManager.isSkillLoaded(id)){
                     ErrorManager.registerSkillError(skillID, "incompatibility : [" + id + "] does not exist.");
                     skill.removeIncompatibility(id);
                     continue;
                 }
 
-                var conflict = SkillManager.get().getSkill(id);
+                var conflict = SkillManager.getSkill(id);
                 if(conflict == null) continue;
 
                 if(!conflict.isSkillIncompatible(skillID)) conflict.addIncompatibility(skillID);
@@ -74,7 +74,7 @@ public class SkillLoader {
 
             var prerequisites = skill.getRawPrerequisites();
             for (var prerequisite : prerequisites){
-                if(!SkillManager.get().isSkillLoaded(prerequisite)) {
+                if(!SkillManager.isSkillLoaded(prerequisite)) {
                     ErrorManager.registerSkillError(skillID, "prerequisite : [" + prerequisite + "] does not exist.");
                     skill.removePrerequisite(prerequisite);
                 }
@@ -84,12 +84,12 @@ public class SkillLoader {
 
     private static void loadSkill(String id, JsonObject source){
         Boolean state = getSafeElement(source, "active", JsonPrimitive::getAsBoolean);
-        if(state == null) state = false;
+        if(state == null) state = true;
         if(!state) return; //Les skills désactivés ne sont pas chargés
 
         Integer maxLevel = getSafeElement(source, "maximumLevel", JsonPrimitive::getAsInt);
         if(maxLevel == null) maxLevel = 1;
-        maxLevel = Math.min(Math.max(maxLevel, 1), Constants.SKILL_MAX_LEVEL);
+        maxLevel = Math.clamp(maxLevel, 1, Constants.SKILL_MAX_LEVEL);
 
         List<Integer> prices = getSafeList(source, "prices", JsonElement::getAsInt);
         if(prices == null) {ErrorManager.registerSkillError(id, "invalid price list"); return;}
@@ -153,7 +153,7 @@ public class SkillLoader {
 
             if(modifiers.isEmpty()) {ErrorManager.registerSkillError(id, "one modifier is required"); return;}
 
-            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category,
+            SkillManager.registerSkill(new Skill(true, id, maxLevel, prices, type, category,
                     icon, displayName, description, modifiers, null, config));
             return;
 
@@ -186,7 +186,7 @@ public class SkillLoader {
 
             if(valueSet.isEmpty()){ErrorManager.registerSkillError(id, "one value set is required");return;}
 
-            SkillManager.get().registerSkill(new Skill(true, id, maxLevel, prices, type, category,
+            SkillManager.registerSkill(new Skill(true, id, maxLevel, prices, type, category,
                     icon, displayName, description, null, valueSet, config));
         }
     }
@@ -242,8 +242,6 @@ public class SkillLoader {
             return null;
         }
     }
-
-
 
 
     //Utils

@@ -31,7 +31,7 @@ public class DebugManager {
     public static void reload(MinecraftServer server) throws IOException {
         ErrorManager.clearErrors();
 
-        SkillManager.get().clearSkills();
+        SkillManager.clearSkills();
         XpGainRegistry.clearAll();
         LevelManager.clearPool();
 
@@ -64,16 +64,15 @@ public class DebugManager {
         LevelManager.checkForLevelUp(player, XpManager.getXP(player));
         GenericEffects.restoreEffects(player);
 
-        var manager = SkillManager.get();
-        for (var skillId : manager.getPlayerOwnedSkillIds(player)){
+        for (var skillId : SkillManager.getPlayerOwnedSkillIds(player)){
 
-            var skill = manager.getSkill(skillId);
+            var skill = SkillManager.getSkill(skillId);
             if(skill == null) continue;
 
-            var lvl = manager.getPlayerSkillLevel(player, skillId);
+            var lvl = SkillManager.getPlayerSkillLevel(player, skillId);
 
-            var incompatibilities = skill.getIncompatibilities(manager.getPlayerOwnedSkillIds(player));
-            var prerequisites = skill.getPrerequisites(manager.getPlayerOwnedSkillIds(player));
+            var incompatibilities = skill.getIncompatibilities(SkillManager.getPlayerOwnedSkillIds(player));
+            var prerequisites = skill.getPrerequisites(SkillManager.getPlayerOwnedSkillIds(player));
 
             if(!skill.meetsLevelRequirement(LevelManager.getLevel(player))){
                 cleanRefund(0, lvl, player, skill);
@@ -83,8 +82,8 @@ public class DebugManager {
                 cleanRefund(0, lvl, player, skill);
 
                 for(var id : incompatibilities){
-                    var conflict = manager.getSkill(id);
-                    if(conflict != null )cleanRefund(0, manager.getPlayerSkillLevel(player, id), player, conflict);
+                    var conflict = SkillManager.getSkill(id);
+                    if(conflict != null )cleanRefund(0, SkillManager.getPlayerSkillLevel(player, id), player, conflict);
                 }
                 continue;
             }
@@ -93,7 +92,7 @@ public class DebugManager {
                 continue;
             }
 
-            if(!manager.isSkillLoaded(skill.getID())) continue;
+            if(!SkillManager.isSkillLoaded(skill.getID())) continue;
 
             var maxLvl = skill.getMaximumLevel();
             if(lvl <= maxLvl) continue;
@@ -110,7 +109,7 @@ public class DebugManager {
             spToRefund += skill.getPrices().get(i);
         }
 
-        SkillManager.get().setSkillLevel(player, skill.getID(), targetLvl);
+        SkillManager.setSkillLevel(player, skill.getID(), targetLvl);
 
         if(spToRefund <= 0) return;
         SpManager.tryAddSp(player, spToRefund);
@@ -153,11 +152,9 @@ public class DebugManager {
     }
 
     private static void resetSkills(ServerPlayer player){
-        var manager = SkillManager.get();
-
-        for (var skill : manager.getAllSkills()){
-            if(manager.getPlayerSkillLevel(player, skill.getID().toLowerCase()) > 0){
-                manager.setSkillLevel(player, skill.getID().toLowerCase(), 0);
+        for (var skill : SkillManager.getAllSkills()){
+            if(SkillManager.getPlayerSkillLevel(player, skill.getID().toLowerCase()) > 0){
+                SkillManager.setSkillLevel(player, skill.getID().toLowerCase(), 0);
             }
         }
     }

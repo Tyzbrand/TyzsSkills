@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class UpdatePayloads {
 
     public record PlayerSyncData(int level, int sp, float xp, float totalXp, int spEarned, int spSpent){
@@ -202,13 +203,12 @@ public class UpdatePayloads {
 
     //UTILS
     public static UpdatePayloads.InitPayload getInitPayload(ServerPlayer player){
-        var skillManager = SkillManager.get();
         var data = player.getData(StatsTracker.DATA);
 
         return new UpdatePayloads.InitPayload(
-                new UpdatePayloads.ServerSyncData(skillManager.getAllSkills(),
-                        skillManager.getAllBookmarkIDs(player), CategoryLoader.getCategories(),
-                        skillManager.getPlayerSkillLevels(player)),
+                new UpdatePayloads.ServerSyncData(SkillManager.getAllSkills(),
+                        SkillManager.getAllBookmarkIDs(player), CategoryLoader.getCategories(),
+                        SkillManager.getPlayerSkillLevels(player)),
 
                 new UpdatePayloads.PlayerSyncData(LevelManager.getLevel(player),
                         SpManager.getSP(player), XpManager.getXP(player),

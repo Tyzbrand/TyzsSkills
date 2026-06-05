@@ -112,7 +112,7 @@ public class CompatibilityManager {
 
     private static void migrateSkill(ServerPlayer player, LegacyData data, String oldKey, String newId){
         double value = data.getOldValue(oldKey);
-        if(value > 0) SkillManager.get().setSkillLevel(player, newId, (int)value);
+        if(value > 0) SkillManager.setSkillLevel(player, newId, (int)value);
     }
 
 
@@ -149,14 +149,14 @@ public class CompatibilityManager {
             if(oldData.contains("SKILL_XP")) XpManager.setXp(player, oldData.getFloat("SKILL_XP"), false);
 
 
-            for (var skill : SkillManager.get().getAllSkills()){
+            for (var skill : SkillManager.getAllSkills()){
                 var id = skill.getID().toLowerCase();
                 var lvlKey = id + "_lvl";
                 var bkKey = id + "_bookmark";
 
-                if(oldData.contains(lvlKey)) SkillManager.get().setSkillLevel(player, id, oldData.getInt(lvlKey));
+                if(oldData.contains(lvlKey)) SkillManager.setSkillLevel(player, id, oldData.getInt(lvlKey));
 
-                if(oldData.contains(bkKey)) SkillManager.get().bookmarkSkill(player, id);
+                if(oldData.contains(bkKey)) SkillManager.bookmarkSkill(player, id);
             }
         }
         data.putTag(MIGRATION_TAG_V2);
@@ -184,13 +184,12 @@ public class CompatibilityManager {
             totalRefund += checkAndRefundTrait(player, "deep_rest", 30);
             totalRefund += checkAndRefundTrait(player, "keepsake", 65);
 
-            var manager = SkillManager.get();
-            var traitSurgeLvl = manager.getPlayerSkillLevel(player, "trait_surge");
+            var traitSurgeLvl = SkillManager.getPlayerSkillLevel(player, "trait_surge");
             if(traitSurgeLvl > 0){
                 var prices = new int[]{10, 15, 20, 30, 45};
                 traitSurgeLvl = Math.min(traitSurgeLvl, 5);
 
-                manager.setSkillLevel(player, "trait_surge", 0);
+                SkillManager.setSkillLevel(player, "trait_surge", 0);
 
                 for(int i = 0; i < traitSurgeLvl; i++){
                     var price = prices[i];
@@ -206,9 +205,8 @@ public class CompatibilityManager {
     }
 
     private static int checkAndRefundTrait(ServerPlayer player, String id, int price){
-        var manager = SkillManager.get();
-        if(manager.getPlayerSkillLevel(player, id) > 0) {
-            manager.setSkillLevel(player, id, 0);
+        if(SkillManager.getPlayerSkillLevel(player, id) > 0) {
+            SkillManager.setSkillLevel(player, id, 0);
             SpManager.tryAddSp(player, price);
 
             return price;
