@@ -23,17 +23,19 @@ public class ExportManager {
         var mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) return;
 
+        var cache = ClientCache.get();
+
         Map<String, Integer> purchasedSkills = new HashMap<>();
-        for (var id : ClientCache.getPurchasedSkills()){
-            purchasedSkills.put(id, ClientCache.getSkillLevel(id));
+        for (var id : cache.getPurchasedSkills()){
+            purchasedSkills.put(id, cache.getSkillLevel(id));
         }
 
         var data = new ExportData(
                 mc.level.getGameTime(),
-                ClientCache.getLvl(),
-                ClientCache.getXP(),
-                ClientCache.getSP(),
-                ClientCache.getTotalXpPerHour(),
+                cache.getLevel(),
+                cache.getXp(),
+                cache.getSp(),
+                cache.getTotalXpPerHour(),
                 purchasedSkills
         );
 

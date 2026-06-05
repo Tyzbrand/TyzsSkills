@@ -18,7 +18,6 @@ version = mod_version
 group = mod_group_id
 
 repositories {
-    // Le dépôt officiel KubeJS selon la doc GitHub
     maven {
         url = "https://maven.latvian.dev/releases"
         content {
@@ -27,7 +26,6 @@ repositories {
         }
     }
 
-    // Le dépôt Jitpack pour la librairie d'images GIF
     maven {
         url = 'https://jitpack.io'
         content {

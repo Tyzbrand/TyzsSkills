@@ -2,6 +2,7 @@ package com.tyzsskills.impl.client.tools;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.Category;
 import com.tyzsskills.api.records.SortType;
 import com.tyzsskills.impl.client.ClientCache;
@@ -39,7 +40,7 @@ public class SortingTools {
     private static String currentSearchQuery = "";
 
 
-    private static final List<Skill> currentSkillOrder = new ArrayList<>();
+    private static final List<ISkill> currentSkillOrder = new ArrayList<>();
 
 
     public static void registerSortingType(@NotNull SortType sortType){
@@ -51,8 +52,9 @@ public class SortingTools {
     }
 
 
-    public static List<Skill> refreshList(){
-        List<Skill> listToSort =  new ArrayList<>(ClientCache.getAllSkills());
+    public static List<ISkill> refreshList(){
+        var cache = ClientCache.get();
+        List<ISkill> listToSort =  new ArrayList<>(cache.getAllSkills());
 
 
         if(!currentSearchQuery.isBlank()){
@@ -61,16 +63,16 @@ public class SortingTools {
         }
 
         if(!showUnbuyable) listToSort.removeIf(s ->
-                !s.canBuy(ClientCache.getCurrentContext(s.getID()), ClientCache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true)));
+                !s.canBuy(cache.getCurrentContext(s.getID()), cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true)));
 
-        if(!showMaxed) listToSort.removeIf(s -> ClientCache.getSkillLevel(s.getID()) >= s.getMaximumLevel());
+        if(!showMaxed) listToSort.removeIf(s -> cache.getSkillLevel(s.getID()) >= s.getMaximumLevel());
 
         if(mainCategory != null){
-            if(mainCategory == Enums.SortingCategory.BOOKMARKS) listToSort.removeIf(s -> !ClientCache.getAllBookmarkedIDs().contains(s.getID()));
+            if(mainCategory == Enums.SortingCategory.BOOKMARKS) listToSort.removeIf(s -> !cache.getBookmarkedSkills().contains(s.getID()));
         }
         else listToSort.removeIf(s -> !s.getCategory().equals(currentCategory));
 
-        listToSort.removeIf(s -> !s.isVisible() && ClientCache.getSkillLevel(s.getID()) < 1);
+        listToSort.removeIf(s -> !s.isVisible() && cache.getSkillLevel(s.getID()) < 1);
 
         if(!activeSortTypes.isEmpty()){
             var currentSortType = activeSortTypes.get(currentSortTypeIndex);
@@ -139,7 +141,7 @@ public class SortingTools {
 
 
     //Getters
-    public static List<Skill> getCurrentSkillOrder() {
+    public static List<ISkill> getCurrentSkillOrder() {
         return activeSortTypes.isEmpty() ? refreshList() : List.copyOf(currentSkillOrder);
     }
 
@@ -177,13 +179,13 @@ public class SortingTools {
             var index = catOffset + i;
 
             if(index >= rawCategories.size()) categories[i] = null;
-            else categories[i] = ClientCache.getCategory(rawCategories.get(index));
+            else categories[i] = ClientCache.get().getCategory(rawCategories.get(index));
         }
         return categories;
     }
 
     //Util
-    private static boolean queryCheck(String query, Skill skill){
+    private static boolean queryCheck(String query, ISkill skill){
         var id = skill.getID().toLowerCase();
         var name = Component.translatable(skill.getDisplayName()).getString().toLowerCase(Locale.ROOT);
         var description = Component.translatable(skill.getDescription()).getString().toLowerCase(Locale.ROOT);

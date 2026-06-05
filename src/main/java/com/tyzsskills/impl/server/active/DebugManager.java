@@ -9,7 +9,7 @@ import com.tyzsskills.impl.server.attachments.LimitsTracker;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.payloads.ResetPayload;
+import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpGainRegistry;
@@ -54,15 +54,7 @@ public class DebugManager {
 
         for(var player : server.getPlayerList().getPlayers()){
 
-            PacketDistributor.sendToPlayer(player, new ResetPayload(Enums.ResetType.ALL));
-
-            ClientSynchronizer.syncSkillList(player);
-            ClientSynchronizer.syncConfig(player);
-            ClientSynchronizer.syncMainData(player);
-            ClientSynchronizer.syncStats(player);
-            ClientSynchronizer.syncSkillBookmarks(player);
-            ClientSynchronizer.syncSkillLevels(player);
-            ClientSynchronizer.syncCategories(player);
+            PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
 
             if (player.hasPermissions(2) && ErrorManager.hasErrors()) {
                 ErrorManager.printErrors(player);
@@ -144,7 +136,7 @@ public class DebugManager {
 
         }
         NeoForge.EVENT_BUS.post(new PlayerResetEvent(player));
-        PacketDistributor.sendToPlayer(player, new ResetPayload(type));
+        PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
     }
 
     private static void resetMetaData(ServerPlayer player){

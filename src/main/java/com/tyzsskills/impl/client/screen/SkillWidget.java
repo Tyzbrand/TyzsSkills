@@ -5,6 +5,7 @@ import com.mojang.datafixers.util.Either;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.SoundPlayer;
 import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
@@ -49,19 +50,19 @@ public class SkillWidget {
     protected static final int U_BOOK_ACTIVE = 237 , V_BOOK_ACTIVE = 174;
     protected static final int U_BOOK_NEUTRAL = 246;
 
-
-
     protected static final int U_REFUND_BTN = 200 ,V_REFUND_BTN = 173;
     protected static final int U_REFUND_BTN_HOVER = 209;
     protected static final int U_REFUND_ALL_BTN = 283;
     protected static final int U_REFUND_ALL_BTN_HOVER = 292;
 
-    protected final Skill skill;
+    protected final ISkill skill;
     protected final ResourceLocation icon;
     protected int x, y;
+    protected final ClientCache cache;
 
-    public SkillWidget(Skill skill){
+    public SkillWidget(ISkill skill){
         this.skill = skill;
+        this.cache = ClientCache.get();
 
         var candidate = ResourceLocation.tryParse(skill.getIcon());
 
@@ -76,9 +77,9 @@ public class SkillWidget {
         this.y = y;
 
         Font font = Minecraft.getInstance().font;
-        boolean isLocked = !skill.isAvailable(ClientCache.getCurrentContext(skill.getID()));
+        boolean isLocked = !skill.isAvailable(cache.getCurrentContext(skill.getID()));
 
-        int currentU = ClientCache.getSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel() ? U_BACKGROUND_FINAL : U_BACKGROUND;
+        int currentU = cache.getSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel() ? U_BACKGROUND_FINAL : U_BACKGROUND;
 
         if(isLocked){
             drawWithShade(gui, () -> {
@@ -96,7 +97,7 @@ public class SkillWidget {
 
         MutableComponent text = !isLocked ?
                 Component.translatable("gui.tyzs_skills.Lvl")
-                .append(": " + ClientCache.getSkillLevel(skill.getID()) + "/" + skill.getMaximumLevel())
+                .append(": " + cache.getSkillLevel(skill.getID()) + "/" + skill.getMaximumLevel())
                 :
                 Component.translatable("gui.tyzs_skills.locked");
 
@@ -132,7 +133,7 @@ public class SkillWidget {
             else gui.blit(REF_TEXTURE, x+48, y+16, U_BOOK_BTN_HOVER, V_BOOK_BTN_HOVER, 11, 11, TEXTURE_W, TEXTURE_H);
         }
 
-       if(ClientCache.isSkillBookmarked(skill.getID().toLowerCase())){
+       if(cache.isSkillBookMarked(skill.getID().toLowerCase())){
            if(isLocked) drawWithShade(gui, () -> gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_ACTIVE, V_BOOK_ACTIVE, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H));
            else gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_ACTIVE, V_BOOK_ACTIVE, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
         }
@@ -165,9 +166,9 @@ public class SkillWidget {
 
     public List<Either<FormattedText, TooltipComponent>> getTooltip(int mouseX, int mouseY){
         List<Either<FormattedText, TooltipComponent>> tooltip = new ArrayList<>();
-        int currentLevel = ClientCache.getSkillLevel(this.skill.getID().toLowerCase());
+        int currentLevel = cache.getSkillLevel(this.skill.getID().toLowerCase());
 
-        boolean isLocked = !skill.isAvailable(ClientCache.getCurrentContext(skill.getID()));
+        boolean isLocked = !skill.isAvailable(cache.getCurrentContext(skill.getID()));
 
         if(isMouseOver(mouseX, mouseY, x+4, y+4, 22, 22)) {
             tooltip.add(Either.right(new SkillTooltipData(this.skill)));
@@ -211,8 +212,8 @@ public class SkillWidget {
 
             SoundPlayer.PlayUIClick();
 
-            if(isShiftPressed()) ClientCache.predictBuyMax(skill);
-            else ClientCache.predictBuy(skill);
+            if(isShiftPressed()) cache.predictBuyMax(skill);
+            else cache.predictBuy(skill);
 
             var actionTask = isShiftPressed() ? 3 : 0;
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), actionTask));
@@ -225,8 +226,8 @@ public class SkillWidget {
 
             SoundPlayer.PlayUIClick();
 
-            if(isShiftPressed()) ClientCache.predictRefundMax(skill);
-            else ClientCache.predictRefund(skill);
+            if(isShiftPressed()) cache.predictRefundMax(skill);
+            else cache.predictRefund(skill);
 
             var actionTask = isShiftPressed() ? 4 : 1;
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), actionTask));
@@ -236,7 +237,7 @@ public class SkillWidget {
 
         if(isMouseOver((int)mouseX, (int)mouseY, x+49, y+17, BTN_W, BTN_H)) {
             SoundPlayer.PlayUIClick();
-            ClientCache.predictBookmark(skill);
+            cache.predictBookmark(skill);
             PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 2));
 
             var mc = Minecraft.getInstance();
@@ -269,7 +270,7 @@ public class SkillWidget {
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
 
         // Bordure
-        if(ClientCache.getSkillLevel(skill.getID().toLowerCase()) < skill.getMaximumLevel()) return;
+        if(cache.getSkillLevel(skill.getID().toLowerCase()) < skill.getMaximumLevel()) return;
         gui.fill(x + 1, y, x + width - 1, y + 1, COLOR_BORDER); // Haut
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, COLOR_BORDER); // Bas
         gui.fill(x, y + 1, x + 1, y + height - 1, COLOR_BORDER); // Gauche
@@ -277,18 +278,18 @@ public class SkillWidget {
     }
 
     protected boolean canAffordPurchase(){
-        return skill.canBuy(ClientCache.getCurrentContext(skill.getID()), ClientCache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
+        return skill.canBuy(cache.getCurrentContext(skill.getID()), cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
     }
 
     protected boolean canAffordRefund(){
-        return skill.canRefund(ClientCache.getCurrentContext(skill.getID()), ClientCache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
+        return skill.canRefund(cache.getCurrentContext(skill.getID()), cache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
     }
 
     protected boolean canBuy(){
-        return ClientCache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true) && skill.isPurchasable();
+        return cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true) && skill.isPurchasable();
     }
 
     protected boolean canRefund(){
-        return ClientCache.getConfigBool(Config.REFUND_SYSTEM_KEY, true) && skill.isRefundable();
+        return cache.getConfigBool(Config.REFUND_SYSTEM_KEY, true) && skill.isRefundable();
     }
 }

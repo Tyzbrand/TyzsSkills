@@ -48,10 +48,15 @@ public class MainGUI extends Screen {
     private int topPos;
 
 
-    public MainGUI(){super(Component.translatable("gui.tyzs_skills.title"));}
+    public MainGUI(){
+        super(Component.translatable("gui.tyzs_skills.title"));
+        this.cache = ClientCache.get();
+    }
 
     private CustomScrollView scrollView;
     private EditBox searchBar;
+
+    private final ClientCache cache;
 
     @Override
     protected void init(){
@@ -103,7 +108,7 @@ public class MainGUI extends Screen {
         gui.drawString(this.font, lvlStat, 0, 0, color1, false);
         gui.pose().popPose();
 
-        MutableComponent lvlValue = Component.literal(String.valueOf(ClientCache.getLvl()));
+        MutableComponent lvlValue = Component.literal(String.valueOf(cache.getLevel()));
         int text1W = this.font.width(lvlValue);
         int rightLimit1 = leftPos + 32;
         gui.pose().pushPose();
@@ -122,7 +127,7 @@ public class MainGUI extends Screen {
         gui.drawString(this.font, spStat, 0, 0, color2, false);
         gui.pose().popPose();
 
-        MutableComponent spValue = Component.literal(String.valueOf(StringTools.valueSmartFormat(ClientCache.getSP())));
+        MutableComponent spValue = Component.literal(String.valueOf(StringTools.valueSmartFormat(cache.getSp())));
         int text2W = this.font.width(spValue);
         int rightLimit2 = leftPos + 71;
         gui.pose().pushPose();
@@ -134,8 +139,8 @@ public class MainGUI extends Screen {
 
     private void renderXpBar(GuiGraphics gui){
 
-        float xpStat = ClientCache.getXP();
-        float xpGoal = ClientCache.getXpGoal();
+        float xpStat = cache.getXp();
+        float xpGoal = cache.getXpGoal();
 
         if(xpGoal <= 0) return;
 
@@ -200,10 +205,10 @@ public class MainGUI extends Screen {
     private void renderTooltips(GuiGraphics gui, int mouseX, int mouseY){
 
         if(isHovering(mouseX, mouseY, leftPos, topPos+96, 76, 9)){ //Xp bar
-            String xpTooltip = StringTools.valueSmartFormat(ClientCache.getXP()) + "/" + StringTools.valueSmartFormat(ClientCache.getXpGoal()) ;
+            String xpTooltip = StringTools.valueSmartFormat(cache.getXp()) + "/" + StringTools.valueSmartFormat(cache.getXpGoal()) ;
 
             MutableComponent finalText = Component.literal(xpTooltip)
-                            .append(Component.literal(" [+" + StringTools.valueSmartFormat(ClientCache.getReward()) + " ").withStyle(ChatFormatting.GREEN))
+                            .append(Component.literal(" [+" + StringTools.valueSmartFormat(cache.getSpReward()) + " ").withStyle(ChatFormatting.GREEN))
                             .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.GREEN))
                             .append(Component.literal("]").withStyle(ChatFormatting.GREEN));
 
@@ -229,8 +234,8 @@ public class MainGUI extends Screen {
             tooltip.add(Component.empty()
                     .append(Component.translatable("gui.tyzs_skills.stats.all_time_xp").withStyle(ChatFormatting.BLUE))
                     .append(Component.literal(": ").withStyle(ChatFormatting.BLUE))
-                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.getAllTimeXp())).withStyle(ChatFormatting.GRAY))
-                    .append(Component.literal(" (" + StringTools.valueSmartFormat(ClientCache.getTotalXpPerHour()))
+                    .append(Component.literal(StringTools.valueSmartFormat(cache.getAllTimeXP())).withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(" (" + StringTools.valueSmartFormat(cache.getTotalXpPerHour()))
                             .append(Component.translatable("gui.tyzs_skills.stats.xp_per_hour"))
                             .append(Component.literal(")"))).withStyle(ChatFormatting.DARK_GRAY));
 
@@ -239,25 +244,25 @@ public class MainGUI extends Screen {
             tooltip.add(Component.empty()
                     .append(Component.translatable("gui.tyzs_skills.stats.session_xp").withStyle(ChatFormatting.BLUE))
                     .append(Component.literal(": ").withStyle(ChatFormatting.BLUE))
-                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.getSessionXp())).withStyle(ChatFormatting.GRAY))
-                    .append(Component.literal(" (" + StringTools.valueSmartFormat(ClientCache.getSessionXpPerHour()))
+                    .append(Component.literal(StringTools.valueSmartFormat(cache.getSessionXp())).withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(" (" + StringTools.valueSmartFormat(cache.getSessionXpPerHour()))
                             .append(Component.translatable("gui.tyzs_skills.stats.xp_per_hour"))
                             .append(Component.literal(")"))).withStyle(ChatFormatting.DARK_GRAY));
 
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.sp_earned").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
-                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.getSpEarned())).withStyle(ChatFormatting.GRAY)));
+                    .append(Component.literal(StringTools.valueSmartFormat(cache.getSpEarned())).withStyle(ChatFormatting.GRAY)));
 
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.sp_spent").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
-                    .append(Component.literal(StringTools.valueSmartFormat(ClientCache.getSpSpent())).withStyle(ChatFormatting.GRAY)));
+                    .append(Component.literal(StringTools.valueSmartFormat(cache.getSpSpent())).withStyle(ChatFormatting.GRAY)));
 
 
             tooltip.add(Component.translatable("gui.tyzs_skills.stats.skill_unlocked").withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(": "))
-                    .append(Component.literal(ClientCache.getUnlockedSkills() + "/" + ClientCache.getSkillCount())
+                    .append(Component.literal(cache.getOwnedSkillsAmount() + "/" + cache.getTotalSkills())
                             .withStyle(ChatFormatting.GRAY)));
 
 

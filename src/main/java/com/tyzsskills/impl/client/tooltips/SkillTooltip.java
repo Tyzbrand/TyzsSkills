@@ -31,6 +31,8 @@ public class SkillTooltip implements ClientTooltipComponent {
         this.descriptionLines = StringTools.getSkillDescription(this.skill);
         this.displayName = StringTools.getSkillFormattedName(skill);
         this.requirementLines = StringTools.getSkillRequirements(skill);
+
+        this.cache = ClientCache.get();
     }
 
     private final ISkill skill;
@@ -42,6 +44,8 @@ public class SkillTooltip implements ClientTooltipComponent {
     private final List<FormattedCharSequence> descriptionLines;
     private final List<Component> requirementLines;
     private final Component requirementLine = Component.translatable("gui.tyzs_skills.requirements").withStyle(ChatFormatting.DARK_GRAY);
+
+    private final ClientCache cache;
 
 
     @Override
@@ -91,7 +95,7 @@ public class SkillTooltip implements ClientTooltipComponent {
     //GETTERS
     @NotNull
     public ISkill getSkill(){return  skill;}
-    private boolean isMaxed(){return ClientCache.getSkillLevel(skill.getID()) >= skill.getMaximumLevel();}
+    private boolean isMaxed(){return cache.getSkillLevel(skill.getID()) >= skill.getMaximumLevel();}
     private boolean isShiftPressed(){return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);}
     private boolean hasInfos() {
         return skill.getRequiredLevel() != 0
@@ -123,7 +127,7 @@ public class SkillTooltip implements ClientTooltipComponent {
     }
 
     private void renderSkillIcon(GuiGraphics gui, int x, int y){
-        ResourceLocation icon = skill.isAvailable(ClientCache.getCurrentContext(skill.getID())) ? ResourceLocation.tryParse(skill.getIcon()) : LOCK_ICON;
+        ResourceLocation icon = skill.isAvailable(cache.getCurrentContext(skill.getID())) ? ResourceLocation.tryParse(skill.getIcon()) : LOCK_ICON;
         if(icon == null) icon = DEFAULT_ICON;
 
         var borderColor = isMaxed() ? 0xFFD6AD55 : 0xFFD6D6D6;

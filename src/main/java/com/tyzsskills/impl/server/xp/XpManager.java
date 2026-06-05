@@ -8,13 +8,11 @@ import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.LimitsTracker;
+import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.payloads.LevelToastPayload;
-import com.tyzsskills.impl.server.payloads.StatsSpEarnedPayload;
-import com.tyzsskills.impl.server.payloads.StatsXpPayload;
-import com.tyzsskills.impl.server.payloads.XpUpdatePayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -80,7 +78,6 @@ public class XpManager {
 
         if (triggersOverlay && gains > 0) {
             player.getData(StatsTracker.DATA).addXp(gains);
-            PacketDistributor.sendToPlayer(player, new StatsXpPayload(gains));
         }
     }
 
@@ -110,7 +107,7 @@ public class XpManager {
 
     //Util
     private static void updateClient(ServerPlayer player, float gains, boolean triggersOverlay) {
-        PacketDistributor.sendToPlayer(player, new XpUpdatePayload(getXP(player), gains, triggersOverlay, getLimitPercentage(player)));
+        PacketDistributor.sendToPlayer(player, new UpdatePayloads.XpPayload(getXP(player), gains, triggersOverlay, getLimitPercentage(player)));
     }
 
     public static void levelUpCheck(ServerPlayer player) {
@@ -147,7 +144,6 @@ public class XpManager {
 
             if (spBuffer > 0) {
                 SpManager.addSP(player, spBuffer);
-                PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(spBuffer));
                 player.getData(StatsTracker.DATA).addSpEarned(spBuffer);
             }
         }

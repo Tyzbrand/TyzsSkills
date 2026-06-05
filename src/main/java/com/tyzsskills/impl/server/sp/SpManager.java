@@ -1,11 +1,10 @@
 package com.tyzsskills.impl.server.sp;
 
 import com.tyzsskills.Config;
-import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.events.SkillPointChangeEvent;
 import com.tyzsskills.impl.server.attachments.LimitsTracker;
 import com.tyzsskills.impl.server.attachments.PlayerData;
-import com.tyzsskills.impl.server.payloads.SpUpdatePayload;
+import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -64,7 +63,7 @@ public class SpManager {
 
         //Util
         private static void updateClient(ServerPlayer player){
-            PacketDistributor.sendToPlayer(player, new SpUpdatePayload(getSP(player)));
+            PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpPayload(getSP(player)));
         }
 
         private static int checkLimit(ServerPlayer player, int amount){

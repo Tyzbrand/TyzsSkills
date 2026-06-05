@@ -1,212 +1,256 @@
 package com.tyzsskills.impl.client;
 
 import com.tyzsskills.Config;
-import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.Category;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
 import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.server.model.*;
+import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
 
 public class ClientCache {
 
-    private static int clientLevel = 1;
-    private static int clientSP = 0;
-    private static float clientXP = 0f;
+    private ClientCache() {}
 
-    private static float clientXpLimit = 0f;
+    private static ClientCache INSTANCE;
+    public static @NotNull ClientCache get() throws IllegalStateException {
+        if (INSTANCE == null)
+            throw new IllegalStateException("Attempt to Access ClientCache.java While it's not yet Initialized.");
+        return INSTANCE;
+    }
+    public static void deleteCache() {INSTANCE = null;}
+    public static void init() {INSTANCE = new ClientCache();}
+    public static boolean isReady() {return INSTANCE != null;}
 
-    private static float clientAllTimeXP = 0f;
-    private static float clientSessionXP = 0f;
-    private static int clientSpEarned = 0;
-    private static int clientSpSpent = 0;
-    private static int clientOwnedSkills = 0;
-
-    private static LevelData clientLevelData = new LevelData(100f, 1);
-
-    private final static Map<String, Category> clientCategories = new HashMap<>();
-
-    private final static Map<String, Skill> clientSkills = new HashMap<>();
-    private final static Map<String, Integer> clientSkillLevels = new HashMap<>();
-    private final static Map<String, Object> clientConfigMap = new HashMap<>();
-    private final static HashSet<String> clientBookmarks = new HashSet<>();
+    public final Update UPDATE = new Update();
 
 
+    //METADATA
+    private int level;
+    public int getLevel() {return level;}
 
+    private int sp;
+    public int getSp() {return sp;}
 
-    public static void updateClientCacheLevel(int level){
-        clientLevel = level;
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client Level Update: " + level), false);
-        }
+    private float xp;
+    public float getXp() {
+        return xp;
     }
 
-    public static void updateClientCacheSP(int sp){
-        clientSP = sp;
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP Update: " + sp), false);
-        }
+    private LevelData levelData;
+    public float getXpGoal() {
+        return levelData != null ? levelData.goal() : 999999;
+    }
+    public int getSpReward() {
+        return levelData != null ? levelData.reward() : 0;
     }
 
-    public static void updateClientCacheXP(float xp, float gained, boolean triggersOverlay, float limit){
-        if(gained > 0) {
-            XpTriggerOverlay.AddXp(gained, triggersOverlay);
-            clientSessionXP += gained;
-        }
-        clientXP = xp;
-        clientXpLimit = limit;
-
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP Update: " + xp + ", limit: " + limit), false);
-        }
+    private final Map<String, Integer> skillLevels = new HashMap<>();
+    public int getSkillLevel(@NotNull String skillId) {
+        return skillLevels.getOrDefault(skillId.toLowerCase(), 0);
+    }
+    public @NotNull List<String> getPurchasedSkills() {
+        var list = new ArrayList<String>();
+        for (var kvp : skillLevels.entrySet()) if (kvp.getValue() > 0) list.add(kvp.getKey());
+        return list;
     }
 
-    public static void updateClientStatXP(float amount){
-        if(amount > 0f)clientAllTimeXP += amount;
-
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client XP stats Update"), false);
-        }
+    private final HashSet<String> bookmarks = new HashSet<>();
+    public boolean isSkillBookMarked(@NotNull String skillId) {
+        return bookmarks.contains(skillId.toLowerCase());
+    }
+    public @NotNull @Unmodifiable List<String> getBookmarkedSkills() {
+        return List.copyOf(bookmarks);
     }
 
-    public static void updateClientStatSpEarned(int amount){
-        if(amount > 0)clientSpEarned += amount;
-
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP e stats Update"), false);
-        }
+    //STATISTICS
+    private float allTimeXp;
+    public float getAllTimeXP() {
+        return allTimeXp;
     }
 
-    public static void updateClientStatSpSpent(int amount){
-        if(amount > 0)clientSpSpent += amount;
-
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client SP s stats Update"), false);
-        }
+    private float sessionXp;
+    public float getSessionXp() {
+        return sessionXp;
     }
 
-    public static void updateClientCacheLevelData(LevelData data){
-        clientLevelData = data;
-
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client LevelData Update: " + data.goal() + "xp, " + data.reward() + "sp"), false);
-        }
+    private int spEarned;
+    public int getSpEarned() {
+        return spEarned;
     }
 
-
-    public static void updateClientCacheCategories(Map<String, Category> map){
-        clientCategories.clear();
-        clientCategories.putAll(map);
-
-        var sortedCategories = new ArrayList<>(map.values());
-        sortedCategories.sort(Comparator.comparingInt(Category::order));
-
-        var sortedIds = sortedCategories.stream()
-                .map(Category::id)
-                .toList();
-
-        SortingTools.registerCategories(sortedIds);
-
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client categories Update: " + clientCategories.size() + " loaded."), false);
-        }
+    private int spSpent;
+    public int getSpSpent() {
+        return spSpent;
     }
 
-
-    public static void updateSkills(List<Skill> skills){
-        clientSkills.clear();
-        for(var skill : skills){clientSkills.put(skill.getID(), skill);}
-
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Client skills sync: " + clientSkills.size() + " skills cached" ), false);
-        }
-
+    private int ownedSkills;
+    public int getOwnedSkillsAmount() {
+        return ownedSkills;
     }
 
-    public static void updateSkillLevels(String id, int lvl){
-        id = id.toLowerCase();
+    private int totalSkills;
+    public int getTotalSkills(){return totalSkills;}
 
-        if(lvl <= 0) clientSkillLevels.remove(id);
-        else clientSkillLevels.put(id.toLowerCase(), lvl);
-
-        int owned = 0;
-        for(var skill : clientSkills.values()){
-            if(!clientSkillLevels.containsKey(skill.getID().toLowerCase())) continue;
-            owned += clientSkillLevels.get(skill.getID().toLowerCase());
-        }
-        clientOwnedSkills = owned;
-
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("New skill level: " + id + " level " + lvl ), false);
-        }
+    //SERVER
+    private final Map<String, Category> categories = new HashMap<>();
+    public @Nullable Category getCategory(@NotNull String categoryId) {
+        return categories.getOrDefault(categoryId, null);
     }
 
-    public static void syncConfig(Map<String, Object> syncedMap){
-        clientConfigMap.clear();
-        clientConfigMap.putAll(syncedMap);
-
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced config: " + clientConfigMap.size() + " entries"), false);
-            for (var entry : clientConfigMap.entrySet()) Minecraft.getInstance().player.displayClientMessage(Component.literal(entry.getKey() + "->" + entry.getValue()), false);
-        }
-
+    private final Map<String, Skill> skills = new HashMap<>();
+    public boolean isSkillLoaded(@NotNull String skillId) {
+        return skills.containsKey(skillId.toLowerCase());
+    }
+    public @Nullable ISkill getSkill(@NotNull String skillId) {
+        return skills.getOrDefault(skillId.toLowerCase(), null);
+    }
+    public @NotNull @Unmodifiable List<ISkill> getAllSkills() {
+        return List.copyOf(skills.values());
+    }
+    public @NotNull @Unmodifiable List<String> getAllSkillIDs() {
+        return List.copyOf(skills.keySet());
     }
 
-    public static void syncBookmark(String id, boolean state){
-        if(!state) clientBookmarks.remove(id.toLowerCase());
-        else clientBookmarks.add(id.toLowerCase());
+    private final Map<String, Object> configMap = new HashMap<>();
 
-        if(Config.SHOW_DEBUG_MESSAGES.get()){
-            Minecraft.getInstance().player.displayClientMessage(Component.literal("Synced bookmark: " + id + ": " + state), false);
+
+    public class Update {
+
+        public void updateInit(@NotNull UpdatePayloads.InitPayload payload){
+            var playerData = payload.playerData(); var configData = payload.configData();
+            var serverData = payload.serverData();
+
+            categories.clear(); skills.clear(); configMap.clear(); bookmarks.clear();
+            skillLevels.clear();
+
+            for(var skill : serverData.skills()) skills.put(skill.getID(), skill);
+
+            bookmarks.addAll(serverData.bookmarks());
+            skillLevels.putAll(serverData.playerSkillLevels());
+
+            categories.putAll(serverData.categories());
+            sortCategories();
+
+            level = playerData.level();
+            sp = playerData.sp();
+            xp = playerData.xp();
+            allTimeXp = playerData.totalXp();
+            spEarned = playerData.spEarned();
+            spSpent = playerData.spSpent();
+            levelData = payload.levelData();
+
+            configMap.putAll(configData.booleanMap());
+            configMap.putAll(configData.doubleMap());
+
+            ownedSkills = skillLevels.values().stream().mapToInt(i -> i).sum();
+
+            totalSkills = 0;
+            for (var skill : skills.values()) totalSkills += skill.getMaximumLevel();
+
+            logUpdate("Initial Synchronization");
+        }
+
+        public void updateLevel(@NotNull UpdatePayloads.LevelPayload payload) {
+            level = payload.level();
+            logUpdate("Level Synced: New Cached Level [" + level + "]");
+        }
+
+        public void updateSp(@NotNull UpdatePayloads.SpPayload payload) {
+            var old = sp;
+            sp = payload.sp();
+
+            var diff = sp - old;
+            if(diff < 0) spSpent += Math.abs(diff);
+            else if(diff > 0) spEarned += diff;
+        }
+
+        public void updateXp(@NotNull UpdatePayloads.XpPayload payload) {
+            if (payload.gained() > 0) XpTriggerOverlay.AddXp(payload.gained(), payload.triggersOverlay());
+            xp = payload.xp();
+
+            allTimeXp += payload.gained();
+            sessionXp += payload.gained();
+
+            logUpdate("Xp Synced: New Cached Xp Value [" + xp + "]");
+        }
+
+        public void updateSkillLevel(@NotNull UpdatePayloads.SkillLevelPayload payload) {
+            var diff = payload.level() - getSkillLevel(payload.id());
+            ownedSkills += diff;
+
+            if (payload.level() <= 0) skillLevels.remove(payload.id().toLowerCase());
+            else skillLevels.put(payload.id().toLowerCase(), payload.level());
+            logUpdate("Skill Level Synced: New Cached Skill Level [" + payload.id() + ", " + payload.level() + "]");
+        }
+
+        public void updateLevelData(@NotNull UpdatePayloads.LevelDataPayload payload) {
+            levelData = payload.data();
+            logUpdate("Level Data Synced: New Cached Level Data [" + payload.data().goal() + " xp, " + payload.data().reward() + "sp]");
+        }
+
+        public void updateBookmarks(@NotNull UpdatePayloads.BookmarksPayload payload) {
+            var id = payload.id().toLowerCase();
+            if (payload.state()) bookmarks.add(id);
+            else bookmarks.remove(id);
+            logUpdate("Bookmark Synced: New Cached Bookmark [" + id + ", " + payload.state() + "]");
+        }
+
+
+        private void logUpdate(String message) {
+            var player = Minecraft.getInstance().player;
+            if (player == null || !Config.SHOW_DEBUG_MESSAGES.get()) return;
+            player.displayClientMessage(Component.literal(message), false);
         }
     }
-
 
     //PREDICTIONS
-    public static void predictBookmark(Skill skill){
+    public void predictBookmark(ISkill skill) {
         String id = skill.getID();
-        if(isSkillBookmarked(id)) clientBookmarks.remove(id);
-        else clientBookmarks.add(id);
+        if (isSkillBookMarked(id)) bookmarks.remove(id);
+        else bookmarks.add(id);
     }
 
-    public static void predictBuy(Skill skill) {
+    public void predictBuy(ISkill skill) {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if(!skill.canBuy(getCurrentContext(id), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return;
+        if (!skill.canBuy(getCurrentContext(id), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return;
         int price = skill.getPrices().get(currentLvl);
 
-        clientSP -= price;
-        updateSkillLevels(id, currentLvl + 1);
+        sp -= price;
+        skillLevels.put(id, currentLvl + 1);
     }
 
-    public static void predictBuyMax(Skill skill) {
+    public void predictBuyMax(ISkill skill) {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
         var bulkResult = skill.checkBulkBuy(getCurrentContext(id), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
 
         if (bulkResult.levelToAdd() > 0) {
-            clientSP -= bulkResult.spToWithdraw();
-            updateSkillLevels(id, currentLvl + bulkResult.levelToAdd());
+            sp -= bulkResult.spToWithdraw();
+            skillLevels.put(id, currentLvl + bulkResult.levelToAdd());
         }
     }
 
-    public static void predictRefund(Skill skill) {
+    public void predictRefund(ISkill skill) {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if(!skill.canRefund(getCurrentContext(id), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return;
+        if (!skill.canRefund(getCurrentContext(id), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return;
 
-        updateSkillLevels(id, currentLvl - 1);
-        float percentage = (float)getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
+        skillLevels.put(id, currentLvl - 1);
+        float percentage = (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
 
         List<Integer> prices = skill.getPrices();
         if (currentLvl - 1 < prices.size()) {
@@ -215,104 +259,48 @@ public class ClientCache {
             int refundAmount = (initialPrice <= 0) ? 0 : Math.round(initialPrice * refundPercentage);
 
             if (refundAmount > 0) {
-                clientSP += refundAmount;
+                sp += refundAmount;
             }
         }
     }
 
-    public static void predictRefundMax(Skill skill) {
+    public void predictRefundMax(ISkill skill) {
         String id = skill.getID().toLowerCase();
 
-        if(getSkillLevel(id) <= 0) return;
+        if (getSkillLevel(id) <= 0) return;
 
         var spToRefund = skill.checkBulkRefund(getCurrentContext(id),
                 (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), getConfigBool(Config.REFUND_SYSTEM_KEY, false));
 
         if (spToRefund > 0) {
-            clientSP += spToRefund;
+            sp += spToRefund;
         }
-        updateSkillLevels(id, 0);
-    }
-
-    public static void clearCache(Enums.ResetType type){
-        switch (type){
-            case ALL -> {
-                resetMetadata();
-                resetSkills();
-                resetStats();
-                resetLimits();
-            }
-            case METADATA -> resetMetadata();
-            case SKILLS -> resetSkills();
-            case STATS -> resetStats();
-            case LIMITS -> resetLimits();
-            case SHUTDOWN -> {
-                resetMetadata();
-                resetSkills();
-                resetStats();
-                resetLimits();
-                shutDownReset();
-            }
-        }
+        skillLevels.put(id, 0);
     }
 
 
-    //getters
-    public static float getXP(){return clientXP;}
-    public static int getSP(){return clientSP;}
-    public static int getLvl(){return clientLevel;}
-    public static float getXpGoal(){return clientLevelData.goal();}
-    public static int getReward(){return clientLevelData.reward();}
-    public static int getLimitPercentage(){return (int)(clientXpLimit * 100);}
-
-    public static List<Skill> getAllSkills(){return new ArrayList<>(clientSkills.values());}
-    public static List<String> getAllSkillIDs(){return new ArrayList<>(clientSkills.keySet());}
-    public static List<String> getAllBookmarkedIDs(){return new ArrayList<>(clientBookmarks);}
-    public static List<String> getPurchasedSkills(){return clientSkillLevels.keySet().stream().filter(clientSkills::containsKey).toList();}
-
-    public static int getSkillLevel(String id){return clientSkillLevels.getOrDefault(id.toLowerCase(), 0);}
-    public static Skill getSkill(String id){return clientSkills.getOrDefault(id.toLowerCase(), null);}
-    public static boolean isSkillBookmarked(String id){return clientBookmarks.contains(id.toLowerCase());}
-
-    @Nullable
-    public static Category getCategory(@NotNull String id){return clientCategories.getOrDefault(id, null);}
-
-    @NotNull
-    public static SkillContext getCurrentContext(String skillID){
+    //UTILS
+    public @NotNull SkillContext getCurrentContext(String skillID) {
         var player = Minecraft.getInstance().player;
         Objects.requireNonNull(player, "Attempt to access SkillContext with null client.");
-
-        return new SkillContext(player, getSkillLevel(skillID), clientLevel, clientSP, getPurchasedSkills());
+        return new SkillContext(player, getSkillLevel(skillID), level, sp, getPurchasedSkills());
     }
 
-    public static float getAllTimeXp(){return clientAllTimeXP;}
-    public static float getSessionXp(){return clientSessionXP;}
-    public static int getSpEarned(){return clientSpEarned;}
-    public static int getSpSpent(){return clientSpSpent;}
-    public static int getUnlockedSkills(){return clientOwnedSkills;}
-    public static int getSkillCount(){
-        int count = 0;
-        for(var skill : clientSkills.values()){
-            count += skill.getMaximumLevel();
-        }
-        return count;
-    }
-    public static int getTotalXpPerHour(){
+    public int getTotalXpPerHour() {
         var level = Minecraft.getInstance().level;
-        if(level == null) return 0;
+        if (level == null) return 0;
 
         var ticks = level.getGameTime();
-
         var effectiveTicks = Math.max(ticks, 1200f);
         var exactHours = effectiveTicks / 72000f;
 
-        return (int)(clientAllTimeXP / exactHours);
+        return (int) (allTimeXp / exactHours);
     }
 
-    private static long sessionStartTick = -1L;
-    public static int getSessionXpPerHour(){
+    private long sessionStartTick = -1L;
+    public int getSessionXpPerHour() {
         var level = Minecraft.getInstance().level;
-        if(level == null) return 0;
+        if (level == null) return 0;
 
         if (sessionStartTick == -1) {
             sessionStartTick = level.getGameTime();
@@ -323,71 +311,43 @@ public class ClientCache {
         var effectiveTicks = Math.max(sessionTicks, 1200f);
         var exactSessionHours = effectiveTicks / 72000f;
 
-        return (int)(ClientCache.getSessionXp() / exactSessionHours);
+        return (int) (sessionXp / exactSessionHours);
     }
 
-    //getters config
-    public static boolean getConfigBool(String id, boolean fallback){
-        var value = clientConfigMap.get(id);
-        if(value instanceof Boolean bool) return bool;
-        else return fallback;
-    }
-
-    public static double getConfigDouble(String id, double fallback){
-        var value = clientConfigMap.get(id);
-        if(value instanceof Double dbl) return dbl;
-        else if(value instanceof Number nbr) return nbr.doubleValue();
-        else return fallback;
-    }
-
-    public static int getConfigInt(String id, int fallback){
-        var value = clientConfigMap.get(id);
-        if(value instanceof Integer nbr) return nbr;
-        else return fallback;
-    }
-
-
-
-
-    //UTIL
     public static int parseColor(String hexString, int fallback) {
         if (hexString == null || hexString.isEmpty()) return fallback;
         try {
             String clean = hexString.replace("#", "");
             if (clean.length() == 6) clean = "FF" + clean;
             return (int) Long.parseLong(clean, 16);
+        } catch (NumberFormatException e) {
+            return fallback;
         }
-        catch (NumberFormatException e) {return fallback;}
     }
 
-    private static void resetMetadata(){
-        clientLevel = 1;
-        clientSP = 0;
-        clientXP = 0f;
-        clientLevelData = new LevelData(100f, 1);
+    private void sortCategories(){
+        var sortedCategories = new ArrayList<>(categories.values());
+        sortedCategories.sort(Comparator.comparingInt(Category::order));
+
+        var sortedIds = sortedCategories.stream()
+                .map(Category::id)
+                .toList();
+
+        SortingTools.registerCategories(sortedIds);
     }
 
-    private static void resetSkills(){
-        clientSkillLevels.clear();
+    //CONFIG
+    public boolean getConfigBool(@NotNull String id, boolean fallback) {
+        var value = configMap.get(id);
+        if (value instanceof Boolean bool) return bool;
+        else return fallback;
     }
 
-    private static void resetStats(){
-        clientSessionXP = 0f;
-        clientAllTimeXP = 0f;
-        clientSpEarned = 0;
-        clientSpSpent = 0;
-        sessionStartTick = -1L;
+    public double getConfigDouble(@NotNull String id, double fallback) {
+        var value = configMap.get(id);
+        if (value instanceof Double dbl) return dbl;
+        else if (value instanceof Number nbr) return nbr.doubleValue();
+        else return fallback;
     }
 
-    private static void resetLimits(){
-        clientXpLimit = 0f;
-    }
-
-    private static void shutDownReset(){
-        clientConfigMap.clear();
-        clientBookmarks.clear();
-        clientSkills.clear();
-
-        clientCategories.clear();
-    }
 }

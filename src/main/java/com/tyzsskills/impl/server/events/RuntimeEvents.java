@@ -1,10 +1,20 @@
 package com.tyzsskills.impl.server.events;
 
+import com.tyzsskills.Config;
+import com.tyzsskills.api.records.LevelData;
+import com.tyzsskills.impl.client.ClientCache;
+import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.active.*;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.impl.server.attachments.PlayerData;
+import com.tyzsskills.impl.server.attachments.StatsTracker;
+import com.tyzsskills.impl.server.categories.CategoryLoader;
 import com.tyzsskills.impl.server.effects.GenericEffects;
+import com.tyzsskills.impl.server.payloads.UpdatePayloads;
+import com.tyzsskills.impl.server.skills.SkillManager;
+import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpGainRegistry;
+import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.CropBlock;
@@ -13,7 +23,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @ApiStatus.Internal
 public class RuntimeEvents {
@@ -26,13 +40,7 @@ public class RuntimeEvents {
         CompatibilityManager.processMigrationV2(player);
         CompatibilityManager.processMigrationV3(player);
 
-        ClientSynchronizer.syncMainData(player);
-        ClientSynchronizer.syncSkillList(player);
-        ClientSynchronizer.syncSkillLevels(player);
-        ClientSynchronizer.syncConfig(player);
-        ClientSynchronizer.syncSkillBookmarks(player);
-        ClientSynchronizer.syncStats(player);
-        ClientSynchronizer.syncCategories(player);
+        PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
 
         DebugManager.checkForInconsistencies(player);
 
@@ -78,5 +86,5 @@ public class RuntimeEvents {
         }
     }
 
-
+    //UTILS
 }

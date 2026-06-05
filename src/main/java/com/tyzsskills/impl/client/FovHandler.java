@@ -15,15 +15,17 @@ public class FovHandler {
         double reduction = Config.FOV_REDUCTION.get();
         if(reduction <= 0.0001D) return;
 
+        var cache = ClientCache.get();
+
         float totalDampening = 0f;
 
-        for (String rawId : ClientCache.getPurchasedSkills()){
+        for (String rawId : cache.getPurchasedSkills()){
             String id = rawId.toLowerCase();
 
-            int level = ClientCache.getSkillLevel(id);
+            int level = cache.getSkillLevel(id);
             if(level <= 0) continue;
 
-            var skill = ClientCache.getSkill(id);
+            var skill = cache.getSkill(id);
             if(skill == null) continue;
 
             for(var modifier : skill.getModifiers()){

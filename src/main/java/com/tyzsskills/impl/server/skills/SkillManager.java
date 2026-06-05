@@ -86,7 +86,6 @@ public class SkillManager {
             var price = skill.getPrices().get(currentLvl);
 
             SpManager.removeSP(player, price);
-            PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(price));
             player.getData(StatsTracker.DATA).addSpSpent(price);
 
             setSkillLevel(player, id, currentLvl + 1);
@@ -116,7 +115,6 @@ public class SkillManager {
         if (bulkResult.levelToAdd() > 0) {
             SpManager.removeSP(player, bulkResult.spToWithdraw());
 
-            PacketDistributor.sendToPlayer(player, new StatsSpSpentPayload(bulkResult.spToWithdraw()));
             player.getData(StatsTracker.DATA).addSpSpent(bulkResult.spToWithdraw());
 
             setSkillLevel(player, id, currentLvl + bulkResult.levelToAdd());
@@ -150,7 +148,6 @@ public class SkillManager {
 
         if(finalPrice > 0){
             SpManager.addSP(player, finalPrice);
-            PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(finalPrice));
             player.getData(StatsTracker.DATA).addSpEarned(finalPrice);
         }
 
@@ -177,7 +174,6 @@ public class SkillManager {
 
         if (spToRefund > 0) {
             SpManager.addSP(player, spToRefund);
-            PacketDistributor.sendToPlayer(player, new StatsSpEarnedPayload(spToRefund));
             player.getData(StatsTracker.DATA).addSpEarned(spToRefund);
         }
 
@@ -199,7 +195,7 @@ public class SkillManager {
 
         data.triggerBookmark(id);
         NeoForge.EVENT_BUS.post(new SkillActionEvent.Bookmark(getSkill(id), player));
-        PacketDistributor.sendToPlayer(player, new SkillBookmarksPayload(id.toLowerCase(), newValue));
+        PacketDistributor.sendToPlayer(player, new UpdatePayloads.BookmarksPayload(id.toLowerCase(), newValue));
     }
 
     public void setSkillLevel(ServerPlayer player, String id, int lvl){
@@ -216,7 +212,7 @@ public class SkillManager {
         data.setSkillLevel(id, lvl);
         NeoForge.EVENT_BUS.post(new SkillActionEvent.LevelChange(skill, player, oldLvl, lvl));
 
-        PacketDistributor.sendToPlayer(player, new SkillLevelSyncPayload(id, lvl));
+        PacketDistributor.sendToPlayer(player, new UpdatePayloads.SkillLevelPayload(id, lvl));
 
 
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
@@ -246,6 +242,11 @@ public class SkillManager {
     public List<String> getPlayerOwnedSkillIds(ServerPlayer player){
         var data = player.getData(PlayerData.DATA).getOwnedSkillIds();
         return data.stream().filter(this::isSkillLoaded).toList();
+    }
+    public Map<String, Integer> getPlayerSkillLevels(ServerPlayer player){
+        var ownedSkills = new HashMap<String, Integer>();
+        for(var id : getPlayerOwnedSkillIds(player)) ownedSkills.put(id, getPlayerSkillLevel(player, id));
+        return ownedSkills;
     }
 
     //API

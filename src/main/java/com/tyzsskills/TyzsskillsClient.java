@@ -15,7 +15,6 @@ import com.tyzsskills.impl.client.tooltips.SkillTooltip;
 import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.impl.client.screen.*;
 import com.tyzsskills.impl.client.tools.SortingTools;
-import com.tyzsskills.impl.client.wrappers.ClientCacheWrapper;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -50,9 +49,6 @@ public class TyzsskillsClient {
 
         NeoForge.EVENT_BUS.register(ClientEvents.class);
 
-        //API client side
-        TyzsSkillsAPI.registerPlayerCacheManager(new ClientCacheWrapper());
-
         //Config screen
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
@@ -76,14 +72,14 @@ public class TyzsskillsClient {
 
         event.wrapper().registerSortingType(new SortType(
                 "gui.tyzs_skills.sorting.price",
-                Comparator.comparingInt((ISkill skill) -> skill.getPrice(ClientCache.getSkillLevel(skill.getID()) + 1)).thenComparing(ISkill::getID),
+                Comparator.comparingInt((ISkill skill) -> skill.getPrice(ClientCache.get().getSkillLevel(skill.getID()) + 1)).thenComparing(ISkill::getID),
                 78, 151,
                 110, 151
         ));
 
         event.wrapper().registerSortingType(new SortType(
                 "gui.tyzs_skills.sorting.level",
-                Comparator.comparingInt((ISkill skill) -> ClientCache.getSkillLevel(skill.getID())).thenComparing(ISkill::getID),
+                Comparator.comparingInt((ISkill skill) -> ClientCache.get().getSkillLevel(skill.getID())).thenComparing(ISkill::getID),
                 126, 167,
                 142, 167
         ));
@@ -121,7 +117,7 @@ public class TyzsskillsClient {
 
     @SubscribeEvent
     public static void onClientLogOut(ClientPlayerNetworkEvent.LoggingOut event){
-        ClientCache.clearCache(Enums.ResetType.SHUTDOWN);
+        ClientCache.deleteCache();
         SortingTools.clearData();
         SkillTriggerOverlay.Clear();
         XpTriggerOverlay.Clear();

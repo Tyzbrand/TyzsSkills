@@ -30,7 +30,7 @@ public class StringTools {
         return SMART_FORMATTER.get().format(value);
     }
 
-    public static MutableComponent getPriceLine(Skill skill, int currentLvl, boolean canBuy, boolean isMax){
+    public static MutableComponent getPriceLine(ISkill skill, int currentLvl, boolean canBuy, boolean isMax){
         LocalPlayer client = Minecraft.getInstance().player;
         if(skill == null || !skill.isPurchasable() || client == null) return Component.translatable("gui.tyzs_skills.error_value").withStyle(ChatFormatting.RED);
 
@@ -43,7 +43,7 @@ public class StringTools {
         if (!isMax) {
             if(currentLvl < prices.size()) totalSpAmount = prices.get(currentLvl);
         } else {
-            int availableSp = ClientCache.getSP();
+            int availableSp = ClientCache.get().getSp();
             int simulatedSp = availableSp;
             int levelsAffordable = 0;
 
@@ -75,11 +75,11 @@ public class StringTools {
     }
 
 
-    public static List<MutableComponent> getTooltipAction(Skill skill, int currentLvl, Enums.TooltipType type, boolean canBuy) {
+    public static List<MutableComponent> getTooltipAction(ISkill skill, int currentLvl, Enums.TooltipType type, boolean canBuy) {
         return getTooltipAction(skill, currentLvl, type, canBuy, false);
     }
 
-    public static List<MutableComponent> getTooltipAction(Skill skill, int currentLvl, Enums.TooltipType type, boolean canBuy, boolean isMax) {
+    public static List<MutableComponent> getTooltipAction(ISkill skill, int currentLvl, Enums.TooltipType type, boolean canBuy, boolean isMax) {
         LocalPlayer client = Minecraft.getInstance().player;
         List<MutableComponent> lines = new ArrayList<>();
 
@@ -99,7 +99,7 @@ public class StringTools {
             if (!isMax) {
                 targetLvl = currentLvl + 1;
             } else {
-                int availableSp = ClientCache.getSP();
+                int availableSp = ClientCache.get().getSp();
                 int simulatedSp = availableSp;
                 int levelsAffordable = 0;
                 var prices = skill.getPrices();
@@ -145,13 +145,13 @@ public class StringTools {
         return lines;
     }
 
-    public static MutableComponent getRefundLine(Skill skill, int currentLvl, boolean isMax) {
+    public static MutableComponent getRefundLine(ISkill skill, int currentLvl, boolean isMax) {
         if(skill == null || currentLvl <= 0) return Component.empty();
 
         int totalSpAmount = 0;
         var prices = skill.getPrices();
 
-        float refundRate = (float)(ClientCache.getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D) / 100f);
+        float refundRate = (float)(ClientCache.get().getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D) / 100f);
 
         if (!isMax) {
             if (currentLvl - 1 < prices.size()) {
@@ -178,7 +178,7 @@ public class StringTools {
     public static List<FormattedCharSequence> getSkillDescription(ISkill skill) {
         List<MutableComponent> lines = new ArrayList<>();
         String rawDesc = Component.translatable(skill.getDescription()).getString();
-        var currentLvl = ClientCache.getSkillLevel(skill.getID().toLowerCase());
+        var currentLvl = ClientCache.get().getSkillLevel(skill.getID().toLowerCase());
 
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
             var modifiers = skill.getModifiers();
@@ -230,13 +230,14 @@ public class StringTools {
     @NotNull
     public static List<Component> getSkillRequirements(ISkill skill){
         var lines = new ArrayList<Component>();
+        var cache = ClientCache.get();
 
         var requiredLvl = skill.getRequiredLevel();
         var incompatibilities = skill.getRawIncompatibilities();
         var prerequisites = skill.getRawPrerequisites();
 
         if(requiredLvl != 0) {
-            var color = requiredLvl <= ClientCache.getLvl() ? ChatFormatting.GREEN : ChatFormatting.RED;
+            var color = requiredLvl <= cache.getLevel() ? ChatFormatting.GREEN : ChatFormatting.RED;
             var message = Component.empty()
                     .append(Component.literal("◆").withStyle(ChatFormatting.BLUE))
                     .append(Component.translatable("gui.tyzs_skills.level_lock").withStyle(ChatFormatting.BLUE))
@@ -255,10 +256,10 @@ public class StringTools {
             lines.add(header);
 
             for(var conflict : incompatibilities){
-                var conflictSkill = ClientCache.getSkill(conflict);
+                var conflictSkill = cache.getSkill(conflict);
                 if (conflictSkill == null) continue;
 
-                var color = ClientCache.getSkillLevel(conflict) > 0 ? ChatFormatting.RED : ChatFormatting.DARK_GRAY;
+                var color = cache.getSkillLevel(conflict) > 0 ? ChatFormatting.RED : ChatFormatting.DARK_GRAY;
 
                 var message = Component.empty()
                         .append(Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY))
@@ -277,10 +278,10 @@ public class StringTools {
             lines.add(header);
 
             for(var prerequisite : prerequisites){
-                var prerequisiteSkill = ClientCache.getSkill(prerequisite);
+                var prerequisiteSkill = cache.getSkill(prerequisite);
                 if (prerequisiteSkill == null) continue;
 
-                var color = ClientCache.getSkillLevel(prerequisite) <= 0 ? ChatFormatting.RED : ChatFormatting.GREEN;
+                var color = cache.getSkillLevel(prerequisite) <= 0 ? ChatFormatting.RED : ChatFormatting.GREEN;
                 var message = Component.empty()
                         .append(Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY))
                         .append(Component.translatable(prerequisiteSkill.getDisplayName()).withStyle(color));

@@ -3,6 +3,7 @@ package com.tyzsskills.impl.client.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.client.DeltaTracker;
@@ -35,7 +36,7 @@ public class SkillTriggerOverlay implements LayeredDraw.Layer {
 
     public static void ShowSkillIcon(String id){
         if(!Config.SHOW_SKILL_OVERLAY.get()) return;
-        Skill skill = ClientCache.getSkill(id.toLowerCase());
+        ISkill skill = ClientCache.get().getSkill(id.toLowerCase());
         if(skill != null){
             var icon = ResourceLocation.tryParse(skill.getIcon());
             if(icon == null || Minecraft.getInstance().getResourceManager().getResource(icon).isEmpty()){

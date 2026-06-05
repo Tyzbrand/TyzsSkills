@@ -23,6 +23,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
@@ -130,52 +131,52 @@ public class Tyzsskills {
         var server = ServerLifecycleHooks.getCurrentServer();
         if(server == null) return;
 
-        for(var player : server.getPlayerList().getPlayers()) ClientSynchronizer.syncConfig(player);
+        for(var player : server.getPlayerList().getPlayers()) PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
     }
 
     private void registerPayloads(final RegisterPayloadHandlersEvent event){
         final PayloadRegistrar registrar = event.registrar("1");
 
         registrar.playToClient(
-                LevelUpdatePayload.TYPE,
-                LevelUpdatePayload.STREAM_CODEC,
-                LevelUpdatePayload::Handle
+                UpdatePayloads.InitPayload.TYPE,
+                UpdatePayloads.InitPayload.STREAM_CODEC,
+                UpdatePayloads.InitPayload::Handle
         );
 
         registrar.playToClient(
-                SpUpdatePayload.TYPE,
-                SpUpdatePayload.STREAM_CODEC,
-                SpUpdatePayload::Handle
+                UpdatePayloads.LevelPayload.TYPE,
+                UpdatePayloads.LevelPayload.STREAM_CODEC,
+                UpdatePayloads.LevelPayload::Handle
         );
 
         registrar.playToClient(
-                XpUpdatePayload.TYPE,
-                XpUpdatePayload.STREAM_CODEC,
-                XpUpdatePayload::Handle
+                UpdatePayloads.SpPayload.TYPE,
+                UpdatePayloads.SpPayload.STREAM_CODEC,
+                UpdatePayloads.SpPayload::Handle
         );
 
         registrar.playToClient(
-                LevelDataUpdatePayload.TYPE,
-                LevelDataUpdatePayload.STREAM_CODEC,
-                LevelDataUpdatePayload::Handle
+                UpdatePayloads.XpPayload.TYPE,
+                UpdatePayloads.XpPayload.STREAM_CODEC,
+                UpdatePayloads.XpPayload::Handle
         );
 
         registrar.playToClient(
-                SkillSyncPayload.TYPE,
-                SkillSyncPayload.STREAM_CODEC,
-                SkillSyncPayload::Handle
+                UpdatePayloads.LevelDataPayload.TYPE,
+                UpdatePayloads.LevelDataPayload.STREAM_CODEC,
+                UpdatePayloads.LevelDataPayload::Handle
         );
 
         registrar.playToClient(
-                SkillLevelSyncPayload.TYPE,
-                SkillLevelSyncPayload.STREAM_CODEC,
-                SkillLevelSyncPayload::Handle
+                UpdatePayloads.SkillLevelPayload.TYPE,
+                UpdatePayloads.SkillLevelPayload.STREAM_CODEC,
+                UpdatePayloads.SkillLevelPayload::Handle
         );
 
         registrar.playToClient(
-                ConfigSyncPayload.TYPE,
-                ConfigSyncPayload.STREAM_CODEC,
-                ConfigSyncPayload::Handle
+                UpdatePayloads.BookmarksPayload.TYPE,
+                UpdatePayloads.BookmarksPayload.STREAM_CODEC,
+                UpdatePayloads.BookmarksPayload::Handle
         );
 
         registrar.playToServer(
@@ -197,47 +198,11 @@ public class Tyzsskills {
         );
 
         registrar.playToClient(
-                SkillBookmarksPayload.TYPE,
-                SkillBookmarksPayload.STREAM_CODEC,
-                SkillBookmarksPayload::Handle
-        );
-
-
-        registrar.playToClient(
-                StatsXpPayload.TYPE,
-                StatsXpPayload.STREAM_CODEC,
-                StatsXpPayload::Handle
-        );
-
-        registrar.playToClient(
-                StatsSpEarnedPayload.TYPE,
-                StatsSpEarnedPayload.STREAM_CODEC,
-                StatsSpEarnedPayload::Handle
-        );
-
-        registrar.playToClient(
-                StatsSpSpentPayload.TYPE,
-                StatsSpSpentPayload.STREAM_CODEC,
-                StatsSpSpentPayload::Handle
-        );
-
-        registrar.playToClient(
-                ResetPayload.TYPE,
-                ResetPayload.STREAM_CODEC,
-                ResetPayload::Handle
-        );
-
-        registrar.playToClient(
                 ExportPayload.TYPE,
                 ExportPayload.STREAM_CODEC,
                 ExportPayload::Handle
         );
 
-        registrar.playToClient(
-                CategoriesPayload.TYPE,
-                CategoriesPayload.STREAM_CODEC,
-                CategoriesPayload::Handle
-        );
 
     }
 
