@@ -1,6 +1,8 @@
 package com.tyzsskills.impl.client;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.Constants;
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.Category;
 import com.tyzsskills.api.records.LevelData;
@@ -8,14 +10,18 @@ import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
 import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.server.model.*;
+import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
+import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
+
 
 public class ClientCache {
 
@@ -100,6 +106,11 @@ public class ClientCache {
 
     private int totalSkills;
     public int getTotalSkills(){return totalSkills;}
+
+    //SECURITY
+    private long lastClickTime = 0L;
+    public void registerNewClick(){lastClickTime = System.currentTimeMillis();}
+    public boolean isSpamming(){return System.currentTimeMillis() - lastClickTime < Constants.PAYLOAD_COOLDOWN_MS;}
 
     //SERVER
     private final Map<String, Category> categories = new HashMap<>();
@@ -213,6 +224,22 @@ public class ClientCache {
             if (player == null || !Config.SHOW_DEBUG_MESSAGES.get()) return;
             player.displayClientMessage(Component.literal(message), false);
         }
+    }
+
+    //ACTIONS
+    public void triggerAction(@NotNull ISkill skill, Enums.ClientAction actionType){
+        if(isSpamming()) return;
+
+        switch(actionType){
+            case PURCHASE -> predictBuy(skill);
+            case REFUND -> predictRefund(skill);
+            case BULK_PURCHASE -> predictBuyMax(skill);
+            case BULK_REFUND -> predictRefundMax(skill);
+            case BOOKMARK -> predictBookmark(skill);
+        }
+
+        registerNewClick();
+        PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID(), actionType));
     }
 
     //PREDICTIONS

@@ -212,11 +212,8 @@ public class SkillWidget {
 
             SoundPlayer.PlayUIClick();
 
-            if(isShiftPressed()) cache.predictBuyMax(skill);
-            else cache.predictBuy(skill);
-
-            var actionTask = isShiftPressed() ? 3 : 0;
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), actionTask));
+            var actionTask = isShiftPressed() ? Enums.ClientAction.BULK_PURCHASE : Enums.ClientAction.PURCHASE;
+            cache.triggerAction(skill, actionTask);
 
             return true;
         }
@@ -226,22 +223,21 @@ public class SkillWidget {
 
             SoundPlayer.PlayUIClick();
 
-            if(isShiftPressed()) cache.predictRefundMax(skill);
-            else cache.predictRefund(skill);
-
-            var actionTask = isShiftPressed() ? 4 : 1;
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), actionTask));
+            var actionTask = isShiftPressed() ? Enums.ClientAction.BULK_REFUND : Enums.ClientAction.REFUND;
+            cache.triggerAction(skill, actionTask);
 
             return true;
         }
 
         if(isMouseOver((int)mouseX, (int)mouseY, x+49, y+17, BTN_W, BTN_H)) {
             SoundPlayer.PlayUIClick();
-            cache.predictBookmark(skill);
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID().toLowerCase(), 2));
+
+            cache.triggerAction(skill, Enums.ClientAction.BOOKMARK);
 
             var mc = Minecraft.getInstance();
             if(mc.screen instanceof MainGUI gui) gui.refreshList();
+
+            return true;
         }
 
         return false;

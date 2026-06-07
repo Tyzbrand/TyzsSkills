@@ -9,4 +9,6 @@ public class Enums {
 
     public enum SortingDirection {ASCENDING, DESCENDING}
     public enum SortingCategory {ALL, BOOKMARKS}
+
+    public enum ClientAction {PURCHASE, REFUND, BULK_PURCHASE, BULK_REFUND, BOOKMARK}
 }
