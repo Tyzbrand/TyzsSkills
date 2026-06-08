@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.active;
 
+import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.PlayerResetEvent;
 import com.tyzsskills.api.events.SkillReloadEvent;
@@ -37,11 +38,9 @@ public class DebugManager {
         try {
             FileManager.readSkills(server);
             FileManager.readData(server);
-        } catch (Exception e) {
-            ErrorManager.registerLoadError("Loading json files", "Check the logs for more details");
-            System.err.println("[Tyz's Skills] CRITICAL ERROR: Unable to load files during server start");
-            e.printStackTrace();
-            return;
+        } catch (IOException e) {
+            Tyzsskills.LOGGER.error("CRITICAL ERROR: Unable to load files during mod reload", e);
+            throw new RuntimeException(e);
         }
 
         for(var player : server.getPlayerList().getPlayers()){checkForInconsistencies(player);}

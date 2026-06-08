@@ -22,9 +22,8 @@ public abstract class SkillBehavior {
     public void onEffectApplicable(MobEffectEvent.Applicable event, ServerPlayer player, int lvl, ISkill skill){}
     public void onTargetChange(LivingChangeTargetEvent event, ServerPlayer player, int lvl, ISkill skill){}
     public void onPlayerClone(PlayerEvent.Clone event, ServerPlayer player, int lvl, ISkill skill){}
-    public void OnNoiseAtPlayer(PlayLevelSoundEvent.AtEntity event, ServerPlayer player, int lvl, ISkill skill){}
-    public void OnPlayerWakeUp(PlayerWakeUpEvent event, ServerPlayer player, int lvl, ISkill skill){}
-    public void OnBabySpawn(BabyEntitySpawnEvent event, ServerPlayer player, int lvl, ISkill skill){}
+    public void onPlayerWakeUp(PlayerWakeUpEvent event, ServerPlayer player, int lvl, ISkill skill){}
+    public void onBabySpawn(BabyEntitySpawnEvent event, ServerPlayer player, int lvl, ISkill skill){}
     public void onItemCrafted(PlayerEvent.ItemCraftedEvent event, ServerPlayer player, int lvl, ISkill skill){}
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, ServerPlayer player, int lvl, ISkill skill){}
 

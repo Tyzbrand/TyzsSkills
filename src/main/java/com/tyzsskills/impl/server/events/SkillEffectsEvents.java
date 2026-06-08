@@ -1,7 +1,5 @@
 package com.tyzsskills.impl.server.events;
 
-import com.tyzsskills.Config;
-import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.server.level.ServerPlayer;
@@ -160,19 +158,6 @@ public class SkillEffectsEvents {
     }
 
     @SubscribeEvent
-    public static void onNoiseAtPlayer(PlayLevelSoundEvent.AtEntity event){
-        if(event.isCanceled()) return;
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        
-
-        for (Skill skill : SkillManager.getSortedBehaviors()){
-            var lvl = SkillManager.getPlayerSkillLevel(player, skill.getID());
-            if( lvl<= 0) continue;
-            skill.getBehavior().OnNoiseAtPlayer(event, player, lvl, skill);
-        }
-    }
-
-    @SubscribeEvent
     public static void onPlayerWakeUp(PlayerWakeUpEvent event){
         
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
@@ -181,7 +166,7 @@ public class SkillEffectsEvents {
             var lvl = SkillManager.getPlayerSkillLevel(player, skill.getID());
             if( lvl<= 0) continue;
 
-            skill.getBehavior().OnPlayerWakeUp(event, player, lvl, skill);
+            skill.getBehavior().onPlayerWakeUp(event, player, lvl, skill);
         }
     }
     @SubscribeEvent
@@ -222,7 +207,7 @@ public class SkillEffectsEvents {
             var lvl = SkillManager.getPlayerSkillLevel(player, skill.getID());
             if( lvl<= 0) continue;
 
-            skill.getBehavior().OnBabySpawn(event, player, lvl, skill);
+            skill.getBehavior().onBabySpawn(event, player, lvl, skill);
         }
     }
 

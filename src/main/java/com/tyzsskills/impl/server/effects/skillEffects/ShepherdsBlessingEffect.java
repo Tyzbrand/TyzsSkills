@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.entity.living.BabyEntitySpawnEvent;
 public class ShepherdsBlessingEffect extends SkillBehavior {
 
     @Override
-    public void OnBabySpawn(BabyEntitySpawnEvent event, ServerPlayer player, int lvl, ISkill skill) {
+    public void onBabySpawn(BabyEntitySpawnEvent event, ServerPlayer player, int lvl, ISkill skill) {
         var values = skill.getValueSet("growth_speed");
         if(values == null) return;
 

@@ -237,9 +237,8 @@ public class Tyzsskills {
             FileManager.readData(server);
         }
         catch (IOException e) {
-        ErrorManager.registerLoadError("Loading json files", "Check the logs for more details");
-        System.err.println("[Tyz's Skills] CRITICAL ERROR: Unable to load files during server start");
-        e.printStackTrace();
+            Tyzsskills.LOGGER.error("CRITICAL ERROR: Unable to load files during server start", e);
+            throw new RuntimeException(e);
         }
     }
 

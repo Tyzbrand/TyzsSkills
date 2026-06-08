@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.Level;
 
 import com.google.gson.JsonObject;
+import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.events.SkillLevelChangeEvent;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
@@ -118,7 +119,9 @@ public class LevelManager {
 
                 if (goal <= 0 || reward < 0 || level < -1) continue;
                 POOL.put(level, new LevelData(goal, reward));
-            } catch (Exception ex) {ex.printStackTrace();}
+            } catch (Exception e) {
+                Tyzsskills.LOGGER.error("Unable to load level pool", e);
+            }
         }
     }
 
