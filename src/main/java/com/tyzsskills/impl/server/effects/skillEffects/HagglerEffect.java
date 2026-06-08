@@ -44,4 +44,9 @@ public class HagglerEffect extends SkillBehavior {
 
         }
     }
+
+    @Override
+    public boolean isTickEvent() {
+        return true;
+    }
 }

@@ -39,4 +39,9 @@ public class MagnetEffect extends SkillBehavior {
             }
         }
     }
+
+    @Override
+    public boolean isTickEvent() {
+        return true;
+    }
 }

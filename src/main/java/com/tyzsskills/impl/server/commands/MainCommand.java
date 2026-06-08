@@ -217,15 +217,7 @@ public class MainCommand {
                         .executes(ctx -> {
                             DebugManager.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.STATS);
                             return 1;
-                        })))
-                .then(Commands.literal("limits")
-                .then(Commands.argument("player", EntityArgument.player())
-                        .executes(ctx -> {
-                            DebugManager.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.LIMITS);
-                            return 1;
                         })));
-
-
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> export(){

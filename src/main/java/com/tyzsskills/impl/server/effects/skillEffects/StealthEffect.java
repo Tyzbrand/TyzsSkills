@@ -25,5 +25,8 @@ public class StealthEffect extends SkillBehavior {
         event.modifyVisibility(multiplier);
     }
 
-
+    @Override
+    public boolean isVisibilityEvent() {
+        return true;
+    }
 }

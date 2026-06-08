@@ -134,7 +134,9 @@ public class Tyzsskills {
         var server = ServerLifecycleHooks.getCurrentServer();
         if(server == null) return;
 
-        for(var player : server.getPlayerList().getPlayers()) PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
+        for(var player : server.getPlayerList().getPlayers()) {
+            PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
+        }
     }
 
     private void registerPayloads(final RegisterPayloadHandlersEvent event){

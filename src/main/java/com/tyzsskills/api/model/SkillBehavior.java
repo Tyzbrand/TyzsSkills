@@ -43,4 +43,7 @@ public abstract class SkillBehavior {
 
     public int getPriority(){return 0;}
 
+    public boolean isTickEvent(){return false;}
+    public boolean isVisibilityEvent(){return false;}
+
 }

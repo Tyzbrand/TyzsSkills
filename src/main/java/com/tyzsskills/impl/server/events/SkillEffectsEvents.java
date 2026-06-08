@@ -227,16 +227,12 @@ public class SkillEffectsEvents {
     }
 
 
-    private final static String[] playerTickSkills = {"magnet", "haggler"};
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event){
         
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        for(var id : playerTickSkills){
-            var skill = SkillManager.getSkill(id.toLowerCase());
-            if(skill == null || !skill.hasBehaviour()) continue;
-
+        for(var skill : SkillManager.getSortedTickBehaviors()){
             var lvl = SkillManager.getPlayerSkillLevel(player, skill.getID());
             if( lvl<= 0) continue;
 
@@ -244,16 +240,12 @@ public class SkillEffectsEvents {
         }
     }
 
-    private final static String[] entityVisibility = {"stealth"};
     @SubscribeEvent
     public static void onLivingVisibility(LivingEvent.LivingVisibilityEvent event){
         
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        for(var id : entityVisibility){
-            var skill = SkillManager.getSkill(id.toLowerCase());
-            if(skill == null || !skill.hasBehaviour()) continue;
-
+        for(var skill : SkillManager.getSortedVisibilityBehaviors()){
             var lvl = SkillManager.getPlayerSkillLevel(player, skill.getID());
             if( lvl<= 0) continue;
 
