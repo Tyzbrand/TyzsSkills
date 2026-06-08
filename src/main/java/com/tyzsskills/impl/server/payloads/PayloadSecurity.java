@@ -20,4 +20,7 @@ public class PayloadSecurity {
         COOLDOWNS.put(player.getUUID(), currentTime);
         return false;
     }
+
+
+    public static void unregisterPlayer(@NotNull ServerPlayer player) {COOLDOWNS.remove(player.getUUID());}
 }

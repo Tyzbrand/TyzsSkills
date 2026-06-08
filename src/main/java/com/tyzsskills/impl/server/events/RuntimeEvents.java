@@ -10,6 +10,7 @@ import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.categories.CategoryLoader;
 import com.tyzsskills.impl.server.effects.GenericEffects;
+import com.tyzsskills.impl.server.payloads.PayloadSecurity;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
@@ -50,6 +51,13 @@ public class RuntimeEvents {
             ErrorManager.printErrors(player);
         }
 
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event){
+        if(!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        PayloadSecurity.unregisterPlayer(player);
     }
 
     @SubscribeEvent

@@ -76,7 +76,6 @@ public class Tyzsskills {
         ExplorationProgression.ATTACHMENT_TYPES.register(modEventBus);
         StatsTracker.ATTACHMENT_TYPES.register(modEventBus);
         PlayerData.ATTACHMENT_TYPES.register(modEventBus);
-        LimitsTracker.ATTACHMENT_TYPES.register(modEventBus);
 
         //Register Sounds
         SoundRegistry.register(modEventBus);
