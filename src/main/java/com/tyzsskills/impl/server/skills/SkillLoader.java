@@ -3,6 +3,7 @@ package com.tyzsskills.impl.server.skills;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.mojang.serialization.JsonOps;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.model.SkillConfiguration;
@@ -10,14 +11,13 @@ import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.api.records.ValueSet;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @ApiStatus.Internal
@@ -245,8 +245,9 @@ public class SkillLoader {
 
 
     //Utils
+    private static final Set<String> GENERIC_PARAMETERS = Set.of("purchasable", "refundable", "visible", "levelRequirement", "incompatibleSkills", "skillPrerequisites");
     private static SkillConfiguration parseConfig(JsonObject obj){
-
+        //Generic Parameters
         var purchasable = getSafeElement(obj, "purchasable", JsonPrimitive::getAsBoolean);
         var refundable = getSafeElement(obj, "refundable", JsonPrimitive::getAsBoolean);
         var visible = getSafeElement(obj, "visible", JsonPrimitive::getAsBoolean);
@@ -256,7 +257,21 @@ public class SkillLoader {
         var incompatibleSkills = getSafeList(obj, "incompatibleSkills", JsonElement::getAsString);
         var skillPrerequisites = getSafeList(obj, "skillPrerequisites", JsonElement::getAsString);
 
-        return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites, refundable, purchasable, visible);
+        //Specific Parameters
+        var tempObj = new JsonObject();
+        CompoundTag parameters = null;
+
+        for(var kvp : obj.entrySet()){
+            if(!GENERIC_PARAMETERS.contains(kvp.getKey())) tempObj.add(kvp.getKey(), kvp.getValue());
+        }
+
+        if(!tempObj.isEmpty()){
+            if(JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, tempObj) instanceof CompoundTag tag){
+                parameters = tag;
+            }
+        }
+
+        return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites, refundable, purchasable, visible, parameters);
     }
 
 }

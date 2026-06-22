@@ -1,5 +1,11 @@
 package com.tyzsskills.api.model;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializer;
+import com.mojang.serialization.JsonOps;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
@@ -7,11 +13,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class SkillConfiguration {
-    public SkillConfiguration(){this(null, null, null, null, null, null);}
+    public SkillConfiguration(){this(null, null, null, null, null, null, null);}
+
+    public SkillConfiguration(@NotNull CompoundTag parameters){this(null, null, null, null, null, null, parameters);}
 
     public SkillConfiguration (Integer levelRequirement,
                                List<String> incompatibilities, List<String> prerequisites,
-                               Boolean refundable, Boolean purchasable, Boolean visible){
+                               Boolean refundable, Boolean purchasable, Boolean visible, CompoundTag parameters){
 
 
         this.refundable = refundable;
@@ -22,6 +30,8 @@ public class SkillConfiguration {
 
         this.incompatibleSkills = incompatibilities == null ? null : new HashSet<>(incompatibilities);
         this.skillPrerequisites = prerequisites == null ? null : new HashSet<>(prerequisites);
+
+        this.parameters = parameters;
     }
 
 
@@ -55,9 +65,35 @@ public class SkillConfiguration {
     public List<String> skillPrerequisites(){return skillPrerequisites == null ? Collections.emptyList() :  List.copyOf(skillPrerequisites);}
     public void removePrerequisite(String skillID){if(skillPrerequisites != null) skillPrerequisites.remove(skillID);}
 
+    //Tags
+    private CompoundTag parameters;
+    public @NotNull CompoundTag parameters(){return parameters == null ? new CompoundTag() : parameters;}
 
+    //region Load/Write/Read
+    public static final JsonSerializer<SkillConfiguration> GSON_SERIALIZER = ((src, typeOfSrc, ctx) -> {
+        var obj = new JsonObject();
+        if(!src.purchasable()) obj.addProperty("purchasable", false);
+        if(!src.refundable()) obj.addProperty("refundable", false);
+        if(!src.visible()) obj.addProperty("visible", false);
 
-    //Network
+        if(src.levelRequirement() > 0) obj.addProperty("levelRequirement", src.levelRequirement());
+
+        if(!src.incompatibleSkills().isEmpty()) obj.add("incompatibleSkills", ctx.serialize(src.incompatibleSkills()));
+        if(!src.skillPrerequisites().isEmpty()) obj.add("skillPrerequisites", ctx.serialize(src.skillPrerequisites()));
+
+        if (src.parameters != null && !src.parameters().isEmpty()) {
+            var customData = NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, src.parameters());
+            if (customData.isJsonObject()) {
+                customData.getAsJsonObject().entrySet().forEach(entry -> obj.add(entry.getKey(), entry.getValue()));
+            }
+        }
+
+        return obj;
+    });
+
+    //endregion
+
+    //region Network
     public static final StreamCodec<FriendlyByteBuf, SkillConfiguration> STREAM_CODEC = StreamCodec.ofMember(
             SkillConfiguration::writeToBuffer,
             SkillConfiguration::readConfigFromBuffer
@@ -72,6 +108,8 @@ public class SkillConfiguration {
 
         buffer.writeCollection(incompatibleSkills(), FriendlyByteBuf::writeUtf);
         buffer.writeCollection(skillPrerequisites(), FriendlyByteBuf::writeUtf);
+
+        buffer.writeNbt(parameters());
     }
 
     public static @NotNull SkillConfiguration readConfigFromBuffer(FriendlyByteBuf buffer){
@@ -91,6 +129,10 @@ public class SkillConfiguration {
 
         List<String> skillPrerequisites = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readUtf);
 
-        return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites,refundable, purchasable, visible);
+        var parametersToRead = buffer.readNbt();
+        CompoundTag parameters = parametersToRead.isEmpty() ? null : parametersToRead;
+
+        return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites,refundable, purchasable, visible, parameters);
     }
+    //endregion
 }

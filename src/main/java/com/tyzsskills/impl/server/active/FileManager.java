@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.active;
 
 import com.google.gson.*;
+import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.Level.LevelPoolPreset;
@@ -28,7 +29,10 @@ import java.util.stream.Stream;
 
 @ApiStatus.Internal
 public class FileManager {
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .registerTypeAdapter(SkillConfiguration.class, SkillConfiguration.GSON_SERIALIZER)
+            .create();
 
     private static final List<SkillPrefab> prefabQueue = new ArrayList<>();
     public static void registerPrefab(@NotNull SkillPrefab prefab){prefabQueue.add(prefab);}

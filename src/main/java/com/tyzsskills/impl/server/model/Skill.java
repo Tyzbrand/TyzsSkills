@@ -8,6 +8,7 @@ import com.tyzsskills.api.records.BulkPurchaseResult;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
 import com.tyzsskills.api.model.SkillBehavior;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
@@ -117,6 +118,10 @@ public class Skill implements ISkill {
                 && getIncompatibilities(ctx.ownedSkillIds()).isEmpty();
     }
 
+    @Override
+    public @NotNull CompoundTag getSpecificParameters() {
+        return config.parameters();
+    }
 
     @Nullable
     public SkillBehavior getBehavior(){return behaviour;}

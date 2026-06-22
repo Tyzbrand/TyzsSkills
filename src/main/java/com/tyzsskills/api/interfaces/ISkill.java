@@ -3,6 +3,7 @@ package com.tyzsskills.api.interfaces;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.api.records.*;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -167,5 +168,7 @@ public interface ISkill {
     }
 
     boolean isAvailable(@NotNull SkillContext ctx);
+
+    @NotNull CompoundTag getSpecificParameters();
 
 }

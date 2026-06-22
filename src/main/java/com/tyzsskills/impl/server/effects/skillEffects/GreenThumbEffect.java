@@ -1,9 +1,11 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.api.tools.TagMatchTool;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -14,29 +16,30 @@ public class GreenThumbEffect extends SkillBehavior {
     @Override
     public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
         if(!(event.getLevel() instanceof ServerLevel serverLevel)) return;
-        if (BlockMarker.IsPlayerPlaced(serverLevel, event.getPos())) return;
 
         var state = event.getState();
         Block block = state.getBlock();
-        boolean flag = false;
+        boolean isValidPlant = false;
 
-        if(block instanceof CropBlock crop && crop.isMaxAge(state)) flag = true;
-        else if (block instanceof NetherWartBlock && state.getValue(NetherWartBlock.AGE) >= 3) flag = true;
-        else if(block instanceof CocoaBlock && state.getValue(CocoaBlock.AGE) >= 2) flag = true;
-        else if (block instanceof TallGrassBlock || block instanceof DeadBushBlock) flag = true;
-        else if (block instanceof TallSeagrassBlock || block instanceof SeagrassBlock || block instanceof KelpBlock) flag = true;
-        else if(block instanceof PumpkinBlock) flag = true;
-        else if(block instanceof CactusBlock || block instanceof SugarCaneBlock || block instanceof BambooStalkBlock) flag = true;
-        else if(state.is(BlockTags.LEAVES)) flag = true;
-        else if(state.is(Blocks.MELON)) flag = true;
-        else if(state.is(Blocks.FERN) || state.is(Blocks.LARGE_FERN)) flag = true;
-        else if(state.is(Blocks.SHORT_GRASS)) flag = true;
+        if(block instanceof CropBlock crop && crop.isMaxAge(state)) isValidPlant = true;
+        else if (block instanceof NetherWartBlock && state.getValue(NetherWartBlock.AGE) >= 3) isValidPlant = true;
+        else if(block instanceof CocoaBlock && state.getValue(CocoaBlock.AGE) >= 2) isValidPlant = true;
+        else if (block instanceof TallGrassBlock || block instanceof DeadBushBlock) isValidPlant = true;
+        else if (block instanceof TallSeagrassBlock || block instanceof SeagrassBlock || block instanceof KelpBlock) isValidPlant = true;
+        else if(block instanceof PumpkinBlock) isValidPlant = true;
+        else if(block instanceof CactusBlock || block instanceof SugarCaneBlock || block instanceof BambooStalkBlock) isValidPlant = true;
+        else if(state.is(BlockTags.LEAVES)) isValidPlant = true;
+        else if(state.is(Blocks.MELON)) isValidPlant = true;
+        else if(state.is(Blocks.FERN) || state.is(Blocks.LARGE_FERN)) isValidPlant = true;
+        else if(state.is(Blocks.SHORT_GRASS)) isValidPlant = true;
 
-
-        if(!flag) return;
+        if(!isValidPlant) return;
 
         var values = skill.getValueSet("success_probability");
         if(values == null) return;
+
+        if (BlockMarker.IsPlayerPlaced(serverLevel, event.getPos())) return;
+        if(TagMatchTool.isBlockInList(skill.getSpecificParameters(), "block_blacklist", state)) return;
 
         float chancePercentage = values.getValue(lvl);
 

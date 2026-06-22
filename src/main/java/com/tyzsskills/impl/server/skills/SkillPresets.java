@@ -1,15 +1,21 @@
 package com.tyzsskills.impl.server.skills;
 
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.api.records.ValueSet;
 import com.tyzsskills.impl.server.effects.skillEffects.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class SkillPresets {
 
@@ -483,7 +489,11 @@ public class SkillPresets {
                 Map.of(
                         "refund_chance", new ValueSet(List.of(4f, 8f, 12f, 16f, 20f), "skill.tyzs_skills.unit.percentage"),
                     "max_materials", new ValueSet(List.of(1f, 1f, 2f, 2f, 3f), "skill.tyzs_skills.unit.item")),
-                new SparePartsEffect(), null
+                new SparePartsEffect(),
+                new SkillConfiguration(makeTag(tag -> {
+                    tag.put("product_blacklist", new ListTag());
+                    tag.put("ingredient_blacklist", new ListTag());
+                }))
         ));
 
         finalList.add(new SkillPrefab(
@@ -505,8 +515,8 @@ public class SkillPresets {
         finalList.add(new SkillPrefab(
                 true,
                 "keepsake",
-                8,
-                List.of(4, 6, 8, 12, 16, 20, 25, 30),
+                9,
+                List.of(4, 6, 8, 12, 16, 20, 25, 30, 35),
                 Enums.SkillType.IMMUTABLE,
                 "misc",
                 "tyzs_skills:textures/gui/skills/keepsake.png",
@@ -514,8 +524,11 @@ public class SkillPresets {
                 "skill.tyzs_skills.keepsake.description",
                 null,
                 Map.of(
-                        "saved_slots", new ValueSet(List.of(1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f), "skill.tyzs_skills.unit.slot")),
-                new KeepsakeEffect(), null
+                        "saved_slots", new ValueSet(List.of(1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f), "skill.tyzs_skills.unit.slot")),
+                new KeepsakeEffect(),
+                new SkillConfiguration(makeTag(tag -> {
+                    tag.put("item_blacklist", new ListTag());
+                }))
         ));
 
         finalList.add(new SkillPrefab(
@@ -554,7 +567,10 @@ public class SkillPresets {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(15f, 30f, 45f, 60f, 75f), "skill.tyzs_skills.unit.percentage")),
-                new GreenThumbEffect(), null
+                new GreenThumbEffect(),
+                new SkillConfiguration(makeTag(tag ->{
+                    tag.put("block_blacklist", new ListTag());
+                }))
         ));
 
 
@@ -571,9 +587,23 @@ public class SkillPresets {
                 null,
                 Map.of(
                         "growth_speed", new ValueSet(List.of(50f, 100f, 150f, 200f, 250f, 300f, 350f, 400f, 450f, 500f, 550f, 600f, 650f, 700f, 750f), "skill.tyzs_skills.unit.percentage")),
-                new ShepherdsBlessingEffect(), null
+                new ShepherdsBlessingEffect(),
+                new SkillConfiguration(makeTag(tag -> {
+                    tag.put("entity_blacklist", new ListTag());
+                }))
         ));
         return finalList;
     }
 
+    //Utils
+    private static @NotNull CompoundTag makeTag(Consumer<CompoundTag> populator){
+        var specificParameters = new CompoundTag();
+        populator.accept(specificParameters);
+        return specificParameters;
+    }
+    private static @NotNull ListTag buildList (List<String> source){
+        var tagList = new ListTag();
+        for (var entry : source) tagList.add(StringTag.valueOf(entry));
+        return tagList;
+    }
 }

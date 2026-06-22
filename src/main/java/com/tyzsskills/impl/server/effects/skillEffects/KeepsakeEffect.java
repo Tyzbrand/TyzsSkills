@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
+import com.tyzsskills.api.tools.TagMatchTool;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
@@ -24,14 +25,15 @@ public class KeepsakeEffect extends SkillBehavior {
         if(values == null) return;
 
         var slotAmount = (int)values.getValue(lvl);
-        slotAmount = Math.max(0, Math.min(41, slotAmount));
+        slotAmount = Math.clamp(slotAmount, 0, 41);
 
         for (int i = 0; i < slotAmount; i++) {
             ItemStack stack = player.getInventory().getItem(i);
-            if (!stack.isEmpty()) {
-                keptItems.put(i, stack.copy());
-                player.getInventory().setItem(i, ItemStack.EMPTY);
-            }
+            if (stack.isEmpty()) continue;
+            if(TagMatchTool.isItemInList(skill.getSpecificParameters(), "item_blacklist", stack)) continue;
+
+            keptItems.put(i, stack.copy());
+            player.getInventory().setItem(i, ItemStack.EMPTY);
         }
 
         SAVED_HOTBARS.put(player.getUUID(), keptItems);
@@ -49,6 +51,8 @@ public class KeepsakeEffect extends SkillBehavior {
             items.forEach((slotId, stack) -> {
                 player.getInventory().setItem(slotId, stack);
             });
+
+            notifyClient(player, skill);
         }
     }
 }
