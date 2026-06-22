@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
+import com.tyzsskills.api.tools.TagMatchTool;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -21,6 +22,8 @@ public class VenomousAttackEffect extends SkillBehavior {
         float chancePercentage = values.getValue(lvl);
 
         if(player.getRandom().nextFloat() < (chancePercentage/100f)){
+            if(TagMatchTool.isEntityInList(skill.getSpecificParameters(), "entity_blacklist", target.getType())) return;
+
             target.addEffect(new MobEffectInstance(MobEffects.POISON, 100, 1));
             notifyClient(player, skill);
         }

@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
+import com.tyzsskills.api.tools.TagMatchTool;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 
@@ -22,6 +23,8 @@ public class NutritionEffect extends SkillBehavior {
         int nutritionBonus = Math.round(foodValue.nutrition() * bonusPercentage);
 
         if(nutritionBonus > 0){
+            if(TagMatchTool.isItemInList(skill.getSpecificParameters(), "food_blacklist", item)) return;
+
             player.getFoodData().eat(nutritionBonus, foodValue.saturation() * 0.5f);
             notifyClient(player, skill);
         }

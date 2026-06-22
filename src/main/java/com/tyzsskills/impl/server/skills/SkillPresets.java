@@ -204,7 +204,10 @@ public class SkillPresets {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(3f, 8f, 14f, 25f, 40f), "skill.tyzs_skills.unit.percentage")),
-                new VenomousAttackEffect(), null
+                new VenomousAttackEffect(),
+                new SkillConfiguration(makeTag(tag -> {
+                    tag.put("entity_blacklist", new ListTag());
+                }))
         ));
 
         finalList.add(new SkillPrefab(
@@ -220,7 +223,10 @@ public class SkillPresets {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(5f, 10f, 15f, 20f, 25f), "skill.tyzs_skills.unit.percentage")),
-                new CriticalHitEffect(), null
+                new CriticalHitEffect(),
+                new SkillConfiguration(makeTag(tag -> {
+                    tag.put("entity_blacklist", new ListTag());
+                }))
         ));
 
         finalList.add(new SkillPrefab(
@@ -236,7 +242,10 @@ public class SkillPresets {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(3f, 7f, 11f, 15f, 20f), "skill.tyzs_skills.unit.percentage")),
-                new DamageDealEffect(), null
+                new DamageDealEffect(),
+                new SkillConfiguration(makeTag(tag -> {
+                    tag.put("entity_blacklist", new ListTag());
+                }))
         ));
 
 
@@ -253,7 +262,10 @@ public class SkillPresets {
                 null,
                 Map.of(
                         "health_percentage", new ValueSet(List.of(3f, 7f, 11f, 15f), "skill.tyzs_skills.unit.percentage")),
-                new BloodlustEffect(), null
+                new BloodlustEffect(),
+                new SkillConfiguration(makeTag(tag -> {
+                    tag.put("entity_blacklist", new ListTag());
+                }))
         ));
 
         finalList.add(new SkillPrefab(
@@ -285,7 +297,10 @@ public class SkillPresets {
                 null,
                 Map.of(
                         "damage_buff", new ValueSet(List.of(5f, 10f, 15f, 20f, 25f), "skill.tyzs_skills.unit.percentage")),
-                new BackstabEffect(), null
+                new BackstabEffect(),
+                new SkillConfiguration(makeTag(tag -> {
+                    tag.put("entity_blacklist", new ListTag());
+                }))
         ));
 
         finalList.add(new SkillPrefab(
@@ -367,7 +382,10 @@ public class SkillPresets {
                 null,
                 Map.of(
                         "success_probability", new ValueSet(List.of(3f, 6f, 9f), "skill.tyzs_skills.unit.percentage")),
-                new TrueStrikeEffect(), null
+                new TrueStrikeEffect(),
+                new SkillConfiguration(makeTag(tag -> {
+                    tag.put("entity_blacklist", new ListTag());
+                }))
         ));
 
         finalList.add(new SkillPrefab(
@@ -423,7 +441,10 @@ public class SkillPresets {
                 null,
                 Map.of(
                         "nutrition_bonus", new ValueSet(List.of(5f, 10f, 15f, 20f, 25f), "skill.tyzs_skills.unit.percentage")),
-                new NutritionEffect(), null
+                new NutritionEffect(),
+                new SkillConfiguration(makeTag(tag -> {
+                    tag.put("food_blacklist", new ListTag());
+                }))
         ));
 
 
@@ -472,7 +493,10 @@ public class SkillPresets {
                 null,
                 Map.of(
                         "block_radius", new ValueSet(List.of(3f, 5f, 7f, 10f), "skill.tyzs_skills.unit.block_radius")),
-                new MagnetEffect(), null
+                new MagnetEffect(),
+                new SkillConfiguration(makeTag(tag -> {
+                    tag.put("item_blacklist", new ListTag());
+                }))
         ));
 
         finalList.add(new SkillPrefab(
@@ -509,7 +533,11 @@ public class SkillPresets {
                 null,
                 Map.of(
                         "loot_multiplier", new ValueSet(List.of(10f, 20f, 30f, 40f, 50f), "skill.tyzs_skills.unit.percentage")),
-                new TwistOfFateEffect(), null
+                new TwistOfFateEffect(),
+                new SkillConfiguration(makeTag(tag -> {
+                    tag.put("container_blacklist", new ListTag());
+                    tag.put("item_blacklist", new ListTag());
+                }))
         ));
 
         finalList.add(new SkillPrefab(

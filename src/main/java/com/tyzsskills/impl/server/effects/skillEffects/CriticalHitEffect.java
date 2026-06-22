@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
+import com.tyzsskills.api.tools.TagMatchTool;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,8 +19,9 @@ public class CriticalHitEffect extends SkillBehavior {
 
         float chancePercentage = values.getValue(lvl);
 
-
         if(player.getRandom().nextFloat() < (chancePercentage/100f)){
+
+            if(TagMatchTool.isEntityInList(skill.getSpecificParameters(), "entity_blacklist", event.getEntity().getType())) return;
 
             event.setAmount(event.getAmount() * 2f);
             notifyClient(player, skill);

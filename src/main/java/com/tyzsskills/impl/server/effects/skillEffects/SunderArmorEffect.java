@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
+import com.tyzsskills.api.tools.TagMatchTool;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +25,6 @@ public class SunderArmorEffect extends SkillBehavior {
 
         var chance = chances.getValue(lvl);
         var damagePercentage = damagePercentages.getValue(lvl);
-
 
         if(player.getRandom().nextFloat() < (chance/100f)) {
 

@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
+import com.tyzsskills.api.tools.TagMatchTool;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,7 +30,7 @@ public class TwistOfFateEffect extends SkillBehavior {
 
             if (nbt.contains("LootTable")) {
                 var server = player.getServer();
-                if (server != null) {
+                if (server != null && !TagMatchTool.isBlockInList(skill.getSpecificParameters(), "container_blacklist", event.getLevel().getBlockState(pos))) {
                     server.tell(new TickTask(server.getTickCount() + 1, () -> {
 
                         var openedEntity = player.level().getBlockEntity(pos);
@@ -46,7 +47,6 @@ public class TwistOfFateEffect extends SkillBehavior {
                             for (int i = 0; i < container.getContainerSize(); i++) {
                                 ItemStack stack = container.getItem(i);
                                 if (!stack.isEmpty()) baseLoot.add(stack.copy());
-
                             }
 
                             for (ItemStack original : baseLoot) {
@@ -54,13 +54,14 @@ public class TwistOfFateEffect extends SkillBehavior {
                                 int extraCount = (int) rawBonus;
 
                                 if (player.getRandom().nextFloat() < (rawBonus - extraCount)) extraCount++;
-
                                 if (extraCount <= 0) continue;
+                                if(TagMatchTool.isItemInList(skill.getSpecificParameters(), "item_blacklist", original)) continue;
 
                                 while (extraCount > 0 && !freeSlots.isEmpty()) {
                                     triggered = true;
                                     var toAdd = Math.min(extraCount, original.getMaxStackSize());
                                     ItemStack bonusStack = original.copy();
+
                                     bonusStack.setCount(toAdd);
 
                                     var targetSlot = freeSlots.removeFirst();

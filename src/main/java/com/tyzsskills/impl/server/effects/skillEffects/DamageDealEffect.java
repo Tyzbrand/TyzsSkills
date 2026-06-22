@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
+import com.tyzsskills.api.tools.TagMatchTool;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -21,20 +22,19 @@ public class DamageDealEffect extends SkillBehavior {
         float chancePercentage = values.getValue(lvl);
 
         if (player.getRandom().nextFloat() < (chancePercentage / 100f)) {
-            if(event.getSource().getEntity() instanceof LivingEntity source){
-                event.setCanceled(true);
+            if(!(event.getSource().getEntity() instanceof LivingEntity source)) return;
+            if(TagMatchTool.isEntityInList(skill.getSpecificParameters(), "entity_blacklist", source.getType())) return;
 
-                IS_REFLECTING.set(true);
+            event.setCanceled(true);
+            IS_REFLECTING.set(true);
 
-                try{
-                    var damageSrc = player.damageSources().thorns(player);
-                    source.hurt(damageSrc, event.getAmount());
-                    notifyClient(player, skill);
-                }
-                finally {
-                    IS_REFLECTING.set(false);
-                }
-
+            try{
+                var damageSrc = player.damageSources().thorns(player);
+                source.hurt(damageSrc, event.getAmount());
+                notifyClient(player, skill);
+            }
+            finally {
+                IS_REFLECTING.set(false);
             }
         }
     }
