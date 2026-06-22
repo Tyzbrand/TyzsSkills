@@ -17,6 +17,8 @@ Currently in active development. **(99% Guaranteed)**
 * <mark style="color:$info;">**AD Consistency**</mark>: Improving asset style and design consistency to deliver a more immersive RPG experience.
 * <mark style="color:$info;">**Localization Expansion**</mark>: Adding more community translations.
 * <mark style="color:$info;">**Stable Java API**</mark>: Building a 100% stable, long-term Java API for official addons.
+* <mark style="color:$info;">**Management Tools**</mark>: Implementing better configuration tools and management utilities for modpack creators and server owners.
+* <mark style="color:$info;">**Skill-Specific Settings**</mark>: Adding advanced properties inside skill JSONs, including whitelists, blacklists, and toggleable booleans.
 
 ***
 
@@ -27,10 +29,8 @@ Scheduled for a future update. **(80% Guaranteed)**
 {% endhint %}
 
 * <mark style="color:$success;">**Active Skills**</mark>: Introducing a variety of active skills! Create your unique build and trigger these custom abilities via a dedicated keybind or quick menu.
-* <mark style="color:$success;">**Management Tools**</mark>: Implementing better configuration tools and management utilities for modpack creators and server owners.
 * <mark style="color:$success;">**Skill Requirements**</mark>: Expanding unlock conditions and lock mechanics for skills (integrating deeper script-based checks).
 * <mark style="color:$success;">**Multi-Version Port**</mark>: Porting the mod for Minecraft NeoForge 26.1.
-* <mark style="color:$success;">**Skill-Specific Settings**</mark>: Adding advanced properties inside skill JSONs, including whitelists, blacklists, and toggleable booleans.
 * <mark style="color:$success;">**Progression Balancing**</mark>: Refining default values for a more natural progression curve and better gameplay balance.
 * <mark style="color:$success;">**JEI Integration**</mark>: Adding a JEI integration to display exactly which blocks, entities, or foods grant Skill XP and how much.
 * <mark style="color:$success;">**JADE Integration**</mark>: Adding dynamic tooltips for JADE to display block and entity XP values directly when looking at them in-game.
