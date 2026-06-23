@@ -10,8 +10,6 @@ import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.SoundPlayer;
 import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.impl.client.tools.StringTools;
-import com.tyzsskills.impl.server.model.Skill;
-import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,7 +18,6 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 

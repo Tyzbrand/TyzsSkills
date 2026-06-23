@@ -34,7 +34,6 @@ public class Category {
 
 
 
-
     //Network
     public static final StreamCodec<ByteBuf, Category> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, Category::displayName,

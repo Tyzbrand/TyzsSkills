@@ -8,7 +8,7 @@ import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.ExplorationProgression;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.effects.GenericEffects;
-import com.tyzsskills.impl.server.model.Skill;
+import com.tyzsskills.impl.server.skills.Skill;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;

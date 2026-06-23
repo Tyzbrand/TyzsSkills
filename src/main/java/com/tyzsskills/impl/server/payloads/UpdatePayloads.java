@@ -8,7 +8,7 @@ import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.categories.CategoryLoader;
-import com.tyzsskills.impl.server.model.Skill;
+import com.tyzsskills.impl.server.skills.Skill;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;

@@ -4,7 +4,6 @@ import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

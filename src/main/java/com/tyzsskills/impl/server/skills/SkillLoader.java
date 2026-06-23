@@ -9,7 +9,6 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.api.records.Modifier;
-import com.tyzsskills.impl.server.model.Skill;
 import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;

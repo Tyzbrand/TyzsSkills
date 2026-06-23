@@ -2,20 +2,15 @@ package com.tyzsskills.impl.server.effects;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.skills.SkillManager;
-import com.tyzsskills.impl.server.model.Skill;
-import net.minecraft.core.Holder;
+import com.tyzsskills.impl.server.skills.Skill;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashSet;
-import java.util.Optional;
 
 
 @ApiStatus.Internal

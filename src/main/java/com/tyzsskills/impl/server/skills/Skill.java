@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.model;
+package com.tyzsskills.impl.server.skills;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;

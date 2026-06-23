@@ -10,6 +10,7 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -17,6 +18,7 @@ import java.util.function.Supplier;
 public class PlayerData implements INBTSerializable<CompoundTag> {
 
     private final Map<String, Integer> playerSkills = new HashMap<>();
+    private final Map<String, Integer> playerSpells = new HashMap<>();
     private final Set<String> playerBookmarks = new HashSet<>();
     private int playerLevel = 1;
     private int playerSP = 0;
@@ -34,6 +36,21 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     }
     public int getSkillLevel(String id){return playerSkills.getOrDefault(id, 0);}
     public List<String> getOwnedSkillIds(){return List.copyOf(playerSkills.keySet());}
+
+
+    //-----------------Spell level-----------------
+    private String getPropertyId(String spellId, String propertyKey){return spellId + ":" + propertyKey;}
+    public void setSpellPropertyLevel(String spellId, String propertyKey, int lvl){
+        if(spellId == null || propertyKey == null || lvl < 0) return;
+
+        var finalId = getPropertyId(spellId, propertyKey);
+
+        if(lvl == 0 && playerSpells.containsKey(finalId)) playerSpells.remove(finalId);
+        else playerSpells.put(finalId, lvl);
+    }
+    public int getSpellPropertyLevel(String spellId, String propertyKey){
+        return playerSpells.getOrDefault(getPropertyId(spellId, propertyKey), 0);
+    }
 
 
     //-----------------Bookmarks-----------------
@@ -73,6 +90,10 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         for(var entry : playerSkills.entrySet()) skillLevels.putInt(entry.getKey(), entry.getValue());
         tag.put("skill_levels", skillLevels);
 
+        CompoundTag spellLevels = new CompoundTag();
+        for(var entry : playerSpells.entrySet()) spellLevels.putInt(entry.getKey(), entry.getValue());
+        tag.put("spell_levels", spellLevels);
+
         ListTag bookmarks = new ListTag();
         playerBookmarks.forEach(b -> bookmarks.add(StringTag.valueOf(b)));
         tag.put("skill_bookmarks", bookmarks);
@@ -89,13 +110,19 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag compoundTag) {
+    public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag compoundTag) {
         playerBookmarks.clear();
         playerSkills.clear();
+        playerSpells.clear();
 
         if(compoundTag.contains("skill_levels")) {
             CompoundTag skillsTag = compoundTag.getCompound("skill_levels");
             for(String key : skillsTag.getAllKeys()) playerSkills.put(key, skillsTag.getInt(key));
+        }
+
+        if(compoundTag.contains("spell_levels")) {
+            CompoundTag spellsTag = compoundTag.getCompound("spell_levels");
+            for(String key : spellsTag.getAllKeys()) playerSpells.put(key, spellsTag.getInt(key));
         }
 
         if(compoundTag.contains("skill_bookmarks")){

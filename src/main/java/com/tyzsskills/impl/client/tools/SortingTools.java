@@ -6,7 +6,6 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.Category;
 import com.tyzsskills.api.records.SortType;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.server.model.Skill;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
