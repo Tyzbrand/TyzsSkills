@@ -9,6 +9,48 @@ The history below covers all updates starting from version **6.4.0** up to the *
 {% endhint %}
 
 {% updates format="full" %}
+{% update date="2026-06-23" %}
+## v7.0.0 alpha
+
+
+
+#### \[Changes]
+
+* <mark style="color:blue;">**Network Optimizations**</mark>: When joining a world, the client now receives a single, unified payload instead of multiple consecutive data packets.
+* <mark style="color:blue;">**Anti-Spam Protection**</mark>: Added a 100ms cooldown on Client -> Server payloads. Verification is now enforced on both sides.
+* <mark style="color:blue;">**Payload Fallback**</mark>: If the server denies an action, a fallback mechanism automatically resynchronizes the client to prevent ghost states.
+* <mark style="color:blue;">**Performance Boost**</mark>: Major backend optimizations for calculating and applying skill effects.
+* <mark style="color:blue;">**Lenient Commands**</mark>: Skill management commands are now smarter. They automatically clamp the input level to valid minimum/maximum values instead of throwing errors.
+* <mark style="color:blue;">**JSON errors**</mark>: If a skill configuration file has a missing or invalid "active" field, it will now safely default to "true".
+
+#### \[Skill Tweaks]
+
+* `Spare Parts`:
+  * Added both product and ingredient blacklists.
+  * No longer works while in Creative mode.
+* `Magnet`:
+  * Added an item blacklist.
+  * No longer works while in Creative mode.
+* `Keepsake`:
+  * The activation icon is now displayed at respawn.
+  * Increased maximum level to 9.
+* `Green Thumb`:
+  * Added a block blacklist.
+* `Shepherd's Blessing`:
+  * Added an entity blacklist.
+* `Nutrition`:
+  * Added a food item blacklist.
+* `Twist of Fate`:
+  * Added both container and item blacklists.
+* `Combat Skills`: The vast majority of combat-related skills now feature an entity blacklist.
+
+#### \[API]
+
+* <mark style="color:blue;">**CRITICAL BREAKING CHANGES**</mark>: Most functions and interfaces have been renamed or refactored without prior deprecation. (check addons and javascript scripts).
+* <mark style="color:blue;">**Scalable Behaviors**</mark>: Modders can now easily register custom behaviors to specific events (player validation and skill level verifications are now handled automatically).
+* <mark style="color:blue;">**Clean Logging**</mark>: Replaced old-school printStackTrace() calls with a proper, unified LOGGER system for cleaner server logs and easier debugging.
+{% endupdate %}
+
 {% update date="2026-05-20" %}
 ## v6.4.2
 
