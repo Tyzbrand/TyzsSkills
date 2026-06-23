@@ -52,7 +52,6 @@ public class SkillLoader {
 
     public static void finalizePreLoading() {
         for (var kvp : skillQueue.entrySet()) loadSkill(kvp.getKey(), kvp.getValue());
-        SkillManager.buildSortedBehaviors();
         skillQueue.clear();
 
         for(var skill : SkillManager.getAllSkills()){

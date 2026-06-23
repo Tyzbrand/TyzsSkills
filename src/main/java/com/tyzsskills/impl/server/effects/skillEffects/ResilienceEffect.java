@@ -5,14 +5,27 @@ import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 
 public class ResilienceEffect extends SkillBehavior {
 
-    public static final ThreadLocal<Boolean> IS_MODIFYING = ThreadLocal.withInitial(() ->false);
+    public static final ThreadLocal<Boolean> IS_MODIFYING = ThreadLocal.withInitial(() -> false);
 
     @Override
-    public void onStartingEffect(MobEffectEvent.Added event, ServerPlayer player, int lvl, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
+        registerAction(
+                eventBus,
+                skill,
+                MobEffectEvent.Added.class,
+                MobEffectEvent.Added::getEntity,
+                this::onStartingEffect
+        );
+    }
+
+    private void onStartingEffect(MobEffectEvent.Added event, ServerPlayer player, ISkill skill, int lvl) {
 
         if(IS_MODIFYING.get()) return;
 
@@ -54,12 +67,6 @@ public class ResilienceEffect extends SkillBehavior {
             finally {
                 IS_MODIFYING.set(false);
             }
-
         });
-
-
-
-
-
     }
 }

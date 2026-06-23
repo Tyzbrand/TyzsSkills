@@ -7,15 +7,29 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.List;
 
 public class MagnetEffect extends SkillBehavior {
 
     @Override
-    public void onPlayerTick(ServerPlayer player, int lvl, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
+        registerAction(
+                eventBus,
+                skill,
+                PlayerTickEvent.Post.class,
+                PlayerTickEvent.Post::getEntity,
+                this::onPlayerTick
+        );
+    }
 
-        if(player.isDeadOrDying() || player.isSpectator() || player.isCrouching()) return;
+    private void onPlayerTick(PlayerTickEvent.Post event, ServerPlayer player, ISkill skill, int lvl) {
+        if ((player.tickCount + player.getId()) % 2 != 0) return;
+
+        if(player.isDeadOrDying() || player.isSpectator() || player.isCrouching() || player.isCreative()) return;
 
         var values = skill.getValueSet("block_radius");
         if(values == null) return;
@@ -35,15 +49,11 @@ public class MagnetEffect extends SkillBehavior {
             Vec3 direction = targetPos.subtract(itemPos);
 
             if (direction.lengthSqr() > 0.01) {
-                Vec3 motion = direction.normalize().scale(0.2);
+                Vec3 motion = direction.normalize().scale(0.35);
 
                 item.setDeltaMovement(item.getDeltaMovement().scale(0.5).add(motion));
             }
         }
     }
 
-    @Override
-    public boolean isTickEvent() {
-        return true;
-    }
 }

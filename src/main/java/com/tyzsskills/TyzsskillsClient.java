@@ -23,6 +23,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -42,7 +43,11 @@ import java.util.Comparator;
 @EventBusSubscriber(modid = Tyzsskills.MODID, value = Dist.CLIENT)
 public class TyzsskillsClient {
 
-    public static net.neoforged.bus.api.IEventBus MOD_BUS;
+    private static net.neoforged.bus.api.IEventBus MOD_BUS;
+    public static IEventBus getModBus(){
+        if(MOD_BUS == null) throw  new IllegalStateException("Attempt to Access MOD_BUS (client) While it's not yet Initialized.");
+        return MOD_BUS;
+    }
 
     public TyzsskillsClient(ModContainer container) {
         MOD_BUS = container.getEventBus();
@@ -55,7 +60,7 @@ public class TyzsskillsClient {
 
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
-        MOD_BUS.post(new TyzsSkillsClientSetupEvent(new TyzsSkillsClientRegistrationWrapper()));
+        getModBus().post(new TyzsSkillsClientSetupEvent(new TyzsSkillsClientRegistrationWrapper()));
     }
 
     @SubscribeEvent

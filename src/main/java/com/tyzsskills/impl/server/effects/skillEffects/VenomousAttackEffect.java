@@ -7,13 +7,24 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class VenomousAttackEffect extends SkillBehavior {
 
     @Override
-    public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, @UnknownNullability ISkill skill) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
+        registerAction(
+                eventBus,
+                skill,
+                LivingIncomingDamageEvent.class,
+                event -> event.getSource().getEntity(),
+                this::onPlayerAttack
+        );
+    }
+
+    private void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, ISkill skill, int lvl) {
         var values = skill.getValueSet("success_probability");
         if(values == null) return;
 

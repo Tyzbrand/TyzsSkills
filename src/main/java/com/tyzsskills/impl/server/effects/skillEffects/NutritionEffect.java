@@ -4,13 +4,23 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.api.tools.TagMatchTool;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 
 public class NutritionEffect extends SkillBehavior {
 
     @Override
-    public void onPlayerFinishUsingItem(LivingEntityUseItemEvent.Finish event, ServerPlayer player, int lvl, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
+        registerAction(
+                eventBus,
+                skill,
+                LivingEntityUseItemEvent.Finish.class,
+                LivingEntityUseItemEvent.Finish::getEntity,
+                this::onPlayerFinishUsingItem
+        );
+    }
 
+    private void onPlayerFinishUsingItem(LivingEntityUseItemEvent.Finish event, ServerPlayer player, ISkill skill, int lvl) {
         var item = event.getItem();
         var foodValue = item.getFoodProperties(player);
         if(foodValue == null) return;

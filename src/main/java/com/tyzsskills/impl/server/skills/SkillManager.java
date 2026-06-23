@@ -33,10 +33,6 @@ public class SkillManager {
 
     private static final Map<String, Skill> skillCollection = new HashMap<>();
 
-    private static final List<Skill> sortedBehaviorSkills = new ArrayList<>();
-    private static final List<Skill> sortedTickBehaviorSkills = new ArrayList<>();
-    private static final List<Skill> sortedVisibilityBehaviorSkills = new ArrayList<>();
-
     //CORE
     private static boolean setSkillLevelInternal(@NotNull ServerPlayer player, @NotNull Skill skill, int newLevel, boolean syncClient){
         if(newLevel < 0 || newLevel > skill.getMaximumLevel()) return false;
@@ -207,31 +203,18 @@ public class SkillManager {
         if(preEvent.isCanceled()) return;
 
         var behaviour = SkillDataRegistry.getBehavior(skill.getID());
-        if(behaviour != null){skill.setBehaviour(behaviour);}
+        if(behaviour != null){
+            skill.setBehaviour(behaviour);
+            behaviour.registerEvent(NeoForge.EVENT_BUS, skill);
+        }
 
         skillCollection.put(skill.getID().toLowerCase(), skill);
 
         NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
     }
 
-    public static void buildSortedBehaviors() {
-        sortedBehaviorSkills.clear();
-        for (Skill skill : skillCollection.values()) {
-            if (skill.hasBehaviour()) {
-                var behavior = skill.getBehavior();
 
-                if(behavior.isTickEvent()) sortedTickBehaviorSkills.add(skill);
-                else if (behavior.isVisibilityEvent()) sortedVisibilityBehaviorSkills.add(skill);
-                else sortedBehaviorSkills.add(skill);
-            }
-        }
-
-        sortedBehaviorSkills.sort((s1, s2) -> Integer.compare(s2.getBehavior().getPriority(), s1.getBehavior().getPriority()));
-        sortedTickBehaviorSkills.sort((s1, s2) -> Integer.compare(s2.getBehavior().getPriority(), s1.getBehavior().getPriority()));
-        sortedVisibilityBehaviorSkills.sort((s1, s2) -> Integer.compare(s2.getBehavior().getPriority(), s1.getBehavior().getPriority()));
-    }
-
-    public static void clearSkills() {skillCollection.clear(); sortedBehaviorSkills.clear();}
+    public static void clearSkills() {skillCollection.clear();}
 
     //getters
     public static @Nullable Skill getSkill(@NotNull String skillId){return skillCollection.getOrDefault(skillId.toLowerCase(), null);}
@@ -259,8 +242,5 @@ public class SkillManager {
 
     //CORE
     @ApiStatus.Internal public static @NotNull List<Skill> getAllSkills() {return new ArrayList<>(skillCollection.values());}
-    @ApiStatus.Internal public static @NotNull List<Skill> getSortedBehaviors() {return new ArrayList<>(sortedBehaviorSkills);}
-    @ApiStatus.Internal public static @NotNull List<Skill> getSortedTickBehaviors() {return new ArrayList<>(sortedTickBehaviorSkills);}
-    @ApiStatus.Internal public static @NotNull List<Skill> getSortedVisibilityBehaviors() {return new ArrayList<>(sortedVisibilityBehaviorSkills);}
 
 }

@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.model.SkillBehavior;
 
-public class RefinerEffect extends SkillBehavior {
+public class RefinerEffect {
 
 //    private static final ThreadLocal<Boolean> IS_SMELTING = ThreadLocal.withInitial(() -> false);
 //

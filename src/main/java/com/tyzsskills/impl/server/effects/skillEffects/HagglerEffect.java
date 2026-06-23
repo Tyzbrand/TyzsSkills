@@ -4,21 +4,37 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class HagglerEffect extends SkillBehavior {
 
     @Override
-    public void onPlayerTick(ServerPlayer player, int lvl, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
+        registerAction(
+                eventBus,
+                skill,
+                PlayerTickEvent.Post.class,
+                PlayerTickEvent.Post::getEntity,
+                this::onPlayerTick
+        );
+    }
+
+    private final Set<Item> TRIGGER_ITEMS = Set.of(Items.EMERALD, Items.EMERALD_BLOCK);
+    private void onPlayerTick(PlayerTickEvent.Post event, ServerPlayer player, ISkill skill, int lvl) {
         if(player.tickCount % 20 != 0) return;
 
-        boolean holdsEmerald = player.getMainHandItem().is(Items.EMERALD) ||
-                player.getMainHandItem().is(Items.EMERALD_BLOCK) ||
-                player.getOffhandItem().is(Items.EMERALD) ||
-                player.getOffhandItem().is(Items.EMERALD_BLOCK);
+        boolean holdsEmerald = TRIGGER_ITEMS.contains(player.getMainHandItem().getItem()) || TRIGGER_ITEMS.contains(player.getOffhandItem().getItem());
 
         if(!holdsEmerald) return;
 
@@ -43,10 +59,5 @@ public class HagglerEffect extends SkillBehavior {
             villager.getLookControl().setLookAt(player, 10f, (float)villager.getMaxHeadXRot());
 
         }
-    }
-
-    @Override
-    public boolean isTickEvent() {
-        return true;
     }
 }

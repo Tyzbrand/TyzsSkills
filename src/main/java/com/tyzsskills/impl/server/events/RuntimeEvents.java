@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.events;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.server.Level.LevelManager;
@@ -9,6 +10,7 @@ import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.categories.CategoryLoader;
+import com.tyzsskills.impl.server.commands.MainCommand;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.payloads.PayloadSecurity;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
@@ -20,18 +22,58 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 @ApiStatus.Internal
 public class RuntimeEvents {
+
+    @SubscribeEvent
+    public static void registerCommands(RegisterCommandsEvent event){
+        event.getDispatcher().register(MainCommand.register());
+    }
+
+    @SubscribeEvent
+    public static void onServerBeforeStart(ServerAboutToStartEvent event) {
+        var server = event.getServer();
+
+        try{
+            FileManager.init(server);
+
+            FileManager.writeDefaultSkills(server);
+            FileManager.writeDefaultData(server);
+
+            FileManager.readSkills(server);
+            FileManager.readData(server);
+        }
+        catch (IOException e) {
+            Tyzsskills.LOGGER.error("CRITICAL ERROR: Unable to load files during server start", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onServerStop(ServerStoppingEvent event){
+        SkillManager.clearSkills();
+
+        XpGainRegistry.clearAll();
+        LevelManager.clearPool();
+        CategoryLoader.clearCategories();
+
+        ErrorManager.clearErrors();
+    }
 
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event){
@@ -60,7 +102,7 @@ public class RuntimeEvents {
         PayloadSecurity.unregisterPlayer(player);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onPlayerClone(PlayerEvent.Clone event){
 
         if(!(event.getOriginal() instanceof ServerPlayer oldPlayer) ||
@@ -77,7 +119,6 @@ public class RuntimeEvents {
         }
 
         GenericEffects.restoreEffects(newPlayer);
-        SkillEffectsEvents.onPlayerClone(event);
     }
 
     @SubscribeEvent
@@ -93,6 +134,4 @@ public class RuntimeEvents {
             BlockMarker.MarkBlock((net.minecraft.world.level.Level)event.getLevel(), event.getPos());
         }
     }
-
-    //UTILS
 }

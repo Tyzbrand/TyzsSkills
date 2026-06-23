@@ -5,6 +5,9 @@ import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.api.tools.TagMatchTool;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 public class DamageDealEffect extends SkillBehavior {
@@ -12,8 +15,19 @@ public class DamageDealEffect extends SkillBehavior {
     public static final ThreadLocal<Boolean> IS_REFLECTING = ThreadLocal.withInitial(() -> false);
 
     @Override
-    public void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
+        registerAction(
+                eventBus,
+                EventPriority.HIGHEST,
+                skill,
+                LivingIncomingDamageEvent.class,
+                LivingIncomingDamageEvent::getEntity,
+                this::onIncomingDamage
+        );
+    }
 
+
+    private void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, ISkill skill, int lvl) {
         if(IS_REFLECTING.get()) return;
 
         var values = skill.getValueSet("success_probability");
@@ -38,7 +52,4 @@ public class DamageDealEffect extends SkillBehavior {
             }
         }
     }
-
-    @Override
-    public int getPriority(){return 11;}
 }

@@ -10,11 +10,26 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.*;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
 public class GreenThumbEffect extends SkillBehavior {
+
     @Override
-    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
+        registerAction(
+                eventBus,
+                skill,
+                BlockEvent.BreakEvent.class,
+                BlockEvent.BreakEvent::getPlayer,
+                this::onPlayerBreakBlock
+        );
+    }
+
+
+    private void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, ISkill skill, int lvl) {
         if(!(event.getLevel() instanceof ServerLevel serverLevel)) return;
 
         var state = event.getState();
@@ -38,12 +53,13 @@ public class GreenThumbEffect extends SkillBehavior {
         var values = skill.getValueSet("success_probability");
         if(values == null) return;
 
-        if (BlockMarker.IsPlayerPlaced(serverLevel, event.getPos())) return;
-        if(TagMatchTool.isBlockInList(skill.getSpecificParameters(), "block_blacklist", state)) return;
-
         float chancePercentage = values.getValue(lvl);
 
         if(player.getRandom().nextFloat() < (chancePercentage / 100f)){
+
+            if (BlockMarker.IsPlayerPlaced(serverLevel, event.getPos())) return;
+            if(TagMatchTool.isBlockInList(skill.getSpecificParameters(), "block_blacklist", state)) return;
+
             BlockPos position = event.getPos();
             Block.dropResources(state, serverLevel, position, serverLevel.getBlockEntity(position), player, player.getMainHandItem());
             notifyClient(player, skill);

@@ -7,13 +7,28 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class CriticalHitEffect extends SkillBehavior {
 
     @Override
-    public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, @UnknownNullability ISkill skill){
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
+        registerAction(
+                eventBus,
+                EventPriority.HIGH,
+                skill,
+                LivingIncomingDamageEvent.class,
+                event -> event.getSource().getEntity(),
+                this::onPlayerAttack
+        );
+    }
+
+
+    private void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, ISkill skill,  int lvl){
         var values = skill.getValueSet("success_probability");
         if(values == null) return;
 
@@ -40,6 +55,4 @@ public class CriticalHitEffect extends SkillBehavior {
         }
     }
 
-    @Override
-    public int getPriority(){return 9;}
 }

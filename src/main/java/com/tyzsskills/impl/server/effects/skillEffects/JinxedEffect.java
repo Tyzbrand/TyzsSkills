@@ -4,6 +4,8 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 import java.util.ArrayList;
@@ -12,7 +14,17 @@ import java.util.Collections;
 public class JinxedEffect extends SkillBehavior {
 
     @Override
-    public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
+        registerAction(
+                eventBus,
+                skill,
+                LivingIncomingDamageEvent.class,
+                event -> event.getSource().getEntity(),
+                this::onPlayerAttack
+        );
+    }
+
+    private void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, ISkill skill, int lvl) {
         if(!(event.getEntity() instanceof ServerPlayer target)) return;
 
         var values = skill.getValueSet("success_probability");

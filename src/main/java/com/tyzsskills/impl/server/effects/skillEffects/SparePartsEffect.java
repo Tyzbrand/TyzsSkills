@@ -8,6 +8,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.ArrayList;
@@ -16,7 +18,17 @@ import java.util.List;
 
 public class SparePartsEffect extends SkillBehavior {
     @Override
-    public void onItemCrafted(PlayerEvent.ItemCraftedEvent event, ServerPlayer player, int lvl, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
+        registerAction(
+                eventBus,
+                skill,
+                PlayerEvent.ItemCraftedEvent.class,
+                PlayerEvent.ItemCraftedEvent::getEntity,
+                this::onItemCrafted
+        );
+    }
+
+    private void onItemCrafted(PlayerEvent.ItemCraftedEvent event, ServerPlayer player, ISkill skill, int lvl) {
         if(player.isCreative()) return;
 
         var values = skill.getValueSet("refund_chance");

@@ -3,12 +3,25 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 
 public class ExperienceBoostEffect extends SkillBehavior {
 
     @Override
-    public void onPickupXp(PlayerXpEvent.PickupXp event, ServerPlayer player, int lvl, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
+        registerAction(
+                eventBus,
+                skill,
+                PlayerXpEvent.PickupXp.class,
+                PlayerXpEvent.PickupXp::getEntity,
+                this::onPickupXp
+        );
+    }
+
+    private void onPickupXp(PlayerXpEvent.PickupXp event, ServerPlayer player, ISkill skill, int lvl) {
         float orbValue = event.getOrb().getValue();
         if(orbValue <= 0)return;
 

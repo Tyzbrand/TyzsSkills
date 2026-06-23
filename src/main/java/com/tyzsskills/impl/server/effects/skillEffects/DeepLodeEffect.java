@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.model.SkillBehavior;
 
-public class DeepLodeEffect extends SkillBehavior {
+public class DeepLodeEffect {
 
 //    private static final ThreadLocal<Boolean> IS_MINING = ThreadLocal.withInitial(() -> false);
 //

@@ -1,48 +1,58 @@
 package com.tyzsskills.api.model;
 
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.interfaces.ISkillBehavior;
 import com.tyzsskills.impl.server.payloads.SkillTriggerPayload;
+import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.server.level.ServerPlayer;
 
+import net.minecraft.world.entity.Entity;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.ICancellableEvent;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class SkillBehavior {
-    public void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onPlayerKill(LivingDeathEvent event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onPlayerDeath(LivingDeathEvent event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onStartingEffect(MobEffectEvent.Added event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onPlayerBreakBlock(BlockEvent.BreakEvent event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onPlayerFinishUsingItem(LivingEntityUseItemEvent.Finish event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onPickupXp(PlayerXpEvent.PickupXp event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onEffectApplicable(MobEffectEvent.Applicable event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onTargetChange(LivingChangeTargetEvent event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onPlayerClone(PlayerEvent.Clone event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onPlayerWakeUp(PlayerWakeUpEvent event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onBabySpawn(BabyEntitySpawnEvent event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onItemCrafted(PlayerEvent.ItemCraftedEvent event, ServerPlayer player, int lvl, ISkill skill){}
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, ServerPlayer player, int lvl, ISkill skill){}
+import java.util.function.Function;
+
+public abstract class SkillBehavior implements ISkillBehavior {
+
+    public abstract void registerEvent(IEventBus eventBus, ISkill skill);
+
+    protected final <T extends Event> void registerAction(IEventBus eventBus, EventPriority priority, ISkill skill,
+                                                          Class<T> eventClass, Function<T, Entity> entityExtractor, SkillAction<T> skillAction){
+        eventBus.addListener(priority, eventClass, event -> {
+            if(event instanceof ICancellableEvent cancellable && cancellable.isCanceled()) return;
+
+            var entity = entityExtractor.apply(event);
+            if(!(entity instanceof ServerPlayer player)) return;
+
+            var lvl = SkillManager.getPlayerSkillLevel(player, skill.getID());
+            if(lvl <= 0) return;
+
+            skillAction.execute(event, player, skill, lvl);
+        });
+    }
+
+    protected final <T extends Event> void registerAction(IEventBus eventBus, ISkill skill,
+                                                          Class<T> eventClass, Function<T, Entity> entityExtractor, SkillAction<T> skillAction){
+        this.registerAction(eventBus, EventPriority.NORMAL, skill, eventClass, entityExtractor, skillAction);
+    }
 
 
-
-
-    //Tracked events to prevent TPS spikes
-    public void onPlayerTick(ServerPlayer player, int lvl, ISkill skill){}
-    public void onLivingVisibility(LivingEvent.LivingVisibilityEvent event, ServerPlayer player, int lvl, ISkill skill){}
-
-
-
-    protected void notifyClient(ServerPlayer player, ISkill skill ){
+    //Tools
+    protected void notifyClient(@NotNull ServerPlayer player, @NotNull ISkill skill ){
         PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(skill.getID()));
     }
 
-    public int getPriority(){return 0;}
-
-    public boolean isTickEvent(){return false;}
-    public boolean isVisibilityEvent(){return false;}
-
+    //Utils
+    @FunctionalInterface
+    protected interface SkillAction<T extends Event>{
+        void execute(T event, ServerPlayer player, ISkill skill, int lvl);
+    }
 }

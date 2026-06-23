@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.model.SkillBehavior;
 
-public class RootCleaverEffect extends SkillBehavior {
+public class RootCleaverEffect {
 
 
 //    private static final ThreadLocal<Boolean> IS_TIMBERING = ThreadLocal.withInitial(() -> false);

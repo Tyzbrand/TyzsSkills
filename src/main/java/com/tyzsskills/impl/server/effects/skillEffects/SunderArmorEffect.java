@@ -6,6 +6,8 @@ import com.tyzsskills.api.tools.TagMatchTool;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 import java.util.ArrayList;
@@ -14,9 +16,21 @@ import java.util.List;
 
 public class SunderArmorEffect extends SkillBehavior {
 
-    private static final EquipmentSlot[] ARMOR_SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+    private final EquipmentSlot[] ARMOR_SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+
     @Override
-    public void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, int lvl, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
+        registerAction(
+                eventBus,
+                EventPriority.LOWEST,
+                skill,
+                LivingIncomingDamageEvent.class,
+                event -> event.getSource().getEntity(),
+                this::onPlayerAttack
+        );
+    }
+
+    private void onPlayerAttack(LivingIncomingDamageEvent event, ServerPlayer player, ISkill skill, int lvl) {
         if(!(event.getEntity() instanceof ServerPlayer target)) return;
 
         var chances = skill.getValueSet("success_probability");
@@ -52,7 +66,4 @@ public class SunderArmorEffect extends SkillBehavior {
         }
         return validSlots;
     }
-
-    @Override
-    public int getPriority() {return -5;}
 }

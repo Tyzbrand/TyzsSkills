@@ -2,31 +2,22 @@ package com.tyzsskills;
 
 import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.events.TyzsSkillsCommonSetupEvent;
-import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.Level.LevelWrapper;
 import com.tyzsskills.impl.server.active.*;
 import com.tyzsskills.impl.server.attachments.*;
-import com.tyzsskills.impl.server.categories.CategoryLoader;
-import com.tyzsskills.impl.server.events.SkillEffectsEvents;
 import com.tyzsskills.impl.server.events.XpGainsEvents;
 import com.tyzsskills.impl.server.skills.SkillPresets;
-import com.tyzsskills.impl.server.skills.SkillManager;
-import com.tyzsskills.impl.server.commands.MainCommand;
 import com.tyzsskills.impl.server.events.RuntimeEvents;
 import com.tyzsskills.impl.server.payloads.*;
 import com.tyzsskills.impl.server.skills.SkillWrapper;
 import com.tyzsskills.impl.server.sp.SpWrapper;
 import com.tyzsskills.impl.server.wrappers.*;
-import com.tyzsskills.impl.server.xp.XpGainRegistry;
 import com.tyzsskills.impl.server.xp.XpWrapper;
 import com.tyzsskills.integration.kubejs.JsEventsDelegate;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
-import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
-import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -52,23 +43,24 @@ public class Tyzsskills {
     public static final String MODID = "tyzs_skills";
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static net.neoforged.bus.api.IEventBus MOD_BUS;
+
+    private static net.neoforged.bus.api.IEventBus MOD_BUS;
+    public static IEventBus getModBus(){
+        if(MOD_BUS == null) throw  new IllegalStateException("Attempt to Access MOD_BUS (server) While it's not yet Initialized.");
+        return MOD_BUS;
+    }
 
 
     public Tyzsskills(IEventBus modEventBus, ModContainer modContainer) {
         MOD_BUS = modContainer.getEventBus();
+
+        modEventBus.register(this);
 
         //API
         registerWrappers();
 
        //Register attributes
         AttributeRegistry.ATTRIBUTES.register(modEventBus);
-
-
-        modEventBus.addListener(this::registerAttributes);
-        modEventBus.addListener(this::reloadConfig);
-        modEventBus.addListener(this::onServerSetup);
-        modEventBus.addListener(this::onTyzsSkillsCommonSetup);
 
         //Register Attachments
         BlockMarker.ATTACHMENT_TYPES.register(modEventBus);
@@ -80,33 +72,16 @@ public class Tyzsskills {
         //Register Sounds
         SoundRegistry.register(modEventBus);
 
-
-
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (Tyzsskills) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
-        NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(RuntimeEvents.class);
         NeoForge.EVENT_BUS.register(XpGainsEvents.class);
-        NeoForge.EVENT_BUS.register(SkillEffectsEvents.class);
         NeoForge.EVENT_BUS.register(JsEventsDelegate.class);
 
-        //Register network
-        modEventBus.addListener(this::registerPayloads);
-
-        //Register commands
-        NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, this::registerCommands);
-
-        // Register config (Gameplay)
+        // Register configs
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.COMMON_SPEC);
-
-        // Register config (Visual)
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
-    }
-
-
-    private void registerCommands(RegisterCommandsEvent event){
-        event.getDispatcher().register(MainCommand.register());
     }
 
     private void registerWrappers(){
@@ -116,7 +91,9 @@ public class Tyzsskills {
         TyzsSkillsAPI.registerSkillManager(new SkillWrapper());
     }
 
-    private void registerAttributes(EntityAttributeModificationEvent event) {
+    //EVENTS
+    @SubscribeEvent
+    public void registerAttributes(EntityAttributeModificationEvent event) {
         if (!event.has(EntityType.PLAYER, AttributeRegistry.SKILL_XP_MULTIPLIER)) {
             event.add(EntityType.PLAYER, AttributeRegistry.SKILL_XP_MULTIPLIER);
         }
@@ -126,7 +103,8 @@ public class Tyzsskills {
         }
     }
 
-    private void reloadConfig(ModConfigEvent.Reloading event){
+    @SubscribeEvent
+    public void reloadConfig(ModConfigEvent.Reloading event){
         if(!event.getConfig().getModId().equals(MODID)) return;
 
         if(event.getConfig().getType() != ModConfig.Type.COMMON) return;
@@ -139,7 +117,8 @@ public class Tyzsskills {
         }
     }
 
-    private void registerPayloads(final RegisterPayloadHandlersEvent event){
+    @SubscribeEvent
+    public void registerPayloads(final RegisterPayloadHandlersEvent event){
         final PayloadRegistrar registrar = event.registrar("1");
 
         registrar.playToClient(
@@ -212,52 +191,15 @@ public class Tyzsskills {
     }
 
 
-
-    private void onServerSetup(FMLCommonSetupEvent event){
-        MOD_BUS.post(new TyzsSkillsCommonSetupEvent(new TyzsSkillsCommonRegistrationWrapper()));
+    @SubscribeEvent
+    public void onServerSetup(FMLCommonSetupEvent event){
+        getModBus().post(new TyzsSkillsCommonSetupEvent(new TyzsSkillsCommonRegistrationWrapper()));
     }
 
-    private void onTyzsSkillsCommonSetup(TyzsSkillsCommonSetupEvent event){
+    @SubscribeEvent
+    public void onTyzsSkillsCommonSetup(TyzsSkillsCommonSetupEvent event){
         for(var prefab : SkillPresets.getDefaultSkills()){
             event.wrapper().registerSkill(prefab);
         }
     }
-
-    @SubscribeEvent
-    public void onServerBeforeStart(ServerAboutToStartEvent event) {
-        var server = event.getServer();
-
-        try{
-            FileManager.init(server);
-
-            FileManager.writeDefaultSkills(server);
-            FileManager.writeDefaultData(server);
-
-            FileManager.readSkills(server);
-            FileManager.readData(server);
-        }
-        catch (IOException e) {
-            Tyzsskills.LOGGER.error("CRITICAL ERROR: Unable to load files during server start", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    @SubscribeEvent
-    public void onServerStop(ServerStoppingEvent event){
-        SkillManager.clearSkills();
-
-        XpGainRegistry.clearAll();
-        LevelManager.clearPool();
-        CategoryLoader.clearCategories();
-
-        ErrorManager.clearErrors();
-    }
-
-
-
-
-
-
-
-
 }

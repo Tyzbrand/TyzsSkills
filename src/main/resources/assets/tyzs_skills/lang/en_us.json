@@ -113,7 +113,7 @@
   "skill.tyzs_skills.stealth.description" : "Reduces the detection range of hostile mobs by {range_reduction}%",
 
   "skill.tyzs_skills.magnet.displayName" : "Magnet",
-  "skill.tyzs_skills.magnet.description" : "Attracts items within a {block_radius} block radius",
+  "skill.tyzs_skills.magnet.description" : "Attracts items within a {block_radius} block radius [sneak to disable]",
 
   "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
   "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III for {effect_duration}s when health falls below {health_threshold}%",
