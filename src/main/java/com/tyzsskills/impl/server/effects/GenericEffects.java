@@ -27,35 +27,32 @@ public class GenericEffects {
         var attributeChanged = false;
         var currentLvl = SkillManager.getPlayerSkillLevel(player, skill.getID());
 
-        var expectedAttributes = new HashSet<Holder<Attribute>>();
-        if(currentLvl > 0) {
+        var expectedAttributes = new HashSet<>();
+        if (currentLvl > 0) {
             for (var modifier : skill.getModifiers()) {
-                var id = ResourceLocation.tryParse(modifier.attribute());
-                if (id == null) continue;
-
-                var holderOpt = BuiltInRegistries.ATTRIBUTE.getHolder(id);
-                holderOpt.ifPresent(expectedAttributes::add);
+                ResourceLocation id = ResourceLocation.tryParse(modifier.attribute());
+                if (id != null) expectedAttributes.add(id);
             }
         }
 
-        for(var attributeHolder : BuiltInRegistries.ATTRIBUTE.holders().toList()) {
-            var instance = player.getAttribute(attributeHolder);
-            if (instance != null) {
-                var attrID = attributeHolder.key().location();
+        for (var instance : player.getAttributes().getSyncableAttributes()) {
+            var attributeKey = instance.getAttribute().getKey();
+            if(attributeKey == null) continue;
 
-                var safeName = attrID.getPath().replace(".", "_");
-                var modID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeName);
-                var legacyID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
+            var attributeID = attributeKey.location();
+            var safeAttributeName = attributeID.getPath().replace(".", "_");
 
-                if (instance.hasModifier(legacyID)) {
-                    instance.removeModifier(legacyID);
-                    attributeChanged = true;
-                }
+            var modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeAttributeName);
+            var legacyID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
 
-                if (instance.hasModifier(modID) && !expectedAttributes.contains(attributeHolder)) {
-                    instance.removeModifier(modID);
-                    attributeChanged = true;
-                }
+            if (instance.hasModifier(legacyID)) {
+                instance.removeModifier(legacyID);
+                attributeChanged = true;
+            }
+
+            if (instance.hasModifier(modifierID) && !expectedAttributes.contains(attributeID)) {
+                instance.removeModifier(modifierID);
+                attributeChanged = true;
             }
         }
 
