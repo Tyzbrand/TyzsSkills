@@ -31,7 +31,7 @@ repositories {
 ```
 ```gradle
 dependencies {
-    implementation 'com.github.Tyzbrand:TyzsSkills:6.4.2'
+    implementation 'com.github.Tyzbrand:TyzsSkills:7.0.0a'
 }
 ```
 
@@ -40,7 +40,7 @@ Add this to your `neoforge.mods.toml` for the dependency
 [[dependencies.your_mod_id]]
     modId="tyzs_skills"
     mandatory=true
-    versionRange="[6.4.2,)"
+    versionRange="[7.0.0a,)"
     ordering="AFTER"
     side="BOTH"
 ```
