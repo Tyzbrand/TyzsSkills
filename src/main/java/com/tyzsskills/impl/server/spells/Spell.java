@@ -1,7 +1,6 @@
 package com.tyzsskills.impl.server.spells;
 
 import com.tyzsskills.api.interfaces.ISpell;
-import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.api.records.SpellProperty;
 import com.tyzsskills.api.records.SpellPropertyContext;
 import net.minecraft.network.FriendlyByteBuf;
@@ -54,22 +53,15 @@ public class Spell implements ISpell {
 
     //Checks
     @Override
-    public boolean canRefund(@NotNull SpellPropertyContext ctx, boolean refundEnabled){
-        if(!refundEnabled || ctx.propertyLevel() <= 0) return false;
-        var property = getProperty(ctx.propertyKey());
-        if(property == null) return  false;
-
-        return ctx.propertyLevel() <= property.getMaximumLevel();
-    }
-
-    @Override
     public boolean canBuy(@NotNull SpellPropertyContext ctx, boolean purchaseEnabled){
         if(!purchaseEnabled) return false;
 
         var property = getProperty(ctx.propertyKey());
         if(property == null) return  false;
 
-        var price = property.getPrice(ctx.propertyLevel());
+        if(ctx.propertyLevel() >= property.getMaximumLevel()) return false;
+
+        var price = property.getPrice(ctx.propertyLevel() + 1);
         return price <= ctx.playerSP();
     }
 

@@ -72,7 +72,7 @@ public class SpellManager {
         int currentLvl = getPlayerPropertyLevel(player, spellId, propertyKey);
 
         if(spell.canBuy(getPropertyContext(player, spellId, propertyKey), Config.PURCHASE_SYSTEM.get())){
-            var price = property.getPrice(currentLvl);
+            var price = property.getPrice(currentLvl + 1);
 
             if(setPropertyLevelInternal(player, spell, property, currentLvl + 1, true)) {
                 SpManager.tryRemoveSp(player, price);
@@ -97,6 +97,6 @@ public class SpellManager {
         return player.getData(PlayerData.DATA).getSpellPropertyLevel(spellId, propertyKey);}
 
     public static @NotNull SpellPropertyContext getPropertyContext(@NotNull ServerPlayer player, @NotNull String spellId, @NotNull String propertyKey){
-        return new SpellPropertyContext(player, propertyKey, getPlayerPropertyLevel(player, spellId, propertyKey), LevelManager.getLevel(player), SpManager.getSP(player));
+        return new SpellPropertyContext(player, propertyKey, getPlayerPropertyLevel(player, spellId, propertyKey), SpManager.getSP(player));
     }
 }

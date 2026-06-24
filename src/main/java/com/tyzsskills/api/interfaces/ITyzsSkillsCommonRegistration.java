@@ -2,6 +2,7 @@ package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.api.model.SkillBehavior;
+import com.tyzsskills.api.records.SpellPrefab;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.core.jmx.Server;
@@ -24,6 +25,8 @@ public interface ITyzsSkillsCommonRegistration {
      * @param prefab A {@link SkillPrefab} containing all the skill's definitions, including its optional behavior.
      */
     void registerSkill(@NotNull SkillPrefab prefab);
+
+    void registerSpell(@NotNull SpellPrefab prefab);
 
 
 }

@@ -10,6 +10,7 @@ import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
+import com.tyzsskills.impl.server.tools.JsonLoadTools;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -30,13 +31,13 @@ public class SkillLoader {
             return;
         }
 
-        var id = getSafeElement(source, "id", JsonPrimitive::getAsString);
+        var id = JsonLoadTools.getSafeElement(source, "id", JsonPrimitive::getAsString);
         if(id == null || id.isBlank()) {ErrorManager.registerSkillError(filename, "invalid id"); return;}
         id = id.toLowerCase();
 
         if(isDefault) skillQueue.putIfAbsent(id, source);
         else{
-            var type = getSafeElement(source, "type", JsonPrimitive::getAsString);
+            var type = JsonLoadTools.getSafeElement(source, "type", JsonPrimitive::getAsString);
             boolean isCustom = type != null && type.equalsIgnoreCase(Enums.SkillType.CUSTOM.name());
 
             if(isCustom) {
@@ -81,37 +82,37 @@ public class SkillLoader {
     }
 
     private static void loadSkill(String id, JsonObject source){
-        Boolean state = getSafeElement(source, "active", JsonPrimitive::getAsBoolean);
+        Boolean state = JsonLoadTools.getSafeElement(source, "active", JsonPrimitive::getAsBoolean);
         if(state == null) state = true;
         if(!state) return; //Les skills désactivés ne sont pas chargés
 
-        Integer maxLevel = getSafeElement(source, "maximumLevel", JsonPrimitive::getAsInt);
+        Integer maxLevel = JsonLoadTools.getSafeElement(source, "maximumLevel", JsonPrimitive::getAsInt);
         if(maxLevel == null) maxLevel = 1;
         maxLevel = Math.clamp(maxLevel, 1, Constants.SKILL_MAX_LEVEL);
 
-        List<Integer> prices = getSafeList(source, "prices", JsonElement::getAsInt);
+        List<Integer> prices = JsonLoadTools.getSafeList(source, "prices", JsonElement::getAsInt);
         if(prices == null) {ErrorManager.registerSkillError(id, "invalid price list"); return;}
         if(maxLevel > prices.size()) {
             ErrorManager.registerSkillError(id, String.format("price set is too small, current : %d , expected : %d", prices.size(), maxLevel));
             return;
         }
 
-        Enums.SkillType type = getSafeEnum(source, "type", Enums.SkillType.class);
+        Enums.SkillType type = JsonLoadTools.getSafeEnum(source, "type", Enums.SkillType.class);
         if(type == null) {ErrorManager.registerSkillError(id, "invalid skill type"); return;}
 
-        String category = getSafeElement(source, "category", JsonPrimitive::getAsString);
+        String category = JsonLoadTools.getSafeElement(source, "category", JsonPrimitive::getAsString);
         if(category == null) category = "";
 
-        String icon = getSafeElement(source, "icon", JsonPrimitive::getAsString);
+        String icon = JsonLoadTools.getSafeElement(source, "icon", JsonPrimitive::getAsString);
         if(icon == null) icon = "tyzs_skills:textures/gui/skills/default.png";
 
-        String displayName = getSafeElement(source, "displayName", JsonPrimitive::getAsString);
+        String displayName = JsonLoadTools.getSafeElement(source, "displayName", JsonPrimitive::getAsString);
         if(displayName == null) displayName = "Unknown skill";
 
-        String description = getSafeElement(source, "description", JsonPrimitive::getAsString);
+        String description = JsonLoadTools.getSafeElement(source, "description", JsonPrimitive::getAsString);
         if(description == null) description = "Missing description";
 
-        SkillConfiguration config = getSafeObject(source, "config", SkillLoader::parseConfig);
+        SkillConfiguration config = JsonLoadTools.getSafeObject(source, "config", SkillLoader::parseConfig);
         if(config == null) config = new SkillConfiguration();
 
 
@@ -130,20 +131,20 @@ public class SkillLoader {
 
                 var obj = element.getAsJsonObject();
 
-                var attribute = getSafeElement(obj, "attribute", JsonPrimitive::getAsString);
+                var attribute = JsonLoadTools.getSafeElement(obj, "attribute", JsonPrimitive::getAsString);
                 if(attribute == null){ErrorManager.registerSkillError(id, "invalid attribute"); return;}
 
-                var operation = getSafeEnum(obj, "operation", AttributeModifier.Operation.class);
+                var operation = JsonLoadTools.getSafeEnum(obj, "operation", AttributeModifier.Operation.class);
                 if(operation == null) operation = AttributeModifier.Operation.ADD_VALUE;
 
-                var values = getSafeList(obj, "values", JsonElement::getAsFloat);
+                var values = JsonLoadTools.getSafeList(obj, "values", JsonElement::getAsFloat);
                 if(values == null) {ErrorManager.registerSkillError(id, "invalid values"); return;}
                 if(values.size() < maxLevel) {
                     ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), maxLevel));
                     return;
                 }
 
-                var unit = getSafeElement(obj, "unit", JsonPrimitive::getAsString);
+                var unit = JsonLoadTools.getSafeElement(obj, "unit", JsonPrimitive::getAsString);
                 if(unit == null) unit = "";
 
                 modifiers.add(new Modifier(attribute, operation, values, unit));
@@ -169,14 +170,14 @@ public class SkillLoader {
                 if(!entry.getValue().isJsonObject()){ErrorManager.registerSkillError(id, "invalid value set structure");return;}
                 var iterationObj = entry.getValue().getAsJsonObject();
 
-                var values = getSafeList(iterationObj, "values", JsonElement::getAsFloat);
+                var values = JsonLoadTools.getSafeList(iterationObj, "values", JsonElement::getAsFloat);
                 if(values == null) {ErrorManager.registerSkillError(id, "invalid values"); return;}
                 if(values.size() < maxLevel) {
                     ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), maxLevel));
                     return;
                 }
 
-                var unit = getSafeElement(iterationObj, "unit", JsonPrimitive::getAsString);
+                var unit = JsonLoadTools.getSafeElement(iterationObj, "unit", JsonPrimitive::getAsString);
                 if(unit == null) unit = "";
 
                 valueSet.put(key, new ValueSet(values, unit));
@@ -190,70 +191,18 @@ public class SkillLoader {
     }
 
 
-    //Verifications
-    private static <T> T getSafeElement(JsonObject obj, String key, Function<JsonPrimitive, T> mapper){
-        if(obj == null ||key == null) return null;
-
-        var value = obj.get(key);
-        if(value == null || !value.isJsonPrimitive()) return null;
-
-        return mapper.apply(value.getAsJsonPrimitive());
-    }
-
-    private static <T> List<T> getSafeList(JsonObject obj, String key, Function<JsonElement, T> mapper){
-        if (obj == null || key == null || !obj.has(key)) return null;
-
-        var element = obj.get(key);
-        if (!element.isJsonArray()) return null;
-
-        var array = element.getAsJsonArray();
-        List<T> list = new ArrayList<>();
-
-        try {
-            for (var item : array) {
-                list.add(mapper.apply(item));
-            }
-        } catch (Exception e){return null;}
-
-        return list;
-    }
-
-    private static <T extends Enum<T>> T getSafeEnum(JsonObject obj, String key, Class<T> enumClass){
-        if (obj == null || key == null || !obj.has(key)) return null;
-
-        var element = obj.get(key);
-        if (!element.isJsonPrimitive()) return null;
-
-        try {return Enum.valueOf(enumClass, element.getAsString().toUpperCase());}
-        catch (IllegalArgumentException e) {return null;}
-    }
-
-    private static <T> T getSafeObject(JsonObject obj, String key, Function<JsonObject, T> mapper){
-        if(obj == null ||key == null || !obj.has(key)) return null;
-
-        var element = obj.get(key);
-        if (!element.isJsonObject()) return null;
-
-        try {
-            return mapper.apply(element.getAsJsonObject());
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-
     //Utils
     private static final Set<String> GENERIC_PARAMETERS = Set.of("purchasable", "refundable", "visible", "levelRequirement", "incompatibleSkills", "skillPrerequisites");
     private static SkillConfiguration parseConfig(JsonObject obj){
         //Generic Parameters
-        var purchasable = getSafeElement(obj, "purchasable", JsonPrimitive::getAsBoolean);
-        var refundable = getSafeElement(obj, "refundable", JsonPrimitive::getAsBoolean);
-        var visible = getSafeElement(obj, "visible", JsonPrimitive::getAsBoolean);
+        var purchasable = JsonLoadTools.getSafeElement(obj, "purchasable", JsonPrimitive::getAsBoolean);
+        var refundable = JsonLoadTools.getSafeElement(obj, "refundable", JsonPrimitive::getAsBoolean);
+        var visible = JsonLoadTools.getSafeElement(obj, "visible", JsonPrimitive::getAsBoolean);
 
-        var levelRequirement = getSafeElement(obj, "levelRequirement", JsonPrimitive::getAsInt);
+        var levelRequirement = JsonLoadTools.getSafeElement(obj, "levelRequirement", JsonPrimitive::getAsInt);
 
-        var incompatibleSkills = getSafeList(obj, "incompatibleSkills", JsonElement::getAsString);
-        var skillPrerequisites = getSafeList(obj, "skillPrerequisites", JsonElement::getAsString);
+        var incompatibleSkills = JsonLoadTools.getSafeList(obj, "incompatibleSkills", JsonElement::getAsString);
+        var skillPrerequisites = JsonLoadTools.getSafeList(obj, "skillPrerequisites", JsonElement::getAsString);
 
         //Specific Parameters
         var tempObj = new JsonObject();

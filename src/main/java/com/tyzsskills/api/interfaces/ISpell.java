@@ -1,6 +1,5 @@
 package com.tyzsskills.api.interfaces;
 
-import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.api.records.SpellProperty;
 import com.tyzsskills.api.records.SpellPropertyContext;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +36,5 @@ public interface ISpell {
         return property != null ? property.getMaximumLevel() : 0;
     }
 
-    boolean canRefund(@NotNull SpellPropertyContext ctx, boolean refundEnabled);
     boolean canBuy(@NotNull SpellPropertyContext ctx, boolean purchaseEnabled);
 }
