@@ -6,8 +6,11 @@ import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.api.ui.UIButton;
+import com.tyzsskills.api.ui.UIStyleRegistries;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.SoundPlayer;
+import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.impl.client.tools.StringTools;
 import net.minecraft.client.Minecraft;
@@ -34,23 +37,19 @@ public class SkillWidget {
     protected static final int U_BACKGROUND = 166, V_BACKGROUND = 142;
     protected static final int U_BACKGROUND_FINAL = 230;
 
-    public static final int WIDTH = 64, HEIGHT = 30; //Widget Size on screen
+    public static final int WIDTH = 64, HEIGHT = 30;
 
     protected static final int BTN_W = 9, BTN_H = 9;
 
-    protected static final int U_BUY_BTN = 169 ,V_BUY_BTN = 173;
-    protected static final int U_BUY_BTN_HOVER = 178;
-    protected static final int U_BUY_ALL_BTN = 260;
-    protected static final int U_BUY_ALL_BTN_HOVER = 269;
+    protected UIButton PURCHASE_BTN;
+    protected static final int PURCHASE_BTN_X = 38, PURCHASE_BTN_Y = 17;
 
-    protected static final int U_BOOK_BTN_HOVER = 226 ,V_BOOK_BTN_HOVER = 173;
-    protected static final int U_BOOK_ACTIVE = 237 , V_BOOK_ACTIVE = 174;
-    protected static final int U_BOOK_NEUTRAL = 246;
+    protected UIButton REFUND_BTN;
+    protected static final int REFUND_BTN_X = 27, REFUND_BTN_Y = 17;
 
-    protected static final int U_REFUND_BTN = 200 ,V_REFUND_BTN = 173;
-    protected static final int U_REFUND_BTN_HOVER = 209;
-    protected static final int U_REFUND_ALL_BTN = 283;
-    protected static final int U_REFUND_ALL_BTN_HOVER = 292;
+    protected UIButton BOOKMARK_BTN;
+    protected static final int BOOKMARK_BTN_X = 49, BOOKMARK_BTN_Y = 17;
+
 
     protected final ISkill skill;
     protected final ResourceLocation icon;
@@ -67,6 +66,26 @@ public class SkillWidget {
             this.icon = candidate;
         }
         else this.icon = DEFAULT_ICON;
+
+        this.initUIElements();
+    }
+
+    private void initUIElements(){
+        PURCHASE_BTN = new UIButton(x + PURCHASE_BTN_X, y + PURCHASE_BTN_Y, UIStyleRegistries.PURCHASE_BTN, () -> {
+            var actionTask = isShiftPressed() ? Enums.ClientAction.BULK_PURCHASE : Enums.ClientAction.PURCHASE;
+            cache.triggerAction(skill, actionTask);
+        });
+
+        REFUND_BTN = new UIButton(x + REFUND_BTN_X, y + REFUND_BTN_Y, UIStyleRegistries.REFUND_BTN, () -> {
+            var actionTask = isShiftPressed() ? Enums.ClientAction.BULK_REFUND : Enums.ClientAction.REFUND;
+            cache.triggerAction(skill, actionTask);
+        });
+
+        BOOKMARK_BTN = new UIButton(x + BOOKMARK_BTN_X, y + BOOKMARK_BTN_Y, UIStyleRegistries.BOOKMARK_BTN_OFF, () -> {
+            cache.triggerAction(skill, Enums.ClientAction.BOOKMARK);
+            if(Minecraft.getInstance().screen instanceof MainGUI gui && SortingTools.getMainCategory() == Enums.SortingCategory.BOOKMARKS)
+                gui.refreshList();
+        });
     }
 
     public void render(GuiGraphics gui, int x, int y, int mouseX, int mouseY, float partialTick){
@@ -81,13 +100,11 @@ public class SkillWidget {
         if(isLocked){
             drawWithShade(gui, () -> {
                 gui.blit(REF_TEXTURE, x, y, currentU, V_BACKGROUND, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
-                gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_NEUTRAL, V_BOOK_ACTIVE, 9, 9, TEXTURE_W, TEXTURE_H);
                 gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
             });
         }
         else {
             gui.blit(REF_TEXTURE, x, y, currentU, V_BACKGROUND, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
-            gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_NEUTRAL, V_BOOK_ACTIVE, 9, 9, TEXTURE_W, TEXTURE_H);
             gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
         }
 
@@ -124,41 +141,32 @@ public class SkillWidget {
 
         gui.pose().popPose();
 
-        boolean isHoveringBookBtn = isMouseOver(mouseX, mouseY, x+49, y+17, BTN_W, BTN_H);
-        if(isHoveringBookBtn){
-            if(isLocked) drawWithShade(gui, () -> gui.blit(REF_TEXTURE, x+48, y+16, U_BOOK_BTN_HOVER, V_BOOK_BTN_HOVER, 11, 11, TEXTURE_W, TEXTURE_H));
-            else gui.blit(REF_TEXTURE, x+48, y+16, U_BOOK_BTN_HOVER, V_BOOK_BTN_HOVER, 11, 11, TEXTURE_W, TEXTURE_H);
-        }
 
-       if(cache.isSkillBookMarked(skill.getID().toLowerCase())){
-           if(isLocked) drawWithShade(gui, () -> gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_ACTIVE, V_BOOK_ACTIVE, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H));
-           else gui.blit(REF_TEXTURE, x+49, y+17, U_BOOK_ACTIVE, V_BOOK_ACTIVE, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
-        }
+        this.BOOKMARK_BTN.x = x + BOOKMARK_BTN_X;
+        this.BOOKMARK_BTN.y = y + BOOKMARK_BTN_Y;
+        this.BOOKMARK_BTN.style = cache.isSkillBookMarked(skill.getID().toLowerCase()) ? UIStyleRegistries.BOOKMARK_BTN_ON : UIStyleRegistries.BOOKMARK_BTN_OFF;
 
+        if(isLocked) drawWithShade(gui, () -> this.BOOKMARK_BTN.render(gui, mouseX, mouseY, partialTick));
+        else this.BOOKMARK_BTN.render(gui, mouseX, mouseY, partialTick);
 
        if(canAffordPurchase()){
-           boolean isHoverBuyBtn = isMouseOver(mouseX, mouseY, x+38, y+17, BTN_W, BTN_H);
+           this.PURCHASE_BTN.x = x + PURCHASE_BTN_X;
+           this.PURCHASE_BTN.y = y + PURCHASE_BTN_Y;
+           this.PURCHASE_BTN.style = isShiftPressed() ? UIStyleRegistries.BULK_PURCHASE_BTN : UIStyleRegistries.PURCHASE_BTN;
 
-           int currentBuyU;
-
-           if(isShiftPressed() && isMouseOver(mouseX, mouseY, x + 38, y + 17, BTN_W, BTN_H)) currentBuyU = isHoverBuyBtn ? U_BUY_ALL_BTN_HOVER : U_BUY_ALL_BTN;
-           else currentBuyU = isHoverBuyBtn ? U_BUY_BTN_HOVER : U_BUY_BTN;
-
-           if(isLocked) drawWithShade(gui, () -> gui.blit(REF_TEXTURE, x+38, y+17, currentBuyU, V_BUY_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H));
-           else gui.blit(REF_TEXTURE, x+38, y+17, currentBuyU, V_BUY_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
+           if(isLocked) drawWithShade(gui, () -> this.PURCHASE_BTN.render(gui, mouseX, mouseY, partialTick));
+           else this.PURCHASE_BTN.render(gui, mouseX, mouseY, partialTick);
        }
+
        if(canAffordRefund()) {
-           boolean isHoverRefundBtn = isMouseOver(mouseX, mouseY, x+27, y+17, BTN_W, BTN_H);
+           this.REFUND_BTN.x = x + REFUND_BTN_X;
+           this.REFUND_BTN.y = y + REFUND_BTN_Y;
+           this.REFUND_BTN.style = isShiftPressed() ? UIStyleRegistries.BULK_REFUND_BTN : UIStyleRegistries.REFUND_BTN;
 
-           int currentRefundU;
-           if(isShiftPressed() && isMouseOver(mouseX, mouseY, x + 27, y + 17, BTN_W, BTN_H)) currentRefundU = isHoverRefundBtn ? U_REFUND_ALL_BTN_HOVER : U_REFUND_ALL_BTN;
-           else currentRefundU = isHoverRefundBtn? U_REFUND_BTN_HOVER : U_REFUND_BTN;
-
-           if(isLocked) drawWithShade(gui, () -> gui.blit(REF_TEXTURE, x+27, y+17, currentRefundU, V_REFUND_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H));
-           else gui.blit(REF_TEXTURE, x+27, y+17, currentRefundU, V_REFUND_BTN, BTN_W, BTN_H, TEXTURE_W, TEXTURE_H);
+           if(isLocked) drawWithShade(gui, () -> this.REFUND_BTN.render(gui, mouseX, mouseY, partialTick));
+           else this.REFUND_BTN.render(gui, mouseX, mouseY, partialTick);
        }
     }
-
 
 
     public List<Either<FormattedText, TooltipComponent>> getTooltip(int mouseX, int mouseY){
@@ -204,40 +212,12 @@ public class SkillWidget {
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button){
-        if(isMouseOver((int)mouseX, (int)mouseY, x+38, y+17, BTN_W, BTN_H)){
-            if(!canAffordPurchase()) return false;
 
-            SoundPlayer.PlayUIClick();
+        if(canAffordPurchase() && this.PURCHASE_BTN.mouseClicked((int)mouseX, (int)mouseY)) return true;
 
-            var actionTask = isShiftPressed() ? Enums.ClientAction.BULK_PURCHASE : Enums.ClientAction.PURCHASE;
-            cache.triggerAction(skill, actionTask);
+        if(canAffordRefund() && this.REFUND_BTN.mouseClicked((int)mouseX, (int)mouseY)) return true;
 
-            return true;
-        }
-
-        if(isMouseOver((int)mouseX, (int)mouseY, x+27, y+17, BTN_W, BTN_H)){
-            if(!canAffordRefund()) return false;
-
-            SoundPlayer.PlayUIClick();
-
-            var actionTask = isShiftPressed() ? Enums.ClientAction.BULK_REFUND : Enums.ClientAction.REFUND;
-            cache.triggerAction(skill, actionTask);
-
-            return true;
-        }
-
-        if(isMouseOver((int)mouseX, (int)mouseY, x+49, y+17, BTN_W, BTN_H)) {
-            SoundPlayer.PlayUIClick();
-
-            cache.triggerAction(skill, Enums.ClientAction.BOOKMARK);
-
-            var mc = Minecraft.getInstance();
-            if(mc.screen instanceof MainGUI gui) gui.refreshList();
-
-            return true;
-        }
-
-        return false;
+        return this.BOOKMARK_BTN.mouseClicked((int) mouseX, (int) mouseY);
     }
 
 
@@ -273,15 +253,12 @@ public class SkillWidget {
     protected boolean canAffordPurchase(){
         return skill.canBuy(cache.getCurrentContext(skill.getID()), cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
     }
-
     protected boolean canAffordRefund(){
         return skill.canRefund(cache.getCurrentContext(skill.getID()), cache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
     }
-
     protected boolean canBuy(){
         return cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true) && skill.isPurchasable();
     }
-
     protected boolean canRefund(){
         return cache.getConfigBool(Config.REFUND_SYSTEM_KEY, true) && skill.isRefundable();
     }
