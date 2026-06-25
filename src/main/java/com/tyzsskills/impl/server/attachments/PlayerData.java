@@ -23,7 +23,8 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     private final Set<String> playerBookmarks = new HashSet<>();
 
     //SPELLS
-    private final Map<String, Integer> playerSpells = new HashMap<>();
+    private final Map<String, Integer> playerSpellsProperties = new HashMap<>();
+    private final Set<String> playerSpells = new HashSet<>();
     private final String[] assignedSpells = new String[3];
     private final List<Cooldown> cooldowns = new ArrayList<>(3);
 
@@ -47,23 +48,40 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     public List<String> getOwnedSkillIds(){return List.copyOf(playerSkills.keySet());}
 
 
-    //-----------------Spells-----------------
+    //-----------------Properties-----------------
     private String getPropertyId(String spellId, String propertyKey){return spellId + ":" + propertyKey;}
     public void setSpellPropertyLevel(String spellId, String propertyKey, int lvl){
-        if(spellId == null || propertyKey == null || lvl < 0) return;
+        if(spellId == null || propertyKey == null || lvl < 1) return;
 
         var finalId = getPropertyId(spellId, propertyKey);
 
-        if(lvl == 0 && playerSpells.containsKey(finalId)) playerSpells.remove(finalId);
-        else playerSpells.put(finalId, lvl);
+        if(lvl == 1 && playerSpellsProperties.containsKey(finalId)) playerSpellsProperties.remove(finalId);
+        else playerSpellsProperties.put(finalId, lvl);
     }
 
     public void resetPropertyLevels(){
+        playerSpellsProperties.clear();
+    }
+
+    public int getPropertyLevel(String spellId, String propertyKey){
+        if(isSpellPurchased(spellId)) return playerSpellsProperties.getOrDefault(getPropertyId(spellId, propertyKey), 1);
+        else return 0;
+    }
+
+
+    //-----------------Spells-----------------
+    public void purchaseSpell(String spellId){
+        if(spellId == null) return;
+        playerSpells.add(spellId);
+    }
+
+    public void resetSpellLevels(){
         playerSpells.clear();
     }
 
-    public int getSpellPropertyLevel(String spellId, String propertyKey){
-        return playerSpells.getOrDefault(getPropertyId(spellId, propertyKey), 0);
+    public boolean isSpellPurchased(String spellId){
+        if(spellId == null) return false;
+        return playerSpells.contains(spellId);
     }
 
     public void assignSpellToSlot(int slot, @Nullable String spellId){
@@ -157,9 +175,13 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         playerBookmarks.forEach(b -> bookmarks.add(StringTag.valueOf(b)));
         tag.put("skill_bookmarks", bookmarks);
 
-        CompoundTag spellLevels = new CompoundTag();
-        for(var entry : playerSpells.entrySet()) spellLevels.putInt(entry.getKey(), entry.getValue());
-        tag.put("spell_levels", spellLevels);
+        CompoundTag propertyLevels = new CompoundTag();
+        for(var entry : playerSpellsProperties.entrySet()) propertyLevels.putInt(entry.getKey(), entry.getValue());
+        tag.put("property_levels", propertyLevels);
+
+        ListTag spells = new ListTag();
+        playerSpells.forEach(b -> spells.add(StringTag.valueOf(b)));
+        tag.put("spells", spells);
 
         ListTag spellSlots = new ListTag();
         for (String s : assignedSpells) spellSlots.add(StringTag.valueOf(s == null ? "" : s));
@@ -186,6 +208,7 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag compoundTag) {
         playerBookmarks.clear();
         playerSkills.clear();
+        playerSpellsProperties.clear();
         playerSpells.clear();
         cooldowns.clear();
         Arrays.fill(assignedSpells, null);
@@ -201,9 +224,15 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
             }
         }
 
-        if(compoundTag.contains("spell_levels")) {
-            CompoundTag spellsTag = compoundTag.getCompound("spell_levels");
-            for(String key : spellsTag.getAllKeys()) playerSpells.put(key, spellsTag.getInt(key));
+        if(compoundTag.contains("property_levels")) {
+            CompoundTag propTag = compoundTag.getCompound("property_levels");
+            for(String key : propTag.getAllKeys()) playerSpellsProperties.put(key, propTag.getInt(key));
+        }
+
+        if(compoundTag.contains("spells")){
+            for (var id : compoundTag.getList("spells", Tag.TAG_STRING)){
+                playerSpells.add(id.getAsString());
+            }
         }
 
         if(compoundTag.contains("spell_slots")){

@@ -41,6 +41,9 @@ public class SpellLoader {
         if(state == null) state = true;
         else if (!state) return;
 
+        Integer price = JsonLoadTools.getSafeElement(source, "price", JsonPrimitive::getAsInt);
+        if(price == null) {/*ErrorManager.registerSkillError(id, "invalid modifier structure");*/return;}
+
         String icon = JsonLoadTools.getSafeElement(source, "icon", JsonPrimitive::getAsString);
         if(icon == null) icon = "tyzs_skills:textures/gui/spells/default.png";
 
@@ -82,6 +85,6 @@ public class SpellLoader {
             properties.add(new SpellProperty(key, prices, values, propDisplayName, propDescription));
         }
         if(!hasCooldown) /*REGISTER AN ERROR*/return;
-        SpellManager.registerSpell(new Spell(true, id, icon, displayName, description, properties));
+        SpellManager.registerSpell(new Spell(true, id, price, icon, displayName, description, properties));
     }
 }

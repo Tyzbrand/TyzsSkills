@@ -267,7 +267,6 @@ public class Skill implements ISkill {
         Enums.SkillType type = buffer.readEnum(Enums.SkillType.class);
         String category = buffer.readUtf();
 
-
         String icon = buffer.readUtf();
         String displayName = buffer.readUtf();
         String description = buffer.readUtf();

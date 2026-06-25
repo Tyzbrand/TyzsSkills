@@ -1,7 +1,7 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.records.SpellProperty;
-import com.tyzsskills.api.records.SpellPropertyContext;
+import com.tyzsskills.api.records.PropertyContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -11,6 +11,8 @@ import java.util.List;
 public interface ISpell {
 
     @NotNull String getID();
+
+    int getPrice();
 
     /**
      * @return a resourceLocation path as a string
@@ -36,5 +38,6 @@ public interface ISpell {
         return property != null ? property.getMaximumLevel() : 0;
     }
 
-    boolean canBuy(@NotNull SpellPropertyContext ctx, boolean purchaseEnabled);
+    boolean canBuyProperty(@NotNull PropertyContext ctx, boolean purchaseEnabled);
+    boolean canBuySpell(int playerSp, boolean purchaseEnabled);
 }

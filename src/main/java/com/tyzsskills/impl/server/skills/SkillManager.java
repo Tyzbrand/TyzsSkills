@@ -11,6 +11,7 @@ import com.tyzsskills.api.events.SkillActionEvent;
 import com.tyzsskills.api.events.SkillLoadEvent;
 import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.impl.server.Level.LevelManager;
+import com.tyzsskills.impl.server.active.BehaviorRegistries;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.effects.GenericEffects;
@@ -198,7 +199,7 @@ public class SkillManager {
         NeoForge.EVENT_BUS.post(preEvent);
         if(preEvent.isCanceled()) return;
 
-        var behaviour = SkillDataRegistry.getBehavior(skill.getID());
+        var behaviour = BehaviorRegistries.getSkillBehavior(skill.getID());
         if(behaviour != null){
             skill.setBehaviour(behaviour);
             behaviour.registerEvent(NeoForge.EVENT_BUS, skill);

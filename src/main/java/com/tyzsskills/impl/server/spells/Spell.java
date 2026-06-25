@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.spells;
 
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.api.records.SpellProperty;
-import com.tyzsskills.api.records.SpellPropertyContext;
+import com.tyzsskills.api.records.PropertyContext;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
@@ -16,9 +16,11 @@ import java.util.Map;
 
 
 public class Spell implements ISpell {
-    public Spell(boolean active, String id, String icon, String displayName, String description, List<SpellProperty> properties){
+    public Spell(boolean active, String id, int price, String icon, String displayName, String description, List<SpellProperty> properties){
         this.active = active;
         this.id = id;
+        this.price = price;
+
         this.icon = icon;
         this.displayName = displayName;
         this.description = description;
@@ -29,6 +31,7 @@ public class Spell implements ISpell {
 
     protected boolean active;
     protected String id;
+    protected int price;
 
     protected String icon;
     protected String displayName;
@@ -50,10 +53,12 @@ public class Spell implements ISpell {
     public @NotNull @Unmodifiable List<SpellProperty> getProperties(){
         return List.copyOf(properties.values());
     }
+    @Override
+    public int getPrice() {return price;}
 
     //Checks
     @Override
-    public boolean canBuy(@NotNull SpellPropertyContext ctx, boolean purchaseEnabled){
+    public boolean canBuyProperty(@NotNull PropertyContext ctx, boolean purchaseEnabled){
         if(!purchaseEnabled) return false;
 
         var property = getProperty(ctx.propertyKey());
@@ -63,6 +68,12 @@ public class Spell implements ISpell {
 
         var price = property.getPrice(ctx.propertyLevel() + 1);
         return price <= ctx.playerSP();
+    }
+
+    @Override
+    public boolean canBuySpell(int playerSp, boolean purchaseEnabled) {
+        if(!purchaseEnabled) return false;
+        return price <= playerSp;
     }
 
     //Network
@@ -75,6 +86,7 @@ public class Spell implements ISpell {
     public void writeToBuffer(FriendlyByteBuf buffer){
         buffer.writeBoolean(active);
         buffer.writeUtf(id);
+        buffer.writeInt(price);
 
         buffer.writeUtf(icon);
         buffer.writeUtf(displayName);
@@ -86,6 +98,7 @@ public class Spell implements ISpell {
     public static @NotNull Spell readSpellFromBuffer(FriendlyByteBuf buffer){
         boolean active = buffer.readBoolean();
         String id = buffer.readUtf();
+        int price = buffer.readInt();
 
         String icon = buffer.readUtf();
         String displayName = buffer.readUtf();
@@ -93,6 +106,6 @@ public class Spell implements ISpell {
 
         List<SpellProperty> readProperties = buffer.readCollection(ArrayList::new, SpellProperty::readFromBuffer);
 
-        return new Spell(active, id, icon, displayName, description, readProperties);
+        return new Spell(active, id, price, icon, displayName, description, readProperties);
     }
 }
