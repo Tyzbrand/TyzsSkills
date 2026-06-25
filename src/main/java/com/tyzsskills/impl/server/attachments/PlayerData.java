@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.attachments;
 
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.api.model.Cooldown;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -10,20 +11,28 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
 import java.util.*;
 import java.util.function.Supplier;
 
 public class PlayerData implements INBTSerializable<CompoundTag> {
 
+    //SKILLS
     private final Map<String, Integer> playerSkills = new HashMap<>();
-    private final Map<String, Integer> playerSpells = new HashMap<>();
     private final Set<String> playerBookmarks = new HashSet<>();
+
+    //SPELLS
+    private final Map<String, Integer> playerSpells = new HashMap<>();
+    private final String[] assignedSpells = new String[3];
+    private final List<Cooldown> cooldowns = new ArrayList<>(3);
+
+    //METADATA
     private int playerLevel = 1;
     private int playerSP = 0;
     private float playerXP = 0f;
 
+    //COMPAT
     private final Set<String> compatibility_tags = new HashSet<>();
 
 
@@ -38,7 +47,7 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     public List<String> getOwnedSkillIds(){return List.copyOf(playerSkills.keySet());}
 
 
-    //-----------------Spell level-----------------
+    //-----------------Spells-----------------
     private String getPropertyId(String spellId, String propertyKey){return spellId + ":" + propertyKey;}
     public void setSpellPropertyLevel(String spellId, String propertyKey, int lvl){
         if(spellId == null || propertyKey == null || lvl < 0) return;
@@ -48,8 +57,62 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         if(lvl == 0 && playerSpells.containsKey(finalId)) playerSpells.remove(finalId);
         else playerSpells.put(finalId, lvl);
     }
+
+    public void resetPropertyLevels(){
+        playerSpells.clear();
+    }
+
     public int getSpellPropertyLevel(String spellId, String propertyKey){
         return playerSpells.getOrDefault(getPropertyId(spellId, propertyKey), 0);
+    }
+
+    public void assignSpellToSlot(int slot, @Nullable String spellId){
+        if(slot <= 0 ||slot > 3) return;
+        assignedSpells[slot - 1] = spellId;
+    }
+
+    public @NotNull @UnmodifiableView List<String> getAssignedSpells(){
+        return Collections.unmodifiableList(Arrays.asList(assignedSpells));
+    }
+
+    public @Nullable String getSpellInSlot(int slot){
+        if(slot <= 0 ||slot > 3) return null;
+        return assignedSpells[slot - 1];
+    }
+
+    public boolean isSpellAssigned(@NotNull String  spellId){
+        return getAssignedSpells().contains(spellId);
+    }
+
+    //-----------------Cooldowns-----------------
+    public boolean setCooldown(@NotNull String spellId, int startTick){
+        if(!isSpellAssigned(spellId)) return false;
+
+        for(var cooldown : cooldowns)
+            if(cooldown.spellId.equals(spellId)) return false;
+
+        return cooldowns.add(new Cooldown(spellId, startTick));
+    }
+
+    public int getCooldown(@NotNull String spellId){
+        if(spellId.isEmpty()) return 0;
+
+        for(var cooldown : cooldowns){
+            if(cooldown.spellId.equals(spellId)) return cooldown.ticks;
+        }
+        return 0;
+    }
+
+    public void updateCooldowns(){
+        if(cooldowns.isEmpty()) return;
+
+        var iterator = cooldowns.iterator();
+        while (iterator.hasNext()){
+            var cooldown = iterator.next();
+            cooldown.ticks--;
+
+            if(cooldown.ticks <= 0) iterator.remove();
+        }
     }
 
 
@@ -90,13 +153,23 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         for(var entry : playerSkills.entrySet()) skillLevels.putInt(entry.getKey(), entry.getValue());
         tag.put("skill_levels", skillLevels);
 
+        ListTag bookmarks = new ListTag();
+        playerBookmarks.forEach(b -> bookmarks.add(StringTag.valueOf(b)));
+        tag.put("skill_bookmarks", bookmarks);
+
         CompoundTag spellLevels = new CompoundTag();
         for(var entry : playerSpells.entrySet()) spellLevels.putInt(entry.getKey(), entry.getValue());
         tag.put("spell_levels", spellLevels);
 
-        ListTag bookmarks = new ListTag();
-        playerBookmarks.forEach(b -> bookmarks.add(StringTag.valueOf(b)));
-        tag.put("skill_bookmarks", bookmarks);
+        ListTag spellSlots = new ListTag();
+        for (String s : assignedSpells) spellSlots.add(StringTag.valueOf(s == null ? "" : s));
+        tag.put("spell_slots", spellSlots);
+
+        CompoundTag cooldownsTag = new CompoundTag();
+        for (var cd : cooldowns) {
+            cooldownsTag.putInt(cd.spellId, cd.ticks);
+        }
+        tag.put("active_cooldowns", cooldownsTag);
 
         tag.putInt("skill_level", playerLevel);
         tag.putInt("skill_point", playerSP);
@@ -114,10 +187,18 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         playerBookmarks.clear();
         playerSkills.clear();
         playerSpells.clear();
+        cooldowns.clear();
+        Arrays.fill(assignedSpells, null);
 
         if(compoundTag.contains("skill_levels")) {
             CompoundTag skillsTag = compoundTag.getCompound("skill_levels");
             for(String key : skillsTag.getAllKeys()) playerSkills.put(key, skillsTag.getInt(key));
+        }
+
+        if(compoundTag.contains("skill_bookmarks")){
+            for (var id : compoundTag.getList("skill_bookmarks", Tag.TAG_STRING)){
+                playerBookmarks.add(id.getAsString());
+            }
         }
 
         if(compoundTag.contains("spell_levels")) {
@@ -125,9 +206,18 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
             for(String key : spellsTag.getAllKeys()) playerSpells.put(key, spellsTag.getInt(key));
         }
 
-        if(compoundTag.contains("skill_bookmarks")){
-            for (var id : compoundTag.getList("skill_bookmarks", Tag.TAG_STRING)){
-                playerBookmarks.add(id.getAsString());
+        if(compoundTag.contains("spell_slots")){
+            ListTag slotsTag = compoundTag.getList("spell_slots", Tag.TAG_STRING);
+            for (int i = 0; i < Math.min(3, slotsTag.size()); i++) {
+                var spellId = slotsTag.getString(i);
+                assignedSpells[i] = spellId.isEmpty() ? null : spellId;
+            }
+        }
+
+        if (compoundTag.contains("active_cooldowns")) {
+            CompoundTag cooldownsTag = compoundTag.getCompound("active_cooldowns");
+            for (String key : cooldownsTag.getAllKeys()) {
+                cooldowns.add(new Cooldown(key, cooldownsTag.getInt(key)));
             }
         }
 

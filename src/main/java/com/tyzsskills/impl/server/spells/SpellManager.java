@@ -1,21 +1,20 @@
 package com.tyzsskills.impl.server.spells;
 
-
 import com.tyzsskills.Config;
-import com.tyzsskills.api.events.SkillActionEvent;
 import com.tyzsskills.api.records.SpellProperty;
 import com.tyzsskills.api.records.SpellPropertyContext;
-import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.sp.SpManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.common.NeoForge;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@ApiStatus.Internal
 public class SpellManager {
     private static final Map<String, Spell> spellCollection = new HashMap<>();
 
@@ -33,7 +32,7 @@ public class SpellManager {
         return true;
     }
 
-    //PUBLIC
+    //PURCHASES AND REFUNDS
     public static boolean tryAddPropertyLevel(@NotNull ServerPlayer player, @NotNull String spellId, @NotNull String propertyKey, int amount){
         var spell = getSpell(spellId.toLowerCase()); if(spell == null) return false;
         var property = spell.getProperty(propertyKey); if(property == null) return false;
@@ -53,10 +52,7 @@ public class SpellManager {
     }
 
     public static void resetPropertyLevels(@NotNull ServerPlayer player){
-        for(var spell : spellCollection.values()) {
-            for (var property : spell.getProperties())
-                setPropertyLevelInternal(player, spell, property, 0, false);
-        }
+        player.getData(PlayerData.DATA).resetPropertyLevels();
     }
 
     public static boolean tryBuyProperty(@NotNull ServerPlayer player, @NotNull String spellId, @NotNull String propertyKey)
@@ -82,6 +78,29 @@ public class SpellManager {
         return false;
     }
 
+    //ASSIGNATION
+    public static void assignSpellToSlot(@NotNull ServerPlayer player, @Nullable String spellId, int slot){
+        player.getData(PlayerData.DATA).assignSpellToSlot(slot, spellId);
+    }
+
+    public static void unassignSpellInSlot(@NotNull ServerPlayer player, int slot){
+        assignSpellToSlot(player, null, slot);
+    }
+
+    //COOLDOWNS
+    public static boolean addCooldown(@NotNull ServerPlayer player, @NotNull String spellId, int startTick){
+        return player.getData(PlayerData.DATA).setCooldown(spellId, startTick);
+    }
+
+    public static int getCooldown(@NotNull ServerPlayer player, @NotNull String spellId){
+        return player.getData(PlayerData.DATA).getCooldown(spellId);
+    }
+
+    public static void updateCooldowns(@NotNull MinecraftServer server){
+        for(var player: server.getPlayerList().getPlayers()){
+            player.getData(PlayerData.DATA).updateCooldowns();
+        }
+    }
 
     //API
     public static void registerSpell(@NotNull Spell spell) {
