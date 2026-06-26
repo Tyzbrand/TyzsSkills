@@ -3,14 +3,12 @@ package com.tyzsskills.impl.client.screen;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.datafixers.util.Either;
 import com.tyzsskills.Config;
-import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.api.ui.UIButton;
-import com.tyzsskills.api.ui.UIStyleRegistries;
+import com.tyzsskills.api.ui.*;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.client.SoundPlayer;
 import com.tyzsskills.impl.client.tools.SortingTools;
+import com.tyzsskills.impl.client.tools.UITools;
 import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.impl.client.tools.StringTools;
 import net.minecraft.client.Minecraft;
@@ -28,28 +26,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SkillWidget {
-
-    protected static final ResourceLocation DEFAULT_ICON = ResourceLocation.parse("minecraft:textures/item/barrier.png");
-
-    protected static final ResourceLocation REF_TEXTURE = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png");
-    protected static final int TEXTURE_W = 325, TEXTURE_H = 325;
-
-    protected static final int U_BACKGROUND = 166, V_BACKGROUND = 142;
-    protected static final int U_BACKGROUND_FINAL = 230;
-
+    protected static final int BTN_W = 9, BTN_H = 9;
     public static final int WIDTH = 64, HEIGHT = 30;
 
-    protected static final int BTN_W = 9, BTN_H = 9;
-
     protected UIButton PURCHASE_BTN;
-    protected static final int PURCHASE_BTN_X = 38, PURCHASE_BTN_Y = 17;
-
     protected UIButton REFUND_BTN;
-    protected static final int REFUND_BTN_X = 27, REFUND_BTN_Y = 17;
-
     protected UIButton BOOKMARK_BTN;
-    protected static final int BOOKMARK_BTN_X = 49, BOOKMARK_BTN_Y = 17;
 
+    protected UIImage CARD_BACKGROUND;
+    protected UIImage SKILL_ICON;
+
+    protected UIText SKILL_BADGE;
+    protected UIBackground SKILL_BADGE_BACKGROUND;
+
+    private final UIElement[] uiElements;
 
     protected final ISkill skill;
     protected final ResourceLocation icon;
@@ -65,105 +55,93 @@ public class SkillWidget {
          if(candidate != null && Minecraft.getInstance().getResourceManager().getResource(candidate).isPresent()){
             this.icon = candidate;
         }
-        else this.icon = DEFAULT_ICON;
+        else this.icon = UIStyleRegistries.DEFAULT_SKILL_ICON;
 
         this.initUIElements();
+        uiElements = new UIElement[]{PURCHASE_BTN, REFUND_BTN, BOOKMARK_BTN, CARD_BACKGROUND, SKILL_ICON, SKILL_BADGE_BACKGROUND};
     }
-
     private void initUIElements(){
-        PURCHASE_BTN = new UIButton(x + PURCHASE_BTN_X, y + PURCHASE_BTN_Y, UIStyleRegistries.PURCHASE_BTN, () -> {
+        //BUTTONS
+        PURCHASE_BTN = new UIButton(38, 17, UIStyleRegistries.PURCHASE_BTN, () -> {
             var actionTask = isShiftPressed() ? Enums.ClientAction.BULK_PURCHASE : Enums.ClientAction.PURCHASE;
             cache.triggerAction(skill, actionTask);
         });
 
-        REFUND_BTN = new UIButton(x + REFUND_BTN_X, y + REFUND_BTN_Y, UIStyleRegistries.REFUND_BTN, () -> {
+        REFUND_BTN = new UIButton(27, 17, UIStyleRegistries.REFUND_BTN, () -> {
             var actionTask = isShiftPressed() ? Enums.ClientAction.BULK_REFUND : Enums.ClientAction.REFUND;
             cache.triggerAction(skill, actionTask);
         });
 
-        BOOKMARK_BTN = new UIButton(x + BOOKMARK_BTN_X, y + BOOKMARK_BTN_Y, UIStyleRegistries.BOOKMARK_BTN_OFF, () -> {
+        BOOKMARK_BTN = new UIButton(49, 17, UIStyleRegistries.BOOKMARK_BTN_OFF, () -> {
             cache.triggerAction(skill, Enums.ClientAction.BOOKMARK);
             if(Minecraft.getInstance().screen instanceof MainGUI gui && SortingTools.getMainCategory() == Enums.SortingCategory.BOOKMARKS)
                 gui.refreshList();
         });
+
+        //TEXTS
+        SKILL_BADGE = new UIText(29, 8, 30, 10, () ->{
+            return skill.isAvailable(cache.getCurrentContext(skill.getID())) ?
+                    Component.translatable("gui.tyzs_skills.Lvl").append(": " + cache.getSkillLevel(skill.getID()) + "/" + skill.getMaximumLevel())
+                    : Component.translatable("gui.tyzs_skills.locked");
+        });
+        SKILL_BADGE.wrapWidth = (int)(30 / 0.58f);
+
+        //BACKGROUNDS
+        SKILL_BADGE_BACKGROUND = new UIBackground(27, 6, 34, 9, UIStyleRegistries.COLOR_BG, UIStyleRegistries.COLOR_BORDER);
+
+        //IMAGES
+        CARD_BACKGROUND = new UIImage(x, y, UIStyleRegistries.SKILL_CARD);
+        SKILL_ICON = new UIImage(7, 7, 16, 16, this.icon, 16);
     }
 
     public void render(GuiGraphics gui, int x, int y, int mouseX, int mouseY, float partialTick){
         this.x = x;
         this.y = y;
+        for (var element : uiElements) element.updatePosition(this.x, this.y);
 
-        Font font = Minecraft.getInstance().font;
         boolean isLocked = !skill.isAvailable(cache.getCurrentContext(skill.getID()));
+        boolean isMaxed = cache.getSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel();
 
-        int currentU = cache.getSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel() ? U_BACKGROUND_FINAL : U_BACKGROUND;
+        //BACKGROUND
+        CARD_BACKGROUND.style =  isMaxed?
+                UIStyleRegistries.SKILL_CARD_COMPLETE : UIStyleRegistries.SKILL_CARD;
 
-        if(isLocked){
-            drawWithShade(gui, () -> {
-                gui.blit(REF_TEXTURE, x, y, currentU, V_BACKGROUND, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
-                gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
-            });
-        }
-        else {
-            gui.blit(REF_TEXTURE, x, y, currentU, V_BACKGROUND, WIDTH, HEIGHT, TEXTURE_W, TEXTURE_H);
-            gui.blit(icon, x+7, y+7, 0, 0, 16, 16, 16, 16);
-        }
+        Runnable backDraw = () -> {
+            CARD_BACKGROUND.render(gui, mouseX, mouseY, partialTick);
+            SKILL_ICON.render(gui, mouseX, mouseY, partialTick);
+        };
 
+        if(isLocked) UITools.drawWithShade(gui, backDraw);
+        else backDraw.run();
 
-        MutableComponent text = !isLocked ?
-                Component.translatable("gui.tyzs_skills.Lvl")
-                .append(": " + cache.getSkillLevel(skill.getID()) + "/" + skill.getMaximumLevel())
-                :
-                Component.translatable("gui.tyzs_skills.locked");
+        //BADGE
+        SKILL_BADGE_BACKGROUND.drawBorder = isMaxed;
+        SKILL_BADGE_BACKGROUND.render(gui, mouseX, mouseY, partialTick);
 
+        Runnable renderText = () -> UITools.drawScaledFromTopLeft(gui, SKILL_BADGE, this.x, this.y, .6f, mouseX, mouseY, partialTick);
 
+        if(isLocked) UITools.drawWithShade(gui, renderText);
+        else renderText.run();
 
-        float scale = 0.58f;
-        int fixedWidth = (int)(30 / scale);
-
-        int textHeight = font.wordWrapHeight(text, fixedWidth);
-        int padding = 3;
-
-        gui.pose().pushPose();
-        gui.pose().translate(x+29, y+8, 0);
-        gui.pose().scale(scale, scale, 1f);
-
-        if(isLocked){
-            drawWithShade(gui, () -> {
-                renderBackdrop(gui, -padding, -padding, fixedWidth + (padding*2), textHeight + (padding*2), COLOR_BG);
-                gui.drawWordWrap(font, text, 0, 1, fixedWidth, 0xFFFFFF);
-            });
-        }
-        else{
-            renderBackdrop(gui, -padding, -padding, fixedWidth + (padding*2), textHeight + (padding*2), COLOR_BG);
-            gui.drawWordWrap(font, text, 0, 1, fixedWidth, 0xFFFFFF);
-        }
-
-
-        gui.pose().popPose();
-
-
-        this.BOOKMARK_BTN.x = x + BOOKMARK_BTN_X;
-        this.BOOKMARK_BTN.y = y + BOOKMARK_BTN_Y;
+        //BOOKMARK
         this.BOOKMARK_BTN.style = cache.isSkillBookMarked(skill.getID().toLowerCase()) ? UIStyleRegistries.BOOKMARK_BTN_ON : UIStyleRegistries.BOOKMARK_BTN_OFF;
 
-        if(isLocked) drawWithShade(gui, () -> this.BOOKMARK_BTN.render(gui, mouseX, mouseY, partialTick));
+        if(isLocked) UITools.drawWithShade(gui, () -> this.BOOKMARK_BTN.render(gui, mouseX, mouseY, partialTick));
         else this.BOOKMARK_BTN.render(gui, mouseX, mouseY, partialTick);
 
+        //PURCHASE
        if(canAffordPurchase()){
-           this.PURCHASE_BTN.x = x + PURCHASE_BTN_X;
-           this.PURCHASE_BTN.y = y + PURCHASE_BTN_Y;
            this.PURCHASE_BTN.style = isShiftPressed() ? UIStyleRegistries.BULK_PURCHASE_BTN : UIStyleRegistries.PURCHASE_BTN;
 
-           if(isLocked) drawWithShade(gui, () -> this.PURCHASE_BTN.render(gui, mouseX, mouseY, partialTick));
+           if(isLocked) UITools.drawWithShade(gui, () -> this.PURCHASE_BTN.render(gui, mouseX, mouseY, partialTick));
            else this.PURCHASE_BTN.render(gui, mouseX, mouseY, partialTick);
        }
 
+       //REFUND
        if(canAffordRefund()) {
-           this.REFUND_BTN.x = x + REFUND_BTN_X;
-           this.REFUND_BTN.y = y + REFUND_BTN_Y;
            this.REFUND_BTN.style = isShiftPressed() ? UIStyleRegistries.BULK_REFUND_BTN : UIStyleRegistries.REFUND_BTN;
 
-           if(isLocked) drawWithShade(gui, () -> this.REFUND_BTN.render(gui, mouseX, mouseY, partialTick));
+           if(isLocked) UITools.drawWithShade(gui, () -> this.REFUND_BTN.render(gui, mouseX, mouseY, partialTick));
            else this.REFUND_BTN.render(gui, mouseX, mouseY, partialTick);
        }
     }
@@ -226,29 +204,7 @@ public class SkillWidget {
     }
 
     //Utils
-    protected static final int COLOR_BG = 0xD5000000;
-    protected static final int COLOR_BORDER = 0xFFD6AD55;
-
-    protected void drawWithShade (GuiGraphics gui, Runnable blit){
-        gui.setColor(0.3F, 0.3F, 0.3F, 1.0F);
-        blit.run();
-        gui.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-    }
-
     private boolean isShiftPressed(){return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);}
-    protected void renderBackdrop(GuiGraphics gui, int x, int y, int width, int height, int color) {
-        // Fond
-        gui.fill(x, y + 1, x + width, y + height - 1, color);
-        gui.fill(x + 1, y, x + width - 1, y + 1, color);
-        gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
-
-        // Bordure
-        if(cache.getSkillLevel(skill.getID().toLowerCase()) < skill.getMaximumLevel()) return;
-        gui.fill(x + 1, y, x + width - 1, y + 1, COLOR_BORDER); // Haut
-        gui.fill(x + 1, y + height - 1, x + width - 1, y + height, COLOR_BORDER); // Bas
-        gui.fill(x, y + 1, x + 1, y + height - 1, COLOR_BORDER); // Gauche
-        gui.fill(x + width - 1, y + 1, x + width, y + height - 1, COLOR_BORDER); // Droite
-    }
 
     protected boolean canAffordPurchase(){
         return skill.canBuy(cache.getCurrentContext(skill.getID()), cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));

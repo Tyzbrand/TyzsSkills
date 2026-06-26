@@ -8,8 +8,8 @@ public class UIBackground extends UIElement{
 
     public boolean drawBorder;
 
-    public UIBackground(int x, int y, int width, int height, int backgroundColor, int borderColor) {
-        super(x, y, width, height);
+    public UIBackground(int offsetX, int offsetY, int width, int height, int backgroundColor, int borderColor) {
+        super(offsetX, offsetY, width, height);
 
         this.backgroundColor = backgroundColor;
         this.borderColor = borderColor;

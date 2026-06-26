@@ -1,16 +1,16 @@
 package com.tyzsskills.api.ui;
 
-import com.tyzsskills.api.records.UIStyle;
+import com.tyzsskills.api.ui.UIStyles.ButtonStyle;
 import com.tyzsskills.impl.client.SoundPlayer;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class UIButton extends UIElement {
 
-    public UIStyle style;
+    public ButtonStyle style;
     private final Runnable onClick;
 
-    public UIButton(int x, int y, UIStyle style, Runnable onClick) {
-        super(x, y, style.width(), style.height());
+    public UIButton(int offsetX, int y, ButtonStyle style, Runnable onClick) {
+        super(offsetX, y, style.width(), style.height());
 
         this.style = style;
         this.onClick = onClick;
