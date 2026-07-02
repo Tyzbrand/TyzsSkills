@@ -4,13 +4,17 @@ import com.tyzsskills.api.ui.UIStyles.ButtonStyle;
 import com.tyzsskills.impl.client.SoundPlayer;
 import net.minecraft.client.gui.GuiGraphics;
 
+import java.util.function.Supplier;
+
 public class UIButton extends UIElement {
 
-    public ButtonStyle style;
+    private final Supplier<ButtonStyle> style;
     private final Runnable onClick;
 
-    public UIButton(int offsetX, int y, ButtonStyle style, Runnable onClick) {
-        super(offsetX, y, style.width(), style.height());
+    //Fluents
+
+    public UIButton(int offsetX, int offsetY, Supplier<ButtonStyle> style, Runnable onClick) {
+        super(offsetX, offsetY, style.get().width(), style.get().height());
 
         this.style = style;
         this.onClick = onClick;
@@ -20,15 +24,16 @@ public class UIButton extends UIElement {
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         int finalU;
         int finalV;
+        var currentStyle = style.get();
 
-        if(isHovering(mouseX, mouseY)) {finalU =  style.uHover(); finalV = style.vHover();}
-        else {finalU =  style.u(); finalV = style.v();}
+        if(isHovering(mouseX, mouseY)) {finalU =  currentStyle.uHover(); finalV = currentStyle.vHover();}
+        else {finalU =  currentStyle.u(); finalV = currentStyle.v();}
 
-        gui.blit(style.texture(), x, y, finalU, finalV, width, height, style.textureSize(), style.textureSize());
+        gui.blit(currentStyle.texture(), x, y, finalU, finalV, width, height, currentStyle.textureSize(), currentStyle.textureSize());
     }
 
     @Override
-    public boolean mouseClicked(int mouseX, int mouseY) {
+    protected boolean onClick(int mouseX, int mouseY) {
         if(isHovering(mouseX, mouseY) && onClick != null){
             onClick.run();
             SoundPlayer.PlayUIClick();

@@ -14,7 +14,8 @@ public class UIStyleRegistries {
 
     //COLORS
     public static final int COLOR_BG = 0xD5000000;
-    public static final int COLOR_BORDER = 0xFFD6AD55;
+    public static final int COLOR_BORDER_MAXED = 0xFFD6AD55;
+    public static final int COLOR_BORDER = 0xFFFFFFFF;
 
     //BUTTONS
     public static final ButtonStyle PURCHASE_BTN = new ButtonStyle(9, 9, 169 , 173, 178, 173, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);

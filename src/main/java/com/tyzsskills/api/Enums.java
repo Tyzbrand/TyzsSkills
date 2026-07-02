@@ -10,4 +10,6 @@ public class Enums {
     public enum SortingCategory {ALL, BOOKMARKS}
 
     public enum ClientAction {PURCHASE, REFUND, BULK_PURCHASE, BULK_REFUND, BOOKMARK}
+
+    public enum ScalePivot {TOP_LEFT, CENTER}
 }

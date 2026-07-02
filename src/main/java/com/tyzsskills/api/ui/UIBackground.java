@@ -1,26 +1,23 @@
 package com.tyzsskills.api.ui;
 
 import net.minecraft.client.gui.GuiGraphics;
+import oshi.util.tuples.Pair;
+
+import java.util.function.Supplier;
 
 public class UIBackground extends UIElement{
-    public final int backgroundColor;
-    public int borderColor;
+    private final int backgroundColor;
 
-    public boolean drawBorder;
+    private Supplier<Pair<Boolean, Integer>> drawBorder = () -> new Pair<>(false, 0);
 
-    public UIBackground(int offsetX, int offsetY, int width, int height, int backgroundColor, int borderColor) {
+    //Fluent
+    public UIBackground withBorder(Supplier<Pair<Boolean, Integer>> border){this.drawBorder = border; return this;}
+
+    public UIBackground(int offsetX, int offsetY, int width, int height, int backgroundColor) {
         super(offsetX, offsetY, width, height);
-
         this.backgroundColor = backgroundColor;
-        this.borderColor = borderColor;
-        this.drawBorder = true;
     }
 
-    public UIBackground(int x, int y, int width, int height, int backgroundColor) {
-        super(x, y, width, height);
-        this.backgroundColor = backgroundColor;
-        this.drawBorder = false;
-    }
 
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
@@ -29,7 +26,10 @@ public class UIBackground extends UIElement{
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, backgroundColor);
 
 
-        if(!drawBorder) return;
+        var border = drawBorder.get();
+        if(!border.getA()) return;
+        var borderColor = drawBorder.get().getB();
+
         gui.fill(x + 1, y, x + width - 1, y + 1, borderColor);
         gui.fill(x + 1, y + height - 1, x + width - 1, y + height, borderColor);
         gui.fill(x, y + 1, x + 1, y + height - 1, borderColor);

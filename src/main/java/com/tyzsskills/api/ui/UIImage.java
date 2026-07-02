@@ -4,13 +4,15 @@ import com.tyzsskills.api.ui.UIStyles.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.function.Supplier;
+
 public class UIImage extends UIElement{
 
-    public ResourceLocation texture;
-    public int textureSize;
-    private final boolean isUniqueTexture;
+    private ResourceLocation texture;
+    private int textureSize;
 
-    public ImageStyle style;
+    private final boolean isUniqueTexture;
+    private Supplier<ImageStyle> style;
 
 
     public UIImage(int offsetX, int offsetY, int width, int height, ResourceLocation texture, int textureSize) {
@@ -22,8 +24,8 @@ public class UIImage extends UIElement{
         isUniqueTexture = true;
     }
 
-    public UIImage(int x, int y, ImageStyle style) {
-        super(x, y, style.width(), style.height());
+    public UIImage(int offsetX, int offsetY, Supplier<ImageStyle> style) {
+        super(offsetX, offsetY, style.get().width(), style.get().height());
 
         this.style = style;
 
@@ -33,6 +35,10 @@ public class UIImage extends UIElement{
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         if(isUniqueTexture) gui.blit(texture, x, y, 0, 0, width, height, textureSize, textureSize);
-        else gui.blit(style.texture(), x, y, style.u(), style.v(), style.width(), style.height(), style.textureSize(), style.textureSize());
+        else {
+            var currentStyle = style.get();
+            gui.blit(currentStyle.texture(), x, y, currentStyle.u(), currentStyle.v(),
+                    currentStyle.width(), currentStyle.height(), currentStyle.textureSize(), currentStyle.textureSize());
+        }
     }
 }
