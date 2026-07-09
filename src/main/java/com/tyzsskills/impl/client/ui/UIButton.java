@@ -1,6 +1,6 @@
-package com.tyzsskills.api.ui;
+package com.tyzsskills.impl.client.ui;
 
-import com.tyzsskills.api.ui.UIStyles.ButtonStyle;
+import com.tyzsskills.impl.client.ui.UIStyles.ButtonStyle;
 import com.tyzsskills.impl.client.SoundPlayer;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -9,11 +9,11 @@ import java.util.function.Supplier;
 public class UIButton extends UIElement {
 
     private final Supplier<ButtonStyle> style;
-    private final Runnable onClick;
+    private final Supplier<Boolean> onClick;
 
     //Fluents
 
-    public UIButton(int offsetX, int offsetY, Supplier<ButtonStyle> style, Runnable onClick) {
+    public UIButton(int offsetX, int offsetY, Supplier<ButtonStyle> style, Supplier<Boolean> onClick) {
         super(offsetX, offsetY, style.get().width(), style.get().height());
 
         this.style = style;
@@ -35,8 +35,7 @@ public class UIButton extends UIElement {
     @Override
     protected boolean onClick(int mouseX, int mouseY) {
         if(isHovering(mouseX, mouseY) && onClick != null){
-            onClick.run();
-            SoundPlayer.PlayUIClick();
+            if(onClick.get()) SoundPlayer.PlayUIClick();
             return true;
         }
         return false;

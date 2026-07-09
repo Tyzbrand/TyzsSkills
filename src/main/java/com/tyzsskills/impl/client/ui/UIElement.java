@@ -1,4 +1,4 @@
-package com.tyzsskills.api.ui;
+package com.tyzsskills.impl.client.ui;
 
 import com.mojang.datafixers.util.Either;
 import com.tyzsskills.api.Enums;
@@ -73,7 +73,7 @@ public abstract class UIElement {
 
     public final List<Either<FormattedText, TooltipComponent>> getTooltips(int mouseX, int mouseY, boolean inheritedVisible) {
         boolean visible = inheritedVisible && visibleWhen.get();
-        if (!visible || !isHovering(mouseX, mouseY)) return List.of();
+        if (!visible || !isHovering(mouseX, mouseY)) return EMPTY_TOOLTIP;
         return resolveTooltips(mouseX, mouseY);
     }
 
@@ -112,5 +112,8 @@ public abstract class UIElement {
 
         gui.pose().popPose();
     }
+
+    //STATIC
+    public static final List<Either<FormattedText, TooltipComponent>> EMPTY_TOOLTIP = List.of();
 
 }

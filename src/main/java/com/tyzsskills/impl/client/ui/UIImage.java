@@ -1,6 +1,6 @@
-package com.tyzsskills.api.ui;
+package com.tyzsskills.impl.client.ui;
 
-import com.tyzsskills.api.ui.UIStyles.*;
+import com.tyzsskills.impl.client.ui.UIStyles.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 

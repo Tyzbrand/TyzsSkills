@@ -7,6 +7,7 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.Category;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.api.records.SkillContext;
+import com.tyzsskills.impl.client.screen.MainGUI;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
 import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
@@ -217,7 +218,6 @@ public class ClientCache {
             logUpdate("Bookmark Synced: New Cached Bookmark [" + id + ", " + payload.state() + "]");
         }
 
-
         private void logUpdate(String message) {
             var player = Minecraft.getInstance().player;
             if (player == null || !Config.SHOW_DEBUG_MESSAGES.get()) return;
@@ -226,40 +226,51 @@ public class ClientCache {
     }
 
     //ACTIONS
-    public void triggerAction(@NotNull ISkill skill, Enums.ClientAction actionType){
-        if(isSpamming()) return;
+    public boolean triggerAction(@NotNull ISkill skill, Enums.ClientAction actionType){
+        if(isSpamming()) return false;
+        var success = false;
 
         switch(actionType){
-            case PURCHASE -> predictBuy(skill);
-            case REFUND -> predictRefund(skill);
-            case BULK_PURCHASE -> predictBuyMax(skill);
-            case BULK_REFUND -> predictRefundMax(skill);
-            case BOOKMARK -> predictBookmark(skill);
+            case PURCHASE -> {success = predictPurchase(skill);}
+            case REFUND -> {success =  predictRefund(skill);}
+            case BULK_PURCHASE -> {success = predictBulkPurchase(skill);}
+            case BULK_REFUND -> {success = predictBulkRefund(skill);}
+            case BOOKMARK -> {
+                predictBookmark(skill);
+                success = true;
+            }
         }
 
-        registerNewClick();
-        PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID(), actionType));
+        if(success){
+            registerNewClick();
+            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID(), actionType));
+        }
+        return success;
     }
 
     //PREDICTIONS
-    public void predictBookmark(ISkill skill) {
+    private void predictBookmark(ISkill skill) {
         String id = skill.getID();
         if (isSkillBookMarked(id)) bookmarks.remove(id);
         else bookmarks.add(id);
+
+        if(Minecraft.getInstance().screen instanceof MainGUI gui && SortingTools.getMainCategory() == Enums.SortingCategory.BOOKMARKS)
+            gui.refreshList();
     }
 
-    public void predictBuy(ISkill skill) {
+    private boolean predictPurchase(ISkill skill) {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if (!skill.canBuy(getCurrentContext(id), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return;
+        if (!skill.canBuy(getCurrentContext(id), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return false;
         int price = skill.getPrices().get(currentLvl);
 
         sp -= price;
         skillLevels.put(id, currentLvl + 1);
+        return true;
     }
 
-    public void predictBuyMax(ISkill skill) {
+    private boolean predictBulkPurchase(ISkill skill) {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
@@ -268,14 +279,16 @@ public class ClientCache {
         if (bulkResult.levelToAdd() > 0) {
             sp -= bulkResult.spToWithdraw();
             skillLevels.put(id, currentLvl + bulkResult.levelToAdd());
+            return true;
         }
+        return false;
     }
 
-    public void predictRefund(ISkill skill) {
+    private boolean predictRefund(ISkill skill) {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if (!skill.canRefund(getCurrentContext(id), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return;
+        if (!skill.canRefund(getCurrentContext(id), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return false;
 
         skillLevels.put(id, currentLvl - 1);
         float percentage = (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
@@ -286,16 +299,15 @@ public class ClientCache {
             float refundPercentage = percentage / 100f;
             int refundAmount = (initialPrice <= 0) ? 0 : Math.round(initialPrice * refundPercentage);
 
-            if (refundAmount > 0) {
-                sp += refundAmount;
-            }
+            if (refundAmount > 0) sp += refundAmount;
         }
+        return true;
     }
 
-    public void predictRefundMax(ISkill skill) {
+    private boolean predictBulkRefund(ISkill skill) {
         String id = skill.getID().toLowerCase();
 
-        if (getSkillLevel(id) <= 0) return;
+        if (getSkillLevel(id) <= 0) return false;
 
         var spToRefund = skill.checkBulkRefund(getCurrentContext(id),
                 (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), getConfigBool(Config.REFUND_SYSTEM_KEY, false));
@@ -303,7 +315,9 @@ public class ClientCache {
         if (spToRefund > 0) {
             sp += spToRefund;
         }
+
         skillLevels.put(id, 0);
+        return true;
     }
 
 

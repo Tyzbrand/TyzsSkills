@@ -1,4 +1,4 @@
-package com.tyzsskills.api.ui;
+package com.tyzsskills.impl.client.ui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

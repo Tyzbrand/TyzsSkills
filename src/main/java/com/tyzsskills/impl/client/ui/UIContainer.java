@@ -1,4 +1,4 @@
-package com.tyzsskills.api.ui;
+package com.tyzsskills.impl.client.ui;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.GuiGraphics;
