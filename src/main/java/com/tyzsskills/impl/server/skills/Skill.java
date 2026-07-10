@@ -3,7 +3,7 @@ package com.tyzsskills.impl.server.skills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillConfiguration;
-import com.tyzsskills.api.records.SkillContext;
+import com.tyzsskills.api.records.PlayerContext;
 import com.tyzsskills.api.records.BulkPurchaseResult;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
@@ -106,131 +106,22 @@ public class Skill implements ISkill {
     @Override
     public int getRequiredLevel() {return config.levelRequirement();}
     @Override
-    public boolean isSkillIncompatible(@NotNull String skillID) {return config.incompatibleSkills().contains(skillID);}
-    @Override
     public @NotNull List<String> getRawIncompatibilities() {return config.incompatibleSkills();}
     @Override
     public @NotNull Map<String, Integer> getRawPrerequisites() {return config.skillPrerequisites();}
-    @Override
-    public boolean isAvailable(@NotNull SkillContext ctx){
-        return meetsLevelRequirement(ctx.playerLvl())
-                && getPrerequisites(ctx.ownedSkillIds()).isEmpty()
-                && getIncompatibilities(ctx.ownedSkillIds()).isEmpty();
-    }
-
     @Override
     public @NotNull CompoundTag getSpecificParameters() {
         return config.parameters();
     }
 
-    @Nullable
-    public SkillBehavior getBehavior(){return behaviour;}
+
+    public @Nullable SkillBehavior getBehavior(){return behaviour;}
     public boolean hasBehaviour(){return behaviour != null;}
 
 
     //Setters
     public void setBehaviour(@NotNull SkillBehavior behaviour){
         this.behaviour = behaviour;
-    }
-    @Override
-    public void addIncompatibility(@NotNull String id){config.addIncompatibility(id);}
-    @Override
-    public void removeIncompatibility(@NotNull String id) {config.removeIncompatibility(id);}
-    @Override
-    public void removePrerequisite(@NotNull String id) {config.removePrerequisite(id);}
-
-    //Behavior
-    @Override
-    public boolean canRefund(@NotNull SkillContext ctx, boolean refundEnabled){
-        if(!refundEnabled || !isRefundable() || ctx.skillLvl() <= 0) return false;
-
-        return ctx.skillLvl() <= prices.size();
-    }
-
-    @Override
-    public boolean canBuy(@NotNull SkillContext ctx, boolean purchaseEnabled){
-        if(!isPurchasable() || !purchaseEnabled || ctx.skillLvl() >= maximumLevel) return false;
-
-        if(!isAvailable(ctx)) return false;
-
-        var price = prices.get(ctx.skillLvl());
-        return price <= ctx.playerSP();
-    }
-
-    @Override
-    public @NotNull BulkPurchaseResult checkBulkBuy(@NotNull SkillContext ctx, boolean purchaseEnabled){
-        var bulkResultFallback = new BulkPurchaseResult(0, 0);
-
-        if(!purchaseEnabled || !isPurchasable() || ctx.skillLvl() >= maximumLevel) return bulkResultFallback;
-
-        if(!isAvailable(ctx)) return bulkResultFallback;
-
-        var spToSpend = 0;
-        var levelsToAdd = 0;
-        var availableSp = ctx.playerSP();
-
-        for (int i = ctx.skillLvl(); i < maximumLevel; i++) {
-            if (i >= prices.size()) break;
-            var price = prices.get(i);
-
-            if (availableSp >= price) {
-                availableSp -= price;
-                spToSpend += price;
-                levelsToAdd++;
-            } else break;
-        }
-
-        return new BulkPurchaseResult(levelsToAdd, spToSpend);
-    }
-
-    @Override
-    public int checkBulkRefund(@NotNull SkillContext ctx, float refundPercentage, boolean refundEnabled){
-        if(!refundEnabled || !isRefundable() || ctx.skillLvl() <= 0) return 0;
-
-        var finalRefund = 0;
-        var refundRate = refundPercentage / 100f;
-
-        for (int i = ctx.skillLvl() - 1; i >= 0; i--) {
-            if (i < prices.size()) {
-                int levelPrice = prices.get(i);
-
-                if (levelPrice > 0) finalRefund += Math.round(levelPrice * refundRate);
-            }
-        }
-        return finalRefund;
-    }
-
-    @Override
-    public @NotNull List<String> getIncompatibilities(@NotNull Map<String, Integer> ownedSkillLevels) {
-        var incompatibleSkills = config.incompatibleSkills();
-        if(incompatibleSkills.isEmpty() || ownedSkillLevels.isEmpty()) return Collections.emptyList();
-
-        var intersections = new ArrayList<String>();
-
-        for(var id : ownedSkillLevels.keySet()){
-            if(incompatibleSkills.contains(id)) intersections.add(id);
-        }
-
-        return intersections.isEmpty() ? List.of() : intersections;
-    }
-
-    @Override
-    public @NotNull Map<String, Integer> getPrerequisites(@NotNull Map<String, Integer> ownedSkillLevels) {
-        var prerequisites = config.skillPrerequisites();
-        if(prerequisites.isEmpty()) return Map.of();
-
-        var stillPrerequisites = new HashMap<String, Integer>();
-
-        for(var prerequisite : prerequisites.entrySet()){
-            var id = prerequisite.getKey();
-            var requiredLevel = prerequisite.getValue();
-            var currentLevel = ownedSkillLevels.getOrDefault(id, 0);
-
-            if(currentLevel < requiredLevel)
-                stillPrerequisites.put(id, ownedSkillLevels.get(id));
-        }
-
-        return stillPrerequisites.isEmpty() ? Map.of() : stillPrerequisites;
     }
 
 

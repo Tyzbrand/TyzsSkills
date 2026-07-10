@@ -1,7 +1,7 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.records.SkillContext;
+import com.tyzsskills.api.records.PlayerContext;
 import com.tyzsskills.api.records.*;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
@@ -84,48 +84,6 @@ public interface ISkill {
      */
     List<Modifier> getModifiers();
 
-    /**
-     * Checks if the player can purchase the next skill level.
-     * @return {@code true} if the player can afford the next skill level, {@code false} otherwise.
-     */
-    boolean canBuy(@NotNull SkillContext ctx, boolean purchaseEnabled);
-
-
-    /**
-     * Checks if the player can refund their current skill level.
-     * @param refundEnabled The current state of the refund system configuration.
-     * @return {@code true} if the skill level can be refunded, {@code false} otherwise.
-     */
-    boolean canRefund(@NotNull SkillContext ctx, boolean refundEnabled);
-
-
-    /**
-     * Calculates the maximum number of skill levels a player can purchase at once.
-     * @return A {@link BulkPurchaseResult} indicating how many levels can be bought and the total cost. Never null.
-     */
-    @NotNull BulkPurchaseResult checkBulkBuy(@NotNull SkillContext ctx, boolean purchaseEnabled);
-
-
-    /**
-     * Calculates the total amount of SP returned from a complete skill refund.
-     * @param refundPercentage The current value of the refund percentage configuration.
-     * @param refundEnabled The current state of the refund system configuration.
-     * @return The total amount of SP the player will receive from the bulk refund.
-     */
-    int checkBulkRefund(@NotNull SkillContext ctx, float refundPercentage, boolean refundEnabled);
-
-    /**
-     * Gets the global player level required to purchase this skill.
-     * @return The level requirement for the skill, {@code -1} if the skill doesn't have one.
-     */
-    int getRequiredLevel();
-
-    /**
-     * Checks if a specified skill is incompatible with this one.
-     * @param skillID Valid id of the targeted skill (in lowercase).
-     * @return {@code true} if the specified skill is marked as incompatible, {@code false} otherwise.
-     */
-    boolean isSkillIncompatible(@NotNull String skillID);
 
     /**
      * Gets all skill incompatibilities.
@@ -133,41 +91,13 @@ public interface ISkill {
      */
     @NotNull List<String> getRawIncompatibilities();
 
-
-    /**
-     * Adds an incompatibility to the skill.
-     * @param id Valid id of the targeted incompatible skill (in lowercase).
-     */
-    void addIncompatibility(@NotNull String id);
-
-    void removeIncompatibility(@NotNull String id);
-
-
-
-    /**
-     * Gets all skill that are mutually exclusive with this one (as ids).
-     * Applies only to the skills the player currently possesses.
-     * @param ownedSkillLevels A Map containing all skill IDs and their levels (currently owned by the player).
-     * @return A list containing all incompatible skill ids the player possesses. If there are no incompatibilities, return an empty list.
-     */
-    @NotNull List<String> getIncompatibilities(@NotNull Map<String, Integer> ownedSkillLevels);
-
     @NotNull Map<String, Integer> getRawPrerequisites();
-    @NotNull Map<String, Integer> getPrerequisites(@NotNull Map<String, Integer> ownedSkillLevels);
-    void removePrerequisite(@NotNull String id);
-
 
     /**
-     * Checks if the player meets the global level requirement for this skill.
-     * @param playerLvl The current lvl of the player. Use -1 to bypass the check.
-     * @return {@code true} if the player's level is equal to or greater than the requirement, {@code false} otherwise.
+     * Gets the global player level required to purchase this skill.
+     * @return The level requirement for the skill, {@code -1} if the skill doesn't have one.
      */
-    default boolean meetsLevelRequirement(int playerLvl){
-        if (getRequiredLevel() <= 1 || playerLvl == -1) return true;
-        return playerLvl >= getRequiredLevel();
-    }
-
-    boolean isAvailable(@NotNull SkillContext ctx);
+    int getRequiredLevel();
 
     @NotNull CompoundTag getSpecificParameters();
 

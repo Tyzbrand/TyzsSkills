@@ -6,6 +6,7 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.Category;
 import com.tyzsskills.api.records.SortType;
 import com.tyzsskills.impl.client.ClientCache;
+import com.tyzsskills.impl.server.skills.SkillRules;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +63,7 @@ public class SortingTools {
         }
 
         if(!showUnbuyable) listToSort.removeIf(s ->
-                !s.canBuy(cache.getCurrentContext(s.getID()), cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true)));
+                !SkillRules.canBuy(cache.getSkillContext(s.getID()), cache.getPlayerContext(), cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true)));
 
         if(!showMaxed) listToSort.removeIf(s -> cache.getSkillLevel(s.getID()) >= s.getMaximumLevel());
 

@@ -6,6 +6,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.Category;
 import com.tyzsskills.api.records.LevelData;
+import com.tyzsskills.api.records.PlayerContext;
 import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.impl.client.screen.MainGUI;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
@@ -13,6 +14,8 @@ import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.skills.Skill;
+import com.tyzsskills.impl.server.skills.SkillGraph;
+import com.tyzsskills.impl.server.skills.SkillRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -38,6 +41,7 @@ public class ClientCache {
     public static boolean isReady() {return INSTANCE != null;}
 
     public final Update UPDATE = new Update();
+    public final SkillGraph GRAPH = new SkillGraph();
 
 
     //METADATA
@@ -146,6 +150,7 @@ public class ClientCache {
             skillLevels.clear();
 
             for(var skill : serverData.skills()) skills.put(skill.getID(), skill);
+            GRAPH.build(getAllSkills());
 
             bookmarks.addAll(serverData.bookmarks());
             skillLevels.putAll(serverData.playerSkillLevels());
@@ -168,6 +173,8 @@ public class ClientCache {
 
             totalSkills = 0;
             for (var skill : skills.values()) totalSkills += skill.getMaximumLevel();
+
+
 
             logUpdate("Initial Synchronization");
         }
@@ -263,7 +270,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if (!skill.canBuy(getCurrentContext(id), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return false;
+        if (!SkillRules.canBuy(getSkillContext(id), getPlayerContext(), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return false;
         int price = skill.getPrices().get(currentLvl);
 
         sp -= price;
@@ -275,7 +282,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        var bulkResult = skill.checkBulkBuy(getCurrentContext(id), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
+        var bulkResult = SkillRules.checkBulkBuy(getSkillContext(id), getPlayerContext(), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
 
         if (bulkResult.levelToAdd() > 0) {
             sp -= bulkResult.spToWithdraw();
@@ -289,7 +296,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if (!skill.canRefund(getCurrentContext(id), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return false;
+        if (!SkillRules.canRefund(getSkillContext(id), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return false;
 
         skillLevels.put(id, currentLvl - 1);
         float percentage = (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
@@ -310,7 +317,7 @@ public class ClientCache {
 
         if (getSkillLevel(id) <= 0) return false;
 
-        var spToRefund = skill.checkBulkRefund(getCurrentContext(id),
+        var spToRefund = SkillRules.checkBulkRefund(getSkillContext(id),
                 (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), getConfigBool(Config.REFUND_SYSTEM_KEY, false));
 
         if (spToRefund > 0) {
@@ -323,10 +330,16 @@ public class ClientCache {
 
 
     //UTILS
-    public @NotNull SkillContext getCurrentContext(String skillID) {
+    public @NotNull PlayerContext getPlayerContext() {
         var player = Minecraft.getInstance().player;
-        Objects.requireNonNull(player, "Attempt to access SkillContext with null client.");
-        return new SkillContext(player, getSkillLevel(skillID), level, sp, getSkillLevels());
+        Objects.requireNonNull(player, "Attempt to access PlayerContext with null client.");
+        return new PlayerContext(player, level, sp, getSkillLevels());
+    }
+
+    public @NotNull SkillContext getSkillContext(String skillID){
+        var skill = getSkill(skillID);
+        Objects.requireNonNull(skill, "Attempt to access SkillContext with null skill (client side).");
+        return new SkillContext(skill, getSkillLevel(skillID), GRAPH);
     }
 
     public int getTotalXpPerHour() {

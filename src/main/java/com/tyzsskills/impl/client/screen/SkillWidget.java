@@ -7,9 +7,9 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ui.*;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.impl.client.tools.StringTools;
+import com.tyzsskills.impl.server.skills.SkillRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -108,11 +108,14 @@ public class SkillWidget {
     }
 
     private void updateData(){
+        var sCtx = cache.getSkillContext(skill.getID());
+        var pCtx = cache.getPlayerContext();
+
         this.isShiftPressed = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);
-        this.isLocked = !skill.isAvailable(cache.getCurrentContext(skill.getID()));
+        this.isLocked = !SkillRules.isAvailable(sCtx, pCtx);
         this.isMaxed = cache.getSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel();
-        this.canAffordPurchase = skill.canBuy(cache.getCurrentContext(skill.getID()), cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
-        this.canAffordRefund = skill.canRefund(cache.getCurrentContext(skill.getID()), cache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
+        this.canAffordPurchase = SkillRules.canBuy(sCtx, pCtx, cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
+        this.canAffordRefund = SkillRules.canRefund(sCtx, cache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
         this.canBuy = cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true) && skill.isPurchasable();
         this.canRefund = cache.getConfigBool(Config.REFUND_SYSTEM_KEY, true) && skill.isRefundable();
 

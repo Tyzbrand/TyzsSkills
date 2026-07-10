@@ -8,6 +8,7 @@ import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.tools.StringTools;
+import com.tyzsskills.impl.server.skills.SkillRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -99,8 +100,8 @@ public class SkillTooltip implements ClientTooltipComponent {
     private boolean isShiftPressed(){return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);}
     private boolean hasInfos() {
         return skill.getRequiredLevel() != 0
-                || !skill.getRawIncompatibilities().isEmpty()
-                || !skill.getRawPrerequisites().isEmpty();
+                || !cache.GRAPH.getIncompatibilitiesFor(skill.getID()).isEmpty()
+                || !cache.GRAPH.getPrerequisitesFor(skill.getID()).isEmpty();
     }
 
     //UTILS
@@ -127,7 +128,7 @@ public class SkillTooltip implements ClientTooltipComponent {
     }
 
     private void renderSkillIcon(GuiGraphics gui, int x, int y){
-        ResourceLocation icon = skill.isAvailable(cache.getCurrentContext(skill.getID())) ? ResourceLocation.tryParse(skill.getIcon()) : LOCK_ICON;
+        ResourceLocation icon = SkillRules.isAvailable(cache.getSkillContext(skill.getID()), cache.getPlayerContext()) ? ResourceLocation.tryParse(skill.getIcon()) : LOCK_ICON;
         if(icon == null) icon = DEFAULT_ICON;
 
         var borderColor = isMaxed() ? 0xFFD6AD55 : 0xFFD6D6D6;

@@ -58,33 +58,12 @@ public class SkillLoader {
         for (var kvp : skillQueue.entrySet()) loadSkill(kvp.getKey(), kvp.getValue());
         skillQueue.clear();
 
-        for(var skill : SkillManager.getAllSkills()){
-            var incompatibilities = skill.getRawIncompatibilities();
-            var skillID = skill.getID();
-
-            for (var id : incompatibilities){
-                if(!SkillManager.isSkillLoaded(id)){
-                    ErrorManager.registerSkillError(skillID, "incompatibility : [" + id + "] does not exist.");
-                    skill.removeIncompatibility(id);
-                    continue;
-                }
-
-                var conflict = SkillManager.getSkill(id);
-                if(conflict == null) continue;
-
-                if(!conflict.isSkillIncompatible(skillID)) conflict.addIncompatibility(skillID);
-            }
-
-            var prerequisites = skill.getRawPrerequisites();
-            for (var prerequisite : prerequisites.keySet()){
-                if(!SkillManager.isSkillLoaded(prerequisite)) {
-                    ErrorManager.registerSkillError(skillID, "prerequisite : [" + prerequisite + "] does not exist.");
-                    skill.removePrerequisite(prerequisite);
-                }
-            }
-        }
+        SkillManager.buildGraph();
     }
 
+
+
+    //Utils
     private static void loadSkill(String id, JsonObject source){
         Boolean state = JsonLoadTools.getSafeElement(source, "active", JsonPrimitive::getAsBoolean);
         if(state == null) state = true;
@@ -194,28 +173,6 @@ public class SkillLoader {
         }
     }
 
-    private static void applyTransitions(JsonObject source, String skillId){
-        //MIGRATION FOR PREREQUISITES: List<String> -> Map<String, Integer> (ID + Level)
-        var config = source.get("config");
-        if(config instanceof JsonObject configObject){
-
-            var prerequisite = configObject.get("skillPrerequisites");
-            var newPrerequisites = new JsonObject();
-            if(prerequisite instanceof JsonArray prerequisiteList){
-                for (var id : prerequisiteList){
-                    newPrerequisites.addProperty(id.getAsString(), 1);
-                }
-
-                configObject.remove("skillPrerequisites");
-                configObject.add("skillPrerequisites", newPrerequisites);
-
-                ErrorManager.registerLoadDeprecation(skillId, "\"skillPrerequisites\"", "{skillID, requiredLevel}");
-            }
-        }
-    }
-
-
-    //Utils
     private static final Set<String> GENERIC_PARAMETERS = Set.of("purchasable", "refundable", "visible", "levelRequirement", "incompatibleSkills", "skillPrerequisites");
     private static SkillConfiguration parseConfig(JsonObject obj){
         //Generic Parameters
@@ -243,6 +200,26 @@ public class SkillLoader {
         }
 
         return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites, refundable, purchasable, visible, parameters);
+    }
+
+    private static void applyTransitions(JsonObject source, String skillId){
+        //MIGRATION FOR PREREQUISITES: List<String> -> Map<String, Integer> (ID + Level)
+        var config = source.get("config");
+        if(config instanceof JsonObject configObject){
+
+            var prerequisite = configObject.get("skillPrerequisites");
+            var newPrerequisites = new JsonObject();
+            if(prerequisite instanceof JsonArray prerequisiteList){
+                for (var id : prerequisiteList){
+                    newPrerequisites.addProperty(id.getAsString(), 1);
+                }
+
+                configObject.remove("skillPrerequisites");
+                configObject.add("skillPrerequisites", newPrerequisites);
+
+                ErrorManager.registerLoadDeprecation(skillId, "\"skillPrerequisites\"", "{skillID, requiredLevel}");
+            }
+        }
     }
 
 }

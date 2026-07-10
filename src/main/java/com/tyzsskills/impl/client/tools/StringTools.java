@@ -232,8 +232,8 @@ public class StringTools {
         var cache = ClientCache.get();
 
         var requiredLvl = skill.getRequiredLevel();
-        var incompatibilities = skill.getRawIncompatibilities();
-        var prerequisites = skill.getRawPrerequisites();
+        var incompatibilities = cache.GRAPH.getIncompatibilitiesFor(skill.getID());
+        var prerequisites = cache.GRAPH.getPrerequisitesFor(skill.getID());
 
         if(requiredLvl != 0) {
             var color = requiredLvl <= cache.getLevel() ? ChatFormatting.GREEN : ChatFormatting.RED;

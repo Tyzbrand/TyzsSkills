@@ -1,14 +1,12 @@
 package com.tyzsskills.impl.server.skills;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.SkillActionEvent;
 import com.tyzsskills.api.events.SkillLoadEvent;
+import com.tyzsskills.api.records.PlayerContext;
 import com.tyzsskills.api.records.SkillContext;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.active.BehaviorRegistries;
@@ -27,8 +25,8 @@ import org.jetbrains.annotations.Unmodifiable;
 @ApiStatus.Internal
 public class SkillManager {
 
-
     private static final Map<String, Skill> skillCollection = new HashMap<>();
+    public static final SkillGraph GRAPH = new SkillGraph();
 
     //CORE
     private static boolean setSkillLevelInternal(@NotNull ServerPlayer player, @NotNull Skill skill, int newLevel, boolean syncClient){
@@ -55,21 +53,17 @@ public class SkillManager {
         var skill = getSkill(skillId.toLowerCase()); if(skill == null) return false;
         return setSkillLevelInternal(player, skill, getPlayerSkillLevel(player, skillId) + amount, true);
     }
-
     public static boolean tryRemoveSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int amount){
         var skill = getSkill(skillId.toLowerCase()); if(skill == null) return false;
         return setSkillLevelInternal(player, skill, getPlayerSkillLevel(player, skillId) - amount, true);
     }
-
     public static void setSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int newLevel){
         var skill = getSkill(skillId.toLowerCase());
         if(skill != null) setSkillLevelInternal(player, skill, newLevel, true);
     }
-
     public static void resetSkillLevels(@NotNull ServerPlayer player){
         for(var skill : skillCollection.values()) setSkillLevelInternal(player, skill, 0, false);
     }
-
     public static boolean tryBuySkill(@NotNull ServerPlayer player, @NotNull String skillId)
     {
         skillId = skillId.toLowerCase();
@@ -82,7 +76,7 @@ public class SkillManager {
 
         int currentLvl = getPlayerSkillLevel(player, skillId);
 
-        if(skill.canBuy(getSkillContext(player, skillId), Config.PURCHASE_SYSTEM.get())){
+        if(SkillRules.canBuy(getSkillContext(player, skillId), getPlayerContext(player), Config.PURCHASE_SYSTEM.get())){
             var price = skill.getPrices().get(currentLvl);
 
             if(setSkillLevelInternal(player, skill, currentLvl + 1, true)) {
@@ -93,7 +87,6 @@ public class SkillManager {
         }
         return false;
     }
-
     public static boolean tryBulkBuy(@NotNull ServerPlayer player, @NotNull String skillId){
 
         skillId = skillId.toLowerCase();
@@ -109,7 +102,7 @@ public class SkillManager {
 
         if (currentLvl >= maxLvl) return false;
 
-        var bulkResult = skill.checkBulkBuy(getSkillContext(player, skillId), Config.PURCHASE_SYSTEM.get());
+        var bulkResult = SkillRules.checkBulkBuy(getSkillContext(player, skillId), getPlayerContext(player), Config.PURCHASE_SYSTEM.get());
 
         if (bulkResult.levelToAdd() > 0) {
             if(setSkillLevelInternal(player, skill, currentLvl + bulkResult.levelToAdd(), true)){
@@ -121,14 +114,13 @@ public class SkillManager {
         }
         return false;
     }
-
     public static boolean tryRefundSkill(@NotNull ServerPlayer player, @NotNull String skillId)
     {
         skillId = skillId.toLowerCase();
         var skill = getSkill(skillId);
 
         if(skill == null) return false;
-        if(!skill.canRefund(getSkillContext(player, skillId), Config.REFUND_SYSTEM.getAsBoolean())) return false;
+        if(!SkillRules.canRefund(getSkillContext(player, skillId), Config.REFUND_SYSTEM.getAsBoolean())) return false;
 
         var event = new SkillActionEvent.RefundPre(skill, player);
         NeoForge.EVENT_BUS.post(event);
@@ -151,7 +143,6 @@ public class SkillManager {
 
         return false;
     }
-
     public static boolean tryBulkRefund(@NotNull ServerPlayer player, @NotNull String skillId){
         skillId = skillId.toLowerCase();
         var skill = getSkill(skillId);
@@ -164,7 +155,7 @@ public class SkillManager {
         int currentLvl = player.getData(PlayerData.DATA).getSkillLevel(skillId);
         if (currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
-        var spToRefund = skill.checkBulkRefund(getSkillContext(player, skillId), (float)Config.REFUND_PERCENTAGE.getAsDouble(), Config.REFUND_SYSTEM.getAsBoolean());
+        var spToRefund = SkillRules.checkBulkRefund(getSkillContext(player, skillId), (float)Config.REFUND_PERCENTAGE.getAsDouble(), Config.REFUND_SYSTEM.getAsBoolean());
 
         if(setSkillLevelInternal(player, skill, 0, true)) {
             if (spToRefund > 0) SpManager.tryAddSp(player, spToRefund);
@@ -174,8 +165,6 @@ public class SkillManager {
 
         return false;
     }
-
-
     public static void bookmarkSkill(@NotNull ServerPlayer player, @NotNull String skillId){
         skillId = skillId.toLowerCase();
         var skill = getSkill(skillId);
@@ -209,17 +198,21 @@ public class SkillManager {
 
         NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
     }
-
-
     public static void clearSkills() {skillCollection.clear();}
+    public static void buildGraph() {GRAPH.build(List.copyOf(getAllSkills()));}
 
     //getters
     public static @Nullable Skill getSkill(@NotNull String skillId){return skillCollection.getOrDefault(skillId.toLowerCase(), null);}
     public static boolean isSkillLoaded(String id){return skillCollection.containsKey(id);}
     public static boolean isSkillBookmarked(@NotNull ServerPlayer player,@NotNull String skillId) {return player.getData(PlayerData.DATA).isBookmarked(skillId.toLowerCase());}
 
+    public static @NotNull PlayerContext getPlayerContext(@NotNull ServerPlayer player){
+        return new PlayerContext(player, LevelManager.getLevel(player), SpManager.getSP(player), getPlayerSkillLevels(player));
+    }
     public static @NotNull SkillContext getSkillContext(@NotNull ServerPlayer player, @NotNull String skillId){
-        return new SkillContext(player, getPlayerSkillLevel(player, skillId.toLowerCase()), LevelManager.getLevel(player), SpManager.getSP(player), getPlayerSkillLevels(player));
+        var skill = getSkill(skillId);
+        Objects.requireNonNull(skill, "Attempt to access SkillContext with null skill (server side).");
+        return new SkillContext(skill, getPlayerSkillLevel(player, skillId), GRAPH);
     }
 
     public static int getPlayerSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId) {
@@ -228,14 +221,13 @@ public class SkillManager {
     public static @NotNull List<String> getPlayerOwnedSkillIds(@NotNull ServerPlayer player){
         return player.getData(PlayerData.DATA).getOwnedSkillIds().stream().filter(SkillManager::isSkillLoaded).toList();
     }
-
     public static @NotNull Map<String, Integer> getPlayerSkillLevels(@NotNull ServerPlayer player){
         var ownedSkills = new HashMap<String, Integer>();
         for(var id : getPlayerOwnedSkillIds(player)) ownedSkills.put(id, getPlayerSkillLevel(player, id));
         return ownedSkills;
     }
-
     public static @NotNull @Unmodifiable List<String> getAllBookmarkIDs(@NotNull ServerPlayer player){return player.getData(PlayerData.DATA).getBookmarks();}
+
 
     //CORE
     @ApiStatus.Internal public static @NotNull List<Skill> getAllSkills() {return new ArrayList<>(skillCollection.values());}
