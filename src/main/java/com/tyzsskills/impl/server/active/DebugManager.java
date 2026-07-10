@@ -62,22 +62,25 @@ public class DebugManager {
         LevelManager.checkForLevelUp(player, XpManager.getXP(player));
         GenericEffects.restoreEffects(player);
 
-        for (var skillId : SkillManager.getPlayerOwnedSkillIds(player)){
+        var skillLevels = SkillManager.getPlayerSkillLevels(player);
+        for (var ownedSkills : skillLevels.entrySet()){
+
+            var skillId = ownedSkills.getKey();
+            var skillLevel = ownedSkills.getValue();
 
             var skill = SkillManager.getSkill(skillId);
             if(skill == null) continue;
 
-            var lvl = SkillManager.getPlayerSkillLevel(player, skillId);
 
-            var incompatibilities = skill.getIncompatibilities(SkillManager.getPlayerOwnedSkillIds(player));
-            var prerequisites = skill.getPrerequisites(SkillManager.getPlayerOwnedSkillIds(player));
+            var incompatibilities = skill.getIncompatibilities(skillLevels);
+            var prerequisites = skill.getPrerequisites(skillLevels);
 
             if(!skill.meetsLevelRequirement(LevelManager.getLevel(player))){
-                cleanRefund(0, lvl, player, skill);
+                cleanRefund(0, skillLevel, player, skill);
                 continue;
             }
             else if(!incompatibilities.isEmpty()){
-                cleanRefund(0, lvl, player, skill);
+                cleanRefund(0, skillLevel, player, skill);
 
                 for(var id : incompatibilities){
                     var conflict = SkillManager.getSkill(id);
@@ -86,15 +89,15 @@ public class DebugManager {
                 continue;
             }
             else if (!prerequisites.isEmpty()){
-                cleanRefund(0, lvl, player, skill);
+                cleanRefund(0, skillLevel, player, skill);
                 continue;
             }
 
             if(!SkillManager.isSkillLoaded(skill.getID())) continue;
 
             var maxLvl = skill.getMaximumLevel();
-            if(lvl <= maxLvl) continue;
-            cleanRefund(maxLvl, lvl, player, skill);
+            if(skillLevel <= maxLvl) continue;
+            cleanRefund(maxLvl, skillLevel, player, skill);
         }
     }
 

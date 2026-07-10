@@ -219,7 +219,7 @@ public class SkillManager {
     public static boolean isSkillBookmarked(@NotNull ServerPlayer player,@NotNull String skillId) {return player.getData(PlayerData.DATA).isBookmarked(skillId.toLowerCase());}
 
     public static @NotNull SkillContext getSkillContext(@NotNull ServerPlayer player, @NotNull String skillId){
-        return new SkillContext(player, getPlayerSkillLevel(player, skillId.toLowerCase()), LevelManager.getLevel(player), SpManager.getSP(player), getPlayerOwnedSkillIds(player));
+        return new SkillContext(player, getPlayerSkillLevel(player, skillId.toLowerCase()), LevelManager.getLevel(player), SpManager.getSP(player), getPlayerSkillLevels(player));
     }
 
     public static int getPlayerSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId) {

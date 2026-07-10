@@ -147,13 +147,13 @@ public interface ISkill {
     /**
      * Gets all skill that are mutually exclusive with this one (as ids).
      * Applies only to the skills the player currently possesses.
-     * @param ownedSkillIds A list containing all skill IDs currently owned by the player.
+     * @param ownedSkillLevels A Map containing all skill IDs and their levels (currently owned by the player).
      * @return A list containing all incompatible skill ids the player possesses. If there are no incompatibilities, return an empty list.
      */
-    @NotNull List<String> getIncompatibilities(@NotNull List<String> ownedSkillIds);
+    @NotNull List<String> getIncompatibilities(@NotNull Map<String, Integer> ownedSkillLevels);
 
-    @NotNull List<String> getRawPrerequisites();
-    @NotNull List<String> getPrerequisites(@NotNull List<String> ownedSkillIds);
+    @NotNull Map<String, Integer> getRawPrerequisites();
+    @NotNull Map<String, Integer> getPrerequisites(@NotNull Map<String, Integer> ownedSkillLevels);
     void removePrerequisite(@NotNull String id);
 
 

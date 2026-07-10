@@ -64,6 +64,7 @@ public class ClientCache {
     public int getSkillLevel(@NotNull String skillId) {
         return skillLevels.getOrDefault(skillId.toLowerCase(), 0);
     }
+    public @NotNull @Unmodifiable Map<String, Integer> getSkillLevels(){return Map.copyOf(skillLevels);}
     public @NotNull List<String> getPurchasedSkills() {
         var list = new ArrayList<String>();
         for (var kvp : skillLevels.entrySet()) if (kvp.getValue() > 0) list.add(kvp.getKey());
@@ -325,7 +326,7 @@ public class ClientCache {
     public @NotNull SkillContext getCurrentContext(String skillID) {
         var player = Minecraft.getInstance().player;
         Objects.requireNonNull(player, "Attempt to access SkillContext with null client.");
-        return new SkillContext(player, getSkillLevel(skillID), level, sp, getPurchasedSkills());
+        return new SkillContext(player, getSkillLevel(skillID), level, sp, getSkillLevels());
     }
 
     public int getTotalXpPerHour() {

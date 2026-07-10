@@ -18,7 +18,7 @@ public class SkillConfiguration {
     public SkillConfiguration(@NotNull CompoundTag parameters){this(null, null, null, null, null, null, parameters);}
 
     public SkillConfiguration (Integer levelRequirement,
-                               List<String> incompatibilities, List<String> prerequisites,
+                               List<String> incompatibilities, Map<String, Integer> prerequisites,
                                Boolean refundable, Boolean purchasable, Boolean visible, CompoundTag parameters){
 
 
@@ -29,7 +29,7 @@ public class SkillConfiguration {
         this.levelRequirement = levelRequirement;
 
         this.incompatibleSkills = incompatibilities == null ? null : new HashSet<>(incompatibilities);
-        this.skillPrerequisites = prerequisites == null ? null : new HashSet<>(prerequisites);
+        this.skillPrerequisites = prerequisites == null ? null : new HashMap<>(prerequisites);
 
         this.parameters = parameters;
     }
@@ -60,9 +60,9 @@ public class SkillConfiguration {
     }
     public void removeIncompatibility(String skillID){if(incompatibleSkills != null) incompatibleSkills.remove(skillID);}
 
-    private Set<String> skillPrerequisites;
+    private Map<String, Integer> skillPrerequisites;
     @NotNull
-    public List<String> skillPrerequisites(){return skillPrerequisites == null ? Collections.emptyList() :  List.copyOf(skillPrerequisites);}
+    public Map<String, Integer> skillPrerequisites(){return skillPrerequisites == null ? Map.of() :  Map.copyOf(skillPrerequisites);}
     public void removePrerequisite(String skillID){if(skillPrerequisites != null) skillPrerequisites.remove(skillID);}
 
     //Tags
@@ -107,7 +107,7 @@ public class SkillConfiguration {
         buffer.writeInt(levelRequirement());
 
         buffer.writeCollection(incompatibleSkills(), FriendlyByteBuf::writeUtf);
-        buffer.writeCollection(skillPrerequisites(), FriendlyByteBuf::writeUtf);
+        buffer.writeMap(skillPrerequisites(), FriendlyByteBuf::writeUtf, FriendlyByteBuf::writeInt);
 
         buffer.writeNbt(parameters());
     }
@@ -127,7 +127,7 @@ public class SkillConfiguration {
 
         List<String> incompatibleSkills = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readUtf);
 
-        List<String> skillPrerequisites = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readUtf);
+        Map<String, Integer> skillPrerequisites = buffer.readMap(HashMap::new, FriendlyByteBuf::readUtf, FriendlyByteBuf::readInt);
 
         var parametersToRead = buffer.readNbt();
         CompoundTag parameters = parametersToRead.isEmpty() ? null : parametersToRead;

@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.skills;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -11,14 +12,15 @@ import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
 import com.tyzsskills.impl.server.tools.JsonLoadTools;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Function;
 
 @ApiStatus.Internal
 public class SkillLoader {
@@ -34,6 +36,8 @@ public class SkillLoader {
         var id = JsonLoadTools.getSafeElement(source, "id", JsonPrimitive::getAsString);
         if(id == null || id.isBlank()) {ErrorManager.registerSkillError(filename, "invalid id"); return;}
         id = id.toLowerCase();
+
+        applyTransitions(source, id);
 
         if(isDefault) skillQueue.putIfAbsent(id, source);
         else{
@@ -72,7 +76,7 @@ public class SkillLoader {
             }
 
             var prerequisites = skill.getRawPrerequisites();
-            for (var prerequisite : prerequisites){
+            for (var prerequisite : prerequisites.keySet()){
                 if(!SkillManager.isSkillLoaded(prerequisite)) {
                     ErrorManager.registerSkillError(skillID, "prerequisite : [" + prerequisite + "] does not exist.");
                     skill.removePrerequisite(prerequisite);
@@ -190,6 +194,26 @@ public class SkillLoader {
         }
     }
 
+    private static void applyTransitions(JsonObject source, String skillId){
+        //MIGRATION FOR PREREQUISITES: List<String> -> Map<String, Integer> (ID + Level)
+        var config = source.get("config");
+        if(config instanceof JsonObject configObject){
+
+            var prerequisite = configObject.get("skillPrerequisites");
+            var newPrerequisites = new JsonObject();
+            if(prerequisite instanceof JsonArray prerequisiteList){
+                for (var id : prerequisiteList){
+                    newPrerequisites.addProperty(id.getAsString(), 1);
+                }
+
+                configObject.remove("skillPrerequisites");
+                configObject.add("skillPrerequisites", newPrerequisites);
+
+                ErrorManager.registerLoadDeprecation(skillId, "\"skillPrerequisites\"", "{skillID, requiredLevel}");
+            }
+        }
+    }
+
 
     //Utils
     private static final Set<String> GENERIC_PARAMETERS = Set.of("purchasable", "refundable", "visible", "levelRequirement", "incompatibleSkills", "skillPrerequisites");
@@ -202,7 +226,7 @@ public class SkillLoader {
         var levelRequirement = JsonLoadTools.getSafeElement(obj, "levelRequirement", JsonPrimitive::getAsInt);
 
         var incompatibleSkills = JsonLoadTools.getSafeList(obj, "incompatibleSkills", JsonElement::getAsString);
-        var skillPrerequisites = JsonLoadTools.getSafeList(obj, "skillPrerequisites", JsonElement::getAsString);
+        var skillPrerequisites = JsonLoadTools.getSafeMap(obj, "skillPrerequisites", k -> k, JsonElement::getAsInt);
 
         //Specific Parameters
         var tempObj = new JsonObject();

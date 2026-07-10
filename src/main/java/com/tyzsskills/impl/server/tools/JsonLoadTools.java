@@ -6,7 +6,9 @@ import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class JsonLoadTools {
@@ -35,6 +37,32 @@ public class JsonLoadTools {
         } catch (Exception e){return null;}
 
         return list;
+    }
+
+    public static @Nullable <K, V> Map<K, V> getSafeMap(JsonObject obj, String key,
+            Function<String, K> keyMapper, Function<JsonElement, V> valueMapper) {
+
+        if (obj == null || key == null || !obj.has(key)) return null;
+
+        var element = obj.get(key);
+        if (!element.isJsonObject()) return null;
+
+        var jsonMap = element.getAsJsonObject();
+        Map<K, V> map = new HashMap<>();
+
+        try {
+            for (var entry : jsonMap.entrySet()) {
+                K mappedKey = keyMapper.apply(entry.getKey());
+                V mappedValue = valueMapper.apply(entry.getValue());
+
+                if (mappedKey != null && mappedValue != null) {
+                    map.put(mappedKey, mappedValue);
+                }
+            }
+            return map;
+        }
+        catch (Exception e) {return null;}
+
     }
 
     public static @Nullable <T extends Enum<T>> T getSafeEnum(JsonObject obj, String key, Class<T> enumClass){

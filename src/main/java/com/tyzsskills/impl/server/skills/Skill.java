@@ -110,7 +110,7 @@ public class Skill implements ISkill {
     @Override
     public @NotNull List<String> getRawIncompatibilities() {return config.incompatibleSkills();}
     @Override
-    public @NotNull List<String> getRawPrerequisites() {return config.skillPrerequisites();}
+    public @NotNull Map<String, Integer> getRawPrerequisites() {return config.skillPrerequisites();}
     @Override
     public boolean isAvailable(@NotNull SkillContext ctx){
         return meetsLevelRequirement(ctx.playerLvl())
@@ -201,32 +201,36 @@ public class Skill implements ISkill {
     }
 
     @Override
-    public @NotNull List<String> getIncompatibilities(@NotNull List<String> ownedSkillIds) {
+    public @NotNull List<String> getIncompatibilities(@NotNull Map<String, Integer> ownedSkillLevels) {
         var incompatibleSkills = config.incompatibleSkills();
-        if(incompatibleSkills.isEmpty() || ownedSkillIds.isEmpty()) return Collections.emptyList();
+        if(incompatibleSkills.isEmpty() || ownedSkillLevels.isEmpty()) return Collections.emptyList();
 
         var intersections = new ArrayList<String>();
 
-        for(var id : ownedSkillIds){
+        for(var id : ownedSkillLevels.keySet()){
             if(incompatibleSkills.contains(id)) intersections.add(id);
         }
 
-        return intersections.isEmpty() ? Collections.emptyList() : intersections;
+        return intersections.isEmpty() ? List.of() : intersections;
     }
 
     @Override
-    public @NotNull List<String> getPrerequisites(@NotNull List<String> ownedSkillIds) {
+    public @NotNull Map<String, Integer> getPrerequisites(@NotNull Map<String, Integer> ownedSkillLevels) {
         var prerequisites = config.skillPrerequisites();
+        if(prerequisites.isEmpty()) return Map.of();
 
-        if(prerequisites.isEmpty()) return Collections.emptyList();
+        var stillPrerequisites = new HashMap<String, Integer>();
 
-        var stillPrerequisites = new ArrayList<String>();
+        for(var prerequisite : prerequisites.entrySet()){
+            var id = prerequisite.getKey();
+            var requiredLevel = prerequisite.getValue();
+            var currentLevel = ownedSkillLevels.getOrDefault(id, 0);
 
-        for(var prerequisite : prerequisites){
-            if(!ownedSkillIds.contains(prerequisite)) stillPrerequisites.add(prerequisite);
+            if(currentLevel < requiredLevel)
+                stillPrerequisites.put(id, ownedSkillLevels.get(id));
         }
 
-        return stillPrerequisites.isEmpty() ? Collections.emptyList() : stillPrerequisites;
+        return stillPrerequisites.isEmpty() ? Map.of() : stillPrerequisites;
     }
 
 

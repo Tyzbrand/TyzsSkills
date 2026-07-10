@@ -276,14 +276,20 @@ public class StringTools {
 
             lines.add(header);
 
-            for(var prerequisite : prerequisites){
-                var prerequisiteSkill = cache.getSkill(prerequisite);
+            for(var prerequisite : prerequisites.entrySet()){
+                var id = prerequisite.getKey();
+                var requiredLevel = prerequisite.getValue();
+
+                var prerequisiteSkill = cache.getSkill(id);
                 if (prerequisiteSkill == null) continue;
 
-                var color = cache.getSkillLevel(prerequisite) <= 0 ? ChatFormatting.RED : ChatFormatting.GREEN;
+                var color = cache.getSkillLevel(id) < requiredLevel ? ChatFormatting.RED : ChatFormatting.GREEN;
                 var message = Component.empty()
                         .append(Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY))
-                        .append(Component.translatable(prerequisiteSkill.getDisplayName()).withStyle(color));
+                        .append(Component.translatable(prerequisiteSkill.getDisplayName()).withStyle(ChatFormatting.DARK_GRAY))
+                        .append(Component.literal(", ").withStyle(ChatFormatting.DARK_GRAY))
+                        .append(Component.translatable("gui.tyzs_skills.Lvl").withStyle(ChatFormatting.DARK_GRAY))
+                        .append(Component.literal(" " + requiredLevel).withStyle(color));
 
                 lines.add(message);
             }
