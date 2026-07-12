@@ -6,8 +6,7 @@ import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.SkillActionEvent;
 import com.tyzsskills.api.events.SkillLoadEvent;
-import com.tyzsskills.api.records.PlayerContext;
-import com.tyzsskills.api.records.SkillContext;
+import com.tyzsskills.api.model.Context;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.active.BehaviorRegistries;
 import com.tyzsskills.impl.server.sp.SpManager;
@@ -17,16 +16,17 @@ import com.tyzsskills.impl.server.payloads.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.*;
 
 @ApiStatus.Internal
 public class SkillManager {
 
-    private static final Map<String, Skill> skillCollection = new HashMap<>();
+    private static final Map<String, Skill> SKILL_COLLECTION = new HashMap<>();
+    private static final Map<String, Skill> SKILL_COLLECTION_VIEW = Collections.unmodifiableMap(SKILL_COLLECTION);
     public static final SkillGraph GRAPH = new SkillGraph();
+
+    private static final Context.Player PLAYER_CONTEXT = new Context.Player();
+    private static final Context.Skill SKILL_CONTEXT = new Context.Skill();
 
     //CORE
     private static boolean setSkillLevelInternal(@NotNull ServerPlayer player, @NotNull Skill skill, int newLevel, boolean syncClient){
@@ -62,7 +62,7 @@ public class SkillManager {
         if(skill != null) setSkillLevelInternal(player, skill, newLevel, true);
     }
     public static void resetSkillLevels(@NotNull ServerPlayer player){
-        for(var skill : skillCollection.values()) setSkillLevelInternal(player, skill, 0, false);
+        for(var skill : SKILL_COLLECTION.values()) setSkillLevelInternal(player, skill, 0, false);
     }
     public static boolean tryBuySkill(@NotNull ServerPlayer player, @NotNull String skillId)
     {
@@ -194,42 +194,38 @@ public class SkillManager {
             behaviour.registerEvent(NeoForge.EVENT_BUS, skill);
         }
 
-        skillCollection.put(skill.getID().toLowerCase(), skill);
+        SKILL_COLLECTION.put(skill.getID().toLowerCase(), skill);
 
         NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
     }
-    public static void clearSkills() {skillCollection.clear();}
-    public static void buildGraph() {GRAPH.build(List.copyOf(getAllSkills()));}
+    public static void clearSkills() {SKILL_COLLECTION.clear();}
+    public static void buildGraph() {GRAPH.build(getAllSkills());}
 
     //getters
-    public static @Nullable Skill getSkill(@NotNull String skillId){return skillCollection.getOrDefault(skillId.toLowerCase(), null);}
-    public static boolean isSkillLoaded(String id){return skillCollection.containsKey(id);}
+    public static @Nullable Skill getSkill(@NotNull String skillId){return SKILL_COLLECTION.getOrDefault(skillId.toLowerCase(), null);}
+    public static boolean isSkillLoaded(String id){return SKILL_COLLECTION.containsKey(id);}
     public static boolean isSkillBookmarked(@NotNull ServerPlayer player,@NotNull String skillId) {return player.getData(PlayerData.DATA).isBookmarked(skillId.toLowerCase());}
 
-    public static @NotNull PlayerContext getPlayerContext(@NotNull ServerPlayer player){
-        return new PlayerContext(player, LevelManager.getLevel(player), SpManager.getSP(player), getPlayerSkillLevels(player));
+    public static @NotNull Context.Player getPlayerContext(@NotNull ServerPlayer player){
+        return PLAYER_CONTEXT.updateContext(player, LevelManager.getLevel(player), SpManager.getSP(player), getPlayerSkillLevels(player));
     }
-    public static @NotNull SkillContext getSkillContext(@NotNull ServerPlayer player, @NotNull String skillId){
+    public static @NotNull Context.Skill getSkillContext(@NotNull ServerPlayer player, @NotNull String skillId){
         var skill = getSkill(skillId);
         Objects.requireNonNull(skill, "Attempt to access SkillContext with null skill (server side).");
-        return new SkillContext(skill, getPlayerSkillLevel(player, skillId), GRAPH);
+        return SKILL_CONTEXT.updateContext(skill, getPlayerSkillLevel(player, skillId), GRAPH);
     }
 
     public static int getPlayerSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId) {
         return player.getData(PlayerData.DATA).getSkillLevel(skillId.toLowerCase());}
 
-    public static @NotNull List<String> getPlayerOwnedSkillIds(@NotNull ServerPlayer player){
-        return player.getData(PlayerData.DATA).getOwnedSkillIds().stream().filter(SkillManager::isSkillLoaded).toList();
+    public static @NotNull @UnmodifiableView Map<String, Integer> getPlayerSkillLevels(@NotNull ServerPlayer player){
+        return player.getData(PlayerData.DATA).getOwnedSkill();
     }
-    public static @NotNull Map<String, Integer> getPlayerSkillLevels(@NotNull ServerPlayer player){
-        var ownedSkills = new HashMap<String, Integer>();
-        for(var id : getPlayerOwnedSkillIds(player)) ownedSkills.put(id, getPlayerSkillLevel(player, id));
-        return ownedSkills;
-    }
+
     public static @NotNull @Unmodifiable List<String> getAllBookmarkIDs(@NotNull ServerPlayer player){return player.getData(PlayerData.DATA).getBookmarks();}
 
 
     //CORE
-    @ApiStatus.Internal public static @NotNull List<Skill> getAllSkills() {return new ArrayList<>(skillCollection.values());}
+    @ApiStatus.Internal public static @NotNull Collection<Skill> getAllSkills() {return SKILL_COLLECTION_VIEW.values();}
 
 }

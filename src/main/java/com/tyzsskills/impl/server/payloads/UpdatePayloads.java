@@ -206,7 +206,7 @@ public class UpdatePayloads {
         var data = player.getData(StatsTracker.DATA);
 
         return new UpdatePayloads.InitPayload(
-                new UpdatePayloads.ServerSyncData(SkillManager.getAllSkills(),
+                new UpdatePayloads.ServerSyncData(SkillManager.getAllSkills().stream().toList(),
                         SkillManager.getAllBookmarkIDs(player), CategoryLoader.getCategories(),
                         SkillManager.getPlayerSkillLevels(player)),
 

@@ -1,8 +1,7 @@
 package com.tyzsskills.impl.server.skills;
 
 import com.tyzsskills.api.records.BulkPurchaseResult;
-import com.tyzsskills.api.records.PlayerContext;
-import com.tyzsskills.api.records.SkillContext;
+import com.tyzsskills.api.model.Context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -10,23 +9,23 @@ import java.util.*;
 
 public class SkillRules {
     //LOCK CONDITIONS
-    public static boolean isAvailable(@NotNull SkillContext sCtx, @NotNull PlayerContext pCtx){
+    public static boolean isAvailable(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx){
         return sCtx.skill().getRequiredLevel() <= sCtx.skillLevel()
                 && getActivePrerequisites(sCtx, pCtx).isEmpty()
                 && getActiveIncompatibilities(sCtx, pCtx).isEmpty();
     }
-    public static @NotNull List<String> getActiveIncompatibilities(@NotNull SkillContext sCtx, @NotNull PlayerContext pCtx) {
+    public static @NotNull List<String> getActiveIncompatibilities(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx) {
         var rawIncompatibilities = sCtx.graph().getIncompatibilitiesFor(sCtx.skill().getID());
-        if(rawIncompatibilities.isEmpty() || pCtx.ownedSkillIds().isEmpty()) return Collections.emptyList();
+        if(rawIncompatibilities.isEmpty() || pCtx.ownedSkillLevels().isEmpty()) return Collections.emptyList();
 
         var intersections = new ArrayList<String>();
-        for(var id : pCtx.ownedSkillIds().keySet()){
+        for(var id : pCtx.ownedSkillLevels().keySet()){
             if(rawIncompatibilities.contains(id))
                 intersections.add(id);
         }
         return intersections.isEmpty() ? List.of() : intersections;
     }
-    public static @NotNull @Unmodifiable Map<String, Integer> getActivePrerequisites(@NotNull SkillContext sCtx, @NotNull PlayerContext pCtx) {
+    public static @NotNull @Unmodifiable Map<String, Integer> getActivePrerequisites(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx) {
         var prerequisites = sCtx.graph().getPrerequisitesFor(sCtx.skill().getID());
         if(prerequisites.isEmpty()) return Map.of();
 
@@ -34,7 +33,7 @@ public class SkillRules {
         for(var prerequisite : prerequisites.entrySet()){
             var id = prerequisite.getKey();
             var requiredLevel = prerequisite.getValue();
-            var currentLevel = pCtx.ownedSkillIds().getOrDefault(id, 0);
+            var currentLevel = pCtx.ownedSkillLevels().getOrDefault(id, 0);
 
             if(currentLevel < requiredLevel)
                 stillPrerequisites.put(id, requiredLevel);
@@ -44,18 +43,18 @@ public class SkillRules {
 
 
     //PURCHASES & REFUNDS
-    public static boolean canRefund(@NotNull SkillContext sCtx, boolean refundEnabled){
+    public static boolean canRefund(@NotNull Context.Skill sCtx, boolean refundEnabled){
         if(!refundEnabled || !sCtx.skill().isRefundable() || sCtx.skillLevel() <= 0) return false;
         return sCtx.skillLevel() <= sCtx.skill().getPrices().size();
     }
-    public static boolean canBuy(@NotNull SkillContext sCtx, @NotNull PlayerContext pCtx, boolean purchaseEnabled){
+    public static boolean canBuy(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx, boolean purchaseEnabled){
         if(!sCtx.skill().isPurchasable() || !purchaseEnabled || sCtx.skillLevel() >= sCtx.skill().getMaximumLevel()) return false;
         if(!isAvailable(sCtx, pCtx)) return false;
 
         var price = sCtx.skill().getPrices().get(sCtx.skillLevel());
-        return price <= pCtx.playerSP();
+        return price <= pCtx.playerSp();
     }
-    public static @NotNull BulkPurchaseResult checkBulkBuy(@NotNull SkillContext sCtx, @NotNull PlayerContext pCtx, boolean purchaseEnabled){
+    public static @NotNull BulkPurchaseResult checkBulkBuy(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx, boolean purchaseEnabled){
         var bulkResultFallback = new BulkPurchaseResult(0, 0);
 
         if(!purchaseEnabled || !sCtx.skill().isPurchasable() || sCtx.skillLevel() >= sCtx.skill().getMaximumLevel()) return bulkResultFallback;
@@ -63,7 +62,7 @@ public class SkillRules {
 
         var spToSpend = 0;
         var levelsToAdd = 0;
-        var availableSp = pCtx.playerSP();
+        var availableSp = pCtx.playerSp();
 
         for (int i = sCtx.skillLevel(); i < sCtx.skill().getMaximumLevel(); i++) {
             if (i >= sCtx.skill().getPrices().size()) break;
@@ -78,7 +77,7 @@ public class SkillRules {
 
         return new BulkPurchaseResult(levelsToAdd, spToSpend);
     }
-    public static int checkBulkRefund(@NotNull SkillContext sCtx, float refundPercentage, boolean refundEnabled){
+    public static int checkBulkRefund(@NotNull Context.Skill sCtx, float refundPercentage, boolean refundEnabled){
         if(!refundEnabled || !sCtx.skill().isRefundable() || sCtx.skillLevel() <= 0) return 0;
 
         var finalRefund = 0;

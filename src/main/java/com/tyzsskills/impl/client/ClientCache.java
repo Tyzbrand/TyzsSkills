@@ -6,14 +6,12 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.Category;
 import com.tyzsskills.api.records.LevelData;
-import com.tyzsskills.api.records.PlayerContext;
-import com.tyzsskills.api.records.SkillContext;
+import com.tyzsskills.api.model.Context;
 import com.tyzsskills.impl.client.screen.MainGUI;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
 import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
-import com.tyzsskills.impl.server.skills.Skill;
 import com.tyzsskills.impl.server.skills.SkillGraph;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import net.minecraft.client.Minecraft;
@@ -21,7 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
@@ -65,22 +63,24 @@ public class ClientCache {
     }
 
     private final Map<String, Integer> skillLevels = new HashMap<>();
+    private final Map<String, Integer> skillLevelsView = Collections.unmodifiableMap(skillLevels);
     public int getSkillLevel(@NotNull String skillId) {
         return skillLevels.getOrDefault(skillId.toLowerCase(), 0);
     }
-    public @NotNull @Unmodifiable Map<String, Integer> getSkillLevels(){return Map.copyOf(skillLevels);}
+    public @NotNull @UnmodifiableView Map<String, Integer> getSkillLevels(){return skillLevelsView;}
     public @NotNull List<String> getPurchasedSkills() {
         var list = new ArrayList<String>();
         for (var kvp : skillLevels.entrySet()) if (kvp.getValue() > 0) list.add(kvp.getKey());
         return list;
     }
 
-    private final HashSet<String> bookmarks = new HashSet<>();
+    private final List<String> bookmarks = new ArrayList<>();
+    private final List<String> bookmarksView = Collections.unmodifiableList(bookmarks);
     public boolean isSkillBookMarked(@NotNull String skillId) {
         return bookmarks.contains(skillId.toLowerCase());
     }
-    public @NotNull @Unmodifiable List<String> getBookmarkedSkills() {
-        return List.copyOf(bookmarks);
+    public @NotNull @UnmodifiableView List<String> getBookmarkedSkills() {
+        return bookmarksView;
     }
 
     //STATISTICS
@@ -123,19 +123,13 @@ public class ClientCache {
         return categories.getOrDefault(categoryId, null);
     }
 
-    private final Map<String, Skill> skills = new HashMap<>();
+    private final Map<String, ISkill> skills = new HashMap<>();
+    private final Map<String, ISkill> skillsView = Collections.unmodifiableMap(skills);
     public boolean isSkillLoaded(@NotNull String skillId) {
         return skills.containsKey(skillId.toLowerCase());
     }
-    public @Nullable ISkill getSkill(@NotNull String skillId) {
-        return skills.getOrDefault(skillId.toLowerCase(), null);
-    }
-    public @NotNull @Unmodifiable List<ISkill> getAllSkills() {
-        return List.copyOf(skills.values());
-    }
-    public @NotNull @Unmodifiable List<String> getAllSkillIDs() {
-        return List.copyOf(skills.keySet());
-    }
+    public @Nullable ISkill getSkill(@NotNull String skillId) {return skills.getOrDefault(skillId.toLowerCase(), null);}
+    public @NotNull @UnmodifiableView Map<String, ISkill> getAllSkills() {return skillsView;}
 
     private final Map<String, Object> configMap = new HashMap<>();
 
@@ -150,7 +144,7 @@ public class ClientCache {
             skillLevels.clear();
 
             for(var skill : serverData.skills()) skills.put(skill.getID(), skill);
-            GRAPH.build(getAllSkills());
+            GRAPH.build(getAllSkills().values());
 
             bookmarks.addAll(serverData.bookmarks());
             skillLevels.putAll(serverData.playerSkillLevels());
@@ -330,16 +324,18 @@ public class ClientCache {
 
 
     //UTILS
-    public @NotNull PlayerContext getPlayerContext() {
+    private final Context.Player playerContext = new Context.Player();
+    public @NotNull Context.Player getPlayerContext() {
         var player = Minecraft.getInstance().player;
         Objects.requireNonNull(player, "Attempt to access PlayerContext with null client.");
-        return new PlayerContext(player, level, sp, getSkillLevels());
+        return playerContext.updateContext(player, level, sp, getSkillLevels());
     }
 
-    public @NotNull SkillContext getSkillContext(String skillID){
+    private final Context.Skill skillContext = new Context.Skill();
+    public @NotNull Context.Skill getSkillContext(String skillID){
         var skill = getSkill(skillID);
         Objects.requireNonNull(skill, "Attempt to access SkillContext with null skill (client side).");
-        return new SkillContext(skill, getSkillLevel(skillID), GRAPH);
+        return skillContext.updateContext(skill, getSkillLevel(skillID), GRAPH);
     }
 
     public int getTotalXpPerHour() {

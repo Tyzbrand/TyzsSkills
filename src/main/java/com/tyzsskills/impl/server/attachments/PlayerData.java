@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.attachments;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.model.Cooldown;
+import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -20,7 +21,9 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
 
     //SKILLS
     private final Map<String, Integer> playerSkills = new HashMap<>();
-    private final Set<String> playerBookmarks = new HashSet<>();
+    private final Map<String, Integer> playerSkillsView = Collections.unmodifiableMap(playerSkills);
+    private final List<String> playerBookmarks = new ArrayList<>();
+    private final List<String> playerBookmarksView = Collections.unmodifiableList(playerBookmarks);
 
     //SPELLS
     private final Map<String, Integer> playerSpellsProperties = new HashMap<>();
@@ -45,7 +48,7 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         else playerSkills.put(id, lvl);
     }
     public int getSkillLevel(String id){return playerSkills.getOrDefault(id, 0);}
-    public List<String> getOwnedSkillIds(){return List.copyOf(playerSkills.keySet());}
+    public @NotNull @UnmodifiableView Map<String, Integer> getOwnedSkill(){return playerSkillsView;}
 
 
     //-----------------Properties-----------------
@@ -139,7 +142,7 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         if(playerBookmarks.contains(id)) playerBookmarks.remove(id);
         else playerBookmarks.add(id);
     }
-    public List<String> getBookmarks(){return List.copyOf(playerBookmarks);}
+    public @NotNull @UnmodifiableView List<String> getBookmarks(){return playerBookmarksView;}
     public boolean isBookmarked(String id){return playerBookmarks.contains(id);}
 
 

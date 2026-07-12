@@ -1,7 +1,6 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.records.PlayerContext;
 import com.tyzsskills.api.records.*;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;

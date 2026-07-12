@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
@@ -41,6 +42,7 @@ public class SortingTools {
 
 
     private static final List<ISkill> currentSkillOrder = new ArrayList<>();
+    private static final List<ISkill> currentSkillOrderView = Collections.unmodifiableList(currentSkillOrder);
 
 
     public static void registerSortingType(@NotNull SortType sortType){
@@ -52,44 +54,42 @@ public class SortingTools {
     }
 
 
-    public static List<ISkill> refreshList(){
+    public static void refreshList(){
         var cache = ClientCache.get();
-        List<ISkill> listToSort =  new ArrayList<>(cache.getAllSkills());
+        var toSort =  new ArrayList<>(cache.getAllSkills().values());
 
 
         if(!currentSearchQuery.isBlank()){
             var query = currentSearchQuery.trim().toLowerCase(Locale.ROOT);
-            listToSort.removeIf(s -> queryCheck(query, s));
+            toSort.removeIf(s -> queryCheck(query, s));
         }
 
-        if(!showUnbuyable) listToSort.removeIf(s ->
+        if(!showUnbuyable) toSort.removeIf(s ->
                 !SkillRules.canBuy(cache.getSkillContext(s.getID()), cache.getPlayerContext(), cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true)));
 
-        if(!showMaxed) listToSort.removeIf(s -> cache.getSkillLevel(s.getID()) >= s.getMaximumLevel());
+        if(!showMaxed) toSort.removeIf(s -> cache.getSkillLevel(s.getID()) >= s.getMaximumLevel());
 
         if(mainCategory != null){
-            if(mainCategory == Enums.SortingCategory.BOOKMARKS) listToSort.removeIf(s -> !cache.getBookmarkedSkills().contains(s.getID()));
+            if(mainCategory == Enums.SortingCategory.BOOKMARKS) toSort.removeIf(s -> !cache.getBookmarkedSkills().contains(s.getID()));
         }
-        else listToSort.removeIf(s -> !s.getCategory().equals(currentCategory));
+        else toSort.removeIf(s -> !s.getCategory().equals(currentCategory));
 
-        listToSort.removeIf(s -> !s.isVisible() && cache.getSkillLevel(s.getID()) < 1);
+        toSort.removeIf(s -> !s.isVisible() && cache.getSkillLevel(s.getID()) < 1);
 
         if(!activeSortTypes.isEmpty()){
             var currentSortType = activeSortTypes.get(currentSortTypeIndex);
 
             var comparator = currentSortType.comparator();
-            if(comparator == null) Collections.shuffle(listToSort);
+            if(comparator == null) Collections.shuffle(toSort);
             else {
                 if(currentSortingDirection == Enums.SortingDirection.DESCENDING) comparator = comparator.reversed();
-                listToSort.sort(comparator);
+                toSort.sort(comparator);
             }
 
         }
 
         currentSkillOrder.clear();
-        currentSkillOrder.addAll(listToSort);
-
-        return listToSort;
+        currentSkillOrder.addAll(toSort);
     }
 
     public static void CycleSortType(){
@@ -141,9 +141,7 @@ public class SortingTools {
 
 
     //Getters
-    public static List<ISkill> getCurrentSkillOrder() {
-        return activeSortTypes.isEmpty() ? refreshList() : List.copyOf(currentSkillOrder);
-    }
+    public static @NotNull @UnmodifiableView List<ISkill> getCurrentSkillOrder() {return currentSkillOrder;}
 
     public static SortType getCurrentSortType(){
         return activeSortTypes.get(currentSortTypeIndex);

@@ -3,20 +3,21 @@ package com.tyzsskills.impl.server.skills;
 import com.tyzsskills.api.interfaces.ISkill;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
 @ApiStatus.Internal
 public class SkillGraph {
     //A is incompatible with B
-    private final Map<String, Set<String>> INCOMPATIBILITIES = new HashMap<>();
+    private final Map<String, List<String>> INCOMPATIBILITIES = new HashMap<>();
     //A requires B at lvl x
     private final Map<String, Map<String, Integer>> PREREQUISITES = new HashMap<>();
     //B is a dependency of A at lvl x (A depends on B)
     private final Map<String, Map<String, Integer>> DEPENDENTS = new HashMap<>();
 
-    public void build(@NotNull List<ISkill> skillRegistry){
+
+    public void build(@NotNull Collection<? extends ISkill> skillRegistry){
         INCOMPATIBILITIES.clear();
         PREREQUISITES.clear();
         DEPENDENTS.clear();
@@ -24,7 +25,7 @@ public class SkillGraph {
         for(var skill : skillRegistry){
             var currentId = skill.getID();
 
-            INCOMPATIBILITIES.put(currentId, new HashSet<>());
+            INCOMPATIBILITIES.put(currentId, new ArrayList<>());
             PREREQUISITES.put(currentId, new HashMap<>());
             DEPENDENTS.put(currentId, new HashMap<>());
         }
@@ -34,8 +35,12 @@ public class SkillGraph {
 
             for(var incompatibility : skill.getRawIncompatibilities()){
                 if(!SkillManager.isSkillLoaded(incompatibility)) continue;
-                INCOMPATIBILITIES.get(currentId).add(incompatibility);
-                INCOMPATIBILITIES.get(incompatibility).add(currentId);
+
+                var currentList = INCOMPATIBILITIES.get(currentId);
+                var targetList = INCOMPATIBILITIES.get(incompatibility);
+
+                if(!currentList.contains(incompatibility)) currentList.add(incompatibility);
+                if(!targetList.contains(currentId)) targetList.add(currentId);
             }
 
             for(var prerequisite : skill.getRawPrerequisites().entrySet()){
@@ -48,24 +53,28 @@ public class SkillGraph {
                 }
             }
         }
+
+        for(var entry : INCOMPATIBILITIES.entrySet()) entry.setValue(Collections.unmodifiableList(entry.getValue()));
+        for(var entry : PREREQUISITES.entrySet()) entry.setValue(Collections.unmodifiableMap(entry.getValue()));
+        for(var entry : DEPENDENTS.entrySet()) entry.setValue(Collections.unmodifiableMap(entry.getValue()));
+
     }
 
     //RAW GETTERS
-    public @NotNull @Unmodifiable List<String> getIncompatibilitiesFor(@NotNull String skillId){
-        var set = INCOMPATIBILITIES.get(skillId);
-        return set == null ? List.of() : List.copyOf(set);
+    public @NotNull @UnmodifiableView List<String> getIncompatibilitiesFor(@NotNull String skillId){
+        return INCOMPATIBILITIES.getOrDefault(skillId, Collections.emptyList());
     }
 
-    public @NotNull @Unmodifiable Map<String, Integer> getPrerequisitesFor(@NotNull String skillId){
-        return PREREQUISITES.getOrDefault(skillId, Map.of());
+    public @NotNull @UnmodifiableView Map<String, Integer> getPrerequisitesFor(@NotNull String skillId){
+        return PREREQUISITES.getOrDefault(skillId, Collections.emptyMap());
     }
 
-    public @NotNull @Unmodifiable Map<String, Integer> getSkillThatDependsOn(@NotNull String skillId){
-        return DEPENDENTS.getOrDefault(skillId, Map.of());
+    public @NotNull @UnmodifiableView Map<String, Integer> getSkillThatDependsOn(@NotNull String skillId){
+        return DEPENDENTS.getOrDefault(skillId, Collections.emptyMap());
     }
 
     //GETTERS
     public boolean isIncompatibleWith(@NotNull String skillA, @NotNull String skillB){
-        return INCOMPATIBILITIES.getOrDefault(skillA, Set.of()).contains(skillB);
+        return INCOMPATIBILITIES.getOrDefault(skillA, Collections.emptyList()).contains(skillB);
     }
 }
