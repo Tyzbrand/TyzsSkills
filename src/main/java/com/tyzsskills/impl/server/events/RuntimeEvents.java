@@ -85,7 +85,7 @@ public class RuntimeEvents {
 
         PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
 
-        DebugManager.checkForInconsistencies(player);
+        DebugManager.SANITIZER.repairInconsistencies(player);
 
         GenericEffects.restoreEffects(player);
 

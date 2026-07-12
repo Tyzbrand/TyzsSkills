@@ -179,7 +179,7 @@ public class MainCommand {
         return Commands.literal("reload")
                 .executes(ctx -> {
                     try {
-                        DebugManager.reload(ctx.getSource().getServer());
+                        DebugManager.RELOAD.reload(ctx.getSource().getServer());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -192,25 +192,25 @@ public class MainCommand {
                 .then(Commands.literal("all")
                     .then(Commands.argument("player", EntityArgument.player())
                             .executes(ctx -> {
-                                DebugManager.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.ALL);
+                                DebugManager.RESET.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.ALL);
                                 return 1;
                             })))
                 .then(Commands.literal("skills")
                     .then(Commands.argument("player", EntityArgument.player())
                         .executes(ctx -> {
-                            DebugManager.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.SKILLS);
+                            DebugManager.RESET.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.SKILLS);
                             return 1;
                         })))
                 .then(Commands.literal("metadata")
                 .then(Commands.argument("player", EntityArgument.player())
                         .executes(ctx -> {
-                            DebugManager.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.METADATA);
+                            DebugManager.RESET.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.METADATA);
                             return 1;
                         })))
                 .then(Commands.literal("stats")
                 .then(Commands.argument("player", EntityArgument.player())
                         .executes(ctx -> {
-                            DebugManager.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.STATS);
+                            DebugManager.RESET.reset(EntityArgument.getPlayer(ctx, "player"), Enums.ResetType.STATS);
                             return 1;
                         })));
     }

@@ -38,6 +38,10 @@ public class ErrorManager {
         }
     }
 
+    public static void printDynamicError(ServerPlayer player, @NotNull MutableComponent details){
+        player.sendSystemMessage(Component.literal("[TyzsSkills]: ").withStyle(ERROR).append(details.withStyle(ERROR)));
+    }
+
     //REGISTRATION
     public static void registerLoadError(@NotNull String context, @NotNull String detail){
         var message = HEADER.copy().withStyle(ERROR)
