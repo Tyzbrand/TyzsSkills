@@ -8,7 +8,6 @@ import com.tyzsskills.api.events.SkillActionEvent;
 import com.tyzsskills.api.events.SkillLoadEvent;
 import com.tyzsskills.api.model.Context;
 import com.tyzsskills.impl.server.Level.LevelManager;
-import com.tyzsskills.impl.server.active.BehaviorRegistries;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.effects.GenericEffects;
@@ -23,6 +22,9 @@ public class SkillManager {
 
     private static final Map<String, Skill> SKILL_COLLECTION = new HashMap<>();
     private static final Map<String, Skill> SKILL_COLLECTION_VIEW = Collections.unmodifiableMap(SKILL_COLLECTION);
+
+    private static final Set<String> SUBSCRIBED_SKILL_BEHAVIORS = new HashSet<>();
+
     public static final SkillGraph GRAPH = new SkillGraph();
 
     private static final Context.Player PLAYER_CONTEXT = new Context.Player();
@@ -188,10 +190,13 @@ public class SkillManager {
         NeoForge.EVENT_BUS.post(preEvent);
         if(preEvent.isCanceled()) return;
 
-        var behaviour = BehaviorRegistries.getSkillBehavior(skill.getID());
-        if(behaviour != null){
+        var id = skill.getID();
+
+        var behaviour = SkillBehaviorRegistry.getSkillBehavior(id);
+        if(behaviour != null && !SUBSCRIBED_SKILL_BEHAVIORS.contains(id)){
             skill.setBehaviour(behaviour);
-            behaviour.registerEvent(NeoForge.EVENT_BUS, skill);
+            behaviour.registerEvent(NeoForge.EVENT_BUS, id);
+            SUBSCRIBED_SKILL_BEHAVIORS.add(id);
         }
 
         SKILL_COLLECTION.put(skill.getID().toLowerCase(), skill);

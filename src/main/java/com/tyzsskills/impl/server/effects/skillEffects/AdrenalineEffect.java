@@ -13,10 +13,10 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 public class AdrenalineEffect extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, String skillId) {
         registerAction(
                 eventBus,
-                skill,
+                skillId,
                 LivingIncomingDamageEvent.class,
                 LivingIncomingDamageEvent::getEntity,
                 this::onIncomingDamage
@@ -24,7 +24,6 @@ public class AdrenalineEffect extends SkillBehavior {
     }
 
     private void onIncomingDamage(LivingIncomingDamageEvent event, ServerPlayer player, ISkill skill, int lvl) {
-
         var healthThresholds = skill.getValueSet("health_threshold");
         var effectDurations = skill.getValueSet("effect_duration");
 

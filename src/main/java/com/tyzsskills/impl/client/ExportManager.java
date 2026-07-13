@@ -26,7 +26,8 @@ public class ExportManager {
         var cache = ClientCache.get();
 
         Map<String, Integer> purchasedSkills = new HashMap<>();
-        for (var id : cache.getPurchasedSkills()){
+        for (var kvp : cache.getOwnedSkills().entrySet()){
+            var id = kvp.getKey();
             purchasedSkills.put(id, cache.getSkillLevel(id));
         }
 

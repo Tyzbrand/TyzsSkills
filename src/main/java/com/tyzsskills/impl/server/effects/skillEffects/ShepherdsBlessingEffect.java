@@ -14,10 +14,10 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 public class ShepherdsBlessingEffect extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, String skillId) {
         registerAction(
                 eventBus,
-                skill,
+                skillId,
                 BabyEntitySpawnEvent.class,
                 BabyEntitySpawnEvent::getCausedByPlayer,
                 this::onBabySpawn

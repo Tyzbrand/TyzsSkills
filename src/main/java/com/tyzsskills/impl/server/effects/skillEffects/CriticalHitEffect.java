@@ -16,11 +16,11 @@ import org.jetbrains.annotations.UnknownNullability;
 public class CriticalHitEffect extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, String skillId) {
         registerAction(
                 eventBus,
                 EventPriority.HIGH,
-                skill,
+                skillId,
                 LivingIncomingDamageEvent.class,
                 event -> event.getSource().getEntity(),
                 this::onPlayerAttack

@@ -10,44 +10,48 @@ import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 @EventBusSubscriber(modid = Tyzsskills.MODID, value = Dist.CLIENT)
 public class FovHandler {
 
+    private static int latestCacheVersion = -1;
+    private static float cachedSpeedFactorSum = 0f;
+
     @SubscribeEvent
     public static void onComputeFov(ComputeFovModifierEvent event){
         double reduction = Config.FOV_REDUCTION.get();
-        if(reduction <= 0.0001D) return;
+        if (reduction <= .0001D) return;
 
         var cache = ClientCache.get();
 
-        float totalDampening = 0f;
+        if (cache.getVersion() != latestCacheVersion) {
+            latestCacheVersion = cache.getVersion();
+            cachedSpeedFactorSum = calculateSpeedFactor(cache);
+        }
 
-        for (String rawId : cache.getPurchasedSkills()){
-            String id = rawId.toLowerCase();
 
-            int level = cache.getSkillLevel(id);
+        if (cachedSpeedFactorSum > 0f) {
+            var totalDampening = (float)(cachedSpeedFactorSum * reduction * .5f);
+            var currentFov = event.getFovModifier();
+            var newFov = currentFov - totalDampening;
+
+            if (currentFov >= 1f) event.setNewFovModifier(Math.max(1f, newFov));
+        }
+    }
+
+    private static float calculateSpeedFactor(ClientCache cache){
+        float total = 0f;
+
+        for (var kvp : cache.getOwnedSkills().entrySet()){
+            var level = kvp.getValue();
             if(level <= 0) continue;
 
-            var skill = cache.getSkill(id);
+            var skill = cache.getSkill(kvp.getKey());
             if(skill == null) continue;
 
             for(var modifier : skill.getModifiers()){
-                if(modifier.attribute().equals("minecraft:generic.movement_speed")){
-
-                    var rawValue = modifier.getValue(level);
-
-                    var realFactor = rawValue / 100f;
-                    totalDampening += (float)(realFactor * reduction * 0.5f);
-
+                if(modifier.attribute().equals("minecraft:generic.movement_speed")) {
+                    total += (modifier.getValue(level) / 100f);
                     break;
                 }
             }
         }
-
-        if(totalDampening > 0) {
-            float currentFov = event.getFovModifier();
-            float newFov = currentFov - totalDampening;
-
-            if (currentFov >= 1.0f) {
-                event.setNewFovModifier(Math.max(1.0f, newFov));
-            }
-        }
+        return total;
     }
 }

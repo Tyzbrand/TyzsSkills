@@ -11,10 +11,10 @@ import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 public class ExperienceBoostEffect extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, String skillId) {
         registerAction(
                 eventBus,
-                skill,
+                skillId,
                 PlayerXpEvent.PickupXp.class,
                 PlayerXpEvent.PickupXp::getEntity,
                 this::onPickupXp

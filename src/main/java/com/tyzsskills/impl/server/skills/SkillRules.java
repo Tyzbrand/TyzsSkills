@@ -80,9 +80,10 @@ public class SkillRules {
         var levelsToAdd = 0;
         var availableSp = pCtx.playerSp();
 
+        var prices = sCtx.skill().getPrices();
         for (int i = sCtx.skillLevel(); i < sCtx.skill().getMaximumLevel(); i++) {
-            if (i >= sCtx.skill().getPrices().size()) break;
-            var price = sCtx.skill().getPrices().get(i);
+            if (i >= prices.size()) break;
+            var price = prices.get(i);
 
             if (availableSp >= price) {
                 availableSp -= price;
@@ -100,9 +101,10 @@ public class SkillRules {
         var finalRefund = 0;
         var refundRate = refundPercentage / 100f;
 
+        var prices = sCtx.skill().getPrices();
         for (int i = sCtx.skillLevel() - 1; i >= 0; i--) {
-            if (i < sCtx.skill().getPrices().size()) {
-                int levelPrice = sCtx.skill().getPrices().get(i);
+            if (i < prices.size()) {
+                int levelPrice = prices.get(i);
 
                 if (levelPrice > 0) finalRefund += Math.round(levelPrice * refundRate);
             }

@@ -217,7 +217,7 @@ public class MainGUI extends Screen {
         }
 
         if(this.scrollView != null && this.scrollView.visible && this.scrollView.isMouseOver(mouseX, mouseY)) {
-            SkillWidget hoveredWidget = this.scrollView.getHoveredWidget(mouseX, mouseY);
+            SkillCard hoveredWidget = this.scrollView.getHoveredWidget(mouseX, mouseY);
 
             if (hoveredWidget != null) {
                 List<Either<FormattedText, TooltipComponent>> lines = hoveredWidget.getTooltip(mouseX, mouseY);
@@ -525,7 +525,7 @@ public class MainGUI extends Screen {
                 this.scrollView.AddEntry(currentRow);
                 countInRow = 0;
             }
-            currentRow.addWidget(new SkillWidget(skill));
+            currentRow.addWidget(new SkillCard(skill));
             countInRow++;
         }
         this.scrollView.setScrollAmount(0);

@@ -41,6 +41,9 @@ public class ClientCache {
     public final Update UPDATE = new Update();
     public final SkillGraph GRAPH = new SkillGraph();
 
+    private int cacheVersion = 0;
+    public int getVersion(){return cacheVersion;}
+
 
     //METADATA
     private int level;
@@ -67,12 +70,7 @@ public class ClientCache {
     public int getSkillLevel(@NotNull String skillId) {
         return skillLevels.getOrDefault(skillId.toLowerCase(), 0);
     }
-    public @NotNull @UnmodifiableView Map<String, Integer> getSkillLevels(){return skillLevelsView;}
-    public @NotNull List<String> getPurchasedSkills() {
-        var list = new ArrayList<String>();
-        for (var kvp : skillLevels.entrySet()) if (kvp.getValue() > 0) list.add(kvp.getKey());
-        return list;
-    }
+    public @NotNull @UnmodifiableView Map<String, Integer> getOwnedSkills(){return skillLevelsView;}
 
     private final List<String> bookmarks = new ArrayList<>();
     private final List<String> bookmarksView = Collections.unmodifiableList(bookmarks);
@@ -168,14 +166,13 @@ public class ClientCache {
             totalSkills = 0;
             for (var skill : skills.values()) totalSkills += skill.getMaximumLevel();
 
-
-
-            logUpdate("Initial Synchronization");
+            registerUpdate("Initial Synchronization");
         }
 
         public void updateLevel(@NotNull UpdatePayloads.LevelPayload payload) {
             level = payload.level();
-            logUpdate("Level Synced: New Cached Level [" + level + "]");
+
+            registerUpdate("Level Synced: New Cached Level [" + level + "]");
         }
 
         public void updateSp(@NotNull UpdatePayloads.SpPayload payload) {
@@ -186,7 +183,7 @@ public class ClientCache {
             if(diff < 0) spSpent += Math.abs(diff);
             else if(diff > 0) spEarned += diff;
 
-            logUpdate("Sp Synced: New Cached Sp Value [" + sp + "]");
+            registerUpdate("Sp Synced: New Cached Sp Value [" + sp + "]");
         }
 
         public void updateXp(@NotNull UpdatePayloads.XpPayload payload) {
@@ -196,7 +193,7 @@ public class ClientCache {
             allTimeXp += payload.gained();
             sessionXp += payload.gained();
 
-            logUpdate("Xp Synced: New Cached Xp Value [" + xp + "]");
+            registerUpdate("Xp Synced: New Cached Xp Value [" + xp + "]");
         }
 
         public void updateSkillLevel(@NotNull UpdatePayloads.SkillLevelPayload payload) {
@@ -205,22 +202,23 @@ public class ClientCache {
 
             if (payload.level() <= 0) skillLevels.remove(payload.id().toLowerCase());
             else skillLevels.put(payload.id().toLowerCase(), payload.level());
-            logUpdate("Skill Level Synced: New Cached Skill Level [" + payload.id() + ", " + payload.level() + "]");
+            registerUpdate("Skill Level Synced: New Cached Skill Level [" + payload.id() + ", " + payload.level() + "]");
         }
 
         public void updateLevelData(@NotNull UpdatePayloads.LevelDataPayload payload) {
             levelData = payload.data();
-            logUpdate("Level Data Synced: New Cached Level Data [" + payload.data().goal() + " xp, " + payload.data().reward() + "sp]");
+            registerUpdate("Level Data Synced: New Cached Level Data [" + payload.data().goal() + " xp, " + payload.data().reward() + "sp]");
         }
 
         public void updateBookmarks(@NotNull UpdatePayloads.BookmarksPayload payload) {
             var id = payload.id().toLowerCase();
             if (payload.state()) bookmarks.add(id);
             else bookmarks.remove(id);
-            logUpdate("Bookmark Synced: New Cached Bookmark [" + id + ", " + payload.state() + "]");
+            registerUpdate("Bookmark Synced: New Cached Bookmark [" + id + ", " + payload.state() + "]");
         }
 
-        private void logUpdate(String message) {
+        private void registerUpdate(String message) {
+            cacheVersion++;
             var player = Minecraft.getInstance().player;
             if (player == null || !Config.SHOW_DEBUG_MESSAGES.get()) return;
             player.displayClientMessage(Component.literal(message), false);
@@ -258,6 +256,8 @@ public class ClientCache {
 
         if(Minecraft.getInstance().screen instanceof MainGUI gui && SortingTools.getMainCategory() == Enums.SortingCategory.BOOKMARKS)
             gui.refreshList();
+
+        cacheVersion++;
     }
 
     private boolean predictPurchase(ISkill skill) {
@@ -267,8 +267,10 @@ public class ClientCache {
         if (!SkillRules.canBuy(getSkillContext(id), getPlayerContext(), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return false;
         int price = skill.getPrices().get(currentLvl);
 
+
         sp -= price;
         skillLevels.put(id, currentLvl + 1);
+        cacheVersion++;
         return true;
     }
 
@@ -281,6 +283,7 @@ public class ClientCache {
         if (bulkResult.levelToAdd() > 0) {
             sp -= bulkResult.spToWithdraw();
             skillLevels.put(id, currentLvl + bulkResult.levelToAdd());
+            cacheVersion++;
             return true;
         }
         return false;
@@ -303,6 +306,7 @@ public class ClientCache {
 
             if (refundAmount > 0) sp += refundAmount;
         }
+        cacheVersion++;
         return true;
     }
 
@@ -319,6 +323,7 @@ public class ClientCache {
         }
 
         skillLevels.put(id, 0);
+        cacheVersion++;
         return true;
     }
 
@@ -328,7 +333,7 @@ public class ClientCache {
     public @NotNull Context.Player getPlayerContext() {
         var player = Minecraft.getInstance().player;
         Objects.requireNonNull(player, "Attempt to access PlayerContext with null client.");
-        return playerContext.updateContext(player, level, sp, getSkillLevels());
+        return playerContext.updateContext(player, level, sp, getOwnedSkills());
     }
 
     private final Context.Skill skillContext = new Context.Skill();

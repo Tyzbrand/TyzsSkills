@@ -11,6 +11,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
@@ -26,7 +27,6 @@ public class Skill implements ISkill {
         this.active = active;
         this.id = id;
         this.maximumLevel = maximumLevel;
-        this.prices = prices != null ?  new ArrayList<>(prices) : new ArrayList<>();
         this.type = type;
         this.category = category;
 
@@ -34,11 +34,16 @@ public class Skill implements ISkill {
         this.displayName = displayName;
         this.description = description;
 
+        this.config = config != null ? config : new SkillConfiguration();
+
+        this.prices = prices != null ?  new ArrayList<>(prices) : new ArrayList<>();
+        this.pricesView = Collections.unmodifiableList(this.prices);
+
         this.modifiers = modifiers != null? new ArrayList<>(modifiers) : new ArrayList<>();
+        this.modifiersView = Collections.unmodifiableList(this.modifiers);
 
         this.customValues = customValues != null ? new HashMap<>(customValues) : new HashMap<>();
-
-        this.config = config != null ? config : new SkillConfiguration();
+        this.customValuesView = Collections.unmodifiableMap(this.customValues);
     }
 
     protected transient SkillBehavior behaviour;
@@ -47,7 +52,6 @@ public class Skill implements ISkill {
     protected boolean active;
     protected String id;
     protected int maximumLevel;
-    protected List<Integer> prices;
     protected Enums.SkillType type;
     protected String category;
 
@@ -56,14 +60,18 @@ public class Skill implements ISkill {
     protected String displayName;
     protected String description;
 
-    //Generic
-    protected List<Modifier> modifiers;
-
-    //Immutable
-    protected Map<String, ValueSet> customValues;
-
     //Config
     protected SkillConfiguration config;
+
+    //Collections
+    protected List<Integer> prices;
+    protected final List<Integer> pricesView;
+
+    protected List<Modifier> modifiers;
+    protected final List<Modifier> modifiersView;
+
+    protected Map<String, ValueSet> customValues;
+    protected final Map<String, ValueSet> customValuesView;
 
 
     //Getters
@@ -73,7 +81,7 @@ public class Skill implements ISkill {
     @Override
     public int getMaximumLevel() {return maximumLevel;}
     @Override
-    public @NotNull List<Integer> getPrices() {return Collections.unmodifiableList(prices);}
+    public @NotNull @UnmodifiableView List<Integer> getPrices() {return pricesView;}
     @Override
     public int getPrice(int lvl) {
         if(lvl <= 0 || lvl > prices.size()) return Integer.MAX_VALUE;
@@ -96,17 +104,17 @@ public class Skill implements ISkill {
     @Override
     public @NotNull String getDescription(){return description;}
     @Override
-    public @NotNull Map<String, ValueSet> getValues(){return Map.copyOf(customValues);}
+    public @NotNull @UnmodifiableView Map<String, ValueSet> getValues(){return customValuesView;}
     @Override
-    public @NotNull ValueSet getValueSet(@NotNull String key){return customValues.getOrDefault(key, null);}
+    public @Nullable ValueSet getValueSet(@NotNull String key){return customValues.getOrDefault(key, null);}
     @Override
-    public @NotNull List<Modifier> getModifiers(){return List.copyOf(modifiers);}
+    public @NotNull @UnmodifiableView List<Modifier> getModifiers(){return modifiersView;}
     @Override
     public int getRequiredLevel() {return config.levelRequirement();}
     @Override
-    public @NotNull List<String> getRawIncompatibilities() {return config.incompatibleSkills();}
+    public @NotNull @UnmodifiableView List<String> getRawIncompatibilities() {return config.incompatibleSkills();}
     @Override
-    public @NotNull Map<String, Integer> getRawPrerequisites() {return config.skillPrerequisites();}
+    public @NotNull @UnmodifiableView Map<String, Integer> getRawPrerequisites() {return config.skillPrerequisites();}
     @Override
     public @NotNull CompoundTag getSpecificParameters() {
         return config.parameters();

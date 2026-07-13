@@ -14,11 +14,11 @@ public class TrueStrikeEffect extends SkillBehavior {
     public static final ThreadLocal<Boolean> IS_PENETRATING= ThreadLocal.withInitial(() -> false);
 
     @Override
-    public void registerEvent(IEventBus eventBus, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, String skillId) {
         registerAction(
                 eventBus,
                 EventPriority.HIGHEST,
-                skill,
+                skillId,
                 LivingIncomingDamageEvent.class,
                 event -> event.getSource().getEntity(),
                 this::onPlayerAttack

@@ -7,16 +7,15 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 public class StealthEffect extends SkillBehavior {
 
 
     @Override
-    public void registerEvent(IEventBus eventBus, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, String skillId) {
         registerAction(
                 eventBus,
-                skill,
+                skillId,
                 LivingEvent.LivingVisibilityEvent.class,
                 LivingEvent.LivingVisibilityEvent::getEntity,
                 this::onLivingVisibility

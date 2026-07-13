@@ -6,7 +6,7 @@ import com.tyzsskills.api.model.SpellBehavior;
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.api.records.SpellPrefab;
 import com.tyzsskills.impl.server.active.FileManager;
-import com.tyzsskills.impl.server.active.BehaviorRegistries;
+import com.tyzsskills.impl.server.skills.SkillBehaviorRegistry;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -15,12 +15,12 @@ public class TyzsSkillsCommonRegistrationWrapper implements ITyzsSkillsCommonReg
     @Override
     public void registerSkill(@NotNull SkillPrefab prefab) {
         FileManager.registerSkillPrefab(prefab);
-        if(prefab.behavior() instanceof SkillBehavior behavior) BehaviorRegistries.registerSkillBehavior(prefab.id(), behavior);
+        if(prefab.behavior() instanceof SkillBehavior behavior) SkillBehaviorRegistry.registerSkillBehavior(prefab.id(), behavior);
     }
 
     @Override
     public void registerSpell(@NotNull SpellPrefab prefab) {
         FileManager.registerSpellPrefab(prefab);
-        if(prefab.behavior() instanceof SpellBehavior behavior) BehaviorRegistries.registerSpellBehavior(prefab.id(), behavior);
+        if(prefab.behavior() instanceof SpellBehavior behavior) SkillBehaviorRegistry.registerSpellBehavior(prefab.id(), behavior);
     }
 }

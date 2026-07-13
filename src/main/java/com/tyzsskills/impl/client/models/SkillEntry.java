@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.client.models;
 
-import com.tyzsskills.impl.client.screen.SkillWidget;
+import com.tyzsskills.impl.client.screen.SkillCard;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -9,19 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SkillEntry extends CustomScrollView.Entry{
-    private final List<SkillWidget> widgets = new ArrayList<>();
+    private final List<SkillCard> widgets = new ArrayList<>();
     private final int spacing = 2;
 
     public SkillEntry(){
 
     }
 
-    public void addWidget(SkillWidget widget){
+    public void addWidget(SkillCard widget){
         this.widgets.add(widget);
     }
 
-    public SkillWidget getHoveredWidget(double mouseX, double mouseY) {
-        for (SkillWidget widget : widgets) {
+    public SkillCard getHoveredWidget(double mouseX, double mouseY) {
+        for (SkillCard widget : widgets) {
             if (widget.isMouseOver((int)mouseX, (int)mouseY)) {
                 return widget;
             }
@@ -33,16 +33,16 @@ public class SkillEntry extends CustomScrollView.Entry{
     public void render(GuiGraphics gui, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isHovered, float partialTick) {
         int currentX = left;
 
-        for(SkillWidget widget : widgets){
+        for(SkillCard widget : widgets){
             widget.render(gui, currentX, top, mouseX, mouseY, partialTick);
 
-            currentX+= SkillWidget.WIDTH + spacing;
+            currentX+= SkillCard.WIDTH + spacing;
         }
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button){
-        for(SkillWidget widget : widgets){
+        for(SkillCard widget : widgets){
             if(widget.mouseClicked(mouseX, mouseY, button)){
                 return true;
             }

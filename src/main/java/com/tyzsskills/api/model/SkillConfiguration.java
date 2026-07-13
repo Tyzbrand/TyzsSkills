@@ -9,6 +9,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
@@ -28,14 +29,15 @@ public class SkillConfiguration {
 
         this.levelRequirement = levelRequirement;
 
-        this.incompatibleSkills = incompatibilities == null ? null : new HashSet<>(incompatibilities);
-        this.skillPrerequisites = prerequisites == null ? null : new HashMap<>(prerequisites);
+        //Lists
+        this.incompatibleSkills = incompatibilities == null ? null : Collections.unmodifiableList(incompatibilities);
+        this.skillPrerequisites = prerequisites == null ? null : Collections.unmodifiableMap(prerequisites);
 
-        this.parameters = parameters;
+        this.parameters = parameters == null ? new CompoundTag() : parameters;
     }
 
 
-    //Bools
+    //Booleans
     private final Boolean refundable;
     public boolean refundable(){return refundable == null || refundable;}
 
@@ -50,24 +52,16 @@ public class SkillConfiguration {
     private final Integer levelRequirement;
     public int levelRequirement(){return levelRequirement == null ? 0 : levelRequirement;}
 
-    //Lists
-    private Set<String> incompatibleSkills;
-    @NotNull
-    public List<String> incompatibleSkills(){return incompatibleSkills == null ? Collections.emptyList() :  List.copyOf(incompatibleSkills);}
-    public void addIncompatibility(String skillID){
-        if(incompatibleSkills == null) incompatibleSkills = new HashSet<>();
-        incompatibleSkills.add(skillID);
-    }
-    public void removeIncompatibility(String skillID){if(incompatibleSkills != null) incompatibleSkills.remove(skillID);}
+    private final @UnmodifiableView List<String> incompatibleSkills;
+    public @NotNull @UnmodifiableView List<String> incompatibleSkills(){return incompatibleSkills == null ? Collections.emptyList() :  incompatibleSkills;}
 
-    private Map<String, Integer> skillPrerequisites;
-    @NotNull
-    public Map<String, Integer> skillPrerequisites(){return skillPrerequisites == null ? Map.of() :  Map.copyOf(skillPrerequisites);}
-    public void removePrerequisite(String skillID){if(skillPrerequisites != null) skillPrerequisites.remove(skillID);}
+
+    private final @UnmodifiableView Map<String, Integer> skillPrerequisites;
+    public @NotNull @UnmodifiableView Map<String, Integer> skillPrerequisites(){return skillPrerequisites == null ? Map.of() :  skillPrerequisites;}
 
     //Tags
-    private CompoundTag parameters;
-    public @NotNull CompoundTag parameters(){return parameters == null ? new CompoundTag() : parameters;}
+    private final CompoundTag parameters;
+    public @NotNull CompoundTag parameters(){return parameters;}
 
     //region Load/Write/Read
     public static final JsonSerializer<SkillConfiguration> GSON_SERIALIZER = ((src, typeOfSrc, ctx) -> {

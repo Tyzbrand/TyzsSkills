@@ -22,9 +22,9 @@ import java.util.function.Function;
 
 public abstract class SkillBehavior implements ISkillBehavior {
 
-    public abstract void registerEvent(IEventBus eventBus, ISkill skill);
+    public abstract void registerEvent(IEventBus eventBus, String skillId);
 
-    protected final <T extends Event> void registerAction(IEventBus eventBus, EventPriority priority, ISkill skill,
+    protected final <T extends Event> void registerAction(IEventBus eventBus, EventPriority priority, String skillId,
                                                           Class<T> eventClass, Function<T, Entity> entityExtractor, SkillAction<T> skillAction){
         eventBus.addListener(priority, eventClass, event -> {
             if(event instanceof ICancellableEvent cancellable && cancellable.isCanceled()) return;
@@ -32,16 +32,19 @@ public abstract class SkillBehavior implements ISkillBehavior {
             var entity = entityExtractor.apply(event);
             if(!(entity instanceof ServerPlayer player)) return;
 
-            var lvl = SkillManager.getPlayerSkillLevel(player, skill.getID());
+            var skill = SkillManager.getSkill(skillId);
+            if(skill == null) return;
+
+            var lvl = SkillManager.getPlayerSkillLevel(player, skillId);
             if(lvl <= 0) return;
 
             skillAction.execute(event, player, skill, lvl);
         });
     }
 
-    protected final <T extends Event> void registerAction(IEventBus eventBus, ISkill skill,
+    protected final <T extends Event> void registerAction(IEventBus eventBus, String skillId,
                                                           Class<T> eventClass, Function<T, Entity> entityExtractor, SkillAction<T> skillAction){
-        this.registerAction(eventBus, EventPriority.NORMAL, skill, eventClass, entityExtractor, skillAction);
+        this.registerAction(eventBus, EventPriority.NORMAL, skillId, eventClass, entityExtractor, skillAction);
     }
 
 

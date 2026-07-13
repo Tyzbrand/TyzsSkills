@@ -3,7 +3,7 @@ package com.tyzsskills.impl.server.spells;
 import com.tyzsskills.Config;
 import com.tyzsskills.api.records.SpellProperty;
 import com.tyzsskills.api.records.PropertyContext;
-import com.tyzsskills.impl.server.active.BehaviorRegistries;
+import com.tyzsskills.impl.server.skills.SkillBehaviorRegistry;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.sp.SpManager;
 import net.minecraft.server.MinecraftServer;
@@ -114,7 +114,7 @@ public class SpellManager {
     public static boolean castSpell(@NotNull ServerPlayer player, @NotNull String spellId){
         var spell = getSpell(spellId); if(spell == null) return false;
         if(!isSpellPurchased(player, spellId)) return false;
-        var behavior = BehaviorRegistries.getSpellBehavior(spellId); if(behavior == null) return false;
+        var behavior = SkillBehaviorRegistry.getSpellBehavior(spellId); if(behavior == null) return false;
 
         if(getCooldown(player, spellId) > 0) return false;
 

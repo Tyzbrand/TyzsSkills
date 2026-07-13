@@ -15,11 +15,11 @@ public class DamageDealEffect extends SkillBehavior {
     public static final ThreadLocal<Boolean> IS_REFLECTING = ThreadLocal.withInitial(() -> false);
 
     @Override
-    public void registerEvent(IEventBus eventBus, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, String skillId) {
         registerAction(
                 eventBus,
                 EventPriority.HIGHEST,
-                skill,
+                skillId,
                 LivingIncomingDamageEvent.class,
                 LivingIncomingDamageEvent::getEntity,
                 this::onIncomingDamage

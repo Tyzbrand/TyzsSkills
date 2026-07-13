@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.active;
+package com.tyzsskills.impl.server.skills;
 
 import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.api.model.SpellBehavior;
@@ -7,11 +7,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @ApiStatus.Internal
-public class BehaviorRegistries {
+public class SkillBehaviorRegistry {
     private static final Map<String, SkillBehavior> SKILL_BEHAVIORS = new HashMap<>();
+
     private static final Map<String, SpellBehavior> SPELL_BEHAVIORS = new HashMap<>();
 
     //Skills

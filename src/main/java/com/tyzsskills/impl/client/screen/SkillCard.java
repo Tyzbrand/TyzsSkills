@@ -21,7 +21,7 @@ import oshi.util.tuples.Pair;
 
 import java.util.List;
 
-public class SkillWidget {
+public class SkillCard {
     protected int x, y;
     public static final int WIDTH = 64, HEIGHT = 30;
     protected final UIContainer skillCard;
@@ -39,7 +39,9 @@ public class SkillWidget {
 
     protected int currentLevel;
 
-    public SkillWidget(ISkill skill){
+    protected int latestCacheVersion = -1;
+
+    public SkillCard(ISkill skill){
         this.skill = skill;
         this.cache = ClientCache.get();
         this.skillCard = new UIContainer(0, 0, WIDTH, HEIGHT);
@@ -108,10 +110,15 @@ public class SkillWidget {
     }
 
     private void updateData(){
+        this.isShiftPressed = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);
+
+        var currentCacheVersion = ClientCache.get().getVersion();
+        if(latestCacheVersion == currentCacheVersion) return;
+        else latestCacheVersion = currentCacheVersion;
+
         var sCtx = cache.getSkillContext(skill.getID());
         var pCtx = cache.getPlayerContext();
 
-        this.isShiftPressed = InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);
         this.isLocked = !SkillRules.isAvailable(sCtx, pCtx);
         this.isMaxed = cache.getSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel();
         this.canAffordPurchase = SkillRules.canBuy(sCtx, pCtx, cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));

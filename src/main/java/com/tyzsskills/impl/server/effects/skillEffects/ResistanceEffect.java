@@ -12,11 +12,11 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 public class ResistanceEffect  extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, String skillId) {
         registerAction(
                 eventBus,
                 EventPriority.LOW,
-                skill,
+                skillId,
                 LivingIncomingDamageEvent.class,
                 LivingIncomingDamageEvent::getEntity,
                 this::onIncomingDamage

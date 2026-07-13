@@ -20,21 +20,23 @@ import java.util.Set;
 public class HagglerEffect extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, ISkill skill) {
+    public void registerEvent(IEventBus eventBus, String skillId) {
         registerAction(
                 eventBus,
-                skill,
+                skillId,
                 PlayerTickEvent.Post.class,
                 PlayerTickEvent.Post::getEntity,
                 this::onPlayerTick
         );
     }
 
-    private final Set<Item> TRIGGER_ITEMS = Set.of(Items.EMERALD, Items.EMERALD_BLOCK);
     private void onPlayerTick(PlayerTickEvent.Post event, ServerPlayer player, ISkill skill, int lvl) {
-        if(player.tickCount % 20 != 0) return;
+        if ((player.tickCount + player.getId()) % 20 != 0) return;
 
-        boolean holdsEmerald = TRIGGER_ITEMS.contains(player.getMainHandItem().getItem()) || TRIGGER_ITEMS.contains(player.getOffhandItem().getItem());
+        var mainHand = player.getMainHandItem();
+        var secondHand = player.getOffhandItem();
+        boolean holdsEmerald = mainHand.is(Items.EMERALD) || mainHand.is(Items.EMERALD_BLOCK) ||
+                secondHand.is(Items.EMERALD) || secondHand.is(Items.EMERALD_BLOCK);
 
         if(!holdsEmerald) return;
 
@@ -54,9 +56,11 @@ public class HagglerEffect extends SkillBehavior {
 
         for(var villager : villagers){
             if(villager.isSleeping() || villager.isTrading() || villager.isDeadOrDying()) continue;
-            var nav = villager.getNavigation();
-            nav.moveTo(player, villagerSpeedFactor);
-            villager.getLookControl().setLookAt(player, 10f, (float)villager.getMaxHeadXRot());
+
+            villager.getLookControl().setLookAt(player, 10f, (float) villager.getMaxHeadXRot());
+
+            if (villager.distanceToSqr(player) > 9D) villager.getNavigation().moveTo(player, villagerSpeedFactor);
+            else if (villager.getNavigation().isInProgress()) villager.getNavigation().stop();
 
         }
     }
