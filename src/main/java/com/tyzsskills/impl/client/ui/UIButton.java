@@ -10,8 +10,10 @@ public class UIButton extends UIElement {
 
     private final Supplier<ButtonStyle> style;
     private final Supplier<Boolean> onClick;
+    private Supplier<Boolean> disabledWhen = () -> false;
 
     //Fluents
+    public UIButton withDisabled(Supplier<Boolean> supplier){this.disabledWhen = supplier; return this;}
 
     public UIButton(int offsetX, int offsetY, Supplier<ButtonStyle> style, Supplier<Boolean> onClick) {
         super(offsetX, offsetY, style.get().width(), style.get().height());
@@ -26,14 +28,16 @@ public class UIButton extends UIElement {
         int finalV;
         var currentStyle = style.get();
 
-        if(isHovering(mouseX, mouseY)) {finalU =  currentStyle.uHover(); finalV = currentStyle.vHover();}
-        else {finalU =  currentStyle.u(); finalV = currentStyle.v();}
+        if(disabledWhen.get()) {finalU = currentStyle.uDisabled(); finalV = currentStyle.vDisabled();}
+        else if(isHovering(mouseX, mouseY)) {finalU =  currentStyle.uHover(); finalV = currentStyle.vHover();}
+        else {finalU = currentStyle.u(); finalV = currentStyle.v();}
 
         gui.blit(currentStyle.texture(), x, y, finalU, finalV, width, height, currentStyle.textureSize(), currentStyle.textureSize());
     }
 
     @Override
     protected boolean onClick(int mouseX, int mouseY) {
+        if(disabledWhen.get()) return false;
         if(isHovering(mouseX, mouseY) && onClick != null){
             if(onClick.get()) SoundPlayer.PlayUIClick();
             return true;

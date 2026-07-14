@@ -9,7 +9,7 @@ import java.util.*;
 public class SkillRules {
     //LOCK CONDITIONS
     public static boolean isAvailable(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx){
-        return sCtx.skill().getRequiredLevel() <= sCtx.skillLevel()
+        return sCtx.skill().getRequiredLevel() <= pCtx.playerLevel()
                 && getActivePrerequisites(sCtx, pCtx).isEmpty()
                 && getActiveIncompatibilities(sCtx, pCtx).isEmpty();
     }
@@ -40,26 +40,33 @@ public class SkillRules {
         }
         return stillPrerequisites;
     }
-//    public static @NotNull List<String> getActiveDependents(@NotNull Context.Skill sCtx){
-//        var rawDependents = sCtx.graph().getSkillThatDependsOn(sCtx.skill().getID());
-//        if(rawDependents.isEmpty()) return List.of();
-//
-//        var stillDependents = new ArrayList<String>();
-//        for(var dependents : rawDependents.entrySet()){
-//            if(!SkillManager.isSkillLoaded(dependents.getKey())) continue;
-//            if(dependents.getValue() > sCtx.skillLevel()) continue;
-//
-//            stillDependents.add(dependents.getKey());
-//        }
-//        return stillDependents;
-//    }
+
+    public static @NotNull List<String> getActiveDependents(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx){return getActiveDependents(sCtx, pCtx, sCtx.skillLevel());}
+    public static @NotNull List<String> getActiveDependents(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx, int targetedLevel){
+        var rawDependents = sCtx.graph().getSkillThatDependsOn(sCtx.skill().getID());
+        if(rawDependents.isEmpty()) return List.of();
+
+        var stillDependents = new ArrayList<String>();
+        for(var kvp : rawDependents.entrySet()){
+            var dependentId = kvp.getKey();
+            if(!SkillManager.isSkillLoaded(dependentId)) continue;
+
+            if(pCtx.ownedSkillLevels().getOrDefault(dependentId, 0) <= 0) continue;
+
+            var relevantLevel = kvp.getValue();
+            if(targetedLevel >= relevantLevel) continue;
+
+            stillDependents.add(dependentId);
+        }
+        return stillDependents;
+    }
 
 
     //PURCHASES & REFUNDS
-    public static boolean canRefund(@NotNull Context.Skill sCtx, boolean refundEnabled){
+    public static boolean canRefund(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx, boolean refundEnabled){
         if(!refundEnabled || !sCtx.skill().isRefundable() || sCtx.skillLevel() <= 0) return false;
 
-        //if(!getActiveDependents(sCtx).isEmpty()) return false;
+        if(!getActiveDependents(sCtx, pCtx, sCtx.skillLevel() - 1).isEmpty()) return false;
 
         return sCtx.skillLevel() <= sCtx.skill().getPrices().size();
     }
@@ -94,15 +101,16 @@ public class SkillRules {
 
         return new BulkPurchaseResult(levelsToAdd, spToSpend);
     }
-    public static int checkBulkRefund(@NotNull Context.Skill sCtx, float refundPercentage, boolean refundEnabled){
+    public static int checkBulkRefund(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx, float refundPercentage, boolean refundEnabled){
         if(!refundEnabled || !sCtx.skill().isRefundable() || sCtx.skillLevel() <= 0) return 0;
-        //if(!getActiveDependents(sCtx).isEmpty()) return 0;
 
         var finalRefund = 0;
         var refundRate = refundPercentage / 100f;
 
         var prices = sCtx.skill().getPrices();
         for (int i = sCtx.skillLevel() - 1; i >= 0; i--) {
+            if(!getActiveDependents(sCtx, pCtx, i).isEmpty()) break;
+
             if (i < prices.size()) {
                 int levelPrice = prices.get(i);
 

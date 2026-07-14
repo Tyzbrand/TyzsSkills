@@ -5,6 +5,7 @@ import com.mojang.datafixers.util.Either;
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.client.ui.*;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
@@ -31,6 +32,7 @@ public class SkillCard {
 
     protected boolean isLocked;
     protected boolean isMaxed;
+    protected boolean isBookmarked;
     protected boolean canAffordPurchase;
     protected boolean canAffordRefund;
     protected boolean canBuy;
@@ -75,17 +77,18 @@ public class SkillCard {
         skillCard.addChild(
         new UIButton(38, 17,
                 () -> isShiftPressed ? UIStyleRegistries.BULK_PURCHASE_BTN : UIStyleRegistries.PURCHASE_BTN,
-                () -> {if(isLocked) return false; return cache.triggerAction(skill, isShiftPressed ? Enums.ClientAction.BULK_PURCHASE : Enums.ClientAction.PURCHASE);}
-        ).withVisibility(() -> !isLocked && !isMaxed && canAffordPurchase && canBuy)
+                () -> cache.triggerAction(skill, isShiftPressed ? Enums.ClientAction.BULK_PURCHASE : Enums.ClientAction.PURCHASE))
+                .withDisabled(() -> isLocked || isMaxed || !canAffordPurchase || !canBuy)
                 .withTooltip(() -> {
                     if (isLocked) return UIElement.EMPTY_TOOLTIP;
                     var lines = StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canAffordPurchase, isShiftPressed);
-                    return lines.stream().map(Either::<FormattedText, TooltipComponent>left).toList();}));
+                    return lines.stream().map(Either::<FormattedText, TooltipComponent>left).toList();
+                }));
 
         skillCard.addChild(new UIButton(27, 17,
                 () -> isShiftPressed ? UIStyleRegistries.BULK_REFUND_BTN : UIStyleRegistries.REFUND_BTN,
-                () -> {if(isLocked) return false; return cache.triggerAction(skill, isShiftPressed ? Enums.ClientAction.BULK_REFUND : Enums.ClientAction.REFUND);}
-        ).withVisibility(() -> currentLevel > 0 &&  !isLocked && canAffordRefund && canRefund)
+                () -> cache.triggerAction(skill, isShiftPressed ? Enums.ClientAction.BULK_REFUND : Enums.ClientAction.REFUND))
+                .withDisabled(() -> currentLevel <= 0 || isLocked || !canAffordRefund || !canRefund)
                 .withTooltip(() -> {
                     if (isLocked) return UIElement.EMPTY_TOOLTIP;
                     var lines = StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, isShiftPressed);
@@ -93,7 +96,7 @@ public class SkillCard {
                 }));
 
         skillCard.addChild(new UIButton(49, 17,
-                () -> cache.isSkillBookMarked(skill.getID().toLowerCase()) ? UIStyleRegistries.BOOKMARK_BTN_ON : UIStyleRegistries.BOOKMARK_BTN_OFF,
+                () -> isBookmarked ? UIStyleRegistries.BOOKMARK_BTN_ON : UIStyleRegistries.BOOKMARK_BTN_OFF,
                 () -> cache.triggerAction(skill, Enums.ClientAction.BOOKMARK)));
 
         skillCard.withShade(() -> isLocked);
@@ -121,8 +124,9 @@ public class SkillCard {
 
         this.isLocked = !SkillRules.isAvailable(sCtx, pCtx);
         this.isMaxed = cache.getSkillLevel(skill.getID().toLowerCase()) >= skill.getMaximumLevel();
+        this.isBookmarked = cache.isSkillBookMarked(skill.getID().toLowerCase());
         this.canAffordPurchase = SkillRules.canBuy(sCtx, pCtx, cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
-        this.canAffordRefund = SkillRules.canRefund(sCtx, cache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
+        this.canAffordRefund = SkillRules.canRefund(sCtx, pCtx, cache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
         this.canBuy = cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true) && skill.isPurchasable();
         this.canRefund = cache.getConfigBool(Config.REFUND_SYSTEM_KEY, true) && skill.isRefundable();
 

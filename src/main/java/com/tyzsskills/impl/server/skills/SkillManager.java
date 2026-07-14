@@ -122,7 +122,7 @@ public class SkillManager {
         var skill = getSkill(skillId);
 
         if(skill == null) return false;
-        if(!SkillRules.canRefund(getSkillContext(player, skillId), Config.REFUND_SYSTEM.getAsBoolean())) return false;
+        if(!SkillRules.canRefund(getSkillContext(player, skillId), getPlayerContext(player), Config.REFUND_SYSTEM.getAsBoolean())) return false;
 
         var event = new SkillActionEvent.RefundPre(skill, player);
         NeoForge.EVENT_BUS.post(event);
@@ -157,7 +157,8 @@ public class SkillManager {
         int currentLvl = player.getData(PlayerData.DATA).getSkillLevel(skillId);
         if (currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
-        var spToRefund = SkillRules.checkBulkRefund(getSkillContext(player, skillId), (float)Config.REFUND_PERCENTAGE.getAsDouble(), Config.REFUND_SYSTEM.getAsBoolean());
+        var spToRefund = SkillRules.checkBulkRefund(getSkillContext(player, skillId), getPlayerContext(player),
+                (float)Config.REFUND_PERCENTAGE.getAsDouble(), Config.REFUND_SYSTEM.getAsBoolean());
 
         if(setSkillLevelInternal(player, skill, 0, true)) {
             if (spToRefund > 0) SpManager.tryAddSp(player, spToRefund);

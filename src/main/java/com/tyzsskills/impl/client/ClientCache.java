@@ -72,12 +72,12 @@ public class ClientCache {
     }
     public @NotNull @UnmodifiableView Map<String, Integer> getOwnedSkills(){return skillLevelsView;}
 
-    private final List<String> bookmarks = new ArrayList<>();
-    private final List<String> bookmarksView = Collections.unmodifiableList(bookmarks);
+    private final Set<String> bookmarks = new HashSet<>();
+    private final Set<String> bookmarksView = Collections.unmodifiableSet(bookmarks);
     public boolean isSkillBookMarked(@NotNull String skillId) {
         return bookmarks.contains(skillId.toLowerCase());
     }
-    public @NotNull @UnmodifiableView List<String> getBookmarkedSkills() {
+    public @NotNull @UnmodifiableView Set<String> getBookmarkedSkills() {
         return bookmarksView;
     }
 
@@ -250,7 +250,7 @@ public class ClientCache {
 
     //PREDICTIONS
     private void predictBookmark(ISkill skill) {
-        String id = skill.getID();
+        String id = skill.getID().toLowerCase();
         if (isSkillBookMarked(id)) bookmarks.remove(id);
         else bookmarks.add(id);
 
@@ -293,7 +293,7 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if (!SkillRules.canRefund(getSkillContext(id), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return false;
+        if (!SkillRules.canRefund(getSkillContext(id), getPlayerContext(), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return false;
 
         skillLevels.put(id, currentLvl - 1);
         float percentage = (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
@@ -315,7 +315,7 @@ public class ClientCache {
 
         if (getSkillLevel(id) <= 0) return false;
 
-        var spToRefund = SkillRules.checkBulkRefund(getSkillContext(id),
+        var spToRefund = SkillRules.checkBulkRefund(getSkillContext(id), getPlayerContext(),
                 (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), getConfigBool(Config.REFUND_SYSTEM_KEY, false));
 
         if (spToRefund > 0) {

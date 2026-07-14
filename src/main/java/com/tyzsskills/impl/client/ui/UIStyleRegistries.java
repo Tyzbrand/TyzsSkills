@@ -18,14 +18,14 @@ public class UIStyleRegistries {
     public static final int COLOR_BORDER = 0xFFFFFFFF;
 
     //BUTTONS
-    public static final ButtonStyle PURCHASE_BTN = new ButtonStyle(9, 9, 169 , 173, 178, 173, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ButtonStyle BULK_PURCHASE_BTN = new ButtonStyle(9, 9, 260, 173, 269, 173, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ButtonStyle PURCHASE_BTN = new ButtonStyle(9, 9, 42 , 192, 51, 192, 60, 192, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ButtonStyle BULK_PURCHASE_BTN = new ButtonStyle(9, 9, 100, 192, 109, 192, 60, 192, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 
-    public static final ButtonStyle REFUND_BTN = new ButtonStyle(9, 9, 200 , 173, 209, 173, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ButtonStyle BULK_REFUND_BTN = new ButtonStyle(9, 9, 283, 173, 292, 173, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ButtonStyle REFUND_BTN = new ButtonStyle(9, 9, 71 , 192, 80, 192, 89, 192, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ButtonStyle BULK_REFUND_BTN = new ButtonStyle(9, 9, 120, 192, 129, 192, 89, 192, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 
-    public static final ButtonStyle BOOKMARK_BTN_OFF = new ButtonStyle(9, 9, 248 , 173, 230, 173, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ButtonStyle BOOKMARK_BTN_ON = new ButtonStyle(9, 9, 239, 173, 221, 173, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ButtonStyle BOOKMARK_BTN_OFF = new ButtonStyle(9, 9, 62 , 203, 71, 203, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ButtonStyle BOOKMARK_BTN_ON = new ButtonStyle(9, 9, 42, 203, 51, 203, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 
 
     //IMAGES

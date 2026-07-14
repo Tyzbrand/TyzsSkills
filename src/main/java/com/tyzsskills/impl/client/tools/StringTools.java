@@ -4,6 +4,7 @@ import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
+import com.tyzsskills.impl.server.skills.SkillRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -117,8 +118,9 @@ public class StringTools {
 
             }
         } else {
-            // LE BLOC QUI MANQUAIT EST ICI
             if(currentLvl <= 0) return lines;
+
+
             lines.add(getRefundLine(skill, currentLvl, isMax));
 
             targetLvl = isMax ? 0 : currentLvl - 1;
@@ -152,6 +154,7 @@ public class StringTools {
 
         float refundRate = (float)(ClientCache.get().getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D) / 100f);
 
+
         if (!isMax) {
             if (currentLvl - 1 < prices.size()) {
                 int p = prices.get(currentLvl - 1);
@@ -175,7 +178,6 @@ public class StringTools {
     }
 
     public static List<FormattedCharSequence> getSkillDescription(ISkill skill) {
-        List<MutableComponent> lines = new ArrayList<>();
         String rawDesc = Component.translatable(skill.getDescription()).getString();
         var currentLvl = ClientCache.get().getSkillLevel(skill.getID().toLowerCase());
 
