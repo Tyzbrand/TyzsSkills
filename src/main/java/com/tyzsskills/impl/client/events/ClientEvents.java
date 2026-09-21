@@ -2,7 +2,7 @@ package com.tyzsskills.impl.client.events;
 
 
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.client.screen.MainGUI;
+import com.tyzsskills.impl.client.screen.MainMenu;
 import com.tyzsskills.impl.client.tooltips.SkillTooltip;
 import net.minecraft.client.Minecraft;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -12,7 +12,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onTooltipColor(RenderTooltipEvent.Color event) {
 
-        if (Minecraft.getInstance().screen instanceof MainGUI) {
+        if (Minecraft.getInstance().screen instanceof MainMenu) {
 
         for(var component : event.getComponents()){
             if(component instanceof SkillTooltip tooltip){

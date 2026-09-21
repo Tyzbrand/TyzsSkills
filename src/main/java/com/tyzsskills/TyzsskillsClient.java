@@ -1,7 +1,5 @@
 package com.tyzsskills;
 
-import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.events.TyzsSkillsClientSetupEvent;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.records.SortType;
@@ -138,7 +136,7 @@ public class TyzsskillsClient {
     public static void onClientTick(ClientTickEvent.Post event){
         while (MainKeybind.OPEN_SKILL_KEY.consumeClick()){
             if (Minecraft.getInstance().screen == null) {
-                Minecraft.getInstance().setScreen(new MainGUI());
+                Minecraft.getInstance().setScreen(new MainMenu());
             }
         }
     }
@@ -158,7 +156,7 @@ public class TyzsskillsClient {
                     savedX,
                     savedY,
                     () -> {
-                        Minecraft.getInstance().setScreen(new MainGUI());
+                        Minecraft.getInstance().setScreen(new MainMenu());
                     }
             );
 

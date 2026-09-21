@@ -8,7 +8,7 @@ public class UIStyleRegistries {
 
     //TEXTURES
     public static final ResourceLocation MAIN_TEXTURE = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png");
-    public static final int MAIN_TEXTURE_SIZE = 325;
+    public static final int MAIN_TEXTURE_SIZE = 400;
 
     public static final ResourceLocation DEFAULT_SKILL_ICON = ResourceLocation.parse("minecraft:textures/item/barrier.png");
 
@@ -31,4 +31,8 @@ public class UIStyleRegistries {
     //IMAGES
     public static final ImageStyle SKILL_CARD = new ImageStyle(64, 30, 166, 142, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
     public static final ImageStyle SKILL_CARD_COMPLETE = new ImageStyle(64, 30, 230, 142, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ImageStyle MENU_BACKGROUND = new ImageStyle(347, 152, 0, 0, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+
+    //BARS
+    public static final ImageStyle XP_BAR = new ImageStyle(182, 5, 8, 217, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 }

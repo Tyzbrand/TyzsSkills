@@ -7,7 +7,7 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.Category;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.api.model.Context;
-import com.tyzsskills.impl.client.screen.MainGUI;
+import com.tyzsskills.impl.client.screen.MainMenu;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
 import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
@@ -254,8 +254,8 @@ public class ClientCache {
         if (isSkillBookMarked(id)) bookmarks.remove(id);
         else bookmarks.add(id);
 
-        if(Minecraft.getInstance().screen instanceof MainGUI gui && SortingTools.getMainCategory() == Enums.SortingCategory.BOOKMARKS)
-            gui.refreshList();
+//        if(Minecraft.getInstance().screen instanceof MainMenu gui && SortingTools.getMainCategory() == Enums.SortingCategory.BOOKMARKS)
+//            gui.refreshList();
 
         cacheVersion++;
     }

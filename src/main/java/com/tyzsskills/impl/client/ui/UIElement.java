@@ -3,6 +3,7 @@ package com.tyzsskills.impl.client.ui;
 import com.mojang.datafixers.util.Either;
 import com.tyzsskills.api.Enums;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 
@@ -33,8 +34,32 @@ public abstract class UIElement {
     //Fluents
     public UIElement withVisibility(Supplier<Boolean> supplier) {this.visibleWhen = supplier; return this;}
     public UIElement withShade(Supplier<Boolean> supplier) {this.shadedWhen = supplier; return this;}
-    public UIElement withTooltip(Supplier<List<Either<FormattedText, TooltipComponent>>> supplier) {this.tooltip = supplier; return this;}
     public UIElement withScale(float scale, Enums.ScalePivot scalePivot) {this.scale = scale; this.scalePivot = scalePivot; return this;}
+
+    // 1. Pour un Component unique direct ou dynamique
+    public UIElement withTooltip(Supplier<? extends FormattedText> supplier) {
+        return this.withTooltip(() -> {
+            FormattedText text = supplier.get();
+            return text == null ? EMPTY_TOOLTIP : (FormattedText) List.of(Either.left(text));
+        });
+    }
+
+    // 2. Pour les listes (typiquement StringTools.getTooltipAction)
+    public UIElement withTooltipLines(Supplier<? extends List<? extends FormattedText>> supplier) {
+        return this.withTooltip(() -> {
+            var lines = supplier.get();
+            if (lines == null || lines.isEmpty()) return Component.empty();
+            return (FormattedText) lines.stream().<Either<FormattedText, TooltipComponent>>map(Either::left).toList();
+        });
+    }
+
+    // 3. Pour un Tooltip custom complet (SkillTooltipData -> SkillTooltip)
+    public UIElement withCustomTooltip(Supplier<? extends TooltipComponent> supplier) {
+        return this.withTooltip(() -> {
+            TooltipComponent data = supplier.get();
+            return data == null ? EMPTY_TOOLTIP : (FormattedText) List.of(Either.right(data));
+        });
+    }
 
     //Draws
     protected abstract void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick);
@@ -114,6 +139,7 @@ public abstract class UIElement {
     }
 
     //STATIC
-    public static final List<Either<FormattedText, TooltipComponent>> EMPTY_TOOLTIP = List.of();
+    public static final Component EMPTY_TOOLTIP = Component.empty();
+    p
 
 }

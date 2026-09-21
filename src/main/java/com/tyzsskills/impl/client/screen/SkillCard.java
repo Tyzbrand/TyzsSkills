@@ -82,7 +82,7 @@ public class SkillCard {
                 .withTooltip(() -> {
                     if (isLocked) return UIElement.EMPTY_TOOLTIP;
                     var lines = StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canAffordPurchase, isShiftPressed);
-                    return lines.stream().map(Either::<FormattedText, TooltipComponent>left).toList();
+                    return (FormattedText) lines.stream().map(Either::<FormattedText, TooltipComponent>left).toList();
                 }));
 
         skillCard.addChild(new UIButton(27, 17,
@@ -92,7 +92,7 @@ public class SkillCard {
                 .withTooltip(() -> {
                     if (isLocked) return UIElement.EMPTY_TOOLTIP;
                     var lines = StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, isShiftPressed);
-                    return lines.stream().map(Either::<FormattedText, TooltipComponent>left).toList();
+                    return (FormattedText) lines.stream().map(Either::<FormattedText, TooltipComponent>left).toList();
                 }));
 
         skillCard.addChild(new UIButton(49, 17,
