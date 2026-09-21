@@ -33,7 +33,8 @@ import java.util.stream.Stream;
 public class FileManager {
     private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
-            .registerTypeAdapter(SkillConfiguration.class, SkillConfiguration.GSON_SERIALIZER)
+            .registerTypeAdapter(Skill.class, Skill.SKILL_SERIALIZER)
+            .registerTypeAdapter(SkillConfiguration.class, SkillConfiguration.CONFIG_SERIALIZER)
             .create();
 
     private static final List<SkillPrefab> skillPrefabQueue = new ArrayList<>();
@@ -102,7 +103,7 @@ public class FileManager {
     //WRITING
     public static void writeDefaultSkills(@NotNull MinecraftServer server) throws IOException {
         for(var prefab : skillPrefabQueue){
-            var skill = new Skill(prefab.active(), prefab.id(), prefab.maximumLevel(),
+            var skill = new Skill(prefab.active(), prefab.id(),
                     prefab.prices(), prefab.type(), prefab.category(),
                     prefab.icon(), prefab.displayName(), prefab.description(), prefab.modifiers(), prefab.customValues(),
                     prefab.config()

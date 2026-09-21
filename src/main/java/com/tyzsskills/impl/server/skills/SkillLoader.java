@@ -12,10 +12,8 @@ import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
 import com.tyzsskills.impl.server.tools.JsonLoadTools;
-import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -69,15 +67,10 @@ public class SkillLoader {
         if(state == null) state = true;
         if(!state) return; //Les skills désactivés ne sont pas chargés
 
-        Integer maxLevel = JsonLoadTools.getSafeElement(source, "maximumLevel", JsonPrimitive::getAsInt);
-        if(maxLevel == null) maxLevel = 1;
-        maxLevel = Math.clamp(maxLevel, 1, Constants.SKILL_MAX_LEVEL);
-
         List<Integer> prices = JsonLoadTools.getSafeList(source, "prices", JsonElement::getAsInt);
-        if(prices == null) {ErrorManager.registerSkillError(id, "invalid price list"); return;}
-        if(maxLevel > prices.size()) {
-            ErrorManager.registerSkillError(id, String.format("price set is too small, current : %d , expected : %d", prices.size(), maxLevel));
-            return;
+        if(prices == null || prices.isEmpty()) {ErrorManager.registerSkillError(id, "invalid price list"); return;}
+        if(prices.size() > Constants.SKILL_MAX_LEVEL) {
+            ErrorManager.registerSkillError(id, String.format("prices list is too long, current : %d, limit : %d", prices.size(), Constants.SKILL_MAX_LEVEL)); return;
         }
 
         Enums.SkillType type = JsonLoadTools.getSafeEnum(source, "type", Enums.SkillType.class);
@@ -122,8 +115,8 @@ public class SkillLoader {
 
                 var values = JsonLoadTools.getSafeList(obj, "values", JsonElement::getAsFloat);
                 if(values == null) {ErrorManager.registerSkillError(id, "invalid values"); return;}
-                if(values.size() < maxLevel) {
-                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), maxLevel));
+                if(values.size() < prices.size()) {
+                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), prices.size()));
                     return;
                 }
 
@@ -135,7 +128,7 @@ public class SkillLoader {
 
             if(modifiers.isEmpty()) {ErrorManager.registerSkillError(id, "one modifier is required"); return;}
 
-            SkillManager.registerSkill(new Skill(true, id, maxLevel, prices, type, category,
+            SkillManager.registerSkill(new Skill(true, id, prices, type, category,
                     icon, displayName, description, modifiers, null, config));
             return;
 
@@ -155,8 +148,8 @@ public class SkillLoader {
 
                 var values = JsonLoadTools.getSafeList(iterationObj, "values", JsonElement::getAsFloat);
                 if(values == null) {ErrorManager.registerSkillError(id, "invalid values"); return;}
-                if(values.size() < maxLevel) {
-                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), maxLevel));
+                if(values.size() < prices.size()) {
+                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), prices.size()));
                     return;
                 }
 
@@ -168,7 +161,7 @@ public class SkillLoader {
 
             if(valueSet.isEmpty()){ErrorManager.registerSkillError(id, "one value set is required");return;}
 
-            SkillManager.registerSkill(new Skill(true, id, maxLevel, prices, type, category,
+            SkillManager.registerSkill(new Skill(true, id, prices, type, category,
                     icon, displayName, description, null, valueSet, config));
         }
     }
@@ -206,7 +199,6 @@ public class SkillLoader {
         //MIGRATION FOR PREREQUISITES: List<String> -> Map<String, Integer> (ID + Level)
         var config = source.get("config");
         if(config instanceof JsonObject configObject){
-
             var prerequisite = configObject.get("skillPrerequisites");
             var newPrerequisites = new JsonObject();
             if(prerequisite instanceof JsonArray prerequisiteList){
@@ -217,8 +209,14 @@ public class SkillLoader {
                 configObject.remove("skillPrerequisites");
                 configObject.add("skillPrerequisites", newPrerequisites);
 
-                ErrorManager.registerLoadDeprecation(skillId, "\"skillPrerequisites\"", "{skillID, requiredLevel}");
+                ErrorManager.registerLoadDeprecationModification(skillId, "\"skillPrerequisites\"", "{skillID, requiredLevel}");
             }
+        }
+
+        //MIGRATION FOR MAXIMUM LEVEL: Removal
+        if(source.has("maximumLevel")){
+            source.remove("maximumLevel");
+            ErrorManager.registerLoadDeprecationRemoval(skillId, "\"maximumLevel\"");
         }
     }
 

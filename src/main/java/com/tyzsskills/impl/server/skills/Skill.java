@@ -1,5 +1,7 @@
 package com.tyzsskills.impl.server.skills;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializer;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillConfiguration;
@@ -19,14 +21,13 @@ import java.util.*;
 public class Skill implements ISkill {
 
 
-    public Skill(boolean active, String id, int maximumLevel,
+    public Skill(boolean active, String id,
                  List<Integer> prices, Enums.SkillType type, String category,
                  String icon, String displayName, String description, List<Modifier> modifiers, Map<String, ValueSet> customValues,
                  SkillConfiguration config)
     {
         this.active = active;
         this.id = id;
-        this.maximumLevel = maximumLevel;
         this.type = type;
         this.category = category;
 
@@ -44,34 +45,36 @@ public class Skill implements ISkill {
 
         this.customValues = customValues != null ? new HashMap<>(customValues) : new HashMap<>();
         this.customValuesView = Collections.unmodifiableMap(this.customValues);
+
+        maximumLevel = this.prices.size();
     }
 
     protected transient SkillBehavior behaviour;
 
     //Common data -----------------------
     protected boolean active;
-    protected String id;
-    protected int maximumLevel;
-    protected Enums.SkillType type;
-    protected String category;
+    protected final String id;
+    protected final transient int maximumLevel;
+    protected final Enums.SkillType type;
+    protected final String category;
 
     //Visual -----------------------
-    protected String icon;
-    protected String displayName;
-    protected String description;
+    protected final String icon;
+    protected final String displayName;
+    protected final String description;
 
     //Config
     protected SkillConfiguration config;
 
     //Collections
     protected List<Integer> prices;
-    protected final List<Integer> pricesView;
+    protected final transient List<Integer> pricesView;
 
     protected List<Modifier> modifiers;
-    protected final List<Modifier> modifiersView;
+    protected final transient List<Modifier> modifiersView;
 
     protected Map<String, ValueSet> customValues;
-    protected final Map<String, ValueSet> customValuesView;
+    protected final transient Map<String, ValueSet> customValuesView;
 
 
     //Getters
@@ -131,7 +134,35 @@ public class Skill implements ISkill {
     }
 
 
-    //Network
+    //region GSON
+    public static final JsonSerializer<Skill> SKILL_SERIALIZER = (src, typeOfSrc, ctx) -> {
+        var json = new JsonObject();
+
+        json.addProperty("active", src.active);
+        json.addProperty("id", src.id);
+        json.addProperty("type", src.type.name());
+        json.addProperty("category", src.category);
+        json.addProperty("icon", src.icon);
+        json.addProperty("displayName", src.displayName);
+        json.addProperty("description", src.description);
+
+        if (src.config != null) {
+            var configJson = ctx.serialize(src.config);
+            if (configJson.isJsonObject() && !configJson.getAsJsonObject().isEmpty()) {
+                json.add("config", configJson);
+            }
+        }
+
+        json.add("prices", ctx.serialize(src.prices));
+
+        if (!src.modifiers.isEmpty()) json.add("modifiers", ctx.serialize(src.modifiers));
+        if (!src.customValues.isEmpty()) json.add("customValues", ctx.serialize(src.customValues));
+
+        return json;
+    };
+    //endregion
+
+    //region Network
     public static final StreamCodec<FriendlyByteBuf, Skill> STREAM_CODEC = StreamCodec.ofMember(
             Skill::writeToBuffer,
             Skill::readSkillFromBuffer
@@ -141,7 +172,6 @@ public class Skill implements ISkill {
     public void writeToBuffer(FriendlyByteBuf buffer){
         buffer.writeBoolean(active);
         buffer.writeUtf(id);
-        buffer.writeInt(maximumLevel);
 
         buffer.writeCollection(prices, FriendlyByteBuf::writeInt);
 
@@ -161,7 +191,6 @@ public class Skill implements ISkill {
     public static @NotNull Skill readSkillFromBuffer(FriendlyByteBuf buffer){
         boolean active = buffer.readBoolean();
         String id = buffer.readUtf();
-        int maxLevel = buffer.readInt();
 
         List<Integer> prices = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readInt);
 
@@ -177,7 +206,9 @@ public class Skill implements ISkill {
 
         SkillConfiguration config = SkillConfiguration.STREAM_CODEC.decode(buffer);
 
-        return new Skill(active, id, maxLevel, prices, type, category,
+        return new Skill(active, id, prices, type, category,
                             icon, displayName, description, readModifiers, readCustomValues, config);
     }
+
+    //endregion
 }

@@ -1,6 +1,5 @@
 package com.tyzsskills.api.model;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializer;
 import com.mojang.serialization.JsonOps;
@@ -64,7 +63,7 @@ public class SkillConfiguration {
     public @NotNull CompoundTag parameters(){return parameters;}
 
     //region Load/Write/Read
-    public static final JsonSerializer<SkillConfiguration> GSON_SERIALIZER = ((src, typeOfSrc, ctx) -> {
+    public static final JsonSerializer<SkillConfiguration> CONFIG_SERIALIZER = ((src, typeOfSrc, ctx) -> {
         var obj = new JsonObject();
         if(!src.purchasable()) obj.addProperty("purchasable", false);
         if(!src.refundable()) obj.addProperty("refundable", false);

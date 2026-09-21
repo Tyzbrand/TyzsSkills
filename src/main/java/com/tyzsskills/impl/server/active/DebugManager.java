@@ -31,7 +31,7 @@ public class DebugManager {
 
     public static final class RELOAD{
         public static void reload(MinecraftServer server) throws IOException {
-            ErrorManager.clearErrors();
+            ErrorManager.clear();
             SkillManager.clearSkills();
             XpGainRegistry.clearAll();
             LevelManager.clearPool();
@@ -49,7 +49,7 @@ public class DebugManager {
 
                 PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
 
-                if (player.hasPermissions(2) && ErrorManager.hasErrors()) {
+                if (player.hasPermissions(2) && ErrorManager.hasErrorsOrWarns()) {
                     ErrorManager.printErrors(player);
                 }
             }

@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,12 +14,15 @@ import java.util.List;
 @ApiStatus.Internal
 public class ErrorManager {
 
-    private static final List<MutableComponent> ERROR_PRINTS = new ArrayList<>();
-    public static void clearErrors(){
-        ERROR_PRINTS.clear();
+    private static final List<MutableComponent> ERRORS = new ArrayList<>();
+    private static final List<MutableComponent> WARNS = new ArrayList<>();
+
+    public static void clear(){
+        ERRORS.clear();
+        WARNS.clear();
     }
-    public static boolean hasErrors(){
-        return !ERROR_PRINTS.isEmpty();
+    public static boolean hasErrorsOrWarns(){
+        return !ERRORS.isEmpty() || !WARNS.isEmpty();
     }
 
     private static final MutableComponent HEADER = Component.literal("▶ ");
@@ -30,11 +34,25 @@ public class ErrorManager {
 
     //ACTIVE
     public static void printErrors(ServerPlayer player){
-        if (ERROR_PRINTS.isEmpty()) return;
+        if (ERRORS.isEmpty() && WARNS.isEmpty()) return;
 
-        player.sendSystemMessage(Component.literal("§c⚠ Tyz's Skills loaded with " + ERROR_PRINTS.size() + " issue(s):"));
-        for(var error : ERROR_PRINTS){
+        var headerMessage = Component.empty()
+                .append((Component.literal("⚠ Tyz's Skills loaded with ")))
+                .append(Component.literal(ERRORS.size() + " issue(s)").withStyle(ERROR))
+                .append(Component.literal(" and "))
+                .append(Component.literal(WARNS.size() + " warning(s)").withStyle(WARNING))
+                .append(Component.literal(":"));
+
+        player.sendSystemMessage(headerMessage);
+
+        if(!ERRORS.isEmpty()) player.sendSystemMessage(Component.empty());
+        for(var error : ERRORS) {
             player.sendSystemMessage(error);
+        }
+
+        if(!WARNS.isEmpty()) player.sendSystemMessage(Component.empty());
+        for(var warn : WARNS){
+            player.sendSystemMessage(warn);
         }
     }
 
@@ -48,7 +66,7 @@ public class ErrorManager {
                 .append(Component.literal("Error when " + context).withStyle(ERROR))
                 .append(Component.literal(": " + detail).withStyle(ChatFormatting.WHITE));
 
-        ERROR_PRINTS.add(message);
+        ERRORS.add(message);
     }
 
     public static void registerSkillError(@NotNull String source, @NotNull String error){
@@ -57,18 +75,26 @@ public class ErrorManager {
                 .append(Component.literal("[" + source + "]").withStyle(ID))
                 .append(Component.literal(": " + error).withStyle(ChatFormatting.WHITE));
 
-        ERROR_PRINTS.add(message);
+        ERRORS.add(message);
     }
 
 
-    public static void registerLoadDeprecation(@NotNull String source, @NotNull String field, @NotNull String newFormat){
+    public static void registerLoadDeprecationModification(@NotNull String source, @NotNull String field, @NotNull String newFormat){
         var message = HEADER.copy().withStyle(WARNING)
                 .append(Component.literal(field + " format is outdated in " ).withStyle(WARNING))
                 .append(Component.literal("[" + source + "], ").withStyle(ID))
                 .append(Component.literal("use this format: ").withStyle(WARNING))
-                .append(Component.literal(newFormat).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.DARK_GRAY));
+                .append(Component.literal(newFormat + ".").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.DARK_GRAY));
 
-        ERROR_PRINTS.add(message);
+        WARNS.add(message);
+    }
+
+    public static void registerLoadDeprecationRemoval(@NotNull String source, @NotNull String field){
+        var message = HEADER.copy().withStyle(WARNING)
+                .append(Component.literal(field + " is obsolete in " ).withStyle(WARNING))
+                .append(Component.literal("[" + source + "].").withStyle(ID));
+
+        WARNS.add(message);
     }
 
 
