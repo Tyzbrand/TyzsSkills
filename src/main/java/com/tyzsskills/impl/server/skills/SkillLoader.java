@@ -209,14 +209,14 @@ public class SkillLoader {
                 configObject.remove("skillPrerequisites");
                 configObject.add("skillPrerequisites", newPrerequisites);
 
-                ErrorManager.registerLoadDeprecationModification(skillId, "\"skillPrerequisites\"", "{skillID, requiredLevel}");
+                ErrorManager.registerLoadDeprecationModification(skillId, "the field 'skillPrerequisite' has a new format: {skillID, requiredLevel}");
             }
         }
 
         //MIGRATION FOR MAXIMUM LEVEL: Removal
         if(source.has("maximumLevel")){
             source.remove("maximumLevel");
-            ErrorManager.registerLoadDeprecationRemoval(skillId, "\"maximumLevel\"");
+            ErrorManager.registerLoadDeprecationModification(skillId, "the field 'maximumLevel' is obsolete");
         }
     }
 

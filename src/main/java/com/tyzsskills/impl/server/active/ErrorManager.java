@@ -64,7 +64,7 @@ public class ErrorManager {
     public static void registerLoadError(@NotNull String context, @NotNull String detail){
         var message = HEADER.copy().withStyle(ERROR)
                 .append(Component.literal("Error when " + context).withStyle(ERROR))
-                .append(Component.literal(": " + detail).withStyle(ChatFormatting.WHITE));
+                .append(Component.literal(": " + detail + ".").withStyle(ChatFormatting.WHITE));
 
         ERRORS.add(message);
     }
@@ -73,30 +73,18 @@ public class ErrorManager {
         var message = HEADER.copy().withStyle(ERROR)
                 .append(Component.literal("Error in ").withStyle(ERROR))
                 .append(Component.literal("[" + source + "]").withStyle(ID))
-                .append(Component.literal(": " + error).withStyle(ChatFormatting.WHITE));
+                .append(Component.literal(": " + error + ".").withStyle(ChatFormatting.WHITE));
 
         ERRORS.add(message);
     }
 
 
-    public static void registerLoadDeprecationModification(@NotNull String source, @NotNull String field, @NotNull String newFormat){
+    public static void registerLoadDeprecationModification(@NotNull String source, @NotNull String warn){
         var message = HEADER.copy().withStyle(WARNING)
-                .append(Component.literal(field + " format is outdated in " ).withStyle(WARNING))
-                .append(Component.literal("[" + source + "], ").withStyle(ID))
-                .append(Component.literal("use this format: ").withStyle(WARNING))
-                .append(Component.literal(newFormat + ".").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.DARK_GRAY));
+                .append(Component.literal("Warn in ").withStyle(WARNING))
+                .append(Component.literal("[" + source + "]").withStyle(ID))
+                .append(Component.literal(": " + warn + ".").withStyle(ChatFormatting.WHITE));
 
         WARNS.add(message);
     }
-
-    public static void registerLoadDeprecationRemoval(@NotNull String source, @NotNull String field){
-        var message = HEADER.copy().withStyle(WARNING)
-                .append(Component.literal(field + " is obsolete in " ).withStyle(WARNING))
-                .append(Component.literal("[" + source + "].").withStyle(ID));
-
-        WARNS.add(message);
-    }
-
-
-
 }
