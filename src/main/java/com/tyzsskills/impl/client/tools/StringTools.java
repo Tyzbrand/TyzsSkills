@@ -4,7 +4,6 @@ import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.server.skills.SkillRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -22,12 +21,16 @@ import java.util.List;
 
 public class StringTools {
 
+    public static String format(float value){
+        return FORMATER.get().format(value);
+    }
     public static String valueSmartFormat(float value){
         float absValue = Math.abs(value);
 
-        if (absValue >= 1_000_000f) {return SMART_FORMATTER.get().format(value / 1_000_000f) + "M";}
-        if (absValue >= 10_000f) {return SMART_FORMATTER.get().format(value / 1_000f) + "k";}
-        return SMART_FORMATTER.get().format(value);
+        if(absValue >= 1_000_000_000f){return FORMATER.get().format(value / 1_000_000_000f) + "B";}
+        if (absValue >= 1_000_000f) {return FORMATER.get().format(value / 1_000_000f) + "M";}
+        if (absValue >= 10_000f) {return FORMATER.get().format(value / 1_000f) + "k";}
+        return FORMATER.get().format(value);
     }
 
     public static MutableComponent getPriceLine(ISkill skill, int currentLvl, boolean canBuy, boolean isMax){
@@ -314,7 +317,7 @@ public class StringTools {
                 .append(Component.literal(sign + valueSmartFormat(diff) + " ").withStyle(color))
                 .append(Component.translatable(unit));
     }
-    private static final ThreadLocal<DecimalFormat> SMART_FORMATTER = ThreadLocal.withInitial(() -> {
+    private static final ThreadLocal<DecimalFormat> FORMATER = ThreadLocal.withInitial(() -> {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setDecimalSeparator('.');
 
@@ -322,4 +325,5 @@ public class StringTools {
         format.setRoundingMode(RoundingMode.DOWN);
         return format;
     });
+
 }

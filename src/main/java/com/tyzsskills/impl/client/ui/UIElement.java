@@ -2,12 +2,15 @@ package com.tyzsskills.impl.client.ui;
 
 import com.mojang.datafixers.util.Either;
 import com.tyzsskills.api.Enums;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public abstract class UIElement {
@@ -21,7 +24,7 @@ public abstract class UIElement {
 
     protected Supplier<Boolean> visibleWhen = () -> true;
     protected Supplier<Boolean> shadedWhen = () -> false;
-    protected Supplier<List<Either<FormattedText, TooltipComponent>>> tooltip = List::of;
+    protected Supplier<List<Either<FormattedText, TooltipComponent>>> tooltip = () -> EMPTY_TOOLTIP;
 
     public UIElement(int offsetX, int offsetY, int width, int height){
         this.offsetX = offsetX;
@@ -36,28 +39,30 @@ public abstract class UIElement {
     public UIElement withShade(Supplier<Boolean> supplier) {this.shadedWhen = supplier; return this;}
     public UIElement withScale(float scale, Enums.ScalePivot scalePivot) {this.scale = scale; this.scalePivot = scalePivot; return this;}
 
-    // 1. Pour un Component unique direct ou dynamique
+    //Tooltips
+    private UIElement withRawTooltip(Supplier<List<Either<FormattedText, TooltipComponent>>> supplier) {
+        this.tooltip = supplier != null ? supplier : () -> EMPTY_TOOLTIP;
+        return this;
+    }
     public UIElement withTooltip(Supplier<? extends FormattedText> supplier) {
-        return this.withTooltip(() -> {
+        return this.withRawTooltip(() -> {
             FormattedText text = supplier.get();
-            return text == null ? EMPTY_TOOLTIP : (FormattedText) List.of(Either.left(text));
+            if (text == null) return EMPTY_TOOLTIP;
+            return List.of(Either.left(text));
         });
     }
-
-    // 2. Pour les listes (typiquement StringTools.getTooltipAction)
     public UIElement withTooltipLines(Supplier<? extends List<? extends FormattedText>> supplier) {
-        return this.withTooltip(() -> {
+        return this.withRawTooltip(() -> {
             var lines = supplier.get();
-            if (lines == null || lines.isEmpty()) return Component.empty();
-            return (FormattedText) lines.stream().<Either<FormattedText, TooltipComponent>>map(Either::left).toList();
+            if (lines == null || lines.isEmpty()) return EMPTY_TOOLTIP;
+            return lines.stream().<Either<FormattedText, TooltipComponent>>map(Either::left).toList();
         });
     }
-
-    // 3. Pour un Tooltip custom complet (SkillTooltipData -> SkillTooltip)
     public UIElement withCustomTooltip(Supplier<? extends TooltipComponent> supplier) {
-        return this.withTooltip(() -> {
+        return this.withRawTooltip(() -> {
             TooltipComponent data = supplier.get();
-            return data == null ? EMPTY_TOOLTIP : (FormattedText) List.of(Either.right(data));
+            if (data == null) return EMPTY_TOOLTIP;
+            return List.of(Either.right(data));
         });
     }
 
@@ -78,6 +83,28 @@ public abstract class UIElement {
         draw(gui, mouseX, mouseY, partialTick, true, false);
     }
 
+    public void drawTooltips(GuiGraphics gui, Font font, int mouseX, int mouseY) {
+        var tooltips = getTooltips(mouseX, mouseY);
+        if (tooltips.isEmpty()) return;
+
+        List<Component> textLines = new ArrayList<>();
+        TooltipComponent customComponent = null;
+
+        for (var either : tooltips) {
+            var left = either.left();
+            if (left.isPresent()) {
+                FormattedText ft = left.get();
+                textLines.add(ft instanceof Component c ? c : Component.literal(ft.getString()));
+            }
+            var right = either.right();
+            if (right.isPresent()) {
+                customComponent = right.get();
+            }
+        }
+
+        gui.renderTooltip(font, textLines, Optional.ofNullable(customComponent), mouseX, mouseY);
+    }
+
     //Clicks
     protected boolean onClick(int mouseX, int mouseY){return false;}
 
@@ -93,7 +120,7 @@ public abstract class UIElement {
 
     //Tooltips
     protected List<Either<FormattedText, TooltipComponent>> resolveTooltips(int mouseX, int mouseY) {
-       return tooltip.get();
+        return tooltip.get();
     }
 
     public final List<Either<FormattedText, TooltipComponent>> getTooltips(int mouseX, int mouseY, boolean inheritedVisible) {
@@ -108,7 +135,8 @@ public abstract class UIElement {
 
 
     //Tools
-    public final boolean isHovering(int mouseX, int mouseY){
+    public boolean isHovering(int mouseX, int mouseY){
+        if (width <= 0 && height <= 0) return true;
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
     }
     public final void updatePosition(int parentX, int parentY){
@@ -139,7 +167,7 @@ public abstract class UIElement {
     }
 
     //STATIC
-    public static final Component EMPTY_TOOLTIP = Component.empty();
-    p
+    public static final List<Either<FormattedText, TooltipComponent>> EMPTY_TOOLTIP = List.of();
+
 
 }

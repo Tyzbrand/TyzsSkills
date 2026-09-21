@@ -61,7 +61,7 @@ public class SkillCard {
         //BACKGROUND & ICON
         skillCard.addChild(new UIImage(0, 0, () -> isMaxed? UIStyleRegistries.SKILL_CARD_COMPLETE : UIStyleRegistries.SKILL_CARD));
         skillCard.addChild(new UIImage(7, 7, 16, 16, this.icon, 16)
-                .withTooltip(() -> List.of(Either.right(new SkillTooltipData(this.skill)))));
+                .withCustomTooltip(() -> new SkillTooltipData(this.skill)));
 
         //BADGE
         skillCard.addChild(new UIBackground(27, 7, 53, 13, UIStyleRegistries.COLOR_BG)
@@ -79,20 +79,18 @@ public class SkillCard {
                 () -> isShiftPressed ? UIStyleRegistries.BULK_PURCHASE_BTN : UIStyleRegistries.PURCHASE_BTN,
                 () -> cache.triggerAction(skill, isShiftPressed ? Enums.ClientAction.BULK_PURCHASE : Enums.ClientAction.PURCHASE))
                 .withDisabled(() -> isLocked || isMaxed || !canAffordPurchase || !canBuy)
-                .withTooltip(() -> {
-                    if (isLocked) return UIElement.EMPTY_TOOLTIP;
-                    var lines = StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canAffordPurchase, isShiftPressed);
-                    return (FormattedText) lines.stream().map(Either::<FormattedText, TooltipComponent>left).toList();
+                .withTooltipLines(() -> {
+                    if (isLocked) return List.of();
+                    return  StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canAffordPurchase, isShiftPressed);
                 }));
 
         skillCard.addChild(new UIButton(27, 17,
                 () -> isShiftPressed ? UIStyleRegistries.BULK_REFUND_BTN : UIStyleRegistries.REFUND_BTN,
                 () -> cache.triggerAction(skill, isShiftPressed ? Enums.ClientAction.BULK_REFUND : Enums.ClientAction.REFUND))
                 .withDisabled(() -> currentLevel <= 0 || isLocked || !canAffordRefund || !canRefund)
-                .withTooltip(() -> {
-                    if (isLocked) return UIElement.EMPTY_TOOLTIP;
-                    var lines = StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, isShiftPressed);
-                    return (FormattedText) lines.stream().map(Either::<FormattedText, TooltipComponent>left).toList();
+                .withTooltipLines(() -> {
+                    if (isLocked) return List.of();
+                    return StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, isShiftPressed);
                 }));
 
         skillCard.addChild(new UIButton(49, 17,

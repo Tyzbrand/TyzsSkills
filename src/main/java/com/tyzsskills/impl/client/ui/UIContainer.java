@@ -27,7 +27,8 @@ public class UIContainer extends UIElement{
 
     @Override
     protected boolean onClick(int mouseX, int mouseY) {
-        for(var child : children){
+        for(int i = children.size() - 1; i >= 0; i--){
+            var child = children.get(i);
             if(child.handleClick(mouseX, mouseY, true)) return true;
         }
         return false;
@@ -35,10 +36,20 @@ public class UIContainer extends UIElement{
 
     @Override
     protected List<Either<FormattedText, TooltipComponent>> resolveTooltips(int mouseX, int mouseY) {
-        for (var child : children) {
+        for (int i = children.size() - 1; i >= 0; i--) {
+            var child = children.get(i);
             var childTooltip = child.getTooltips(mouseX, mouseY);
             if (!childTooltip.isEmpty()) return childTooltip;
         }
         return super.resolveTooltips(mouseX, mouseY);
+    }
+
+    @Override
+    public boolean isHovering(int mouseX, int mouseY) {
+        if (super.isHovering(mouseX, mouseY)) return true;
+        for (var child : children) {
+            if (child.isHovering(mouseX, mouseY)) return true;
+        }
+        return false;
     }
 }

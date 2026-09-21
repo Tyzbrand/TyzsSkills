@@ -34,5 +34,5 @@ public class UIStyleRegistries {
     public static final ImageStyle MENU_BACKGROUND = new ImageStyle(347, 152, 0, 0, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 
     //BARS
-    public static final ImageStyle XP_BAR = new ImageStyle(182, 5, 8, 217, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ImageStyle XP_BAR = new ImageStyle(62, 5, 8, 217, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 }

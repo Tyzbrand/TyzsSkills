@@ -11,5 +11,7 @@ public class Enums {
 
     public enum ClientAction {PURCHASE, REFUND, BULK_PURCHASE, BULK_REFUND, BOOKMARK}
 
+    //UI
     public enum ScalePivot {TOP_LEFT, CENTER}
+    public enum TextAlignment {LEFT, CENTER, RIGHT}
 }

@@ -2,13 +2,12 @@ package com.tyzsskills.impl.client.screen;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.models.*;
 import com.tyzsskills.impl.client.tools.SortingTools;
-import com.tyzsskills.impl.client.ui.UIContainer;
-import com.tyzsskills.impl.client.ui.UIImage;
-import com.tyzsskills.impl.client.ui.UIProgressBar;
-import com.tyzsskills.impl.client.ui.UIStyleRegistries;
+import com.tyzsskills.impl.client.tools.StringTools;
+import com.tyzsskills.impl.client.ui.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -60,7 +59,24 @@ public class MainMenu extends Screen {
         mainPanel.addChild(new UIImage(0, 0, () -> UIStyleRegistries.MENU_BACKGROUND));
 
         //Progress Bar
-        mainPanel.addChild(new UIProgressBar(94, 144, () -> UIStyleRegistries.XP_BAR, () -> cache.getXp()/cache.getXpGoal()));
+        mainPanel.addChild(new UIProgressBar(2, 105, () -> UIStyleRegistries.XP_BAR, () -> cache.getXp()/cache.getXpGoal())
+                .withTooltip(() -> Component.literal(cache.getXp() + "/" + StringTools.format(cache.getXpGoal()))));
+
+        //Texts
+        var textScale = .63f;
+        mainPanel.addChild(new UIText(4, 96, 26, 5, () -> Component.translatable("gui.tyzs_skills.Lvl"))
+                .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
+
+        mainPanel.addChild(new UIText(4, 96, 26, 5, () -> Component.literal(StringTools.valueSmartFormat(cache.getLevel())))
+                .withAlignment(Enums.TextAlignment.RIGHT)
+                .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
+
+        mainPanel.addChild(new UIText(37, 96, 26, 5, () -> Component.translatable("gui.tyzs_skills.SP"))
+                .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
+
+        mainPanel.addChild(new UIText(37, 96, 26, 5, () -> Component.literal(StringTools.valueSmartFormat(cache.getSp())))
+                .withAlignment(Enums.TextAlignment.RIGHT)
+                .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
     }
 
     @Override
@@ -69,6 +85,7 @@ public class MainMenu extends Screen {
 
         this.renderEntity(gui, 39, mouseX, mouseY);
         mainPanel.draw(gui, mouseX, mouseY, partialTick);
+        mainPanel.drawTooltips(gui, this.font, mouseX, mouseY);
     }
 
 
