@@ -4,10 +4,9 @@ import com.tyzsskills.Config;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.api.model.Category;
+import com.tyzsskills.api.records.Category;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.api.model.Context;
-import com.tyzsskills.impl.client.screen.MainMenu;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
 import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
@@ -116,10 +115,10 @@ public class ClientCache {
     public boolean isSpamming(){return System.currentTimeMillis() - lastClickTime < Constants.PAYLOAD_COOLDOWN_MS;}
 
     //SERVER
-    private final Map<String, Category> categories = new HashMap<>();
-    public @Nullable Category getCategory(@NotNull String categoryId) {
-        return categories.getOrDefault(categoryId, null);
-    }
+    private final List<Category> categories = new ArrayList<>();
+    private final List<Category> categoriesView = Collections.unmodifiableList(categories);
+    public @NotNull @UnmodifiableView List<Category> getAllCategories(){return categoriesView;}
+
 
     private final Map<String, ISkill> skills = new HashMap<>();
     private final Map<String, ISkill> skillsView = Collections.unmodifiableMap(skills);
@@ -138,8 +137,8 @@ public class ClientCache {
             var playerData = payload.playerData(); var configData = payload.configData();
             var serverData = payload.serverData();
 
-            categories.clear(); skills.clear(); configMap.clear(); bookmarks.clear();
-            skillLevels.clear();
+           skills.clear(); configMap.clear(); bookmarks.clear();
+           skillLevels.clear();
 
             for(var skill : serverData.skills()) skills.put(skill.getID(), skill);
             GRAPH.build(getAllSkills().values());
@@ -147,8 +146,7 @@ public class ClientCache {
             bookmarks.addAll(serverData.bookmarks());
             skillLevels.putAll(serverData.playerSkillLevels());
 
-            categories.putAll(serverData.categories());
-            sortCategories();
+            sortCategories(serverData.categories());
 
             level = playerData.level();
             sp = playerData.sp();
@@ -382,15 +380,14 @@ public class ClientCache {
         }
     }
 
-    private void sortCategories(){
-        var sortedCategories = new ArrayList<>(categories.values());
+    private void sortCategories(List<Category> categories){
+        this.categories.clear();
+
+        var sortedCategories = new ArrayList<>(categories);
         sortedCategories.sort(Comparator.comparingInt(Category::order));
 
-        var sortedIds = sortedCategories.stream()
-                .map(Category::id)
-                .toList();
-
-        SortingTools.registerCategories(sortedIds);
+        this.categories.addAll(sortedCategories);
+        if(!this.categories.isEmpty()) SortingTools.setCategory(this.categories.getFirst().id());
     }
 
     //CONFIG
@@ -406,5 +403,4 @@ public class ClientCache {
         else if (value instanceof Number nbr) return nbr.doubleValue();
         else return fallback;
     }
-
 }

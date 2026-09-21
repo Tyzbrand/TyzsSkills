@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.payloads;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
-import com.tyzsskills.api.model.Category;
+import com.tyzsskills.api.records.Category;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.server.Level.LevelManager;
@@ -48,11 +48,11 @@ public class UpdatePayloads {
                 ConfigSyncData::new
         );
     }
-    public record ServerSyncData(List<Skill> skills, List<String> bookmarks, Map<String, Category> categories, Map<String, Integer> playerSkillLevels){
+    public record ServerSyncData(List<Skill> skills, List<String> bookmarks, List<Category> categories, Map<String, Integer> playerSkillLevels){
         public static final StreamCodec<RegistryFriendlyByteBuf, ServerSyncData> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.collection(ArrayList::new, Skill.STREAM_CODEC), ServerSyncData::skills,
                 ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.STRING_UTF8), ServerSyncData::bookmarks,
-                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, Category.STREAM_CODEC), ServerSyncData::categories,
+                ByteBufCodecs.collection(ArrayList::new, Category.STREAM_CODEC), ServerSyncData::categories,
                 ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.INT), ServerSyncData::playerSkillLevels,
                 ServerSyncData::new
         );

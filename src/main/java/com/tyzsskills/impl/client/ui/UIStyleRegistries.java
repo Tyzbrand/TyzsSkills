@@ -27,6 +27,9 @@ public class UIStyleRegistries {
     public static final ButtonStyle BOOKMARK_BTN_OFF = new ButtonStyle(9, 9, 62 , 203, 71, 203, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
     public static final ButtonStyle BOOKMARK_BTN_ON = new ButtonStyle(9, 9, 42, 203, 51, 203, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 
+    public static final ButtonStyle TAB_BTN_SELECTED = new ButtonStyle(21, 18, 39, 242, 60, 242, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ButtonStyle TAB_BTN_UNSELECTED = new ButtonStyle(21, 18, 39, 260, 60, 260, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+
 
     //IMAGES
     public static final ImageStyle SKILL_CARD = new ImageStyle(64, 30, 166, 142, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);

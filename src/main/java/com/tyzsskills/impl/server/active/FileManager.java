@@ -161,7 +161,7 @@ public class FileManager {
         readExclusiveData(customPath.resolve(levelFile), defaultPath.resolve(levelFile), LevelManager::parsePool);
 
         var categoryFile = Path.of(CATEGORIES_KEY + ".json");
-        readExclusiveData(customPath.resolve(categoryFile), defaultPath.resolve(categoryFile), CategoryLoader::loadCategories);
+        readExclusiveArray(customPath.resolve(categoryFile), defaultPath.resolve(categoryFile), CategoryLoader::loadCategories);
     }
 
 
@@ -172,15 +172,15 @@ public class FileManager {
         Files.writeString(path.resolve(fileName + ".json"), gson.toJson(obj));
     }
 
-    @Nullable
-    private static JsonObject readFile(@NotNull Path path) throws IOException {
-        return gson.fromJson(Files.readString(path), JsonObject.class);
+    private static @Nullable JsonElement readFile(@NotNull Path path) throws IOException {
+        if (!Files.exists(path)) return null;
+        return JsonParser.parseString(Files.readString(path));
     }
 
     private static void processFile(@NotNull Path file, @NotNull Consumer<JsonObject> action){
         try {
             var obj = readFile(file);
-            if(obj != null) action.accept(obj);
+            if(obj != null && obj.isJsonObject()) action.accept(obj.getAsJsonObject());
         }
         catch (JsonSyntaxException ex) {
             ErrorManager.registerLoadError("parsing " + file.getFileName(), "JSON Syntax error");
@@ -210,9 +210,19 @@ public class FileManager {
         }
     }
 
+
     private static void readExclusiveData(@NotNull Path customFile, @NotNull Path defaultFile, @NotNull Consumer<JsonObject> action) throws IOException {
         var source = Files.exists(customFile) ? readFile(customFile) : readFile(defaultFile);
-        if(source != null) action.accept(source);
+        if (source != null && source.isJsonObject()) {
+            action.accept(source.getAsJsonObject());
+        }
+    }
+
+    private static void readExclusiveArray(@NotNull Path customFile, @NotNull Path defaultFile, @NotNull Consumer<JsonArray> action) throws IOException {
+        var source = Files.exists(customFile) ? readFile(customFile) : readFile(defaultFile);
+        if (source != null && source.isJsonArray()) {
+            action.accept(source.getAsJsonArray());
+        }
     }
 
     private static void clearDefaultPath(@NotNull MinecraftServer server) throws IOException {

@@ -9,6 +9,6 @@ public class TyzsSkillsClientRegistrationWrapper implements ITyzsSkillsClientReg
 
     @Override
     public void registerSortingType(@NotNull SortType sortingType) {
-        SortingTools.registerSortingType(sortingType);
+        //SortingTools.registerSortingType(sortingType);
     }
 }

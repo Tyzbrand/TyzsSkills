@@ -7,6 +7,8 @@ import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.models.*;
 import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.client.tools.StringTools;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltip;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
 import com.tyzsskills.impl.client.ui.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -66,17 +68,32 @@ public class MainMenu extends Screen {
         var textScale = .63f;
         mainPanel.addChild(new UIText(4, 96, 26, 5, () -> Component.translatable("gui.tyzs_skills.Lvl"))
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
-
         mainPanel.addChild(new UIText(4, 96, 26, 5, () -> Component.literal(StringTools.valueSmartFormat(cache.getLevel())))
                 .withAlignment(Enums.TextAlignment.RIGHT)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
 
         mainPanel.addChild(new UIText(37, 96, 26, 5, () -> Component.translatable("gui.tyzs_skills.SP"))
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
-
         mainPanel.addChild(new UIText(37, 96, 26, 5, () -> Component.literal(StringTools.valueSmartFormat(cache.getSp())))
                 .withAlignment(Enums.TextAlignment.RIGHT)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
+
+        //Catégories
+        var xStart = 99;
+        var y = 7;
+        for(var category : cache.getAllCategories()){
+
+            var icon = ResourceLocation.tryParse(category.icon());
+            if(icon == null) continue;
+
+            mainPanel.addChild(new UITabButton(xStart, y, 21, 18, () -> {SortingTools.setCategory(category.id()); return true;}, icon)
+                            .withStyle(() -> SortingTools.getCurrentCategory().equalsIgnoreCase(category.id()) ?
+                                    UIStyleRegistries.TAB_BTN_SELECTED :
+                                    UIStyleRegistries.TAB_BTN_UNSELECTED)
+                    /*.withCustomTooltip(() -> new CategoryTooltipData(category))*/);
+
+            xStart += 22;
+        }
     }
 
     @Override
@@ -180,6 +197,11 @@ public class MainMenu extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button){
+        int mX = (int) mouseX;
+        int mY = (int) mouseY;
+
+        if(mainPanel.handleClick(mX, mY)) return true;
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -188,11 +210,11 @@ public class MainMenu extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    @Override
-    public void removed() {
-        if(!Config.KEEP_SEARCH_QUERY.getAsBoolean()) SortingTools.setSearchQuery("");
-        super.removed();
-    }
+//    @Override
+//    public void removed() {
+//        if(!Config.KEEP_SEARCH_QUERY.getAsBoolean()) SortingTools.setSearchQuery("");
+//        super.removed();
+//    }
 
     //states
     @Override
