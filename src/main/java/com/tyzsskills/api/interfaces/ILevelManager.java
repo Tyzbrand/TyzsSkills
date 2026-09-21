@@ -26,19 +26,19 @@ public interface ILevelManager {
     /**
      * @param amount Amount of levels to withdraw (works if the player can afford, must be > {@code 0}).
      * @return {@code true} if the withdrawal is successful, {@code false} otherwise.
-     * @implNote The player's level can't go below {@code 1}.
+     * @apiNote The player's level can't go below {@code 1}.
      */
     boolean tryRemoveLevel(@NotNull ServerPlayer player, int amount);
 
     /**
      * @param newLevel New level to overwrite the current one (must be >= {@code 1}).
-     * @implNote Overlay is not affected.
+     * @apiNote Overlay is not affected.
      */
     void setLevel(@NotNull ServerPlayer player, int newLevel);
 
     /**
      * Resets the player's level back to {@code 1}.
-     * @implNote Client is not synchronized. Overlay is not affected.
+     * @apiNote Client is not synchronized. Overlay is not affected.
      */
     void resetLevel(@NotNull ServerPlayer player);
 
@@ -56,13 +56,13 @@ public interface ILevelManager {
 
     /**
      * @return The xp goal for the specified level.
-     * @implNote Corresponds to the amount of xp needed to complete the specified level.
+     * @apiNote Corresponds to the amount of xp needed to complete the specified level.
      */
     default float getXpGoal(int level){return getLevelData(level).goal();}
 
     /**
      * @return The sp reward for completing the specified level.
-     * @implNote Corresponds to the rewards won when the specified level is completed.
+     * @apiNote Corresponds to the rewards won when the specified level is completed.
      */
     default int getSpReward(int level){return getLevelData(level).reward();}
 

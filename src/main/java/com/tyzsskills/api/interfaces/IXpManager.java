@@ -35,7 +35,7 @@ public interface IXpManager {
 
     /**
      * Resets the player's xp amount back to {@code 0}.
-     * @implNote Client is not synchronized. Player's stats are not affected. Overlay is not affected.
+     * @apiNote Client is not synchronized. Player's stats are not affected. Overlay is not affected.
      */
     void resetXp(@NotNull ServerPlayer player);
 }

@@ -19,13 +19,13 @@ public interface ISkillManager {
     /**
      * @param skillId Valid id of the targeted skill (in lower case).
      * @param newLevel New level to overwrite the current one (must be >= {@code 0})
-     * @implNote If the new level exceeds the skill's max level, the change will fail.
+     * @apiNote If the new level exceeds the skill's max level, the change will fail.
      */
     void setSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int newLevel);
 
     /**
      * Resets all the player skills back to level {@code 0}.
-     * @implNote Works only for loaded skills. Client is not synchronized.
+     * @apiNote Works only for loaded skills. Client is not synchronized.
      */
     void resetSkillLevels(@NotNull ServerPlayer player);
 
@@ -33,7 +33,7 @@ public interface ISkillManager {
      * @param skillId Valid id of the targeted skill (in lowercase).
      * @param amount The amount of levels to add (must be > {@code 0}).
      * @return {@code true} if the addition is successful, {@code false} otherwise.
-     * @implNote If the new level exceeds the skill's max level, the addition will fail.
+     * @apiNote If the new level exceeds the skill's max level, the addition will fail.
      */
     boolean tryAddSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int amount);
 
@@ -41,7 +41,7 @@ public interface ISkillManager {
      * @param skillId Valid id of the targeted skill (in lowercase).
      * @param amount The amount of levels to remove (must be > {@code 0}).
      * @return {@code true} if the withdrawal is successful, {@code false} otherwise.
-     * @implNote The player must have sufficient level for the skill.
+     * @apiNote The player must have sufficient level for the skill.
      */
     boolean tryRemoveSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int amount);
 
@@ -50,7 +50,7 @@ public interface ISkillManager {
      * Tries to buy a skill according to the rules of the mod (not only a verification).
      * @param skillId Valid id of the targeted skill (in lowercase).
      * @return {@code true} if the skill has been purchased, {@code false} otherwise.
-     * @implNote If the process is successful data are handled automatically (sp, skill lvl and stats).
+     * @apiNote If the process is successful data are handled automatically (sp, skill lvl and stats).
      */
     boolean tryBuySkill(@NotNull ServerPlayer player, @NotNull String skillId);
 
@@ -59,7 +59,7 @@ public interface ISkillManager {
      * Tries to refund a skill according to the rules of the mod (not only a verification).
      * @param skillId Valid id of the targeted skill (in lowercase).
      * @return {@code true} if the skill has been refunded, {@code false} otherwise.
-     * @implNote If the process is successful data are handled automatically (sp, skill lvl, and stats).
+     * @apiNote If the process is successful data are handled automatically (sp, skill lvl, and stats).
      */
     boolean tryRefundSkill(@NotNull ServerPlayer player, @NotNull String skillId);
 
@@ -67,7 +67,7 @@ public interface ISkillManager {
      * Tries to buy the maximum levels a player can afford, according to the rules of the mod (not only a verification).
      * @param skillId Valid id of the targeted skill (in lowercase).
      * @return {@code true} if the bulk has succeeded, {@code false} otherwise.
-     * @implNote If the process is successful data are handled automatically (sp, skill lvl, and stats).
+     * @apiNote If the process is successful data are handled automatically (sp, skill lvl, and stats).
      */
     boolean tryBulkBuy(@NotNull ServerPlayer player, @NotNull String skillId);
 

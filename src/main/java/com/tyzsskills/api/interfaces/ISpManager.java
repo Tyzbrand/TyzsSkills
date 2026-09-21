@@ -24,19 +24,19 @@ public interface ISpManager {
     /**
      * @param amount Amount to withdraw (works if the player can afford, must be > {@code 0}).
      * @return {@code true} if the withdrawal is successful, {@code false} otherwise.
-     * @implNote The player sp can't go below {@code 0}.
+     * @apiNote The player sp can't go below {@code 0}.
      */
     boolean tryRemoveSp(@NotNull ServerPlayer player, int amount);
 
     /**
      * @param newAmount New amount to overwrite the current one (must be >= {@code 0}).
-     * @implNote Player's stats are not affected.
+     * @apiNote Player's stats are not affected.
      */
     void setSp(@NotNull ServerPlayer player, int newAmount);
 
     /**
      * Resets the player's sp amount back to {@code 0}.
-     * @implNote Client is not synchronized. Player's stats are not affected.
+     * @apiNote Client is not synchronized. Player's stats are not affected.
      */
     void resetSp(@NotNull ServerPlayer player);
 
