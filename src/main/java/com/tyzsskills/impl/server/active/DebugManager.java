@@ -167,9 +167,6 @@ public class DebugManager {
             player.getData(StatsTracker.DATA).resetStats();
         }
 
-        private static void resetSkills(ServerPlayer player){
-            for (var skillId : SkillManager.getPlayerSkillLevels(player).keySet())
-                SkillManager.setSkillLevel(player, skillId, 0);
-        }
+        private static void resetSkills(ServerPlayer player){SkillManager.resetSkillLevels(player);}
     }
 }
