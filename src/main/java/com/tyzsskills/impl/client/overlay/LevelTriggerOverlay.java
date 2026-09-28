@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.client.screen;
+package com.tyzsskills.impl.client.overlay;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.impl.client.ClientCache;

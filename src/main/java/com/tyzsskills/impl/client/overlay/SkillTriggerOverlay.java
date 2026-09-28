@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.client.screen;
+package com.tyzsskills.impl.client.overlay;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.tyzsskills.Config;

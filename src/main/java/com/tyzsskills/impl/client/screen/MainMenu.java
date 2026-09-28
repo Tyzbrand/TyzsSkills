@@ -7,12 +7,15 @@ import com.tyzsskills.api.tools.FormatTools;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.active.ComponentManager;
 import com.tyzsskills.impl.client.active.SortingManager;
+import com.tyzsskills.impl.client.models.CustomScrollView;
+import com.tyzsskills.impl.client.models.SkillEntry;
 import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
 import com.tyzsskills.impl.client.ui.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import org.joml.Quaternionf;
@@ -31,7 +34,7 @@ public class MainMenu extends Screen {
     protected final UIContainer tabsPanel;
     protected final ClientCache cache;
 
-//    private CustomScrollView scrollView;
+    private CustomScrollView scrollView;
 //    private EditBox searchBar;
 
     private int categoryOffset = 0;
@@ -52,6 +55,8 @@ public class MainMenu extends Screen {
         super.init();
         this.leftPos = (this.width - WIDTH)/2;
         this.topPos = (this.height - HEIGHT)/2;
+
+        this.addScrollView();
 
         mainPanel.clear();
         mainPanel.updatePosition(this.leftPos, this.topPos);
@@ -81,6 +86,7 @@ public class MainMenu extends Screen {
 
         mainPanel.addChild(tabsPanel);
         buildTabs();
+        refreshList();
     }
 
 
@@ -91,7 +97,13 @@ public class MainMenu extends Screen {
 
         this.renderEntity(gui, 39, mouseX, mouseY);
         mainPanel.draw(gui, mouseX, mouseY, partialTick);
+
+        if (this.scrollView != null) {
+            this.scrollView.render(gui, mouseX, mouseY, partialTick);
+        }
+
         mainPanel.drawTooltips(gui, this.font, mouseX, mouseY);
+        renderScrollViewTooltips(gui, mouseX, mouseY);
     }
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button){
@@ -151,7 +163,7 @@ public class MainMenu extends Screen {
             tabsPanel.addChild(new UITabButton(x, y, 29, 20,
                     () -> {
                 SortingManager.setCategory(category.id());
-                SortingManager.refreshList();
+                refreshList();
                 return true;
                     }, icon)
                     .withStyle(() -> SortingManager.getCurrentCategory().equalsIgnoreCase(category.id())
@@ -221,6 +233,46 @@ public class MainMenu extends Screen {
         player.yHeadRot = f5;
         player.yHeadRotO = f6;
     }
+    private void addScrollView(){
+        scrollView = new CustomScrollView(
+                this.minecraft,
+                leftPos + 95, topPos + 26,
+                162, 106, 30,
+                background, UIStyleRegistries.MAIN_TEXTURE_SIZE, UIStyleRegistries.MAIN_TEXTURE_SIZE,
+                7, 242, 10, 242,
+                3, 11);
+
+        this.addRenderableWidget(this.scrollView);
+    }
+    private void renderScrollViewTooltips(GuiGraphics gui, int mouseX, int mouseY){
+        if (scrollView != null && scrollView.isMouseOver(mouseX, mouseY)) {
+            var hoveredCard = scrollView.getHoveredWidget(mouseX, mouseY);
+            if (hoveredCard != null) hoveredCard.drawTooltips(gui, this.font, mouseX, mouseY);
+
+        }
+    }
+    public void refreshList(){
+        if(this.scrollView == null) return;
+        scrollView.clearEntries();
+
+        SortingManager.refreshList();
+
+        int maxPerLine = 5;
+
+        SkillEntry currentRow = null;
+        int countInRow = 0;
+
+        for(var skill : SortingManager.getCurrentSkillOrder()){
+            if(currentRow == null || countInRow >= maxPerLine){
+                currentRow = new SkillEntry();
+                this.scrollView.AddEntry(currentRow);
+                countInRow = 0;
+            }
+            currentRow.addWidget(new SkillCard(skill));
+            countInRow++;
+        }
+        this.scrollView.setScrollAmount(0);
+    }
 
 
     //ACTIVES
@@ -241,15 +293,4 @@ public class MainMenu extends Screen {
     private boolean isHovering(int mouseX, int mouseY, int x, int y, int width, int height){
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
     }
-    private void renderBackdrop(GuiGraphics gui, int x, int y, int width, int height, int color) {
-        gui.fill(x, y + 1, x + width, y + height - 1, color);
-        gui.fill(x + 1, y, x + width - 1, y + 1, color);
-        gui.fill(x + 1, y + height - 1, x + width - 1, y + height, color);
-
-        gui.fill(x + 1, y, x + width - 1, y + 1, 0xFFFFFFFF); // Haut
-        gui.fill(x + 1, y + height - 1, x + width - 1, y + height, 0xFFFFFFFF); // Bas
-        gui.fill(x, y + 1, x + 1, y + height - 1, 0xFFFFFFFF); // Gauche
-        gui.fill(x + width - 1, y + 1, x + width, y + height - 1, 0xFFFFFFFF);
-    }
-
 }

@@ -11,6 +11,7 @@ public class UIStyleRegistries {
     public static final int MAIN_TEXTURE_SIZE = 400;
 
     public static final ResourceLocation DEFAULT_SKILL_ICON = ResourceLocation.parse("minecraft:textures/item/barrier.png");
+    public static final ResourceLocation LOCKED_SKILL_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/lock_icon.png");
 
     //COLORS
     public static final int COLOR_BG = 0xD5000000;
@@ -32,6 +33,8 @@ public class UIStyleRegistries {
 
     public static final ButtonStyle PREV_TAB = new ButtonStyle(9, 13, 69, 247, 78, 247, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
     public static final ButtonStyle NEXT_TAB = new ButtonStyle(9, 13, 154, 247, 145, 247, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+
+    public static final ButtonStyle CARD = new ButtonStyle(28, 28, 68, 262, 96, 262, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 
 
     //IMAGES

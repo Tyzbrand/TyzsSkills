@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.client.models;
 
 import com.tyzsskills.impl.client.screen.SkillCard;
+import com.tyzsskills.impl.client.screen.SkillCardLegacy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;

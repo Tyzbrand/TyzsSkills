@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.client.models;
 
 import com.tyzsskills.impl.client.screen.SkillCard;
+import com.tyzsskills.impl.client.screen.SkillCardLegacy;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -10,11 +11,8 @@ import java.util.List;
 
 public class SkillEntry extends CustomScrollView.Entry{
     private final List<SkillCard> widgets = new ArrayList<>();
-    private final int spacing = 2;
-
-    public SkillEntry(){
-
-    }
+    public static final int SPACING = 2;
+    private static final int PADDING_LEFT = 0;
 
     public void addWidget(SkillCard widget){
         this.widgets.add(widget);
@@ -31,12 +29,11 @@ public class SkillEntry extends CustomScrollView.Entry{
 
     @Override
     public void render(GuiGraphics gui, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isHovered, float partialTick) {
-        int currentX = left;
+        int currentX = left + PADDING_LEFT;
 
         for(SkillCard widget : widgets){
             widget.render(gui, currentX, top, mouseX, mouseY, partialTick);
-
-            currentX+= SkillCard.WIDTH + spacing;
+            currentX += SkillCard.WIDTH + SPACING;
         }
     }
 

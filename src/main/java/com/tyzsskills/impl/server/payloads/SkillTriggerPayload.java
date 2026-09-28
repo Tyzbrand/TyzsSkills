@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.server.payloads;
 
 import com.tyzsskills.Tyzsskills;
-import com.tyzsskills.impl.client.screen.SkillTriggerOverlay;
+import com.tyzsskills.impl.client.overlay.SkillTriggerOverlay;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

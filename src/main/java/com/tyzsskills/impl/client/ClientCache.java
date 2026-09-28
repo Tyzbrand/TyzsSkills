@@ -8,7 +8,7 @@ import com.tyzsskills.api.records.Category;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.api.model.Context;
 import com.tyzsskills.impl.client.active.SortingManager;
-import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
+import com.tyzsskills.impl.client.overlay.XpTriggerOverlay;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.skills.SkillGraph;
