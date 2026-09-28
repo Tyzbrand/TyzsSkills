@@ -1,11 +1,10 @@
 package com.tyzsskills.impl.server.spells;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.tyzsskills.api.records.SpellProperty;
-import com.tyzsskills.impl.server.tools.JsonLoadTools;
+import com.tyzsskills.api.tools.JsonLoadTools;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

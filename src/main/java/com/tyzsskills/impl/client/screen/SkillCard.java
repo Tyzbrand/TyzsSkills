@@ -5,11 +5,10 @@ import com.mojang.datafixers.util.Either;
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.impl.client.tools.SortingTools;
+import com.tyzsskills.impl.client.active.ComponentManager;
 import com.tyzsskills.impl.client.ui.*;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
-import com.tyzsskills.impl.client.tools.StringTools;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -81,7 +80,7 @@ public class SkillCard {
                 .withDisabled(() -> isLocked || isMaxed || !canAffordPurchase || !canBuy)
                 .withTooltipLines(() -> {
                     if (isLocked) return List.of();
-                    return  StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canAffordPurchase, isShiftPressed);
+                    return  ComponentManager.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canAffordPurchase, isShiftPressed);
                 }));
 
         skillCard.addChild(new UIButton(27, 17,
@@ -90,7 +89,7 @@ public class SkillCard {
                 .withDisabled(() -> currentLevel <= 0 || isLocked || !canAffordRefund || !canRefund)
                 .withTooltipLines(() -> {
                     if (isLocked) return List.of();
-                    return StringTools.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, isShiftPressed);
+                    return ComponentManager.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, isShiftPressed);
                 }));
 
         skillCard.addChild(new UIButton(49, 17,

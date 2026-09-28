@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.client.tools.StringTools;
+import com.tyzsskills.impl.client.active.ComponentManager;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -29,9 +29,9 @@ public class SkillTooltip implements ClientTooltipComponent {
     public SkillTooltip(@NotNull SkillTooltipData data){
         skill = data.skill();
 
-        this.descriptionLines = StringTools.getSkillDescription(this.skill);
-        this.displayName = StringTools.getSkillFormattedName(skill);
-        this.requirementLines = StringTools.getSkillRequirements(skill);
+        this.descriptionLines = ComponentManager.getSkillDescription(this.skill);
+        this.displayName = ComponentManager.getSkillFormattedName(skill);
+        this.requirementLines = ComponentManager.getSkillRequirements(skill);
 
         this.cache = ClientCache.get();
     }

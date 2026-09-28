@@ -12,7 +12,7 @@ import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
 import com.tyzsskills.impl.client.tooltips.SkillTooltip;
 import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.impl.client.screen.*;
-import com.tyzsskills.impl.client.tools.SortingTools;
+import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -121,7 +121,7 @@ public class TyzsskillsClient {
     @SubscribeEvent
     public static void onClientLogOut(ClientPlayerNetworkEvent.LoggingOut event){
         ClientCache.deleteCache();
-        SortingTools.clearData();
+        SortingManager.clearData();
         SkillTriggerOverlay.Clear();
         XpTriggerOverlay.Clear();
         Tyzsskills.LOGGER.info("CACHE CLEARED");

@@ -2,15 +2,13 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
-import com.tyzsskills.api.tools.TagMatchTool;
+import com.tyzsskills.impl.client.active.TagMatchManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.*;
@@ -53,7 +51,7 @@ public class KeepsakeEffect extends SkillBehavior {
         for (int i = 0; i < slotAmount; i++) {
             ItemStack stack = player.getInventory().getItem(i);
             if (stack.isEmpty()) continue;
-            if(TagMatchTool.isItemInList(skill.getSpecificParameters(), "item_blacklist", stack)) continue;
+            if(TagMatchManager.isItemInList(skill.getSpecificParameters(), "item_blacklist", stack)) continue;
 
             keptItems.put(i, stack.copy());
             player.getInventory().setItem(i, ItemStack.EMPTY);

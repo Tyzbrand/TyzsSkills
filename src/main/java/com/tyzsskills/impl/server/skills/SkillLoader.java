@@ -11,7 +11,7 @@ import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
-import com.tyzsskills.impl.server.tools.JsonLoadTools;
+import com.tyzsskills.api.tools.JsonLoadTools;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;

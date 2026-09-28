@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.client.records;
+package com.tyzsskills.api.records;
 
 import java.util.Map;
 

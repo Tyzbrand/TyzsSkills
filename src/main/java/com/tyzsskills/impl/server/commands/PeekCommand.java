@@ -2,15 +2,14 @@ package com.tyzsskills.impl.server.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.api.TyzsSkillsAPI;
-import com.tyzsskills.impl.client.tools.StringTools;
+import com.tyzsskills.api.tools.FormatTools;
+import com.tyzsskills.impl.client.active.ComponentManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-
-import java.util.ArrayList;
 
 public class PeekCommand {
 
@@ -36,8 +35,8 @@ public class PeekCommand {
 
         var playerLvl = TyzsSkillsAPI.level().getLevel(player);
         var level = Component.literal(String.format("▶ Lvl: %d.", playerLvl));
-        var xp = Component.literal(String.format("▶ Xp: %s/%s.", StringTools.valueSmartFormat(TyzsSkillsAPI.xp().getXp(player)),
-                StringTools.valueSmartFormat(TyzsSkillsAPI.level().getXpGoal(playerLvl))));
+        var xp = Component.literal(String.format("▶ Xp: %s/%s.", FormatTools.bigFloat(TyzsSkillsAPI.xp().getXp(player)),
+                FormatTools.bigFloat(TyzsSkillsAPI.level().getXpGoal(playerLvl))));
         var sp = Component.literal(String.format("▶ Skill Points: %d.", TyzsSkillsAPI.sp().getSp(player)));
         root.append(level).append("\n").append(xp).append("\n").append(sp).append("\n\n");
 
@@ -60,7 +59,7 @@ public class PeekCommand {
             skillCount++;
         }
 
-        if(skillCount == 0) root.append(Component.literal("▶ No skills").withStyle(ChatFormatting.RED));
+        if(skillCount == 0) root.append(Component.literal("▶ No skills.").withStyle(ChatFormatting.RED));
 
         return root;
     }

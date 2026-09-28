@@ -2,16 +2,14 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
-import com.tyzsskills.api.tools.TagMatchTool;
+import com.tyzsskills.impl.client.active.TagMatchManager;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import org.jetbrains.annotations.UnknownNullability;
 
 public class CriticalHitEffect extends SkillBehavior {
 
@@ -36,7 +34,7 @@ public class CriticalHitEffect extends SkillBehavior {
 
         if(player.getRandom().nextFloat() < (chancePercentage/100f)){
 
-            if(TagMatchTool.isEntityInList(skill.getSpecificParameters(), "entity_blacklist", event.getEntity().getType())) return;
+            if(TagMatchManager.isEntityInList(skill.getSpecificParameters(), "entity_blacklist", event.getEntity().getType())) return;
 
             event.setAmount(event.getAmount() * 2f);
             notifyClient(player, skill);

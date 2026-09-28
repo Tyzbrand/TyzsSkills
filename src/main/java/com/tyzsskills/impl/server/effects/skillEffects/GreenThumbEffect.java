@@ -1,18 +1,15 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.api.tools.TagMatchTool;
+import com.tyzsskills.impl.client.active.TagMatchManager;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.*;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
 public class GreenThumbEffect extends SkillBehavior {
@@ -58,7 +55,7 @@ public class GreenThumbEffect extends SkillBehavior {
         if(player.getRandom().nextFloat() < (chancePercentage / 100f)){
 
             if (BlockMarker.IsPlayerPlaced(serverLevel, event.getPos())) return;
-            if(TagMatchTool.isBlockInList(skill.getSpecificParameters(), "block_blacklist", state)) return;
+            if(TagMatchManager.isBlockInList(skill.getSpecificParameters(), "block_blacklist", state)) return;
 
             BlockPos position = event.getPos();
             Block.dropResources(state, serverLevel, position, serverLevel.getBlockEntity(position), player, player.getMainHandItem());

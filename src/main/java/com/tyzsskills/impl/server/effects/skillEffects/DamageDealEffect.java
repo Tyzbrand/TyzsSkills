@@ -2,12 +2,11 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
-import com.tyzsskills.api.tools.TagMatchTool;
+import com.tyzsskills.impl.client.active.TagMatchManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 public class DamageDealEffect extends SkillBehavior {
@@ -37,7 +36,7 @@ public class DamageDealEffect extends SkillBehavior {
 
         if (player.getRandom().nextFloat() < (chancePercentage / 100f)) {
             if(!(event.getSource().getEntity() instanceof LivingEntity source)) return;
-            if(TagMatchTool.isEntityInList(skill.getSpecificParameters(), "entity_blacklist", source.getType())) return;
+            if(TagMatchManager.isEntityInList(skill.getSpecificParameters(), "entity_blacklist", source.getType())) return;
 
             event.setCanceled(true);
             IS_REFLECTING.set(true);

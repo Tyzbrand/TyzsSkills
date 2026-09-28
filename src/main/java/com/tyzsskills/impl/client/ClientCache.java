@@ -7,8 +7,8 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.records.Category;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.api.model.Context;
+import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.screen.XpTriggerOverlay;
-import com.tyzsskills.impl.client.tools.SortingTools;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.skills.SkillGraph;
@@ -387,7 +387,7 @@ public class ClientCache {
         sortedCategories.sort(Comparator.comparingInt(Category::order));
 
         this.categories.addAll(sortedCategories);
-        if(!this.categories.isEmpty()) SortingTools.setCategory(this.categories.getFirst().id());
+        if(!this.categories.isEmpty()) SortingManager.setCategory(this.categories.getFirst().id());
     }
 
     //CONFIG

@@ -2,9 +2,8 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
-import com.tyzsskills.api.tools.TagMatchTool;
+import com.tyzsskills.impl.client.active.TagMatchManager;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -37,7 +36,7 @@ public class TrueStrikeEffect extends SkillBehavior {
             var rawDamage = event.getAmount();
             var target = event.getEntity();
 
-            if(TagMatchTool.isEntityInList(skill.getSpecificParameters(), "entity_blacklist", target.getType())) return;
+            if(TagMatchManager.isEntityInList(skill.getSpecificParameters(), "entity_blacklist", target.getType())) return;
 
             event.setCanceled(true);
             IS_PENETRATING.set(true);

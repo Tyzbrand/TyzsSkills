@@ -1,8 +1,9 @@
-package com.tyzsskills.impl.client.tools;
+package com.tyzsskills.impl.client.active;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.api.tools.FormatTools;
 import com.tyzsskills.impl.client.ClientCache;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -19,20 +20,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StringTools {
-
-    public static String format(float value){
-        return FORMATER.get().format(value);
-    }
-    public static String valueSmartFormat(float value){
-        float absValue = Math.abs(value);
-
-        if(absValue >= 1_000_000_000f){return FORMATER.get().format(value / 1_000_000_000f) + "B";}
-        if (absValue >= 1_000_000f) {return FORMATER.get().format(value / 1_000_000f) + "M";}
-        if (absValue >= 10_000f) {return FORMATER.get().format(value / 1_000f) + "k";}
-        return FORMATER.get().format(value);
-    }
-
+public class ComponentManager {
     public static MutableComponent getPriceLine(ISkill skill, int currentLvl, boolean canBuy, boolean isMax){
         LocalPlayer client = Minecraft.getInstance().player;
         if(skill == null || !skill.isPurchasable() || client == null) return Component.translatable("gui.tyzs_skills.error_value").withStyle(ChatFormatting.RED);
@@ -197,7 +185,7 @@ public class StringTools {
                     if(value < 0){color = ChatFormatting.RED;}
                     else if (value > 0){color = ChatFormatting.GREEN;}
 
-                    String coloredValue = color + valueSmartFormat(value) + ChatFormatting.GRAY;
+                    String coloredValue = color + FormatTools.bigFloat(value) + ChatFormatting.GRAY;
                     rawDesc = rawDesc.replace(targetText, coloredValue);
                 }
             }
@@ -214,7 +202,7 @@ public class StringTools {
                     if(value < 0){color = ChatFormatting.RED;}
                     else if (value > 0){color = ChatFormatting.GREEN;}
 
-                    String coloredValue = color + valueSmartFormat(value) + ChatFormatting.GRAY;
+                    String coloredValue = color + FormatTools.bigFloat(value) + ChatFormatting.GRAY;
                     rawDesc = rawDesc.replace(targetText, coloredValue);
                 }
             }
@@ -314,16 +302,7 @@ public class StringTools {
         var sign = diff > 0 ? "+" : "";
 
         return Component.literal("-> ")
-                .append(Component.literal(sign + valueSmartFormat(diff) + " ").withStyle(color))
+                .append(Component.literal(sign + FormatTools.bigFloat(diff) + " ").withStyle(color))
                 .append(Component.translatable(unit));
     }
-    private static final ThreadLocal<DecimalFormat> FORMATER = ThreadLocal.withInitial(() -> {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setDecimalSeparator('.');
-
-        DecimalFormat format = new DecimalFormat("0.#", symbols);
-        format.setRoundingMode(RoundingMode.DOWN);
-        return format;
-    });
-
 }

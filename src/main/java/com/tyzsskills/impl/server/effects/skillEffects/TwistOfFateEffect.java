@@ -2,8 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
-import com.tyzsskills.api.tools.TagMatchTool;
-import net.minecraft.core.BlockPos;
+import com.tyzsskills.impl.client.active.TagMatchManager;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.TickTask;
@@ -12,7 +11,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
@@ -51,7 +49,7 @@ public class TwistOfFateEffect extends SkillBehavior {
 
             if (nbt.contains("LootTable")) {
                 var server = player.getServer();
-                if (server != null && !TagMatchTool.isBlockInList(skill.getSpecificParameters(), "container_blacklist", event.getLevel().getBlockState(pos))) {
+                if (server != null && !TagMatchManager.isBlockInList(skill.getSpecificParameters(), "container_blacklist", event.getLevel().getBlockState(pos))) {
 
                     PROCESSING_CHESTS.add(globalPos);
                     server.tell(new TickTask(server.getTickCount() + 1, () -> {
@@ -78,7 +76,7 @@ public class TwistOfFateEffect extends SkillBehavior {
 
                                 if (player.getRandom().nextFloat() < (rawBonus - extraCount)) extraCount++;
                                 if (extraCount <= 0) continue;
-                                if(TagMatchTool.isItemInList(skill.getSpecificParameters(), "item_blacklist", original)) continue;
+                                if(TagMatchManager.isItemInList(skill.getSpecificParameters(), "item_blacklist", original)) continue;
 
                                 while (extraCount > 0 && !freeSlots.isEmpty()) {
                                     triggered = true;

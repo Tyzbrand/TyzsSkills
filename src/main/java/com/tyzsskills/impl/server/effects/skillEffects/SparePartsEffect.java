@@ -2,14 +2,12 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
-import com.tyzsskills.api.records.ValueSet;
-import com.tyzsskills.api.tools.TagMatchTool;
+import com.tyzsskills.impl.client.active.TagMatchManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.ArrayList;
@@ -54,7 +52,7 @@ public class SparePartsEffect extends SkillBehavior {
         if(ingredientCount <= 1) return;
         if ((ingredientCount == 4 || ingredientCount == 9) && allIdentical) return;
 
-        if(TagMatchTool.isItemInList(skill.getSpecificParameters(), "product_blacklist", event.getCrafting())) return;
+        if(TagMatchManager.isItemInList(skill.getSpecificParameters(), "product_blacklist", event.getCrafting())) return;
 
         var chance = values.getValue(lvl);
         var maxRefunds = (int) maxMaterials.getValue(lvl);
@@ -64,7 +62,7 @@ public class SparePartsEffect extends SkillBehavior {
         for (int i = 0; i < container.getContainerSize(); i++) {
             var ingredient = container.getItem(i);
             if (ingredient.isEmpty() || ingredient.getItem().hasCraftingRemainingItem(ingredient)) continue;
-            if(TagMatchTool.isItemInList(skill.getSpecificParameters(), "ingredient_blacklist", ingredient)) continue;
+            if(TagMatchManager.isItemInList(skill.getSpecificParameters(), "ingredient_blacklist", ingredient)) continue;
             validSlots.add(i);
         }
 

@@ -3,7 +3,7 @@ package com.tyzsskills.impl.server.commands;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.api.TyzsSkillsAPI;
-import com.tyzsskills.impl.client.tools.StringTools;
+import com.tyzsskills.api.tools.FormatTools;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -24,7 +24,7 @@ public class XpCommand {
 
                                             var finalCount = successCount;
                                             if(successCount == 0) ctx.getSource().sendFailure(Component.literal(String.format("Failed to add xp to %d player(s)", players.size())));
-                                            else ctx.getSource().sendSuccess(() -> Component.literal(String.format("%s xp added to %d player(s)", StringTools.format(amount), finalCount)), true);
+                                            else ctx.getSource().sendSuccess(() -> Component.literal(String.format("%s xp added to %d player(s)", FormatTools.defaultFloat(amount), finalCount)), true);
                                             return finalCount;}))))
 
                 .then(Commands.literal("remove")
@@ -47,7 +47,7 @@ public class XpCommand {
                                             var finalCount = successCount;
                                             var finalTotal = total;
                                             if(successCount == 0) ctx.getSource().sendFailure(Component.literal(String.format("Failed to remove xp from %d player(s)", players.size())));
-                                            else ctx.getSource().sendSuccess(() -> Component.literal(String.format("%s xp removed across %d player(s)", StringTools.format(finalTotal), finalCount)), true);
+                                            else ctx.getSource().sendSuccess(() -> Component.literal(String.format("%s xp removed across %d player(s)", FormatTools.defaultFloat(finalTotal), finalCount)), true);
                                             return finalCount;}))))
 
                 .then(Commands.literal("set")
@@ -58,7 +58,7 @@ public class XpCommand {
                                             var amount = FloatArgumentType.getFloat(ctx, "amount");
 
                                             for(var player : players) TyzsSkillsAPI.xp().setXp(player, amount, false);
-                                            ctx.getSource().sendSuccess(() -> Component.literal(String.format("Xp set to %s for %d player(s)", StringTools.format(amount), players.size())), true);
+                                            ctx.getSource().sendSuccess(() -> Component.literal(String.format("Xp set to %s for %d player(s)", FormatTools.defaultFloat(amount), players.size())), true);
                                             return players.size();}))));
     }
 }

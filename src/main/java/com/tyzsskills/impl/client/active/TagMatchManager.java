@@ -1,4 +1,4 @@
-package com.tyzsskills.api.tools;
+package com.tyzsskills.impl.client.active;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -7,7 +7,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
-public class TagMatchTool {
+public class TagMatchManager {
 
     //BLOCKS
     private static final Map<String, Predicate<BlockState>> BLOCK_CACHE = new ConcurrentHashMap<>();
@@ -25,7 +24,7 @@ public class TagMatchTool {
         if(params.contains(listKey, Tag.TAG_LIST)){
             var blackList = params.getList(listKey, Tag.TAG_STRING);
             for (int i = 0; i < blackList.size(); i++){
-                if(TagMatchTool.doesBlockMatch(blackList.getString(i), state)) return true;
+                if(TagMatchManager.doesBlockMatch(blackList.getString(i), state)) return true;
             }
         }
         return false;
@@ -33,7 +32,7 @@ public class TagMatchTool {
 
     public static boolean doesBlockMatch(@NotNull String entry, @NotNull BlockState state){
         if(entry.isEmpty()) return false;
-        var test = BLOCK_CACHE.computeIfAbsent(entry, TagMatchTool::blockTest);
+        var test = BLOCK_CACHE.computeIfAbsent(entry, TagMatchManager::blockTest);
         return test.test(state);
     }
 
@@ -62,7 +61,7 @@ public class TagMatchTool {
         if(params.contains(listKey, Tag.TAG_LIST)){
             var blackList = params.getList(listKey, Tag.TAG_STRING);
             for (int i = 0; i < blackList.size(); i++){
-                if(TagMatchTool.doesEntityMatch(blackList.getString(i), type)) return true;
+                if(TagMatchManager.doesEntityMatch(blackList.getString(i), type)) return true;
             }
         }
         return false;
@@ -70,7 +69,7 @@ public class TagMatchTool {
 
     public static boolean doesEntityMatch(@NotNull String entry, @NotNull EntityType<?> type){
         if(entry.isEmpty()) return false;
-        var test = ENTITY_CACHE.computeIfAbsent(entry, TagMatchTool::entityTest);
+        var test = ENTITY_CACHE.computeIfAbsent(entry, TagMatchManager::entityTest);
         return test.test(type);
     }
 
@@ -99,7 +98,7 @@ public class TagMatchTool {
         if(params.contains(listKey, Tag.TAG_LIST)){
             var blackList = params.getList(listKey, Tag.TAG_STRING);
             for (int i = 0; i < blackList.size(); i++){
-                if(TagMatchTool.doesItemMatch(blackList.getString(i), stack)) return true;
+                if(TagMatchManager.doesItemMatch(blackList.getString(i), stack)) return true;
             }
         }
         return false;
@@ -107,7 +106,7 @@ public class TagMatchTool {
 
     public static boolean doesItemMatch(@NotNull String entry, @NotNull ItemStack stack){
         if(entry.isEmpty()) return false;
-        var test = ITEM_CACHE.computeIfAbsent(entry, TagMatchTool::itemTest);
+        var test = ITEM_CACHE.computeIfAbsent(entry, TagMatchManager::itemTest);
         return test.test(stack);
     }
 

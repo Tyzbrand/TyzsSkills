@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.tools;
+package com.tyzsskills.api.tools;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

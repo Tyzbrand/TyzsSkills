@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
-import com.tyzsskills.api.tools.TagMatchTool;
+import com.tyzsskills.impl.client.active.TagMatchManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.phys.AABB;
@@ -47,7 +47,7 @@ public class MagnetEffect extends SkillBehavior {
 
         for(var item : items){
             if (item.hasPickUpDelay() || !item.isAlive()) continue;
-            if(TagMatchTool.isItemInList(skill.getSpecificParameters(), "item_blacklist", item.getItem())) continue;
+            if(TagMatchManager.isItemInList(skill.getSpecificParameters(), "item_blacklist", item.getItem())) continue;
 
             var dx = targetX - item.getX();
             var dy = targetY - item.getY();

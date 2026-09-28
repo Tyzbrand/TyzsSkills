@@ -1,13 +1,7 @@
-package com.tyzsskills.impl.client.tools;
+package com.tyzsskills.impl.client.active;
 
-import com.tyzsskills.Config;
-import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.api.records.Category;
-import com.tyzsskills.api.records.SortType;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.server.skills.SkillRules;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -15,7 +9,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.*;
 
 @ApiStatus.Internal
-public class SortingTools {
+public class SortingManager {
     //CATEGORIES
     private static String currentCategory = "";
 

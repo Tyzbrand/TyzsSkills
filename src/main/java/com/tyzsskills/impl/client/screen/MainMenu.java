@@ -1,14 +1,11 @@
 package com.tyzsskills.impl.client.screen;
 
-import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.api.tools.FormatTools;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.client.models.*;
-import com.tyzsskills.impl.client.tools.SortingTools;
-import com.tyzsskills.impl.client.tools.StringTools;
-import com.tyzsskills.impl.client.tooltips.CategoryTooltip;
-import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
+import com.tyzsskills.impl.client.active.ComponentManager;
+import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.ui.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -18,8 +15,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
-import java.util.List;
 
 public class MainMenu extends Screen {
     private static final ResourceLocation background = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID,
@@ -62,19 +57,19 @@ public class MainMenu extends Screen {
 
         //Progress Bar
         mainPanel.addChild(new UIProgressBar(2, 105, () -> UIStyleRegistries.XP_BAR, () -> cache.getXp()/cache.getXpGoal())
-                .withTooltip(() -> Component.literal(cache.getXp() + "/" + StringTools.format(cache.getXpGoal()))));
+                .withTooltip(() -> Component.literal(cache.getXp() + "/" + FormatTools.defaultFloat(cache.getXpGoal()))));
 
         //Texts
         var textScale = .63f;
         mainPanel.addChild(new UIText(4, 96, 26, 5, () -> Component.translatable("gui.tyzs_skills.Lvl"))
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
-        mainPanel.addChild(new UIText(4, 96, 26, 5, () -> Component.literal(StringTools.valueSmartFormat(cache.getLevel())))
+        mainPanel.addChild(new UIText(4, 96, 26, 5, () -> Component.literal(FormatTools.bigFloat(cache.getLevel())))
                 .withAlignment(Enums.TextAlignment.RIGHT)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
 
         mainPanel.addChild(new UIText(37, 96, 26, 5, () -> Component.translatable("gui.tyzs_skills.SP"))
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
-        mainPanel.addChild(new UIText(37, 96, 26, 5, () -> Component.literal(StringTools.valueSmartFormat(cache.getSp())))
+        mainPanel.addChild(new UIText(37, 96, 26, 5, () -> Component.literal(FormatTools.bigFloat(cache.getSp())))
                 .withAlignment(Enums.TextAlignment.RIGHT)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
 
@@ -86,8 +81,9 @@ public class MainMenu extends Screen {
             var icon = ResourceLocation.tryParse(category.icon());
             if(icon == null) continue;
 
-            mainPanel.addChild(new UITabButton(xStart, y, 21, 18, () -> {SortingTools.setCategory(category.id()); return true;}, icon)
-                            .withStyle(() -> SortingTools.getCurrentCategory().equalsIgnoreCase(category.id()) ?
+            mainPanel.addChild(new UITabButton(xStart, y, 21, 18, () -> {
+                        SortingManager.setCategory(category.id()); return true;}, icon)
+                            .withStyle(() -> SortingManager.getCurrentCategory().equalsIgnoreCase(category.id()) ?
                                     UIStyleRegistries.TAB_BTN_SELECTED :
                                     UIStyleRegistries.TAB_BTN_UNSELECTED)
                     /*.withCustomTooltip(() -> new CategoryTooltipData(category))*/);
