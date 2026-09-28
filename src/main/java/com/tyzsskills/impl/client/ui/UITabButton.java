@@ -32,7 +32,7 @@ public class UITabButton extends UIElement{
         else {finalU = currentStyle.u(); finalV = currentStyle.v();}
 
         gui.blit(currentStyle.texture(), x, y, finalU, finalV, width, height, currentStyle.textureSize(), currentStyle.textureSize());
-        gui.blit(icon, x + 4, y + 3, 0, 0, 16, 16, 16, 16);
+        gui.blit(icon, x + 6, y + 3, 0, 0, 16, 16, 16, 16);
     }
 
     @Override

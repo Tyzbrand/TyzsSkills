@@ -52,4 +52,8 @@ public class UIContainer extends UIElement{
         }
         return false;
     }
+
+    public void clear(){
+        children.clear();
+    }
 }

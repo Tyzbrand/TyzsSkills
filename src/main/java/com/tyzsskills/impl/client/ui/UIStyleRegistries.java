@@ -27,8 +27,11 @@ public class UIStyleRegistries {
     public static final ButtonStyle BOOKMARK_BTN_OFF = new ButtonStyle(9, 9, 62 , 203, 71, 203, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
     public static final ButtonStyle BOOKMARK_BTN_ON = new ButtonStyle(9, 9, 42, 203, 51, 203, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 
-    public static final ButtonStyle TAB_BTN_SELECTED = new ButtonStyle(21, 18, 39, 242, 60, 242, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ButtonStyle TAB_BTN_UNSELECTED = new ButtonStyle(21, 18, 39, 260, 60, 260, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ButtonStyle TAB_BTN_SELECTED = new ButtonStyle(29, 20, 87, 240, 87, 240, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ButtonStyle TAB_BTN_UNSELECTED = new ButtonStyle(29, 20, 116, 240, 116, 240, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+
+    public static final ButtonStyle PREV_TAB = new ButtonStyle(9, 13, 69, 247, 78, 247, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ButtonStyle NEXT_TAB = new ButtonStyle(9, 13, 154, 247, 145, 247, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 
 
     //IMAGES

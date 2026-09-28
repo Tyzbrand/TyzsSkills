@@ -1,11 +1,13 @@
 package com.tyzsskills.impl.client.screen;
 
+import com.tyzsskills.Constants;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.tools.FormatTools;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.active.ComponentManager;
 import com.tyzsskills.impl.client.active.SortingManager;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
 import com.tyzsskills.impl.client.ui.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -26,12 +28,13 @@ public class MainMenu extends Screen {
     public static final int WIDTH = 301, HEIGHT = 142;
 
     protected final UIContainer mainPanel;
+    protected final UIContainer tabsPanel;
     protected final ClientCache cache;
 
 //    private CustomScrollView scrollView;
 //    private EditBox searchBar;
 
-
+    private int categoryOffset = 0;
     private int leftPos;
     private int topPos;
 
@@ -41,6 +44,7 @@ public class MainMenu extends Screen {
         this.cache = ClientCache.get();
 
         this.mainPanel = new UIContainer(0, 0, WIDTH, HEIGHT);
+        this.tabsPanel = new UIContainer(0, 0, WIDTH, HEIGHT);
     }
 
     @Override
@@ -49,8 +53,10 @@ public class MainMenu extends Screen {
         this.leftPos = (this.width - WIDTH)/2;
         this.topPos = (this.height - HEIGHT)/2;
 
-
+        mainPanel.clear();
         mainPanel.updatePosition(this.leftPos, this.topPos);
+
+        initOffset();
 
         //Background Icon
         mainPanel.addChild(new UIImage(0, 0, () -> UIStyleRegistries.MENU_BACKGROUND));
@@ -73,25 +79,12 @@ public class MainMenu extends Screen {
                 .withAlignment(Enums.TextAlignment.RIGHT)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
 
-        //Catégories
-        var xStart = 99;
-        var y = 7;
-        for(var category : cache.getAllCategories()){
-
-            var icon = ResourceLocation.tryParse(category.icon());
-            if(icon == null) continue;
-
-            mainPanel.addChild(new UITabButton(xStart, y, 21, 18, () -> {
-                        SortingManager.setCategory(category.id()); return true;}, icon)
-                            .withStyle(() -> SortingManager.getCurrentCategory().equalsIgnoreCase(category.id()) ?
-                                    UIStyleRegistries.TAB_BTN_SELECTED :
-                                    UIStyleRegistries.TAB_BTN_UNSELECTED)
-                    /*.withCustomTooltip(() -> new CategoryTooltipData(category))*/);
-
-            xStart += 22;
-        }
+        mainPanel.addChild(tabsPanel);
+        buildTabs();
     }
 
+
+    //OVERRIDES
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick){
         super.renderBackground(gui, mouseX, mouseY, partialTick);
@@ -100,9 +93,88 @@ public class MainMenu extends Screen {
         mainPanel.draw(gui, mouseX, mouseY, partialTick);
         mainPanel.drawTooltips(gui, this.font, mouseX, mouseY);
     }
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button){
+        int mX = (int) mouseX;
+        int mY = (int) mouseY;
 
+        if(mainPanel.handleClick(mX, mY)) return true;
 
-    //Locals
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+    @Override
+    protected void renderBlurredBackground(float partialTick){}
+    @Override
+    public boolean isPauseScreen(){
+        return false;
+    }
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
+    //  @Override
+//    public void removed() {
+//        if(!Config.KEEP_SEARCH_QUERY.getAsBoolean()) SortingTools.setSearchQuery("");
+//        super.removed();
+//    }
+
+    //RENDERER
+    private void buildTabs(){
+        tabsPanel.clear();
+        var categories = cache.getAllCategories();
+        var total = categories.size();
+
+        tabsPanel.addChild(new UIButton(97, 12, () -> UIStyleRegistries.PREV_TAB,
+                () -> {
+                    if (categoryOffset > 0){
+                        categoryOffset = Math.max(0, categoryOffset - Constants.MAX_CATEGORIES_PER_LINE);
+                        buildTabs();
+                        return true;
+                    }
+                    return false;
+                })
+                .withDisabled(() -> categoryOffset == 0)
+                .withShade(() -> categoryOffset == 0)
+        );
+
+        var x = 106;
+        var y = 5;
+        var end = Math.min(categoryOffset + Constants.MAX_CATEGORIES_PER_LINE, total);
+
+        for(int i = categoryOffset; i < end; i++){
+            var category = categories.get(i);
+            var icon = ResourceLocation.tryParse(category.icon());
+            if(icon == null) continue;
+
+            tabsPanel.addChild(new UITabButton(x, y, 29, 20,
+                    () -> {
+                SortingManager.setCategory(category.id());
+                SortingManager.refreshList();
+                return true;
+                    }, icon)
+                    .withStyle(() -> SortingManager.getCurrentCategory().equalsIgnoreCase(category.id())
+                            ? UIStyleRegistries.TAB_BTN_SELECTED
+                            : UIStyleRegistries.TAB_BTN_UNSELECTED)
+                    .withTooltip(() -> Component.translatable(category.displayName()))
+            );
+            x += 28;
+        }
+
+        tabsPanel.addChild(new UIButton(x + 1, 12, () -> UIStyleRegistries.NEXT_TAB,
+                () -> {
+                    if(categoryOffset + Constants.MAX_CATEGORIES_PER_LINE < total){
+                        categoryOffset += Constants.MAX_CATEGORIES_PER_LINE;
+                        buildTabs();
+                        return true;
+                    }
+                    return false;
+                })
+                .withDisabled(() -> categoryOffset + Constants.MAX_CATEGORIES_PER_LINE >= total)
+                .withShade(() -> categoryOffset + Constants.MAX_CATEGORIES_PER_LINE >= total)
+        );
+    }
     private void renderEntity(GuiGraphics gui, int scale,  int mouseX, int mouseY){
         LivingEntity player = this.minecraft.player;
         if(player == null) return;
@@ -151,35 +223,24 @@ public class MainMenu extends Screen {
     }
 
 
-    //Uilitaires
+    //ACTIVES
+    private void initOffset(){
+        var activeCat = SortingManager.getCurrentCategory();
+        var categories = cache.getAllCategories();
+
+        for (int i = 0; i < categories.size(); i++) {
+            if (categories.get(i).id().equalsIgnoreCase(activeCat)) {
+                this.categoryOffset = (i / Constants.MAX_CATEGORIES_PER_LINE) * Constants.MAX_CATEGORIES_PER_LINE;
+                return;
+            }
+        }
+        this.categoryOffset = 0;
+    }
+
+    //UTILS
     private boolean isHovering(int mouseX, int mouseY, int x, int y, int width, int height){
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
     }
-
-
-    private void renderIcon(GuiGraphics gui, float scale, int u, int v, int w, int h, int btnX, int btnY, int btnS){
-
-        float scaledSize = w * scale;
-        float offset = (btnS - scaledSize) / 2f;
-
-        float targetVisualX = btnX + offset;
-        float targetVisualY = btnY + offset;
-
-        int drawX = (int)(targetVisualX / scale);
-        int drawY = (int)(targetVisualY / scale);
-
-
-        gui.pose().pushPose();
-        gui.pose().scale(scale, scale, 1.0f);
-        gui.setColor(1.0f, 1.0f, 1.0f, 1f);
-
-
-        gui.blit(background, drawX, drawY, u, v, w, h, 325, 325);
-
-        gui.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        gui.pose().popPose();
-    }
-
     private void renderBackdrop(GuiGraphics gui, int x, int y, int width, int height, int color) {
         gui.fill(x, y + 1, x + width, y + height - 1, color);
         gui.fill(x + 1, y, x + width - 1, y + 1, color);
@@ -190,36 +251,5 @@ public class MainMenu extends Screen {
         gui.fill(x, y + 1, x + 1, y + height - 1, 0xFFFFFFFF); // Gauche
         gui.fill(x + width - 1, y + 1, x + width, y + height - 1, 0xFFFFFFFF);
     }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button){
-        int mX = (int) mouseX;
-        int mY = (int) mouseY;
-
-        if(mainPanel.handleClick(mX, mY)) return true;
-
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-//    @Override
-//    public void removed() {
-//        if(!Config.KEEP_SEARCH_QUERY.getAsBoolean()) SortingTools.setSearchQuery("");
-//        super.removed();
-//    }
-
-    //states
-    @Override
-    protected void renderBlurredBackground(float partialTick){}
-    @Override
-    public boolean isPauseScreen(){
-        return false;
-    }
-    @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
 }
