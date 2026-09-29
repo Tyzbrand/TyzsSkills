@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client.active;
 
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
 import org.jetbrains.annotations.ApiStatus;
@@ -12,6 +13,10 @@ import java.util.*;
 public class SortingManager {
     //CATEGORIES
     private static String currentCategory = "";
+
+    //TYPE
+    private static Enums.MenuFocus currentType = Enums.MenuFocus.SKILL;
+    private static ISkill focusedSkill;
 
     //ORDRE ACTUEL
     private static final List<ISkill> currentSkillOrder = new ArrayList<>();
@@ -29,14 +34,18 @@ public class SortingManager {
 
         currentSkillOrder.clear();
         currentSkillOrder.addAll(toSort);
+
+        if(focusedSkill == null && !currentSkillOrder.isEmpty()) focusedSkill = currentSkillOrder.getFirst();
     }
 
     //Setters
     public static void setCategory(@NotNull String cat){currentCategory = cat;}
+    public static void focusSkill(@NotNull ISkill skill){focusedSkill = skill;}
 
     //Getters
-    public static @NotNull @UnmodifiableView List<ISkill> getCurrentSkillOrder() {return currentSkillOrder;}
+    public static @NotNull @UnmodifiableView List<ISkill> getCurrentSkillOrder() {return currentSkillOrderView;}
     public static @NotNull String getCurrentCategory(){return currentCategory;}
+    public static @NotNull ISkill getFocusedSkill(){return focusedSkill;}
 
     //Utils
     public static void clearData(){currentCategory = "all";}

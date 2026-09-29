@@ -61,8 +61,8 @@
   "skill.tyzs_skills.sneak_speed.displayName" : "Sneaking Speed",
   "skill.tyzs_skills.sneak_speed.description" : "Increases movement speed while sneaking by {value}%",
 
-  "skill.tyzs_skills.speed.displayName" : "Speed",
-  "skill.tyzs_skills.speed.description" : "Increases movement speed by {value}%",
+  "skill.tyzs_skills.speed_boost.displayName" : "Speed",
+  "skill.tyzs_skills.speed_boost.description" : "Increases movement speed by {value}%",
 
   "skill.tyzs_skills.step_height.displayName" : "Step Height",
   "skill.tyzs_skills.step_height.description" : "Allows stepping up blocks up to {value} blocks high without jumping",

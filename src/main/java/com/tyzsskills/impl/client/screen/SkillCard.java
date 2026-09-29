@@ -2,10 +2,8 @@ package com.tyzsskills.impl.client.screen;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.client.ui.UIButton;
-import com.tyzsskills.impl.client.ui.UIContainer;
-import com.tyzsskills.impl.client.ui.UIImage;
-import com.tyzsskills.impl.client.ui.UIStyleRegistries;
+import com.tyzsskills.impl.client.active.SortingManager;
+import com.tyzsskills.impl.client.ui.*;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -21,13 +19,16 @@ public class SkillCard {
     protected final ClientCache cache;
 
     protected boolean isLocked;
+    protected boolean isFocused;
 
     protected int latestCacheVersion = -1;
 
     public SkillCard(ISkill skill){
         this.skill = skill;
         this.cache = ClientCache.get();
+
         this.skillCard = new UIContainer(0, 0, WIDTH, HEIGHT);
+        this.skillCard.withShade(() -> isLocked);
 
         var candidate = ResourceLocation.tryParse(skill.getIcon());
         if(candidate != null && Minecraft.getInstance().getResourceManager().getResource(candidate).isPresent()){
@@ -39,7 +40,12 @@ public class SkillCard {
     }
 
     private void init(){
-        skillCard.addChild(new UIButton(0, 0, () -> UIStyleRegistries.CARD, () -> true)
+        skillCard.addChild(new UIButton(0, 0,
+                () -> isFocused ? UIStyleRegistries.CARD_FOCUSED : UIStyleRegistries.CARD,
+                () -> {
+                    SortingManager.focusSkill(skill);
+                    return true;
+                })
                 .withTooltip(() -> Component.translatable(skill.getDisplayName())));
 
         skillCard.addChild(new UIImage(6, 7, 16, 16, icon, 16));
@@ -48,6 +54,9 @@ public class SkillCard {
     public void render(GuiGraphics gui, int x, int y, int mouseX, int mouseY, float partialTick){
         this.x = x;
         this.y = y;
+
+
+        updateData();
 
         skillCard.updatePosition(this.x, this.y);
         skillCard.draw(gui, mouseX, mouseY, partialTick);
@@ -66,12 +75,16 @@ public class SkillCard {
     }
 
     private void updateData(){
+
+        isFocused = SortingManager.getFocusedSkill() == skill;
+
         var currentCacheVersion = ClientCache.get().getVersion();
         if(latestCacheVersion == currentCacheVersion) return;
         else latestCacheVersion = currentCacheVersion;
 
         var sCtx = cache.getSkillContext(skill.getID());
         var pCtx = cache.getPlayerContext();
+
 
         this.isLocked = !SkillRules.isAvailable(sCtx, pCtx);
     }

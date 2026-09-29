@@ -11,6 +11,7 @@ import com.tyzsskills.impl.client.models.CustomScrollView;
 import com.tyzsskills.impl.client.models.SkillEntry;
 import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
 import com.tyzsskills.impl.client.ui.*;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -20,15 +21,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import oshi.util.tuples.Pair;
 
 public class MainMenu extends Screen {
-    private static final ResourceLocation background = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID,
-            "textures/gui/background.png");
+    public static final int WIDTH = 352, HEIGHT = 139;
 
-    private static final ResourceLocation mainFont = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID,
-            "main_font");
-
-    public static final int WIDTH = 301, HEIGHT = 142;
+    private final SkillDetails skillDetails = new SkillDetails();
 
     protected final UIContainer mainPanel;
     protected final UIContainer tabsPanel;
@@ -48,6 +46,8 @@ public class MainMenu extends Screen {
 
         this.mainPanel = new UIContainer(0, 0, WIDTH, HEIGHT);
         this.tabsPanel = new UIContainer(0, 0, WIDTH, HEIGHT);
+
+
     }
 
     @Override
@@ -102,6 +102,8 @@ public class MainMenu extends Screen {
             this.scrollView.render(gui, mouseX, mouseY, partialTick);
         }
 
+        skillDetails.getPanel().draw(gui, mouseX, mouseY, partialTick);
+
         mainPanel.drawTooltips(gui, this.font, mouseX, mouseY);
         renderScrollViewTooltips(gui, mouseX, mouseY);
     }
@@ -110,9 +112,13 @@ public class MainMenu extends Screen {
         int mX = (int) mouseX;
         int mY = (int) mouseY;
 
-        if(mainPanel.handleClick(mX, mY)) return true;
-
+        if(button == 0 && mainPanel.handleClick(mX, mY)) return true;
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        //if (detailsPanel.mouseScrolled(mouseX, mouseY, scrollY)) return true;
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
@@ -238,7 +244,7 @@ public class MainMenu extends Screen {
                 this.minecraft,
                 leftPos + 95, topPos + 26,
                 162, 106, 30,
-                background, UIStyleRegistries.MAIN_TEXTURE_SIZE, UIStyleRegistries.MAIN_TEXTURE_SIZE,
+                UIStyleRegistries.MAIN_TEXTURE, UIStyleRegistries.MAIN_TEXTURE_SIZE, UIStyleRegistries.MAIN_TEXTURE_SIZE,
                 7, 242, 10, 242,
                 3, 11);
 

@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.client.ui;
 
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.impl.client.screen.MainMenu;
 import com.tyzsskills.impl.client.ui.UIStyles.*;
 import net.minecraft.resources.ResourceLocation;
 
@@ -35,12 +36,13 @@ public class UIStyleRegistries {
     public static final ButtonStyle NEXT_TAB = new ButtonStyle(9, 13, 154, 247, 145, 247, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 
     public static final ButtonStyle CARD = new ButtonStyle(28, 28, 68, 262, 96, 262, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ButtonStyle CARD_FOCUSED = new ButtonStyle(28, 124, 68, 262, 152, 262, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 
 
     //IMAGES
     public static final ImageStyle SKILL_CARD = new ImageStyle(64, 30, 166, 142, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
     public static final ImageStyle SKILL_CARD_COMPLETE = new ImageStyle(64, 30, 230, 142, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ImageStyle MENU_BACKGROUND = new ImageStyle(347, 152, 0, 0, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final ImageStyle MENU_BACKGROUND = new ImageStyle(MainMenu.WIDTH, MainMenu.HEIGHT, 0, 0, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
 
     //BARS
     public static final ImageStyle XP_BAR = new ImageStyle(62, 5, 8, 217, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);

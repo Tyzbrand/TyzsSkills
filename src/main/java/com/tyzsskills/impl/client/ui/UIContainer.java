@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UIContainer extends UIElement{
-    private final List<UIElement> children = new ArrayList<>();
+    protected final List<UIElement> children = new ArrayList<>();
 
     public UIContainer(int offsetX, int offsetY, int width, int height) {super(offsetX, offsetY, width, height);}
 
