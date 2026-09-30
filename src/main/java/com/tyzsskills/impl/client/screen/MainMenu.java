@@ -1,27 +1,20 @@
 package com.tyzsskills.impl.client.screen;
 
-import com.tyzsskills.Constants;
-import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.tools.FormatTools;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.client.active.ComponentManager;
-import com.tyzsskills.impl.client.active.SortingManager;
-import com.tyzsskills.impl.client.models.CustomScrollView;
-import com.tyzsskills.impl.client.models.SkillEntry;
-import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
-import com.tyzsskills.impl.client.ui.*;
-import net.minecraft.ChatFormatting;
+import com.tyzsskills.impl.client.Styles;
+import com.tyzsskills.integration.ui.models.UIContainer;
+import com.tyzsskills.integration.ui.models.UIImage;
+import com.tyzsskills.integration.ui.models.UIProgressBar;
+import com.tyzsskills.integration.ui.models.UIText;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import oshi.util.tuples.Pair;
 
 public class MainMenu extends Screen {
     public static final int WIDTH = 352, HEIGHT = 139;
@@ -57,10 +50,10 @@ public class MainMenu extends Screen {
 
 
         //Background Icon
-        mainPanel.addChild(new UIImage(0, 0, () -> UIStyleRegistries.MENU_BACKGROUND));
+        mainPanel.addChild(new UIImage(0, 0, () -> Styles.MENU_BACKGROUND));
 
         //Progress Bar
-        mainPanel.addChild(new UIProgressBar(2, 105, () -> UIStyleRegistries.XP_BAR, () -> cache.getXp()/cache.getXpGoal())
+        mainPanel.addChild(new UIProgressBar(2, 105, () -> Styles.XP_BAR, () -> cache.getXp()/cache.getXpGoal())
                 .withTooltip(() -> Component.literal(cache.getXp() + "/" + FormatTools.defaultFloat(cache.getXpGoal()))));
 
         //Texts

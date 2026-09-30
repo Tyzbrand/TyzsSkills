@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.client.ui;
+package com.tyzsskills.integration.ui;
 
 import com.mojang.datafixers.util.Either;
 import com.tyzsskills.api.Enums;

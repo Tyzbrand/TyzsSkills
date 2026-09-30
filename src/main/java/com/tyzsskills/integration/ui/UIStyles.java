@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.client.ui;
+package com.tyzsskills.integration.ui;
 
 import net.minecraft.resources.ResourceLocation;
 

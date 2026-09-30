@@ -5,10 +5,11 @@ import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.active.ComponentManager;
-import com.tyzsskills.impl.client.ui.*;
+import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.impl.server.skills.SkillRules;
+import com.tyzsskills.integration.ui.models.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -48,20 +49,20 @@ public class SkillCardLegacyLegacy {
          if(candidate != null && Minecraft.getInstance().getResourceManager().getResource(candidate).isPresent()){
             this.icon = candidate;
         }
-        else this.icon = UIStyleRegistries.DEFAULT_SKILL_ICON;
+        else this.icon = Styles.DEFAULT_SKILL_ICON;
 
         this.init();
     }
 
     private void init(){
         //BACKGROUND & ICON
-        skillCard.addChild(new UIImage(0, 0, () -> isMaxed? UIStyleRegistries.SKILL_CARD_COMPLETE : UIStyleRegistries.SKILL_CARD));
+        skillCard.addChild(new UIImage(0, 0, () -> isMaxed? Styles.SKILL_CARD_COMPLETE : Styles.SKILL_CARD));
         skillCard.addChild(new UIImage(7, 7, 16, 16, this.icon, 16)
                 .withCustomTooltip(() -> new SkillTooltipData(this.skill)));
 
         //BADGE
-        skillCard.addChild(new UIBackground(27, 7, 53, 13, UIStyleRegistries.COLOR_BG)
-                .withBorder(() -> new Pair<>(isMaxed, UIStyleRegistries.COLOR_BORDER_MAXED))
+        skillCard.addChild(new UIBackground(27, 7, 53, 13, Styles.COLOR_BG)
+                .withBorder(() -> new Pair<>(isMaxed, Styles.COLOR_BORDER_MAXED))
                 .withScale(.65f, Enums.ScalePivot.TOP_LEFT));
         var textScale = .57f;
         skillCard.addChild(new UIText(29, 9, 30, 10, () ->
@@ -72,7 +73,7 @@ public class SkillCardLegacyLegacy {
         //BUTTONS
         skillCard.addChild(
         new UIButton(38, 17,
-                () -> isShiftPressed ? UIStyleRegistries.BULK_PURCHASE_BTN : UIStyleRegistries.PURCHASE_BTN,
+                () -> isShiftPressed ? Styles.BULK_PURCHASE_BTN : Styles.PURCHASE_BTN,
                 () -> cache.triggerAction(skill, isShiftPressed ? Enums.ClientAction.BULK_PURCHASE : Enums.ClientAction.PURCHASE))
                 .withDisabled(() -> isLocked || isMaxed || !canAffordPurchase || !canBuy)
                 .withTooltipLines(() -> {
@@ -81,7 +82,7 @@ public class SkillCardLegacyLegacy {
                 }));
 
         skillCard.addChild(new UIButton(27, 17,
-                () -> isShiftPressed ? UIStyleRegistries.BULK_REFUND_BTN : UIStyleRegistries.REFUND_BTN,
+                () -> isShiftPressed ? Styles.BULK_REFUND_BTN : Styles.REFUND_BTN,
                 () -> cache.triggerAction(skill, isShiftPressed ? Enums.ClientAction.BULK_REFUND : Enums.ClientAction.REFUND))
                 .withDisabled(() -> currentLevel <= 0 || isLocked || !canAffordRefund || !canRefund)
                 .withTooltipLines(() -> {
@@ -90,7 +91,7 @@ public class SkillCardLegacyLegacy {
                 }));
 
         skillCard.addChild(new UIButton(49, 17,
-                () -> isBookmarked ? UIStyleRegistries.BOOKMARK_BTN_ON : UIStyleRegistries.BOOKMARK_BTN_OFF,
+                () -> isBookmarked ? Styles.BOOKMARK_BTN_ON : Styles.BOOKMARK_BTN_OFF,
                 () -> cache.triggerAction(skill, Enums.ClientAction.BOOKMARK)));
 
         skillCard.withShade(() -> isLocked);

@@ -3,8 +3,9 @@ package com.tyzsskills.impl.client.screen;
 import com.tyzsskills.Constants;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.active.SortingManager;
+import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.models.SubScreen;
-import com.tyzsskills.impl.client.ui.*;
+import com.tyzsskills.integration.ui.models.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -41,7 +42,7 @@ public class SkillPanel extends SubScreen {
         mainPanel.addChild(tabsPanel);
         mainPanel.addChild(scrollView);
 
-        mainPanel.addChild(new UIBackground(267, 5, 80, 129, UIStyleRegistries.COLOR_BG));
+        mainPanel.addChild(new UIBackground(267, 5, 80, 129, Styles.COLOR_BG));
 
         initOffset();
         buildTabs();
@@ -88,7 +89,7 @@ public class SkillPanel extends SubScreen {
         var categories = cache.getAllCategories();
         var total = categories.size();
 
-        tabsPanel.addChild(new UIButton(97, 12, () -> UIStyleRegistries.PREV_TAB,
+        tabsPanel.addChild(new UIButton(97, 12, () -> Styles.PREV_TAB,
                 () -> {
                     if (categoryOffset > 0){
                         categoryOffset = Math.max(0, categoryOffset - Constants.MAX_CATEGORIES_PER_LINE);
@@ -117,14 +118,14 @@ public class SkillPanel extends SubScreen {
                         return true;
                     }, icon)
                     .withStyle(() -> SortingManager.getCurrentCategory().equalsIgnoreCase(category.id())
-                            ? UIStyleRegistries.TAB_BTN_SELECTED
-                            : UIStyleRegistries.TAB_BTN_UNSELECTED)
+                            ? Styles.TAB_BTN_SELECTED
+                            : Styles.TAB_BTN_UNSELECTED)
                     .withTooltip(() -> Component.translatable(category.displayName()))
             );
             x += 28;
         }
 
-        tabsPanel.addChild(new UIButton(x + 1, 12, () -> UIStyleRegistries.NEXT_TAB,
+        tabsPanel.addChild(new UIButton(x + 1, 12, () -> Styles.NEXT_TAB,
                 () -> {
                     if(categoryOffset + Constants.MAX_CATEGORIES_PER_LINE < total){
                         categoryOffset += Constants.MAX_CATEGORIES_PER_LINE;

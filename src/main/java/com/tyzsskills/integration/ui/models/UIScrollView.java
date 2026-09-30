@@ -1,5 +1,6 @@
-package com.tyzsskills.impl.client.ui;
+package com.tyzsskills.integration.ui.models;
 
+import com.tyzsskills.integration.ui.UIElement;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class UIScrollView extends UIContainer{

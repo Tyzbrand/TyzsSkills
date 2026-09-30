@@ -1,12 +1,14 @@
-package com.tyzsskills.impl.client.ui;
+package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.impl.client.SoundPlayer;
+import com.tyzsskills.integration.ui.UIElement;
+import com.tyzsskills.integration.ui.UIStyles;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Supplier;
 
-public class UITabButton extends UIElement{
+public class UITabButton extends UIElement {
 
     private Supplier<UIStyles.ButtonStyle> style;
     private final Supplier<Boolean> onClick;

@@ -1,10 +1,12 @@
-package com.tyzsskills.impl.client.ui;
+package com.tyzsskills.integration.ui.models;
 
+import com.tyzsskills.integration.ui.UIElement;
+import com.tyzsskills.integration.ui.UIStyles;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.function.Supplier;
 
-public class UIProgressBar extends UIElement{
+public class UIProgressBar extends UIElement {
 
     private final Supplier<UIStyles.ImageStyle> style;
     private Supplier<Float> value = () -> 0f;

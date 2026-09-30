@@ -1,6 +1,7 @@
-package com.tyzsskills.impl.client.ui;
+package com.tyzsskills.integration.ui.models;
 
-import com.tyzsskills.impl.client.ui.UIStyles.ButtonStyle;
+import com.tyzsskills.integration.ui.UIElement;
+import com.tyzsskills.integration.ui.UIStyles.ButtonStyle;
 import com.tyzsskills.impl.client.SoundPlayer;
 import net.minecraft.client.gui.GuiGraphics;
 

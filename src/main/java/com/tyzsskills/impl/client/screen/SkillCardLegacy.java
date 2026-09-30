@@ -3,8 +3,11 @@ package com.tyzsskills.impl.client.screen;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.active.SortingManager;
-import com.tyzsskills.impl.client.ui.*;
+import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.server.skills.SkillRules;
+import com.tyzsskills.integration.ui.models.UIButton;
+import com.tyzsskills.integration.ui.models.UIContainer;
+import com.tyzsskills.integration.ui.models.UIImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -34,14 +37,14 @@ public class SkillCardLegacy {
         if(candidate != null && Minecraft.getInstance().getResourceManager().getResource(candidate).isPresent()){
             this.icon = candidate;
         }
-        else this.icon = UIStyleRegistries.DEFAULT_SKILL_ICON;
+        else this.icon = Styles.DEFAULT_SKILL_ICON;
 
         this.init();
     }
 
     private void init(){
         skillCard.addChild(new UIButton(0, 0,
-                () -> isFocused ? UIStyleRegistries.CARD_FOCUSED : UIStyleRegistries.CARD,
+                () -> isFocused ? Styles.CARD_FOCUSED : Styles.CARD,
                 () -> {
                     SortingManager.focusSkill(skill);
                     return true;

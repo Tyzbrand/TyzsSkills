@@ -1,6 +1,7 @@
-package com.tyzsskills.impl.client.ui;
+package com.tyzsskills.integration.ui.models;
 
 import com.mojang.datafixers.util.Either;
+import com.tyzsskills.integration.ui.UIElement;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -8,7 +9,7 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UIContainer extends UIElement{
+public class UIContainer extends UIElement {
     protected final List<UIElement> children = new ArrayList<>();
 
     public UIContainer(int offsetX, int offsetY, int width, int height) {super(offsetX, offsetY, width, height);}

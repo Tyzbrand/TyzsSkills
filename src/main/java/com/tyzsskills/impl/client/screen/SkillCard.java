@@ -2,10 +2,10 @@ package com.tyzsskills.impl.client.screen;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.active.SortingManager;
-import com.tyzsskills.impl.client.ui.UIButton;
-import com.tyzsskills.impl.client.ui.UIContainer;
-import com.tyzsskills.impl.client.ui.UIImage;
-import com.tyzsskills.impl.client.ui.UIStyleRegistries;
+import com.tyzsskills.integration.ui.models.UIButton;
+import com.tyzsskills.integration.ui.models.UIContainer;
+import com.tyzsskills.integration.ui.models.UIImage;
+import com.tyzsskills.impl.client.Styles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -20,10 +20,10 @@ public class SkillCard {
         if(candidate != null && Minecraft.getInstance().getResourceManager().getResource(candidate).isPresent()){
             icon = candidate;
         }
-        else icon = UIStyleRegistries.DEFAULT_SKILL_ICON;
+        else icon = Styles.DEFAULT_SKILL_ICON;
 
         container.addChild(new UIButton(0, 0,
-                () -> UIStyleRegistries.CARD,
+                () -> Styles.CARD,
                 () -> {
                     SortingManager.focusSkill(skill);
                     return true;

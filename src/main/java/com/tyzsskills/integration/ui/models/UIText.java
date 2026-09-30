@@ -1,6 +1,7 @@
-package com.tyzsskills.impl.client.ui;
+package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.integration.ui.UIElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -8,7 +9,7 @@ import net.minecraft.network.chat.MutableComponent;
 
 import java.util.function.Supplier;
 
-public class UIText extends UIElement{
+public class UIText extends UIElement {
 
     private final Font FONT = Minecraft.getInstance().font;
     private final Supplier<MutableComponent> textExtractor;

@@ -1,11 +1,11 @@
-package com.tyzsskills.impl.client.ui;
+package com.tyzsskills.impl.client;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.impl.client.screen.MainMenu;
-import com.tyzsskills.impl.client.ui.UIStyles.*;
+import com.tyzsskills.integration.ui.UIStyles.*;
 import net.minecraft.resources.ResourceLocation;
 
-public class UIStyleRegistries {
+public class Styles {
 
     //TEXTURES
     public static final ResourceLocation MAIN_TEXTURE = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png");

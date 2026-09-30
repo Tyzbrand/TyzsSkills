@@ -1,11 +1,12 @@
-package com.tyzsskills.impl.client.ui;
+package com.tyzsskills.integration.ui.models;
 
+import com.tyzsskills.integration.ui.UIElement;
 import net.minecraft.client.gui.GuiGraphics;
 import oshi.util.tuples.Pair;
 
 import java.util.function.Supplier;
 
-public class UIBackground extends UIElement{
+public class UIBackground extends UIElement {
     private final int backgroundColor;
 
     private Supplier<Pair<Boolean, Integer>> drawBorder = () -> new Pair<>(false, 0);
