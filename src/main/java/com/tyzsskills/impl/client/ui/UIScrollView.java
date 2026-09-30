@@ -36,10 +36,17 @@ public class UIScrollView extends UIContainer{
     protected void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         gui.enableScissor(this.x, this.y, this.x + this.width, this.y + this.height);
 
+        var hovered = isHovering(mouseX, mouseY);
+        var childMouseX = hovered ? mouseX : -1;
+        var childMouseY = hovered ? mouseY : -1;
+
         var scrolledY = (int) (this.y - this.scrollAmount);
         for (var child : children) {
             child.updatePosition(this.x, scrolledY);
-            child.draw(gui, mouseX, mouseY, partialTick, true, isCurrentShaded());
+
+            if (child.y + child.height <= this.y || child.y >= this.y + this.height) continue; //Checks if the child is visible (culling)
+
+            child.draw(gui, childMouseX, childMouseY, partialTick, true, isCurrentShaded());
         }
 
         gui.disableScissor();
@@ -70,8 +77,4 @@ public class UIScrollView extends UIContainer{
 
     //SETTERS
     public void setScrollAmount(double amount){scrollAmount = Math.clamp(amount, 0, getMaxScroll());}
-    public void setContentHeight(int contentHeight){
-        this.contentHeight = contentHeight;
-        setScrollAmount(scrollAmount);
-    }
 }

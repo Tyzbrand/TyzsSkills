@@ -26,42 +26,35 @@ import oshi.util.tuples.Pair;
 public class MainMenu extends Screen {
     public static final int WIDTH = 352, HEIGHT = 139;
 
-    private final SkillDetails skillDetails = new SkillDetails();
-
     protected final UIContainer mainPanel;
-    protected final UIContainer tabsPanel;
     protected final ClientCache cache;
 
-    private CustomScrollView scrollView;
+    private SkillPanel skillPanel;
 //    private EditBox searchBar;
 
-    private int categoryOffset = 0;
     private int leftPos;
     private int topPos;
 
 
     public MainMenu(){
         super(Component.translatable("gui.tyzs_skills.title"));
-        this.cache = ClientCache.get();
+        cache = ClientCache.get();
 
-        this.mainPanel = new UIContainer(0, 0, WIDTH, HEIGHT);
-        this.tabsPanel = new UIContainer(0, 0, WIDTH, HEIGHT);
-
-
+        mainPanel = new UIContainer(0, 0, WIDTH, HEIGHT);
+        skillPanel = new SkillPanel(this);
     }
 
     @Override
     protected void init(){
         super.init();
-        this.leftPos = (this.width - WIDTH)/2;
-        this.topPos = (this.height - HEIGHT)/2;
-
-        this.addScrollView();
+        leftPos = (width - WIDTH)/2;
+        topPos = (height - HEIGHT)/2;
 
         mainPanel.clear();
-        mainPanel.updatePosition(this.leftPos, this.topPos);
+        mainPanel.updatePosition(leftPos, topPos);
 
-        initOffset();
+        skillPanel.updatePositions(leftPos, topPos);
+
 
         //Background Icon
         mainPanel.addChild(new UIImage(0, 0, () -> UIStyleRegistries.MENU_BACKGROUND));
@@ -83,10 +76,6 @@ public class MainMenu extends Screen {
         mainPanel.addChild(new UIText(37, 96, 26, 5, () -> Component.literal(FormatTools.bigFloat(cache.getSp())))
                 .withAlignment(Enums.TextAlignment.RIGHT)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
-
-        mainPanel.addChild(tabsPanel);
-        buildTabs();
-        refreshList();
     }
 
 
@@ -95,29 +84,27 @@ public class MainMenu extends Screen {
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick){
         super.renderBackground(gui, mouseX, mouseY, partialTick);
 
-        this.renderEntity(gui, 39, mouseX, mouseY);
+        renderEntity(gui, 39, mouseX, mouseY);
         mainPanel.draw(gui, mouseX, mouseY, partialTick);
 
-        if (this.scrollView != null) {
-            this.scrollView.render(gui, mouseX, mouseY, partialTick);
-        }
+        skillPanel.render(gui, mouseX, mouseY, partialTick);
+        skillPanel.drawTooltips(gui, font, mouseX, mouseY);
 
-        skillDetails.getPanel().draw(gui, mouseX, mouseY, partialTick);
-
-        mainPanel.drawTooltips(gui, this.font, mouseX, mouseY);
-        renderScrollViewTooltips(gui, mouseX, mouseY);
+        mainPanel.drawTooltips(gui, font, mouseX, mouseY);
     }
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button){
         int mX = (int) mouseX;
         int mY = (int) mouseY;
 
-        if(button == 0 && mainPanel.handleClick(mX, mY)) return true;
+        if(button != 0) return false;
+        if(mainPanel.handleClick(mX, mY)) return true;
+        if(skillPanel.mouseClicked(mouseX, mouseY, button)) return true;
         return super.mouseClicked(mouseX, mouseY, button);
     }
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        //if (detailsPanel.mouseScrolled(mouseX, mouseY, scrollY)) return true;
+        if (skillPanel.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) return true;
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
     @Override
@@ -139,60 +126,6 @@ public class MainMenu extends Screen {
 //    }
 
     //RENDERER
-    private void buildTabs(){
-        tabsPanel.clear();
-        var categories = cache.getAllCategories();
-        var total = categories.size();
-
-        tabsPanel.addChild(new UIButton(97, 12, () -> UIStyleRegistries.PREV_TAB,
-                () -> {
-                    if (categoryOffset > 0){
-                        categoryOffset = Math.max(0, categoryOffset - Constants.MAX_CATEGORIES_PER_LINE);
-                        buildTabs();
-                        return true;
-                    }
-                    return false;
-                })
-                .withDisabled(() -> categoryOffset == 0)
-                .withShade(() -> categoryOffset == 0)
-        );
-
-        var x = 106;
-        var y = 5;
-        var end = Math.min(categoryOffset + Constants.MAX_CATEGORIES_PER_LINE, total);
-
-        for(int i = categoryOffset; i < end; i++){
-            var category = categories.get(i);
-            var icon = ResourceLocation.tryParse(category.icon());
-            if(icon == null) continue;
-
-            tabsPanel.addChild(new UITabButton(x, y, 29, 20,
-                    () -> {
-                SortingManager.setCategory(category.id());
-                refreshList();
-                return true;
-                    }, icon)
-                    .withStyle(() -> SortingManager.getCurrentCategory().equalsIgnoreCase(category.id())
-                            ? UIStyleRegistries.TAB_BTN_SELECTED
-                            : UIStyleRegistries.TAB_BTN_UNSELECTED)
-                    .withTooltip(() -> Component.translatable(category.displayName()))
-            );
-            x += 28;
-        }
-
-        tabsPanel.addChild(new UIButton(x + 1, 12, () -> UIStyleRegistries.NEXT_TAB,
-                () -> {
-                    if(categoryOffset + Constants.MAX_CATEGORIES_PER_LINE < total){
-                        categoryOffset += Constants.MAX_CATEGORIES_PER_LINE;
-                        buildTabs();
-                        return true;
-                    }
-                    return false;
-                })
-                .withDisabled(() -> categoryOffset + Constants.MAX_CATEGORIES_PER_LINE >= total)
-                .withShade(() -> categoryOffset + Constants.MAX_CATEGORIES_PER_LINE >= total)
-        );
-    }
     private void renderEntity(GuiGraphics gui, int scale,  int mouseX, int mouseY){
         LivingEntity player = this.minecraft.player;
         if(player == null) return;
@@ -239,61 +172,7 @@ public class MainMenu extends Screen {
         player.yHeadRot = f5;
         player.yHeadRotO = f6;
     }
-    private void addScrollView(){
-        scrollView = new CustomScrollView(
-                this.minecraft,
-                leftPos + 95, topPos + 26,
-                162, 106, 30,
-                UIStyleRegistries.MAIN_TEXTURE, UIStyleRegistries.MAIN_TEXTURE_SIZE, UIStyleRegistries.MAIN_TEXTURE_SIZE,
-                7, 242, 10, 242,
-                3, 11);
 
-        this.addRenderableWidget(this.scrollView);
-    }
-    private void renderScrollViewTooltips(GuiGraphics gui, int mouseX, int mouseY){
-        if (scrollView != null && scrollView.isMouseOver(mouseX, mouseY)) {
-            var hoveredCard = scrollView.getHoveredWidget(mouseX, mouseY);
-            if (hoveredCard != null) hoveredCard.drawTooltips(gui, this.font, mouseX, mouseY);
-
-        }
-    }
-    public void refreshList(){
-        if(this.scrollView == null) return;
-        scrollView.clearEntries();
-
-        SortingManager.refreshList();
-
-        int maxPerLine = 5;
-
-        SkillEntry currentRow = null;
-        int countInRow = 0;
-
-        for(var skill : SortingManager.getCurrentSkillOrder()){
-            if(currentRow == null || countInRow >= maxPerLine){
-                currentRow = new SkillEntry();
-                this.scrollView.AddEntry(currentRow);
-                countInRow = 0;
-            }
-            currentRow.addWidget(new SkillCard(skill));
-            countInRow++;
-        }
-        this.scrollView.setScrollAmount(0);
-    }
-
-
-    //ACTIVES
-    private void initOffset(){
-        var activeCat = SortingManager.getCurrentCategory();
-        var categories = cache.getAllCategories();
-
-        for (int i = 0; i < categories.size(); i++) {
-            if (categories.get(i).id().equalsIgnoreCase(activeCat)) {
-                this.categoryOffset = (i / Constants.MAX_CATEGORIES_PER_LINE) * Constants.MAX_CATEGORIES_PER_LINE;
-                return;
-            }
-        }
-        this.categoryOffset = 0;
-    }
 
     //UTILS
     private boolean isHovering(int mouseX, int mouseY, int x, int y, int width, int height){

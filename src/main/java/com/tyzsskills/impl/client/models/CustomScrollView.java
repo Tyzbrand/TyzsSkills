@@ -1,6 +1,5 @@
 package com.tyzsskills.impl.client.models;
 
-import com.tyzsskills.impl.client.screen.SkillCard;
 import com.tyzsskills.impl.client.screen.SkillCardLegacy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -84,7 +83,7 @@ public class CustomScrollView extends ObjectSelectionList<CustomScrollView.Entry
         super.addEntry(entry);
     }
 
-    public SkillCard getHoveredWidget(int mouseX, int mouseY) {
+    public SkillCardLegacy getHoveredWidget(int mouseX, int mouseY) {
         CustomScrollView.Entry entry = this.getEntryAtPosition(mouseX, mouseY);
 
         if (entry instanceof SkillEntry skillEntry) {
