@@ -1,7 +1,7 @@
 package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.integration.ui.UIElement;
-import com.tyzsskills.integration.ui.UIStyles.*;
+import com.tyzsskills.integration.ui.records.UIStyles.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
@@ -38,8 +38,8 @@ public class UIImage extends UIElement {
         if(isUniqueTexture) gui.blit(texture, x, y, 0, 0, width, height, textureSize, textureSize);
         else {
             var currentStyle = style.get();
-            gui.blit(currentStyle.texture(), x, y, currentStyle.u(), currentStyle.v(),
-                    currentStyle.width(), currentStyle.height(), currentStyle.textureSize(), currentStyle.textureSize());
+            gui.blit(currentStyle.image().texture(), x, y, currentStyle.u(), currentStyle.v(),
+                    currentStyle.width(), currentStyle.height(), currentStyle.image().size(), currentStyle.image().size());
         }
     }
 }

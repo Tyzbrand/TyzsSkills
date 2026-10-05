@@ -118,6 +118,45 @@ public abstract class UIElement {
         return handleClick(mouseX, mouseY, true);
     }
 
+    //Scrolls
+    protected boolean onScroll(double mouseX, double mouseY, double deltaY) {return false;}
+
+    public final boolean handleScroll(double mouseX, double mouseY, double deltaY, boolean inheritedVisible) {
+        boolean visible = inheritedVisible && visibleWhen.get();
+        if (!visible) return false;
+        return onScroll(mouseX, mouseY, deltaY);
+    }
+
+    public final boolean handleScroll(double mouseX, double mouseY, double deltaY){
+        return handleScroll(mouseX, mouseY, deltaY, true);
+    }
+
+    //Drags
+    protected boolean onDrag(double mouseX, double mouseY, int button, double dragX, double dragY){return false;}
+
+    public final boolean handleDrag(double mouseX, double mouseY, int button, double dragX, double dragY, boolean inheritedVisible) {
+        boolean visible = inheritedVisible && visibleWhen.get();
+        if (!visible) return false;
+        return onDrag(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    public boolean handleDrag(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        return handleDrag(mouseX, mouseY, button, dragX, dragY, true);
+    }
+
+    //Releases
+    protected boolean onRelease(double mouseX, double mouseY, int button) { return false; }
+
+    public boolean handleRelease(double mouseX, double mouseY, int button, boolean inheritedVisible) {
+        boolean visible = inheritedVisible && visibleWhen.get();
+        if (!visible) return false;
+        return onRelease(mouseX, mouseY, button);
+    }
+
+    public boolean handleRelease(double mouseX, double mouseY, int button) {
+        return handleRelease(mouseX, mouseY, button, true);
+    }
+
     //Tooltips
     protected List<Either<FormattedText, TooltipComponent>> resolveTooltips(int mouseX, int mouseY) {
         return tooltip.get();
@@ -151,7 +190,6 @@ public abstract class UIElement {
         render(gui, mouseX, mouseY, partialTick);
         gui.setColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
-
     private void drawScaled(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean shaded) {
         float pivotX = (scalePivot == Enums.ScalePivot.CENTER) ? x + (width / 2f) : x;
         float pivotY = (scalePivot == Enums.ScalePivot.CENTER) ? y + (height / 2f) : y;

@@ -2,7 +2,7 @@ package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.impl.client.SoundPlayer;
 import com.tyzsskills.integration.ui.UIElement;
-import com.tyzsskills.integration.ui.UIStyles;
+import com.tyzsskills.integration.ui.records.UIStyles;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
@@ -33,7 +33,7 @@ public class UITabButton extends UIElement {
         if(isHovering(mouseX, mouseY)) {finalU = currentStyle.uHover(); finalV = currentStyle.vHover();}
         else {finalU = currentStyle.u(); finalV = currentStyle.v();}
 
-        gui.blit(currentStyle.texture(), x, y, finalU, finalV, width, height, currentStyle.textureSize(), currentStyle.textureSize());
+        gui.blit(currentStyle.image().texture(), x, y, finalU, finalV, width, height, currentStyle.image().size(), currentStyle.image().size());
         gui.blit(icon, x + 6, y + 3, 0, 0, 16, 16, 16, 16);
     }
 

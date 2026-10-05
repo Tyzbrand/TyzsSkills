@@ -1,49 +1,30 @@
 package com.tyzsskills.impl.client;
 
 import com.tyzsskills.Tyzsskills;
-import com.tyzsskills.impl.client.screen.MainMenu;
-import com.tyzsskills.integration.ui.UIStyles.*;
+import com.tyzsskills.integration.ui.records.UIStyles;
+import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.resources.ResourceLocation;
 
 public class Styles {
-
-    //TEXTURES
-    public static final ResourceLocation MAIN_TEXTURE = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png");
-    public static final int MAIN_TEXTURE_SIZE = 400;
-
-    public static final ResourceLocation DEFAULT_SKILL_ICON = ResourceLocation.parse("minecraft:textures/item/barrier.png");
-    public static final ResourceLocation LOCKED_SKILL_ICON = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/lock_icon.png");
 
     //COLORS
     public static final int COLOR_BG = 0xD5000000;
     public static final int COLOR_BORDER_MAXED = 0xFFD6AD55;
     public static final int COLOR_BORDER = 0xFFFFFFFF;
 
-    //BUTTONS
-    public static final ButtonStyle PURCHASE_BTN = new ButtonStyle(9, 9, 42 , 192, 51, 192, 60, 192, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ButtonStyle BULK_PURCHASE_BTN = new ButtonStyle(9, 9, 100, 192, 109, 192, 60, 192, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-
-    public static final ButtonStyle REFUND_BTN = new ButtonStyle(9, 9, 71 , 192, 80, 192, 89, 192, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ButtonStyle BULK_REFUND_BTN = new ButtonStyle(9, 9, 120, 192, 129, 192, 89, 192, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-
-    public static final ButtonStyle BOOKMARK_BTN_OFF = new ButtonStyle(9, 9, 62 , 203, 71, 203, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ButtonStyle BOOKMARK_BTN_ON = new ButtonStyle(9, 9, 42, 203, 51, 203, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-
-    public static final ButtonStyle TAB_BTN_SELECTED = new ButtonStyle(29, 20, 87, 240, 87, 240, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ButtonStyle TAB_BTN_UNSELECTED = new ButtonStyle(29, 20, 116, 240, 116, 240, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-
-    public static final ButtonStyle PREV_TAB = new ButtonStyle(9, 13, 69, 247, 78, 247, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ButtonStyle NEXT_TAB = new ButtonStyle(9, 13, 154, 247, 145, 247, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-
-    public static final ButtonStyle CARD = new ButtonStyle(28, 28, 68, 262, 96, 262, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ButtonStyle CARD_FOCUSED = new ButtonStyle(28, 124, 68, 262, 152, 262, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    //Styles
+    public static final UITexture MAIN_TEXTURE =
+            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png"), 400);
 
 
-    //IMAGES
-    public static final ImageStyle SKILL_CARD = new ImageStyle(64, 30, 166, 142, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ImageStyle SKILL_CARD_COMPLETE = new ImageStyle(64, 30, 230, 142, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
-    public static final ImageStyle MENU_BACKGROUND = new ImageStyle(MainMenu.WIDTH, MainMenu.HEIGHT, 0, 0, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+    public static final UITexture DEFAULT_SKILL_ICON =
+            new UITexture(ResourceLocation.parse("minecraft:textures/item/barrier.png"), 16);
+    public static final UITexture LOCKED_SKILL_ICON =
+            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/lock_icon.png"), 16);
 
-    //BARS
-    public static final ImageStyle XP_BAR = new ImageStyle(62, 5, 8, 217, MAIN_TEXTURE, MAIN_TEXTURE_SIZE);
+
+    public static final UIStyles.BackgroundStyle DEFAULT_BACKGROUND =
+            new UIStyles.BackgroundStyle(COLOR_BG, COLOR_BORDER, 4, 4);
+
+
 }

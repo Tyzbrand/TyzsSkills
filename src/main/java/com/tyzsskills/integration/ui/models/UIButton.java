@@ -1,7 +1,7 @@
 package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.integration.ui.UIElement;
-import com.tyzsskills.integration.ui.UIStyles.ButtonStyle;
+import com.tyzsskills.integration.ui.records.UIStyles.ButtonStyle;
 import com.tyzsskills.impl.client.SoundPlayer;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -33,7 +33,7 @@ public class UIButton extends UIElement {
         else if(isHovering(mouseX, mouseY)) {finalU =  currentStyle.uHover(); finalV = currentStyle.vHover();}
         else {finalU = currentStyle.u(); finalV = currentStyle.v();}
 
-        gui.blit(currentStyle.texture(), x, y, finalU, finalV, width, height, currentStyle.textureSize(), currentStyle.textureSize());
+        gui.blit(currentStyle.image().texture(), x, y, finalU, finalV, width, height, currentStyle.image().size(), currentStyle.image().size());
     }
 
     @Override

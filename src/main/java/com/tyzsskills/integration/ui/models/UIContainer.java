@@ -36,6 +36,31 @@ public class UIContainer extends UIElement {
     }
 
     @Override
+    protected boolean onScroll(double mouseX, double mouseY, double deltaY) {
+        for (int i = children.size() - 1; i >= 0; i--) {
+            var child = children.get(i);
+            if (child.handleScroll(mouseX, mouseY, deltaY, true)) return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean onDrag(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        for (int i = children.size() - 1; i >= 0; i--) {
+            if (children.get(i).handleDrag(mouseX, mouseY, button, dragX, dragY, true)) return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean onRelease(double mouseX, double mouseY, int button) {
+        for (int i = children.size() - 1; i >= 0; i--) {
+            if (children.get(i).handleRelease(mouseX, mouseY, button, true)) return true;
+        }
+        return false;
+    }
+
+    @Override
     protected List<Either<FormattedText, TooltipComponent>> resolveTooltips(int mouseX, int mouseY) {
         for (int i = children.size() - 1; i >= 0; i--) {
             var child = children.get(i);

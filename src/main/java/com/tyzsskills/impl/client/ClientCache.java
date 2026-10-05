@@ -116,8 +116,10 @@ public class ClientCache {
 
     //SERVER
     private final List<Category> categories = new ArrayList<>();
+    private final Map<String, Category> categoriesMap = new HashMap<>();
     private final List<Category> categoriesView = Collections.unmodifiableList(categories);
     public @NotNull @UnmodifiableView List<Category> getAllCategories(){return categoriesView;}
+    public @Nullable Category getCategory(@NotNull String categoryId){return categoriesMap.getOrDefault(categoryId, null);}
 
 
     private final Map<String, ISkill> skills = new HashMap<>();
@@ -387,7 +389,8 @@ public class ClientCache {
         sortedCategories.sort(Comparator.comparingInt(Category::order));
 
         this.categories.addAll(sortedCategories);
-        if(!this.categories.isEmpty()) SortingManager.setCategory(this.categories.getFirst().id());
+        for(var cat : categories) categoriesMap.put(cat.id(), cat);
+        if(!this.categories.isEmpty()) SortingManager.setCategory(this.categories.getFirst());
     }
 
     //CONFIG
