@@ -12,6 +12,7 @@ import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.payloads.*;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -66,8 +67,7 @@ public class SkillManager {
     public static void resetSkillLevels(@NotNull ServerPlayer player){
         for(var skill : SKILL_COLLECTION.values()) setSkillLevelInternal(player, skill, 0, false);
     }
-    public static boolean tryBuySkill(@NotNull ServerPlayer player, @NotNull String skillId)
-    {
+    public static boolean tryBuySkill(@NotNull ServerPlayer player, @NotNull String skillId) {
         skillId = skillId.toLowerCase();
         var skill = getSkill(skillId);
         if(skill == null) return false;
@@ -116,8 +116,7 @@ public class SkillManager {
         }
         return false;
     }
-    public static boolean tryRefundSkill(@NotNull ServerPlayer player, @NotNull String skillId)
-    {
+    public static boolean tryRefundSkill(@NotNull ServerPlayer player, @NotNull String skillId) {
         skillId = skillId.toLowerCase();
         var skill = getSkill(skillId);
 
@@ -169,7 +168,6 @@ public class SkillManager {
         return false;
     }
     public static void bookmarkSkill(@NotNull ServerPlayer player, @NotNull String skillId){
-        skillId = skillId.toLowerCase();
         var skill = getSkill(skillId);
         if(skill == null) return;
 
@@ -182,8 +180,24 @@ public class SkillManager {
         NeoForge.EVENT_BUS.post(new SkillActionEvent.Bookmark(skill, player));
         PacketDistributor.sendToPlayer(player, new UpdatePayloads.BookmarksPayload(skillId, newValue));
     }
+    public static boolean deactivateSkill(@NotNull ServerPlayer player, @NotNull String skillId){
+        var skill = getSkill(skillId);
+        if(skill == null || getPlayerSkillLevel(player, skillId) <= 0) return false;
 
+        var data = player.getData(PlayerData.DATA);
+        var isCurrentlyDeactivated = data.isDeactivated(skillId);
+        var newValue = !isCurrentlyDeactivated;
 
+        data.triggerDeactivation(skillId);
+        PacketDistributor.sendToPlayer(player, new UpdatePayloads.DeactivationsPayload(skillId, newValue));
+
+        if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
+            GenericEffects.applyEffects(skill, player);
+        }
+
+        player.displayClientMessage(Component.literal("GOOD"), false);
+        return true;
+    }
 
     //API
     public static void registerSkill(@NotNull Skill skill) {
@@ -210,7 +224,8 @@ public class SkillManager {
     //getters
     public static @Nullable Skill getSkill(@NotNull String skillId){return SKILL_COLLECTION.getOrDefault(skillId.toLowerCase(), null);}
     public static boolean isSkillLoaded(String id){return SKILL_COLLECTION.containsKey(id);}
-    public static boolean isSkillBookmarked(@NotNull ServerPlayer player,@NotNull String skillId) {return player.getData(PlayerData.DATA).isBookmarked(skillId.toLowerCase());}
+    public static boolean isSkillBookmarked(@NotNull ServerPlayer player, @NotNull String skillId) {return player.getData(PlayerData.DATA).isBookmarked(skillId);}
+    public static boolean isSkillDeactivated(@NotNull ServerPlayer player, @NotNull String skillId){return player.getData(PlayerData.DATA).isDeactivated(skillId);}
 
     public static @NotNull Context.Player getPlayerContext(@NotNull ServerPlayer player){
         return PLAYER_CONTEXT.updateContext(player, LevelManager.getLevel(player), SpManager.getSP(player), getPlayerSkillLevels(player));
@@ -228,7 +243,8 @@ public class SkillManager {
         return player.getData(PlayerData.DATA).getOwnedSkill();
     }
 
-    public static @NotNull @Unmodifiable List<String> getAllBookmarkIDs(@NotNull ServerPlayer player){return player.getData(PlayerData.DATA).getBookmarks();}
+    public static @NotNull @UnmodifiableView List<String> getAllBookmarkIDs(@NotNull ServerPlayer player){return player.getData(PlayerData.DATA).getBookmarks();}
+    public static @NotNull @UnmodifiableView List<String> getAllDeactivatedIds(@NotNull ServerPlayer player){return player.getData(PlayerData.DATA).getDeactivatedSkills();}
 
 
     //CORE

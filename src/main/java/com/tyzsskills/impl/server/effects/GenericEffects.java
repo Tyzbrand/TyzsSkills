@@ -21,9 +21,10 @@ public class GenericEffects {
         var healthSnapshot = player.getHealth();
         var attributeChanged = false;
         var currentLvl = SkillManager.getPlayerSkillLevel(player, skill.getID());
+        var deactivated = SkillManager.isSkillDeactivated(player, skill.getID());
 
         var expectedAttributes = new HashSet<>();
-        if (currentLvl > 0) {
+        if (currentLvl > 0 && !deactivated) {
             for (var modifier : skill.getModifiers()) {
                 ResourceLocation id = ResourceLocation.tryParse(modifier.attribute());
                 if (id != null) expectedAttributes.add(id);
@@ -51,10 +52,11 @@ public class GenericEffects {
             }
         }
 
-            if(currentLvl <= 0){
+            if(currentLvl <= 0 || deactivated){
                 if(attributeChanged && healthSnapshot > player.getHealth()) player.setHealth(healthSnapshot);
                 return;
             }
+
 
             for(var modifier : skill.getModifiers()){
                 ResourceLocation attributeID = ResourceLocation.tryParse(modifier.attribute());

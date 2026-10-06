@@ -48,10 +48,11 @@ public class UpdatePayloads {
                 ConfigSyncData::new
         );
     }
-    public record ServerSyncData(List<Skill> skills, List<String> bookmarks, List<Category> categories, Map<String, Integer> playerSkillLevels){
+    public record ServerSyncData(List<Skill> skills, List<String> bookmarks, List<String> deactivations, List<Category> categories, Map<String, Integer> playerSkillLevels){
         public static final StreamCodec<RegistryFriendlyByteBuf, ServerSyncData> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.collection(ArrayList::new, Skill.STREAM_CODEC), ServerSyncData::skills,
                 ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.STRING_UTF8), ServerSyncData::bookmarks,
+                ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.STRING_UTF8), ServerSyncData::deactivations,
                 ByteBufCodecs.collection(ArrayList::new, Category.STREAM_CODEC), ServerSyncData::categories,
                 ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.INT), ServerSyncData::playerSkillLevels,
                 ServerSyncData::new
@@ -200,6 +201,25 @@ public class UpdatePayloads {
         }
 
     }
+    public record DeactivationsPayload(String id, boolean state) implements CustomPacketPayload{
+        public static final Type<DeactivationsPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_deactivation_payload"));
+
+        public static final StreamCodec<ByteBuf, DeactivationsPayload> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, DeactivationsPayload::id,
+                ByteBufCodecs.BOOL, DeactivationsPayload::state,
+                DeactivationsPayload::new
+        );
+
+        @Override
+        public @NotNull Type<? extends CustomPacketPayload> type(){
+            return TYPE;
+        }
+
+        public static void Handle(final DeactivationsPayload payload, final IPayloadContext ctx){
+            ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateDeactivations(payload);} );
+        }
+
+    }
 
     //UTILS
     public static UpdatePayloads.InitPayload getInitPayload(ServerPlayer player){
@@ -207,8 +227,8 @@ public class UpdatePayloads {
 
         return new UpdatePayloads.InitPayload(
                 new UpdatePayloads.ServerSyncData(SkillManager.getAllSkills().stream().toList(),
-                        SkillManager.getAllBookmarkIDs(player), CategoryLoader.getCategories(),
-                        SkillManager.getPlayerSkillLevels(player)),
+                        SkillManager.getAllBookmarkIDs(player), SkillManager.getAllDeactivatedIds(player),
+                        CategoryLoader.getCategories(), SkillManager.getPlayerSkillLevels(player)),
 
                 new UpdatePayloads.PlayerSyncData(LevelManager.getLevel(player),
                         SpManager.getSP(player), XpManager.getXP(player),

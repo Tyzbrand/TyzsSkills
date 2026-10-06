@@ -6,6 +6,9 @@ import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
 
 public record Category(@NotNull String id, @NotNull String displayName, @NotNull String icon, int order) {
+
+    public boolean is(@NotNull String categoryId){return categoryId.equalsIgnoreCase(id);}
+
     public static final StreamCodec<ByteBuf, Category> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, Category::id,
             ByteBufCodecs.STRING_UTF8, Category::displayName,

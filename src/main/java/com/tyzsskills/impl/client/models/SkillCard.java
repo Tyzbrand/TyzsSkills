@@ -6,7 +6,6 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.active.ComponentManager;
-import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.models.*;
@@ -29,6 +28,7 @@ public class SkillCard extends UIContainer {
     protected boolean isLocked;
     protected boolean isMaxed;
     protected boolean isBookmarked;
+    protected boolean isDeactivated;
     protected boolean canAffordPurchase;
     protected boolean canAffordRefund;
     protected boolean canBuy;
@@ -42,11 +42,17 @@ public class SkillCard extends UIContainer {
     //region STYLES
     private static final UIStyles.ImageStyle SKILL_CARD =
             new UIStyles.ImageStyle(64,30, 69, 262, Styles.MAIN_TEXTURE);
+    private static final UIStyles.ImageStyle SKILL_CARD_MAXED =
+            new UIStyles.ImageStyle(64,30, 69, 292, Styles.MAIN_TEXTURE);
 
-    private static final UIStyles.ImageStyle CADRE_DEFAULT =
-            new UIStyles.ImageStyle(22, 22, 138, 267,  Styles.MAIN_TEXTURE);
-    private static final UIStyles.ImageStyle CADRE_ACTIVE =
-            new UIStyles.ImageStyle(22, 22, 160, 267,  Styles.MAIN_TEXTURE);
+    private static final UIStyles.ButtonStyle CADRE_DEFAULT =
+            new UIStyles.ButtonStyle(22, 22, 138, 267,  Styles.MAIN_TEXTURE);
+    private static final UIStyles.ButtonStyle CADRE_ACTIVE =
+            new UIStyles.ButtonStyle(22, 22, 160, 267,  Styles.MAIN_TEXTURE);
+    private static final UIStyles.ButtonStyle CADRE_INACTIVE =
+            new UIStyles.ButtonStyle(22, 22, 182, 267,  Styles.MAIN_TEXTURE);
+    private static final UIStyles.ButtonStyle CADRE_MAXED =
+            new UIStyles.ButtonStyle(22, 22, 204, 267,  Styles.MAIN_TEXTURE);
 
     private static final UIStyles.ButtonStyle PURCHASE_BTN =
             new UIStyles.ButtonStyle(9, 9, 69, 227, 78, 227, 87, 227, Styles.MAIN_TEXTURE);
@@ -90,15 +96,15 @@ public class SkillCard extends UIContainer {
     //IMPLEMENTATION
     private void initElements(){
         //BACKGROUND & ICON
-        this.addChild(new UIImage(0, 0, () -> SKILL_CARD));
-        this.addChild(new UIImage(4, 4, () -> CADRE_DEFAULT));
+        this.addChild(new UIImage(0, 0, () -> isMaxed ? SKILL_CARD_MAXED : SKILL_CARD));
+        this.addChild(new UIButton(4, 4, this::getCadreStyle, this::handleDeactivation));
         this.addChild(new UIImage(7, 7, 16, 16, this.icon, 16).withScale(.95f, Enums.ScalePivot.CENTER));
 //                .withCustomTooltip(() -> new SkillTooltipData(this.skill)));
 
         //BADGE
         var textScale = .57f;
         this.addChild(new UIText(29, 9, 30, 10, this::getSkillLevelText)
-                .withWrapWidth((int)(30 / textScale)).withAlignment(Enums.TextAlignment.LEFT).withBackground(() -> LEVEL_BACKGROUND, () -> false)
+                .withWrapWidth((int)(30 / textScale)).withAlignment(Enums.TextAlignment.LEFT).withBackground(() -> LEVEL_BACKGROUND, () -> isMaxed)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
 
         //BUTTONS
@@ -126,6 +132,7 @@ public class SkillCard extends UIContainer {
         this.isLocked = !SkillRules.isAvailable(sCtx, pCtx);
         this.isMaxed = cache.getSkillLevel(skill.getID()) >= skill.getMaximumLevel();
         this.isBookmarked = cache.isSkillBookMarked(skill.getID());
+        this.isDeactivated = cache.isSkillDeactivated(skill.getID());
         this.canAffordPurchase = SkillRules.canBuy(sCtx, pCtx, cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
         this.canAffordRefund = SkillRules.canRefund(sCtx, pCtx, cache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
         this.canBuy = cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true) && skill.isPurchasable();
@@ -144,6 +151,9 @@ public class SkillCard extends UIContainer {
     }
     private boolean handleBookmark(){
         return cache.triggerAction(skill, Enums.ClientAction.BOOKMARK);
+    }
+    private boolean handleDeactivation(){
+        return cache.triggerAction(skill, Enums.ClientAction.DEACTIVATION);
     }
 
     // ==================== CONDITIONS ====================
@@ -167,6 +177,13 @@ public class SkillCard extends UIContainer {
         return !isLocked
                 ? Component.translatable("gui.tyzs_skills.Lvl").append(": " + currentLevel + "/" + skill.getMaximumLevel())
                 : Component.translatable("gui.tyzs_skills.locked");
+    }
+
+    // ==================== STYLES ====================
+    private UIStyles.ButtonStyle getCadreStyle(){
+        if(isDeactivated) return CADRE_INACTIVE;
+        if(isMaxed) return CADRE_MAXED;
+        return currentLevel > 0 ? CADRE_ACTIVE : CADRE_DEFAULT;
     }
     //endregion
 }

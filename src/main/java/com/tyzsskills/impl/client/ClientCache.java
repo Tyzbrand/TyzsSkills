@@ -67,17 +67,26 @@ public class ClientCache {
     private final Map<String, Integer> skillLevels = new HashMap<>();
     private final Map<String, Integer> skillLevelsView = Collections.unmodifiableMap(skillLevels);
     public int getSkillLevel(@NotNull String skillId) {
-        return skillLevels.getOrDefault(skillId.toLowerCase(), 0);
+        return skillLevels.getOrDefault(skillId, 0);
     }
     public @NotNull @UnmodifiableView Map<String, Integer> getOwnedSkills(){return skillLevelsView;}
 
     private final Set<String> bookmarks = new HashSet<>();
     private final Set<String> bookmarksView = Collections.unmodifiableSet(bookmarks);
     public boolean isSkillBookMarked(@NotNull String skillId) {
-        return bookmarks.contains(skillId.toLowerCase());
+        return bookmarks.contains(skillId);
     }
     public @NotNull @UnmodifiableView Set<String> getBookmarkedSkills() {
         return bookmarksView;
+    }
+
+    private final Set<String> deactivations = new HashSet<>();
+    private final Set<String> deactivationsView = Collections.unmodifiableSet(deactivations);
+    public boolean isSkillDeactivated(@NotNull String skillId) {
+        return deactivations.contains(skillId);
+    }
+    public @NotNull @UnmodifiableView Set<String> getDeactivatedSkills() {
+        return deactivationsView;
     }
 
     //STATISTICS
@@ -140,12 +149,13 @@ public class ClientCache {
             var serverData = payload.serverData();
 
            skills.clear(); configMap.clear(); bookmarks.clear();
-           skillLevels.clear();
+           deactivations.clear(); skillLevels.clear();
 
             for(var skill : serverData.skills()) skills.put(skill.getID(), skill);
             GRAPH.build(getAllSkills().values());
 
             bookmarks.addAll(serverData.bookmarks());
+            deactivations.addAll(serverData.deactivations());
             skillLevels.putAll(serverData.playerSkillLevels());
 
             sortCategories(serverData.categories());
@@ -217,6 +227,12 @@ public class ClientCache {
             registerUpdate("Bookmark Synced: New Cached Bookmark [" + id + ", " + payload.state() + "]");
         }
 
+        public void updateDeactivations(@NotNull UpdatePayloads.DeactivationsPayload payload) {
+            if (payload.state()) deactivations.add(payload.id());
+            else deactivations.remove(payload.id());
+            registerUpdate("Deactivation Synced: New Cached Deactivation [" + payload.id() + ", " + payload.state() + "]");
+        }
+
         private void registerUpdate(String message) {
             cacheVersion++;
             var player = Minecraft.getInstance().player;
@@ -231,14 +247,17 @@ public class ClientCache {
         var success = false;
 
         switch(actionType){
-            case PURCHASE -> {success = predictPurchase(skill);}
-            case REFUND -> {success =  predictRefund(skill);}
-            case BULK_PURCHASE -> {success = predictBulkPurchase(skill);}
-            case BULK_REFUND -> {success = predictBulkRefund(skill);}
+            case PURCHASE -> success = predictPurchase(skill);
+            case REFUND -> success =  predictRefund(skill);
+            case BULK_PURCHASE -> success = predictBulkPurchase(skill);
+            case BULK_REFUND -> success = predictBulkRefund(skill);
             case BOOKMARK -> {
                 predictBookmark(skill);
                 success = true;
             }
+            case DEACTIVATION -> success = predictDeactivation(skill);
+
+
         }
 
         if(success){
@@ -253,11 +272,19 @@ public class ClientCache {
         String id = skill.getID().toLowerCase();
         if (isSkillBookMarked(id)) bookmarks.remove(id);
         else bookmarks.add(id);
+        cacheVersion++;
+    }
 
-//        if(Minecraft.getInstance().screen instanceof MainMenu gui && SortingTools.getMainCategory() == Enums.SortingCategory.BOOKMARKS)
-//            gui.refreshList();
+    //PREDICTIONS
+    private boolean predictDeactivation(ISkill skill) {
+        String id = skill.getID();
+        if(getSkillLevel(id) <= 0) return false;
+
+        if (isSkillDeactivated(id)) deactivations.remove(id);
+        else deactivations.add(id);
 
         cacheVersion++;
+        return true;
     }
 
     private boolean predictPurchase(ISkill skill) {

@@ -163,6 +163,12 @@ public class Tyzsskills {
                 UpdatePayloads.BookmarksPayload::Handle
         );
 
+        registrar.playToClient(
+                UpdatePayloads.DeactivationsPayload.TYPE,
+                UpdatePayloads.DeactivationsPayload.STREAM_CODEC,
+                UpdatePayloads.DeactivationsPayload::Handle
+        );
+
         registrar.playToServer(
                 CActionSkillPayload.TYPE,
                 CActionSkillPayload.STREAM_CODEC,

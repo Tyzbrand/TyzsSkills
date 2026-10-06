@@ -9,7 +9,7 @@ public class Styles {
 
     //COLORS
     public static final int COLOR_BG = 0xD5000000;
-    public static final int COLOR_BORDER_MAXED = 0xFFD6AD55;
+    public static final int COLOR_BORDER_MAXED = 0xFFA38441;
     public static final int COLOR_BORDER = 0xFFFFFFFF;
 
     //Styles

@@ -2,7 +2,6 @@ package com.tyzsskills.impl.server.attachments;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.model.Cooldown;
-import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -24,6 +23,8 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     private final Map<String, Integer> playerSkillsView = Collections.unmodifiableMap(playerSkills);
     private final List<String> playerBookmarks = new ArrayList<>();
     private final List<String> playerBookmarksView = Collections.unmodifiableList(playerBookmarks);
+    private final List<String> playerDeactivations = new ArrayList<>();
+    private final List<String> playerDeactivationsView = Collections.unmodifiableList(playerDeactivations);
 
     //SPELLS
     private final Map<String, Integer> playerSpellsProperties = new HashMap<>();
@@ -145,6 +146,13 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     public @NotNull @UnmodifiableView List<String> getBookmarks(){return playerBookmarksView;}
     public boolean isBookmarked(String id){return playerBookmarks.contains(id);}
 
+    //-----------------Deactivations-----------------
+    public void triggerDeactivation(String id){
+        if(playerDeactivations.contains(id)) playerDeactivations.remove(id);
+        else playerDeactivations.add(id);
+    }
+    public @NotNull @UnmodifiableView List<String> getDeactivatedSkills(){return playerDeactivationsView;}
+    public boolean isDeactivated(String id){return playerDeactivations.contains(id);}
 
     //-----------------Level-----------------
     public void setLevel(int lvl){playerLevel = Math.max(1, lvl);}
@@ -178,6 +186,10 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         playerBookmarks.forEach(b -> bookmarks.add(StringTag.valueOf(b)));
         tag.put("skill_bookmarks", bookmarks);
 
+        ListTag deactivations = new ListTag();
+        playerDeactivations.forEach(b -> deactivations.add(StringTag.valueOf(b)));
+        tag.put("skill_deactivations", deactivations);
+
         CompoundTag propertyLevels = new CompoundTag();
         for(var entry : playerSpellsProperties.entrySet()) propertyLevels.putInt(entry.getKey(), entry.getValue());
         tag.put("property_levels", propertyLevels);
@@ -210,6 +222,7 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     @Override
     public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag compoundTag) {
         playerBookmarks.clear();
+        playerDeactivations.clear();
         playerSkills.clear();
         playerSpellsProperties.clear();
         playerSpells.clear();
@@ -224,6 +237,12 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         if(compoundTag.contains("skill_bookmarks")){
             for (var id : compoundTag.getList("skill_bookmarks", Tag.TAG_STRING)){
                 playerBookmarks.add(id.getAsString());
+            }
+        }
+
+        if(compoundTag.contains("skill_deactivations")){
+            for (var id : compoundTag.getList("skill_deactivations", Tag.TAG_STRING)){
+                playerDeactivations.add(id.getAsString());
             }
         }
 

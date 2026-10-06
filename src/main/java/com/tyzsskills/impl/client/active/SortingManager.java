@@ -28,8 +28,8 @@ public class SortingManager {
         var cache = ClientCache.get();
         var toSort =  new ArrayList<>(cache.getAllSkills().values());
 
-        if(currentCategory.id().equalsIgnoreCase("bookmarks")) toSort.removeIf(s -> !cache.isSkillBookMarked(s.getID()));
-        else if(!currentCategory.id().equalsIgnoreCase("all")) toSort.removeIf(s -> !s.getCategory().equalsIgnoreCase(currentCategory.id()));
+        if(currentCategory.is("bookmarks")) toSort.removeIf(s -> !cache.isSkillBookMarked(s.getID()));
+        else if(!currentCategory.is("all")) toSort.removeIf(s -> !currentCategory.is(s.getCategory()));
 
         toSort.removeIf(s -> !s.isVisible() && cache.getSkillLevel(s.getID()) < 1);
 

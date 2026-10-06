@@ -49,10 +49,12 @@ public record CActionSkillPayload(String id, Enums.ClientAction actionType) impl
                     case BULK_PURCHASE -> success = SkillManager.tryBulkBuy(player, payload.id());
                     case BULK_REFUND -> success = SkillManager.tryBulkRefund(player, payload.id());
                     case BOOKMARK -> SkillManager.bookmarkSkill(player, payload.id());
+                    case DEACTIVATION -> success = SkillManager.deactivateSkill(player, payload.id());
                 }
 
                 if(!success){
                     PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpPayload(SpManager.getSP(player)));
+                    PacketDistributor.sendToPlayer(player, new UpdatePayloads.DeactivationsPayload(payload.id(), SkillManager.isSkillDeactivated(player, payload.id())));
                     PacketDistributor.sendToPlayer(player, new UpdatePayloads.SkillLevelPayload(payload.id(), SkillManager.getPlayerSkillLevel(player, payload.id())));
                 }
             }
