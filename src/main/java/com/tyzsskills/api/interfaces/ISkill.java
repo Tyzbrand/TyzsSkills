@@ -41,12 +41,6 @@ public interface ISkill {
     String getCategory();
 
 
-    boolean isPurchasable();
-
-    boolean isRefundable();
-
-    boolean isVisible();
-
     /**
      * @return a resourceLocation path as a string
      */
@@ -91,6 +85,19 @@ public interface ISkill {
     @NotNull @UnmodifiableView List<String> getRawIncompatibilities();
 
     @NotNull @UnmodifiableView Map<String, Integer> getRawPrerequisites();
+
+    @NotNull @UnmodifiableView List<STag> getTags();
+
+    boolean isPurchasable();
+
+    boolean isRefundable();
+
+    boolean isVisible();
+
+    boolean isPermanent();
+
+    default boolean hasTag(@NotNull String tagId){return getTags().stream().anyMatch(tag -> tag.is(tagId));}
+    default boolean hasTag(@NotNull STag tag){return hasTag(tag.id());}
 
     /**
      * Gets the global player level required to purchase this skill.

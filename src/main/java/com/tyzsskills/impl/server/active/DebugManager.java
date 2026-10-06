@@ -79,6 +79,8 @@ public class DebugManager {
                     var skill = SkillManager.getSkill(id);
                     if(skill == null) continue;
 
+                    if(skill.isPermanent() && SkillManager.isSkillDeactivated(player, id)) SkillManager.tryToggleSkillDeactivation(player, id);
+
                     int lvl = SkillManager.getPlayerSkillLevel(player, id);
                     if(lvl <= 0) continue;
 

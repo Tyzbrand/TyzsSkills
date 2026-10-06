@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,22 +88,7 @@ public abstract class UIElement {
         var tooltips = getTooltips(mouseX, mouseY);
         if (tooltips.isEmpty()) return;
 
-        List<Component> textLines = new ArrayList<>();
-        TooltipComponent customComponent = null;
-
-        for (var either : tooltips) {
-            var left = either.left();
-            if (left.isPresent()) {
-                FormattedText ft = left.get();
-                textLines.add(ft instanceof Component c ? c : Component.literal(ft.getString()));
-            }
-            var right = either.right();
-            if (right.isPresent()) {
-                customComponent = right.get();
-            }
-        }
-
-        gui.renderTooltip(font, textLines, Optional.ofNullable(customComponent), mouseX, mouseY);
+        gui.renderComponentTooltipFromElements(font, tooltips, mouseX, mouseY, ItemStack.EMPTY);
     }
 
     //Clicks

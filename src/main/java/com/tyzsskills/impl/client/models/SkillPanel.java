@@ -6,6 +6,8 @@ import com.tyzsskills.api.records.Category;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.Styles;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltipData;
+import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.integration.ui.models.*;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import net.minecraft.network.chat.Component;
@@ -92,7 +94,7 @@ public class SkillPanel extends UIContainer {
 
             tabsPanel.addChild(new UITabButton(x, y, 29, 20, () -> handleCategoryChange(category), icon)
                     .withStyle(() -> SortingManager.getCurrentCategory() == category ? TAB_BTN_SELECTED : TAB_BTN_UNSELECTED)
-                    .withTooltip(() -> Component.translatable(category.displayName())));
+                    .withCustomTooltip(() -> new CategoryTooltipData(category)));
             x += 28;
         }
 

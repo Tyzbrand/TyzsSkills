@@ -6,6 +6,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.api.records.Modifier;
+import com.tyzsskills.api.records.STag;
 import com.tyzsskills.api.records.ValueSet;
 import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.nbt.CompoundTag;
@@ -101,6 +102,8 @@ public class Skill implements ISkill {
     @Override
     public boolean isVisible(){return config.visible();}
     @Override
+    public boolean isPermanent() {return config.permanent();}
+    @Override
     public @NotNull String getIcon(){return icon;}
     @Override
     public @NotNull String getDisplayName(){return displayName;}
@@ -118,6 +121,8 @@ public class Skill implements ISkill {
     public @NotNull @UnmodifiableView List<String> getRawIncompatibilities() {return config.incompatibleSkills();}
     @Override
     public @NotNull @UnmodifiableView Map<String, Integer> getRawPrerequisites() {return config.skillPrerequisites();}
+    @Override
+    public @NotNull @UnmodifiableView List<STag> getTags() {return config.tags();}
     @Override
     public @NotNull CompoundTag getSpecificParameters() {
         return config.parameters();

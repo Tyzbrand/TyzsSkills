@@ -278,7 +278,7 @@ public class ClientCache {
     //PREDICTIONS
     private boolean predictDeactivation(ISkill skill) {
         String id = skill.getID();
-        if(getSkillLevel(id) <= 0) return false;
+        if(skill.isPermanent() || getSkillLevel(id) <= 0) return false;
 
         if (isSkillDeactivated(id)) deactivations.remove(id);
         else deactivations.add(id);

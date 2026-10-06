@@ -1,8 +1,11 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
+import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
+import com.tyzsskills.impl.server.active.TagRegistry;
 import com.tyzsskills.impl.server.skills.SkillManager;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -42,6 +45,7 @@ public class AdrenalineEffect extends SkillBehavior {
         if(currentHealth <= healthFlag && !player.hasEffect(MobEffects.MOVEMENT_SPEED)){
             player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, durationInTick, 2));
             player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, durationInTick, 0));
+            if(skill.hasTag(TagRegistry.CONSUMABLE)) TyzsSkillsAPI.skills().tryRemoveSkillLevel(player, skill.getID(), 1);
             notifyClient(player, skill);
         }
     }

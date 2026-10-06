@@ -4,7 +4,6 @@ import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -15,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jetbrains.annotations.NotNull;
 
 
 public record CActionSkillPayload(String id, Enums.ClientAction actionType) implements CustomPacketPayload{
@@ -49,7 +47,7 @@ public record CActionSkillPayload(String id, Enums.ClientAction actionType) impl
                     case BULK_PURCHASE -> success = SkillManager.tryBulkBuy(player, payload.id());
                     case BULK_REFUND -> success = SkillManager.tryBulkRefund(player, payload.id());
                     case BOOKMARK -> SkillManager.bookmarkSkill(player, payload.id());
-                    case DEACTIVATION -> success = SkillManager.deactivateSkill(player, payload.id());
+                    case DEACTIVATION -> success = SkillManager.tryToggleSkillDeactivation(player, payload.id());
                 }
 
                 if(!success){

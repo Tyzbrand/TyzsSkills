@@ -12,7 +12,6 @@ import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.payloads.*;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -180,9 +179,11 @@ public class SkillManager {
         NeoForge.EVENT_BUS.post(new SkillActionEvent.Bookmark(skill, player));
         PacketDistributor.sendToPlayer(player, new UpdatePayloads.BookmarksPayload(skillId, newValue));
     }
-    public static boolean deactivateSkill(@NotNull ServerPlayer player, @NotNull String skillId){
+    public static boolean tryToggleSkillDeactivation(@NotNull ServerPlayer player, @NotNull String skillId){
         var skill = getSkill(skillId);
         if(skill == null || getPlayerSkillLevel(player, skillId) <= 0) return false;
+
+        if(skill.isPermanent() && !isSkillDeactivated(player, skillId)) return false;
 
         var data = player.getData(PlayerData.DATA);
         var isCurrentlyDeactivated = data.isDeactivated(skillId);
@@ -194,8 +195,6 @@ public class SkillManager {
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
             GenericEffects.applyEffects(skill, player);
         }
-
-        player.displayClientMessage(Component.literal("GOOD"), false);
         return true;
     }
 

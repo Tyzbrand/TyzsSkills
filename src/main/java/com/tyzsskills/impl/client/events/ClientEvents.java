@@ -3,6 +3,7 @@ package com.tyzsskills.impl.client.events;
 
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.screen.MainMenu;
+import com.tyzsskills.impl.client.tooltips.CategoryTooltip;
 import com.tyzsskills.impl.client.tooltips.SkillTooltip;
 import net.minecraft.client.Minecraft;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -29,7 +30,12 @@ public class ClientEvents {
 
                 break;
             }
-
+            else{
+                event.setBackground(0xFF000000);
+                event.setBorderStart(0xFFD6D6D6);
+                event.setBorderEnd(0xFF8B8B8B);
+                break;
+            }
 
         }
 

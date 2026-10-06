@@ -8,10 +8,12 @@ import com.mojang.serialization.JsonOps;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.model.SkillConfiguration;
+import com.tyzsskills.api.records.STag;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.ValueSet;
 import com.tyzsskills.api.tools.JsonLoadTools;
+import com.tyzsskills.impl.server.active.TagRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -77,18 +79,18 @@ public class SkillLoader {
         if(type == null) {ErrorManager.registerSkillError(id, "invalid skill type"); return;}
 
         String category = JsonLoadTools.getSafeElement(source, "category", JsonPrimitive::getAsString);
-        if(category == null) category = "";
+        if(category == null) {ErrorManager.registerSkillWarn(id, "invalid category"); category = "misc";}
 
         String icon = JsonLoadTools.getSafeElement(source, "icon", JsonPrimitive::getAsString);
-        if(icon == null) icon = "tyzs_skills:textures/gui/skills/default.png";
+        if(icon == null) {ErrorManager.registerSkillWarn(id, "invalid icon"); icon = "tyzs_skills:textures/gui/skills/default.png";}
 
         String displayName = JsonLoadTools.getSafeElement(source, "displayName", JsonPrimitive::getAsString);
-        if(displayName == null) displayName = "Unknown skill";
+        if(displayName == null) {ErrorManager.registerSkillWarn(id, "invalid display name"); displayName = "Unknown skill";}
 
         String description = JsonLoadTools.getSafeElement(source, "description", JsonPrimitive::getAsString);
-        if(description == null) description = "Missing description";
+        if(description == null) {ErrorManager.registerSkillWarn(id, "invalid description"); description = "Missing description";}
 
-        SkillConfiguration config = JsonLoadTools.getSafeObject(source, "config", SkillLoader::parseConfig);
+        SkillConfiguration config = JsonLoadTools.getSafeObject(source, "config", obj -> parseConfig(obj, id));
         if(config == null) config = new SkillConfiguration();
 
 
@@ -128,6 +130,11 @@ public class SkillLoader {
 
             if(modifiers.isEmpty()) {ErrorManager.registerSkillError(id, "one modifier is required"); return;}
 
+            //Not to erase JSON tags
+            var finalTags = new ArrayList<>(config.tags());
+            finalTags.add(TagRegistry.ATTRIBUTE);
+            config.withTags(finalTags);
+
             SkillManager.registerSkill(new Skill(true, id, prices, type, category,
                     icon, displayName, description, modifiers, null, config));
             return;
@@ -166,17 +173,45 @@ public class SkillLoader {
         }
     }
 
-    private static final Set<String> GENERIC_PARAMETERS = Set.of("purchasable", "refundable", "visible", "levelRequirement", "incompatibleSkills", "skillPrerequisites");
-    private static SkillConfiguration parseConfig(JsonObject obj){
+    private static final Set<String> GENERIC_PARAMETERS =
+            Set.of("purchasable", "refundable", "visible", "permanent", "levelRequirement", "incompatibleSkills", "skillPrerequisites", "tags");
+    private static SkillConfiguration parseConfig(JsonObject obj, String skillId){
+        var skillConfig = new SkillConfiguration();
+
         //Generic Parameters
         var purchasable = JsonLoadTools.getSafeElement(obj, "purchasable", JsonPrimitive::getAsBoolean);
+        if(purchasable != null) skillConfig.withPurchasable(purchasable);
+
         var refundable = JsonLoadTools.getSafeElement(obj, "refundable", JsonPrimitive::getAsBoolean);
+        if(refundable != null) skillConfig.withRefundable(refundable);
+
         var visible = JsonLoadTools.getSafeElement(obj, "visible", JsonPrimitive::getAsBoolean);
+        if(visible != null) skillConfig.withVisible(visible);
+
+        var permanent = JsonLoadTools.getSafeElement(obj, "permanent", JsonPrimitive::getAsBoolean);
+        if(permanent != null) skillConfig.withPermanent(permanent);
+
 
         var levelRequirement = JsonLoadTools.getSafeElement(obj, "levelRequirement", JsonPrimitive::getAsInt);
+        if(levelRequirement != null) skillConfig.withLevelRequirement(levelRequirement);
 
         var incompatibleSkills = JsonLoadTools.getSafeList(obj, "incompatibleSkills", JsonElement::getAsString);
+        if(incompatibleSkills != null) skillConfig.withIncompatibilities(incompatibleSkills);
+
         var skillPrerequisites = JsonLoadTools.getSafeMap(obj, "skillPrerequisites", k -> k, JsonElement::getAsInt);
+        if(skillPrerequisites != null) skillConfig.withPrerequisites(skillPrerequisites);
+
+        var rawTags = JsonLoadTools.getSafeList(obj, "tags", JsonElement::getAsString);
+        ArrayList<STag> tags = null;
+        if(rawTags != null && !rawTags.isEmpty()){
+            tags = new ArrayList<>();
+            for(var id : rawTags){
+                var tag = TagRegistry.getTag(id);
+                if(tag != null) tags.add(tag);
+                else ErrorManager.registerSkillWarn(skillId, String.format("unknown tag '%s'", id));
+            }
+        }
+        if(tags != null && !tags.isEmpty()) skillConfig.withTags(tags);
 
         //Specific Parameters
         var tempObj = new JsonObject();
@@ -192,7 +227,9 @@ public class SkillLoader {
             }
         }
 
-        return new SkillConfiguration(levelRequirement, incompatibleSkills, skillPrerequisites, refundable, purchasable, visible, parameters);
+        if(parameters != null) skillConfig.withParameters(parameters);
+
+        return skillConfig;
     }
 
     private static void applyTransitions(JsonObject source, String skillId){
@@ -209,14 +246,14 @@ public class SkillLoader {
                 configObject.remove("skillPrerequisites");
                 configObject.add("skillPrerequisites", newPrerequisites);
 
-                ErrorManager.registerLoadDeprecationModification(skillId, "the field 'skillPrerequisite' has a new format: {skillID, requiredLevel}");
+                ErrorManager.registerSkillWarn(skillId, "the field 'skillPrerequisite' has a new format: {skillID, requiredLevel}");
             }
         }
 
         //MIGRATION FOR MAXIMUM LEVEL: Removal
         if(source.has("maximumLevel")){
             source.remove("maximumLevel");
-            ErrorManager.registerLoadDeprecationModification(skillId, "the field 'maximumLevel' is obsolete");
+            ErrorManager.registerSkillWarn(skillId, "the field 'maximumLevel' is obsolete");
         }
     }
 

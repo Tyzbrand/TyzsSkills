@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,7 +78,7 @@ public class ErrorManager {
     }
 
 
-    public static void registerLoadDeprecationModification(@NotNull String source, @NotNull String warn){
+    public static void registerSkillWarn(@NotNull String source, @NotNull String warn){
         var message = HEADER.copy().withStyle(WARNING)
                 .append(Component.literal("Warn in ").withStyle(WARNING))
                 .append(Component.literal("[" + source + "]").withStyle(ID))

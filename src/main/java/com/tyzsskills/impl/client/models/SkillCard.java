@@ -6,6 +6,7 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.active.ComponentManager;
+import com.tyzsskills.impl.client.tooltips.SkillTooltipData;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.models.*;
@@ -97,9 +98,8 @@ public class SkillCard extends UIContainer {
     private void initElements(){
         //BACKGROUND & ICON
         this.addChild(new UIImage(0, 0, () -> isMaxed ? SKILL_CARD_MAXED : SKILL_CARD));
-        this.addChild(new UIButton(4, 4, this::getCadreStyle, this::handleDeactivation));
+        this.addChild(new UIButton(4, 4, this::getCadreStyle, this::handleDeactivation).withCustomTooltip(() -> new SkillTooltipData(this.skill)));
         this.addChild(new UIImage(7, 7, 16, 16, this.icon, 16).withScale(.95f, Enums.ScalePivot.CENTER));
-//                .withCustomTooltip(() -> new SkillTooltipData(this.skill)));
 
         //BADGE
         var textScale = .57f;
