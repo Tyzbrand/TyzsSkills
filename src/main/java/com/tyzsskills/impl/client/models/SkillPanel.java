@@ -34,6 +34,9 @@ public class SkillPanel extends UIContainer {
             new UIStyles.ButtonStyle(9, 13, 69, 247, 78, 247, Styles.MAIN_TEXTURE);
     private static final UIStyles.ButtonStyle NEXT_TAB =
             new UIStyles.ButtonStyle(9, 13, 154, 247, 145, 247, Styles.MAIN_TEXTURE);
+
+    private static final UIStyles.ImageStyle SEARCH_BAR =
+            new UIStyles.ImageStyle(115, 17, 8, 198, Styles.MAIN_TEXTURE);
     //endregion
 
     //PARENTS
@@ -52,6 +55,8 @@ public class SkillPanel extends UIContainer {
                 .withAlignment(Enums.TextAlignment.RIGHT)
                 .withBackground(() -> Styles.DEFAULT_BACKGROUND, () -> true)
                 .withScale(.85f, Enums.ScalePivot.CENTER));
+
+        this.addChild(new UIImage(97, -17, () -> SEARCH_BAR));
 
         this.addChild(tabsPanel);
         this.addChild(scrollView);

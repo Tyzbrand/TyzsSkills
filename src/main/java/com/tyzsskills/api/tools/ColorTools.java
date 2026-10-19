@@ -13,7 +13,7 @@ public class ColorTools {
 
         return (alpha << 24) | (red << 16) | (green << 8) | blue;
     }
-    public static int darken(int color){return darken(color, .5f);}
+    public static int darken(int color){return darken(color, .75f);}
 
     public static int lighten(int color, float factor) {
         var alpha = (color >>> 24) & 0xFF;

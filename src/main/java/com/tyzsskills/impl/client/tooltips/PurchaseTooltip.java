@@ -73,23 +73,28 @@ public class PurchaseTooltip extends UITooltip {
 
         var nextPrice = skill.getPrice(currentLvl + 1);
         var priceColor = currentSp < nextPrice ? ChatFormatting.RED : ChatFormatting.BLUE;
+        var delta = targetLvl - currentLvl;
 
         currentPriceLine = Component.empty()
-                .append(Component.translatable("gui.tyzs_skills.cost").withStyle(ChatFormatting.GRAY))
+                .append(Component.translatable("gui.tyzs_skills.cost"))
                 .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
                 .append(Component.literal(getFinalPrice(currentLvl, targetLvl) + " ").withStyle(priceColor))
                 .append(Component.translatable("gui.tyzs_skills.SP").withStyle(priceColor));
+
+        if(latestShiftState) currentPriceLine.append(Component.literal(String.format(" (x%d)", delta)));
     }
 
-    private void addStatLine(float stat, String unit){
-        if(stat == 0f) return;
+    private void addStatLine(float currentStat, float targetedStat, String unit){
+        var color = targetedStat > currentStat ? ChatFormatting.GREEN : ChatFormatting.RED;
+        var translatedUnit = Component.translatable(unit);
 
-        var color = stat > 0f ? ChatFormatting.GREEN : ChatFormatting.RED;
-        var prefix = stat > 0f ? "+" : "";
         var message = Component.empty()
-                .append(Component.literal("-> "))
-                .append(Component.literal(prefix + FormatTools.defaultFloat(stat) + " ").withStyle(color))
-                .append(Component.translatable(unit));
+                .append(Component.literal("◆ "))
+                .append(Component.literal(FormatTools.defaultFloat(currentStat) + " ").withStyle(ChatFormatting.DARK_GRAY))
+                .append(translatedUnit)
+                .append(Component.literal(" -> "))
+                .append(Component.literal(FormatTools.defaultFloat(targetedStat) + " ").withStyle(color))
+                .append(translatedUnit);
 
         currentDataLines.add(message);
     }
@@ -105,14 +110,14 @@ public class PurchaseTooltip extends UITooltip {
                 var currentStat = valueSet.getValue(currentLvl);
                 var targetedStat = valueSet.getValue(targetLvl);
 
-                addStatLine(targetedStat - currentStat, valueSet.unit());
+                addStatLine(currentStat, targetedStat, valueSet.unit());
             }
         } else {
             for (var modifier : skill.getModifiers()) {
                 var currentStat = modifier.getValue(currentLvl);
                 var targetedStat = modifier.getValue(targetLvl);
 
-                addStatLine(targetedStat - currentStat, modifier.unit());
+                addStatLine(currentStat, targetedStat, modifier.unit());
             }
         }
 

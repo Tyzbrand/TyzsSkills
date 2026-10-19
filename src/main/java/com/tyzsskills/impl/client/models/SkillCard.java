@@ -5,7 +5,6 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.client.active.ComponentManager;
 import com.tyzsskills.impl.client.tooltips.PurchaseTooltip;
 import com.tyzsskills.impl.client.tooltips.RefundTooltip;
 import com.tyzsskills.impl.client.tooltips.SkillTooltip;
@@ -13,14 +12,11 @@ import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.models.*;
 import com.tyzsskills.integration.ui.records.UITexture;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.List;
 
 public class SkillCard extends UIContainer {
     public static final int WIDTH = 64, HEIGHT = 30;

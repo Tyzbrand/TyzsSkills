@@ -72,21 +72,23 @@ public class RefundTooltip extends UITooltip {
         if(currentLvl <= 0) return;
 
         currentRefundLine = Component.empty()
-                .append(Component.translatable("gui.tyzs_skills.gain").withStyle(ChatFormatting.GRAY))
+                .append(Component.translatable("gui.tyzs_skills.gain"))
                 .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
                 .append(Component.literal(getFinalGain(currentLvl, targetLvl) + " ").withStyle(ChatFormatting.BLUE))
                 .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.BLUE));
     }
 
-    private void addStatLine(float stat, String unit){
-        if(stat == 0f) return;
+    private void addStatLine(float currentStat, float targetedStat, String unit){
+        var color = targetedStat > currentStat ? ChatFormatting.GREEN : ChatFormatting.RED;
+        var translatedUnit = Component.translatable(unit);
 
-        var color = stat > 0f ? ChatFormatting.GREEN : ChatFormatting.RED;
-        var prefix = stat > 0f ? "+" : "";
         var message = Component.empty()
-                .append(Component.literal("-> "))
-                .append(Component.literal(prefix + FormatTools.defaultFloat(stat) + " ").withStyle(color))
-                .append(Component.translatable(unit));
+                .append(Component.literal("◆ "))
+                .append(Component.literal(FormatTools.defaultFloat(currentStat) + " ").withStyle(ChatFormatting.DARK_GRAY))
+                .append(translatedUnit)
+                .append(Component.literal(" -> "))
+                .append(Component.literal(FormatTools.defaultFloat(targetedStat) + " ").withStyle(color))
+                .append(translatedUnit);
 
         currentDataLines.add(message);
     }
@@ -102,14 +104,14 @@ public class RefundTooltip extends UITooltip {
                 var currentStat = valueSet.getValue(currentLvl);
                 var targetedStat = valueSet.getValue(targetLvl);
 
-                addStatLine(targetedStat - currentStat , valueSet.unit());
+                addStatLine(currentStat, targetedStat, valueSet.unit());
             }
         } else {
             for (var modifier : skill.getModifiers()) {
                 var currentStat = modifier.getValue(currentLvl);
                 var targetedStat = modifier.getValue(targetLvl);
 
-                addStatLine(targetedStat - currentStat, modifier.unit());
+                addStatLine(currentStat, targetedStat, modifier.unit());
             }
         }
 
