@@ -2,25 +2,23 @@ package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.integration.ui.UIElement;
 import com.tyzsskills.integration.ui.records.UIStyles.*;
+import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Supplier;
 
 public class UIImage extends UIElement {
-
-    private ResourceLocation texture;
-    private int textureSize;
+    private Supplier<UITexture> texture = () -> null;
 
     private final boolean isUniqueTexture;
     private Supplier<ImageStyle> style;
 
 
-    public UIImage(int offsetX, int offsetY, int width, int height, ResourceLocation texture, int textureSize) {
+    public UIImage(int offsetX, int offsetY, int width, int height, Supplier<UITexture> texture) {
         super(offsetX, offsetY, width, height);
 
         this.texture = texture;
-        this.textureSize = textureSize;
 
         isUniqueTexture = true;
     }
@@ -35,7 +33,9 @@ public class UIImage extends UIElement {
 
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        if(isUniqueTexture) gui.blit(texture, getRawX(), getRawY(), 0, 0, getRawWidth(), getRawHeight(), textureSize, textureSize);
+        var currentTexture = texture.get();
+        if(isUniqueTexture && currentTexture != null)
+            gui.blit(currentTexture.texture(), getRawX(), getRawY(), 0, 0, getRawWidth(), getRawHeight(), currentTexture.size(), currentTexture.size());
         else {
             var currentStyle = style.get();
             gui.blit(currentStyle.image().texture(), getRawX(), getRawY(), currentStyle.u(), currentStyle.v(),

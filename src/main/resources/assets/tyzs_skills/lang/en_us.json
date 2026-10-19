@@ -205,8 +205,6 @@
 
 
 
-
-
   "skill.tyzs_skills.haggler.displayName" : "Haggler",
   "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius.\n\nThey will follow you with a {villager_speed}% speed bonus",
 

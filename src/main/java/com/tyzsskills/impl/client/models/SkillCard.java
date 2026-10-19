@@ -8,9 +8,11 @@ import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.active.ComponentManager;
 import com.tyzsskills.impl.client.tooltips.PurchaseTooltip;
 import com.tyzsskills.impl.client.tooltips.RefundTooltip;
+import com.tyzsskills.impl.client.tooltips.SkillTooltip;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.models.*;
+import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -24,7 +26,7 @@ public class SkillCard extends UIContainer {
     public static final int WIDTH = 64, HEIGHT = 30;
 
     protected final ISkill skill;
-    protected final ResourceLocation icon;
+    protected final UITexture icon;
     protected final ClientCache cache;
 
     protected boolean isLocked;
@@ -81,7 +83,10 @@ public class SkillCard extends UIContainer {
 
         this.skill = skill;
         cache = ClientCache.get();
-        icon = resolveIcon();
+
+        var tempIcon = ResourceLocation.tryParse(skill.getIcon());
+        if(tempIcon == null) tempIcon = Styles.DEFAULT_SKILL_ICON.texture();
+        icon = new UITexture(tempIcon, 16);
 
         updateData();
 
@@ -99,8 +104,12 @@ public class SkillCard extends UIContainer {
     private void initElements(){
         //BACKGROUND & ICON
         this.addChild(new UIImage(0, 0, () -> isMaxed ? SKILL_CARD_MAXED : SKILL_CARD));
-        this.addChild(new UIButton(4, 4, this::getCadreStyle, this::handleDeactivation));//.withCustomTooltip(() -> new SkillTooltipData(this.skill)));
-        this.addChild(new UIImage(7, 7, 16, 16, this.icon, 16).withScale(.95f, Enums.ScalePivot.CENTER));
+
+        var skillTooltip = new SkillTooltip(skill);
+        this.addChild(new UIButton(4, 4, this::getCadreStyle, this::handleDeactivation)
+                .withTooltip(() -> skillTooltip));
+
+        this.addChild(new UIImage(7, 7, 16, 16, () -> icon).withScale(.95f, Enums.ScalePivot.CENTER));
 
         //BADGE
         var textScale = .57f;
@@ -121,11 +130,7 @@ public class SkillCard extends UIContainer {
 
         this.addChild(new UIButton(49, 17, () -> isBookmarked ? BOOKMARK_ON : BOOKMARK_OFF, this::handleBookmark));
     }
-    private ResourceLocation resolveIcon(){
-        var candidate = ResourceLocation.tryParse(skill.getIcon());
-        return candidate != null && Minecraft.getInstance().getResourceManager().getResource(candidate).isPresent() ?
-                candidate : Styles.DEFAULT_SKILL_ICON.texture();
-    }
+
     private void updateData(){
         var currentCacheVersion = ClientCache.get().getVersion();
         if(latestCacheVersion == currentCacheVersion) return;
@@ -170,14 +175,6 @@ public class SkillCard extends UIContainer {
     }
 
     // ==================== TEXTS & TOOLTIPS ====================
-    private List<MutableComponent> getPurchaseTooltip(){
-        if (isLocked) return List.of();
-        return  ComponentManager.getTooltipAction(skill, currentLevel, Enums.TooltipType.PURCHASE, canAffordPurchase, isShiftPressed());
-    }
-    private List<MutableComponent> getRefundTooltip(){
-        if (isLocked) return List.of();
-        return ComponentManager.getTooltipAction(skill, currentLevel, Enums.TooltipType.REFUND, false, isShiftPressed());
-    }
     private MutableComponent getSkillLevelText(){
         return !isLocked
                 ? Component.translatable("gui.tyzs_skills.Lvl").append(": " + currentLevel + "/" + skill.getMaximumLevel())

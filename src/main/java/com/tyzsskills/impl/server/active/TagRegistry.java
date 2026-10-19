@@ -8,10 +8,10 @@ import java.util.Map;
 
 public class TagRegistry {
     public static final STag CONSUMABLE =
-            new STag("consumable", "Consumable", 0xFF193986);
+            new STag("consumable", "consumable", 0xFF193986);
 
     public static final STag ATTRIBUTE =
-            new STag("attribute", "Attribute", 0xFF7F2F74);
+            new STag("attribute", "attribute", 0xFF7F2F74);
 
 
     private static final Map<String, STag> tags =
