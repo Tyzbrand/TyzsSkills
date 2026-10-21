@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client.models;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.Category;
@@ -8,6 +9,7 @@ import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.integration.ui.models.*;
 import com.tyzsskills.integration.ui.records.UIStyles;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +25,7 @@ public class SkillPanel extends UIContainer {
 
     protected final int SCROLL_ITEM_SPACING = 4;
     protected final int SCROLL_ITEM_PER_LINE = 3;
+
 
     //region STYLES
     private static final UIStyles.ButtonStyle TAB_BTN_SELECTED =
@@ -56,15 +59,19 @@ public class SkillPanel extends UIContainer {
                 .withBackground(() -> Styles.DEFAULT_BACKGROUND, () -> true)
                 .withScale(.85f, Enums.ScalePivot.CENTER));
 
-        this.addChild(new UIImage(97, -17, () -> SEARCH_BAR));
-
         this.addChild(tabsPanel);
         this.addChild(scrollView);
+
+        if (!Config.KEEP_SEARCH_QUERY.get()) SortingManager.setSearchQuery("");
 
         initOffset();
         buildTabs();
         refreshScrollView();
+
+        this.addChild(new UIImage(97, -17, () -> SEARCH_BAR));
+        this.addChild(new UIEditBox(106, -10, 84, 9, this::handleSearchChange, SortingManager::getSearchQuery));
     }
+
 
     //IMPLEMENTATION
     private void initOffset(){
@@ -132,6 +139,7 @@ public class SkillPanel extends UIContainer {
         }
     }
 
+
     //region EXTRACTED LOGIC
     // ==================== BUTTON CLICKS ====================
     private boolean handleTabBack(){
@@ -154,6 +162,11 @@ public class SkillPanel extends UIContainer {
         refreshScrollView();
         categoryDisplayName = getCategoryDisplayName(category);
         return true;
+    }
+
+    private void handleSearchChange(String query) {
+        SortingManager.setSearchQuery(query);
+        refreshScrollView();
     }
 
     // ==================== CONDITIONS ====================

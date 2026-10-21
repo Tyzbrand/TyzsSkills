@@ -69,52 +69,66 @@ public abstract class UIElement {
 
     //Clicks
     protected boolean onClick(int mouseX, int mouseY){return false;}
-
     public final boolean handleClick(int mouseX, int mouseY, boolean inheritedVisible) {
         boolean visible = inheritedVisible && visibleWhen.get();
         if (!visible) return false;
         return onClick(mouseX, mouseY);
     }
-
     public final boolean handleClick(int mouseX, int mouseY){
         return handleClick(mouseX, mouseY, true);
     }
 
+    //Key press
+    protected boolean onKeyPressed(int keyCode, int scanCode, int modifiers) { return false; }
+    public final boolean handleKeyPressed(int keyCode, int scanCode, int modifiers, boolean inheritedVisible) {
+        var visible = inheritedVisible && visibleWhen.get();
+        if (!visible) return false;
+        return onKeyPressed(keyCode, scanCode, modifiers);
+    }
+    public final boolean handleKeyPressed(int keyCode, int scanCode, int modifiers) {
+        return handleKeyPressed(keyCode, scanCode, modifiers, true);
+    }
+
+    //Keyboard typed
+    protected boolean onCharTyped(char codePoint, int modifiers) { return false; }
+    public final boolean handleCharTyped(char codePoint, int modifiers, boolean inheritedVisible) {
+        var visible = inheritedVisible && visibleWhen.get();
+        if (!visible) return false;
+        return onCharTyped(codePoint, modifiers);
+    }
+    public final boolean handleCharTyped(char codePoint, int modifiers) {
+        return handleCharTyped(codePoint, modifiers, true);
+    }
+
     //Scrolls
     protected boolean onScroll(double mouseX, double mouseY, double deltaY) {return false;}
-
     public final boolean handleScroll(double mouseX, double mouseY, double deltaY, boolean inheritedVisible) {
         boolean visible = inheritedVisible && visibleWhen.get();
         if (!visible) return false;
         return onScroll(mouseX, mouseY, deltaY);
     }
-
     public final boolean handleScroll(double mouseX, double mouseY, double deltaY){
         return handleScroll(mouseX, mouseY, deltaY, true);
     }
 
     //Drags
     protected boolean onDrag(double mouseX, double mouseY, int button, double dragX, double dragY){return false;}
-
     public final boolean handleDrag(double mouseX, double mouseY, int button, double dragX, double dragY, boolean inheritedVisible) {
         boolean visible = inheritedVisible && visibleWhen.get();
         if (!visible) return false;
         return onDrag(mouseX, mouseY, button, dragX, dragY);
     }
-
     public boolean handleDrag(double mouseX, double mouseY, int button, double dragX, double dragY) {
         return handleDrag(mouseX, mouseY, button, dragX, dragY, true);
     }
 
     //Releases
     protected boolean onRelease(double mouseX, double mouseY, int button) { return false; }
-
     public boolean handleRelease(double mouseX, double mouseY, int button, boolean inheritedVisible) {
         boolean visible = inheritedVisible && visibleWhen.get();
         if (!visible) return false;
         return onRelease(mouseX, mouseY, button);
     }
-
     public boolean handleRelease(double mouseX, double mouseY, int button) {
         return handleRelease(mouseX, mouseY, button, true);
     }
@@ -185,11 +199,4 @@ public abstract class UIElement {
         float pivotY = getPivotY();
         return pivotY + (getRawY() - pivotY) * scale;
     }
-
-
-
-    //STATIC
-    public static final List<Either<FormattedText, TooltipComponent>> EMPTY_TOOLTIP = List.of();
-
-
 }

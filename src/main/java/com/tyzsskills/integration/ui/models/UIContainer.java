@@ -44,6 +44,24 @@ public class UIContainer extends UIElement {
     }
 
     @Override
+    protected boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
+        for (int i = children.size() - 1; i >= 0; i--) {
+            var child = children.get(i);
+            if (child.handleKeyPressed(keyCode, scanCode, modifiers, true)) return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean onCharTyped(char codePoint, int modifiers) {
+        for (int i = children.size() - 1; i >= 0; i--) {
+            var child = children.get(i);
+            if (child.handleCharTyped(codePoint, modifiers, true)) return true;
+        }
+        return false;
+    }
+
+    @Override
     protected boolean onScroll(double mouseX, double mouseY, double deltaY) {
         for (int i = children.size() - 1; i >= 0; i--) {
             var child = children.get(i);

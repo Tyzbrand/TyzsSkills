@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client.screen;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.tools.FormatTools;
 import com.tyzsskills.impl.client.ClientCache;
@@ -122,6 +123,16 @@ public class MainMenu extends Screen {
         return super.mouseClicked(mouseX, mouseY, button);
     }
     @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (mainPanel.handleKeyPressed(keyCode, scanCode, modifiers)) return true;
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        if (mainPanel.handleCharTyped(codePoint, modifiers)) return true;
+        return super.charTyped(codePoint, modifiers);
+    }
+    @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (mainPanel.handleScroll(mouseX, mouseY, scrollY)) return true;
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
@@ -135,6 +146,11 @@ public class MainMenu extends Screen {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if(mainPanel.handleRelease( mouseX,  mouseY, button)) return true;
         return super.mouseReleased(mouseX, mouseY, button);
+    }
+    @Override
+    public void removed() {
+        if(!Config.KEEP_SEARCH_QUERY.get()) SortingManager.setSearchQuery("");
+        super.removed();
     }
     @Override
     protected void renderBlurredBackground(float partialTick){}
