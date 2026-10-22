@@ -1,7 +1,10 @@
 package com.tyzsskills.api.model;
 
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.api.interfaces.ISpell;
+import com.tyzsskills.api.records.SpellProperty;
 import com.tyzsskills.impl.server.skills.SkillGraph;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -50,6 +53,37 @@ public class Context {
 
             return this;
         }
+    }
+
+    public static class Spell{
+        private ISpell spell;
+        public @NotNull ISpell spell(){return this.spell;}
+
+        private boolean isSpellPurchased;
+        public boolean isSpellPurchased(){return this.isSpellPurchased;}
+
+        public Spell updateContext(@NotNull ISpell spell, boolean purchased){
+            this.spell= spell;
+            this.isSpellPurchased = purchased;
+
+            return this;
+        }
+    }
+
+    public static class Property{
+        private SpellProperty property;
+        public @NotNull SpellProperty property(){return this.property;}
+
+        private int propertyLevel;
+        public int propertyLevel(){return this.propertyLevel;}
+
+        public Property updateContext(@NotNull SpellProperty property, int propertyLevel){
+            this.property = property;
+            this.propertyLevel = propertyLevel;
+
+            return this;
+        }
+
     }
 
 }

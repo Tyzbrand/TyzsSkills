@@ -11,6 +11,7 @@ import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.payloads.PayloadSecurity;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.skills.SkillManager;
+import com.tyzsskills.impl.server.spells.SpellManager;
 import com.tyzsskills.impl.server.xp.XpGainRegistry;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -59,6 +60,7 @@ public class RuntimeEvents {
     @SubscribeEvent
     public static void onServerStop(ServerStoppingEvent event){
         SkillManager.clearSkills();
+        SpellManager.clearSpells();
 
         XpGainRegistry.clearAll();
         LevelManager.clearPool();

@@ -1,18 +1,16 @@
 package com.tyzsskills.impl.server.spells;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializer;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.api.records.SpellProperty;
-import com.tyzsskills.api.records.PropertyContext;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class Spell implements ISpell {
@@ -37,7 +35,7 @@ public class Spell implements ISpell {
     protected String displayName;
     protected String description;
 
-    protected final Map<String, SpellProperty> properties = new HashMap<>();
+    protected final Map<String, SpellProperty> properties = new LinkedHashMap<>();
 
     @Override
     public @NotNull String getID() {return id;}
@@ -48,7 +46,7 @@ public class Spell implements ISpell {
     @Override
     public @NotNull String getDescription() {return description;}
     @Override
-    public @Nullable SpellProperty getProperty(@NotNull String propertyKey) {return properties.getOrDefault(propertyKey, null);}
+    public @Nullable SpellProperty getProperty(@NotNull String propertyKey) {return properties.getOrDefault(propertyKey.toLowerCase(), null);}
     @Override
     public @NotNull @Unmodifiable List<SpellProperty> getProperties(){
         return List.copyOf(properties.values());
@@ -56,27 +54,24 @@ public class Spell implements ISpell {
     @Override
     public int getPrice() {return price;}
 
-    //Checks
-    @Override
-    public boolean canBuyProperty(@NotNull PropertyContext ctx, boolean purchaseEnabled){
-        if(!purchaseEnabled) return false;
+    //region GSON
+    public static final JsonSerializer<Spell> SPELL_SERIALIZER = (src, typeOfSrc, ctx) -> {
+        var json = new JsonObject();
 
-        var property = getProperty(ctx.propertyKey());
-        if(property == null) return  false;
+        json.addProperty("active", src.active);
+        json.addProperty("id", src.id);
+        json.add("price", ctx.serialize(src.price));
+        json.addProperty("icon", src.icon);
+        json.addProperty("displayName", src.displayName);
+        json.addProperty("description", src.description);
 
-        if(ctx.propertyLevel() >= property.getMaximumLevel()) return false;
+        if (!src.properties.isEmpty()) json.add("properties", ctx.serialize(src.properties.values()));
 
-        var price = property.getPrice(ctx.propertyLevel() + 1);
-        return price <= ctx.playerSP();
-    }
+        return json;
+    };
+    //endregion
 
-    @Override
-    public boolean canBuySpell(int playerSp, boolean purchaseEnabled) {
-        if(!purchaseEnabled) return false;
-        return price <= playerSp;
-    }
-
-    //Network
+    //region Network
     public static final StreamCodec<FriendlyByteBuf, Spell> STREAM_CODEC = StreamCodec.ofMember(
             Spell::writeToBuffer,
             Spell::readSpellFromBuffer
@@ -108,4 +103,5 @@ public class Spell implements ISpell {
 
         return new Spell(active, id, price, icon, displayName, description, readProperties);
     }
+    //endregion
 }

@@ -11,6 +11,8 @@ import com.tyzsskills.impl.server.categories.CategoryLoader;
 import com.tyzsskills.impl.server.skills.Skill;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
+import com.tyzsskills.impl.server.spells.Spell;
+import com.tyzsskills.impl.server.spells.SpellManager;
 import com.tyzsskills.impl.server.xp.XpManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -21,6 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,25 +51,46 @@ public class UpdatePayloads {
                 ConfigSyncData::new
         );
     }
-    public record ServerSyncData(List<Skill> skills, List<String> bookmarks, List<String> deactivations, List<Category> categories, Map<String, Integer> playerSkillLevels){
+
+    public record ServerSyncData(List<Skill> skills, List<Spell> spells){
         public static final StreamCodec<RegistryFriendlyByteBuf, ServerSyncData> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.collection(ArrayList::new, Skill.STREAM_CODEC), ServerSyncData::skills,
-                ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.STRING_UTF8), ServerSyncData::bookmarks,
-                ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.STRING_UTF8), ServerSyncData::deactivations,
-                ByteBufCodecs.collection(ArrayList::new, Category.STREAM_CODEC), ServerSyncData::categories,
-                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.INT), ServerSyncData::playerSkillLevels,
+                ByteBufCodecs.collection(ArrayList::new, Spell.STREAM_CODEC), ServerSyncData::spells,
                 ServerSyncData::new
         );
     }
 
+    public record PlayerSyncSkillData(List<String> bookmarks, List<String> deactivations, List<Category> categories, Map<String, Integer> playerSkillLevels){
+        public static final StreamCodec<RegistryFriendlyByteBuf, PlayerSyncSkillData> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.STRING_UTF8), PlayerSyncSkillData::bookmarks,
+                ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.STRING_UTF8), PlayerSyncSkillData::deactivations,
+                ByteBufCodecs.collection(ArrayList::new, Category.STREAM_CODEC), PlayerSyncSkillData::categories,
+                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.INT), PlayerSyncSkillData::playerSkillLevels,
+                PlayerSyncSkillData::new
+        );
+    }
+
+    public record PlayerSyncSpellData(List<String> purchasedSpells, Map<String, Integer> playerPropertyLevels, Map<Integer, String> playerSlots){
+        public static final StreamCodec<RegistryFriendlyByteBuf, PlayerSyncSpellData> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.STRING_UTF8), PlayerSyncSpellData::purchasedSpells,
+                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.INT), PlayerSyncSpellData::playerPropertyLevels,
+                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.INT, ByteBufCodecs.STRING_UTF8), PlayerSyncSpellData::playerSlots,
+                PlayerSyncSpellData::new
+        );
+    }
+
+
+
     //INIT
-    public record InitPayload(ServerSyncData serverData, PlayerSyncData playerData, ConfigSyncData configData, LevelData levelData) implements CustomPacketPayload{
+    public record InitPayload(ServerSyncData serverData, PlayerSyncData playerData, PlayerSyncSkillData playerSkillData, PlayerSyncSpellData playerSpellData, ConfigSyncData configData, LevelData levelData) implements CustomPacketPayload{
 
         public static final Type<InitPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "init_update_payload"));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, InitPayload> STREAM_CODEC = StreamCodec.composite(
                 ServerSyncData.STREAM_CODEC, InitPayload::serverData,
                 PlayerSyncData.STREAM_CODEC, InitPayload::playerData,
+                PlayerSyncSkillData.STREAM_CODEC, InitPayload::playerSkillData,
+                PlayerSyncSpellData.STREAM_CODEC, InitPayload::playerSpellData,
                 ConfigSyncData.STREAM_CODEC, InitPayload::configData,
                 LevelData.STREAM_CODEC, InitPayload::levelData,
                 InitPayload::new
@@ -87,7 +111,8 @@ public class UpdatePayloads {
         }
     }
 
-    //METADATA
+    //PUNCTUAL
+    //-----metadata-----
     public record LevelPayload(int level) implements CustomPacketPayload {
             public static final Type<LevelPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "level_update_payload"));
 
@@ -163,6 +188,7 @@ public class UpdatePayloads {
             ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateLevelData(payload);});
         }
     }
+    //-----skills-----
     public record SkillLevelPayload(String id, int level) implements CustomPacketPayload{
         public static final Type<SkillLevelPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_level_sync_payload"));
 
@@ -220,19 +246,80 @@ public class UpdatePayloads {
         }
 
     }
+    //-----spells-----
+    public record SpellPurchasePayload(String id) implements CustomPacketPayload{
+        public static final Type<SpellPurchasePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "spell_purchase_payload"));
+
+        public static final StreamCodec<ByteBuf, SpellPurchasePayload> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, SpellPurchasePayload::id,
+                SpellPurchasePayload::new
+        );
+
+        @Override
+        public @NotNull Type<? extends CustomPacketPayload> type(){
+            return TYPE;
+        }
+
+        public static void Handle(final SpellPurchasePayload payload, final IPayloadContext ctx){
+            ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateSpellPurchase(payload);} );
+        }
+
+    }
+    public record PropertyLevelPayload(String id, int level) implements CustomPacketPayload{
+        public static final Type<PropertyLevelPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "property_level_sync_payload"));
+
+        public static final StreamCodec<ByteBuf, PropertyLevelPayload> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, PropertyLevelPayload::id,
+                ByteBufCodecs.INT, PropertyLevelPayload::level,
+                PropertyLevelPayload::new
+        );
+
+        @Override
+        public @NotNull Type<? extends CustomPacketPayload> type(){
+            return TYPE;
+        }
+
+        public static void Handle(final PropertyLevelPayload payload, final IPayloadContext ctx){
+            ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updatePropertyLevel(payload);} );
+        }
+
+    }
+    public record SpellSlotChange(int slot, String id) implements CustomPacketPayload{
+        public static final Type<SpellSlotChange> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "spell_slot_payload"));
+
+        public static final StreamCodec<ByteBuf, SpellSlotChange> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.INT, SpellSlotChange::slot,
+                ByteBufCodecs.STRING_UTF8, SpellSlotChange::id,
+                SpellSlotChange::new
+        );
+
+        @Override
+        public @NotNull Type<? extends CustomPacketPayload> type(){
+            return TYPE;
+        }
+
+        public static void Handle(final SpellSlotChange payload, final IPayloadContext ctx){
+            ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateSpellSlot(payload);} );
+        }
+
+    }
+
 
     //UTILS
     public static UpdatePayloads.InitPayload getInitPayload(ServerPlayer player){
         var data = player.getData(StatsTracker.DATA);
 
         return new UpdatePayloads.InitPayload(
-                new UpdatePayloads.ServerSyncData(SkillManager.getAllSkills().stream().toList(),
-                        SkillManager.getAllBookmarkIDs(player), SkillManager.getAllDeactivatedIds(player),
-                        CategoryLoader.getCategories(), SkillManager.getPlayerSkillLevels(player)),
+                new UpdatePayloads.ServerSyncData(SkillManager.getAllSkills().stream().toList(), SpellManager.getAllSpells().stream().toList()),
 
                 new UpdatePayloads.PlayerSyncData(LevelManager.getLevel(player),
                         SpManager.getSP(player), XpManager.getXP(player),
                         data.getAllTimeXp(), data.getTotalSpEarned(), data.getTotalSpSpent()),
+
+                new PlayerSyncSkillData(SkillManager.getAllBookmarkIDs(player), SkillManager.getAllDeactivatedIds(player),
+                        CategoryLoader.getCategories(), SkillManager.getPlayerSkillLevels(player)),
+
+                new PlayerSyncSpellData(SpellManager.getPlayerSpells(player), SpellManager.getPlayerProperties(player), SpellManager.getPlayerSlots(player)),
 
                 new UpdatePayloads.ConfigSyncData(
                         Map.of(Config.REFUND_SYSTEM_KEY, Config.REFUND_SYSTEM.get(),

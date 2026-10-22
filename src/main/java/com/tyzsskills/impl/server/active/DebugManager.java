@@ -13,6 +13,7 @@ import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.impl.server.sp.SpManager;
+import com.tyzsskills.impl.server.spells.SpellManager;
 import com.tyzsskills.impl.server.xp.XpGainRegistry;
 import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.network.chat.Component;
@@ -33,6 +34,7 @@ public class DebugManager {
         public static void reload(MinecraftServer server) throws IOException {
             ErrorManager.clear();
             SkillManager.clearSkills();
+            SpellManager.clearSpells();
             XpGainRegistry.clearAll();
             LevelManager.clearPool();
 

@@ -8,6 +8,7 @@ import com.tyzsskills.api.events.SkillActionEvent;
 import com.tyzsskills.api.events.SkillLoadEvent;
 import com.tyzsskills.api.model.Context;
 import com.tyzsskills.impl.server.Level.LevelManager;
+import com.tyzsskills.impl.server.active.BehaviorRegistry;
 import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.effects.GenericEffects;
@@ -206,9 +207,8 @@ public class SkillManager {
 
         var id = skill.getID();
 
-        var behaviour = SkillBehaviorRegistry.getSkillBehavior(id);
+        var behaviour = BehaviorRegistry.getSkillBehavior(id);
         if(behaviour != null && !SUBSCRIBED_SKILL_BEHAVIORS.contains(id)){
-            skill.setBehaviour(behaviour);
             behaviour.registerEvent(NeoForge.EVENT_BUS, id);
             SUBSCRIBED_SKILL_BEHAVIORS.add(id);
         }

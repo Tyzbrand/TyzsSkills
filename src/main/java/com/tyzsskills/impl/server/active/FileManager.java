@@ -35,6 +35,7 @@ public class FileManager {
             .setPrettyPrinting()
             .registerTypeAdapter(Skill.class, Skill.SKILL_SERIALIZER)
             .registerTypeAdapter(SkillConfiguration.class, SkillConfiguration.CONFIG_SERIALIZER)
+            .registerTypeAdapter(Spell.class, Spell.SPELL_SERIALIZER)
             .create();
 
     private static final List<SkillPrefab> skillPrefabQueue = new ArrayList<>();

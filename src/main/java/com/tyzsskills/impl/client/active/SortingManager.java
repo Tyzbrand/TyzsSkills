@@ -38,16 +38,16 @@ public class SortingManager {
             s -> Component.translatable(s.getDisplayName()).getString(),  String.CASE_INSENSITIVE_ORDER);
 
     private static Comparator<ISkill> byPrice = Comparator.<ISkill>comparingInt(
-            s -> s.getPrice(ClientCache.get().getSkillLevel(s.getID()) + 1)).thenComparing(byName);
+            s -> s.getPrice(ClientCache.get().SKILLS.getSkillLevel(s.getID()) + 1)).thenComparing(byName);
 
     private static Comparator<ISkill> byLevel = Comparator.<ISkill>comparingInt(
-            s -> ClientCache.get().getSkillLevel(s.getID())).thenComparing(byName);
+            s -> ClientCache.get().SKILLS.getSkillLevel(s.getID())).thenComparing(byName);
 
     private static final Comparator<ISkill> byDefault = Comparator.<ISkill>comparingInt(s -> {
         var cache = ClientCache.get();
-        var lvl = cache.getSkillLevel(s.getID());
+        var lvl = cache.SKILLS.getSkillLevel(s.getID());
         if (lvl >= s.getMaximumLevel()) return 2;
-        if (!SkillRules.isAvailable(cache.getSkillContext(s.getID()), cache.getPlayerContext())) return 3;
+        if (!SkillRules.isAvailable(cache.SKILLS.getSkillContext(s.getID()), cache.getPlayerContext())) return 3;
         if (lvl > 0) return 1;
         return 0;
     }).thenComparing(byName);
@@ -59,22 +59,22 @@ public class SortingManager {
 
     public static void refreshList(){
         var cache = ClientCache.get();
-        var toSort =  new ArrayList<>(cache.getAllSkills().values());
+        var toSort =  new ArrayList<>(cache.SKILLS.getAllSkills().values());
 
         //BOOKMARK OR ALL
-        if(currentCategory.is("bookmarks")) toSort.removeIf(s -> !cache.isSkillBookMarked(s.getID()));
+        if(currentCategory.is("bookmarks")) toSort.removeIf(s -> !cache.SKILLS.isSkillBookMarked(s.getID()));
         else if(!currentCategory.is("all")) toSort.removeIf(s -> !currentCategory.is(s.getCategory()));
 
         //SKILL IS SET ON NOT VISIBLE
-        toSort.removeIf(s -> !s.isVisible() && cache.getSkillLevel(s.getID()) < 1);
+        toSort.removeIf(s -> !s.isVisible() && cache.SKILLS.getSkillLevel(s.getID()) < 1);
 
         var playerContext = cache.getPlayerContext();
 
         //TOGGLES
-        if(!showMaxed) toSort.removeIf(s -> cache.getSkillLevel(s.getID()) >= s.getMaximumLevel());
-        if(!showUnaffordable) toSort.removeIf(s -> !SkillRules.canBuy(cache.getSkillContext(s.getID()), playerContext,
+        if(!showMaxed) toSort.removeIf(s -> cache.SKILLS.getSkillLevel(s.getID()) >= s.getMaximumLevel());
+        if(!showUnaffordable) toSort.removeIf(s -> !SkillRules.canBuy(cache.SKILLS.getSkillContext(s.getID()), playerContext,
                 cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true)));
-        if(!showLocked) toSort.removeIf(s -> !SkillRules.isAvailable(cache.getSkillContext(s.getID()), playerContext));
+        if(!showLocked) toSort.removeIf(s -> !SkillRules.isAvailable(cache.SKILLS.getSkillContext(s.getID()), playerContext));
 
         if(!currentSearchQuery.isBlank()){
             var query = currentSearchQuery.trim().toLowerCase(Locale.ROOT);

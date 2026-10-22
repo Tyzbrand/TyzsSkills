@@ -26,16 +26,16 @@ public class ExportManager {
         var cache = ClientCache.get();
 
         Map<String, Integer> purchasedSkills = new HashMap<>();
-        for (var kvp : cache.getOwnedSkills().entrySet()){
+        for (var kvp : cache.SKILLS.getOwnedSkills().entrySet()){
             var id = kvp.getKey();
-            purchasedSkills.put(id, cache.getSkillLevel(id));
+            purchasedSkills.put(id, cache.SKILLS.getSkillLevel(id));
         }
 
         var data = new ExportData(
                 mc.level.getGameTime(),
-                cache.getLevel(),
-                cache.getXp(),
-                cache.getSp(),
+                cache.METADATA.getLevel(),
+                cache.METADATA.getXp(),
+                cache.METADATA.getSp(),
                 cache.getTotalXpPerHour(),
                 purchasedSkills
         );

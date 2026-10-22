@@ -83,7 +83,7 @@ public class MainMenu extends Screen {
 
         //Progress Bar
         var xpTooltip = new XpTooltip();
-        mainPanel.addChild(new UIProgressBar(2, 105, () -> XP_BAR, () -> cache.getXp()/cache.getXpGoal())
+        mainPanel.addChild(new UIProgressBar(2, 105, () -> XP_BAR, () -> cache.METADATA.getXp()/cache.METADATA.getXpGoal())
                 .withTooltip(() -> xpTooltip));
 
 
@@ -91,13 +91,13 @@ public class MainMenu extends Screen {
         var textScale = .63f;
         mainPanel.addChild(new UIText(4, 96 , () -> Component.translatable("gui.tyzs_skills.Lvl"))
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
-        mainPanel.addChild(new UIText(30, 96, () -> Component.literal(FormatTools.bigFloat(cache.getLevel())))
+        mainPanel.addChild(new UIText(30, 96, () -> Component.literal(FormatTools.bigFloat(cache.METADATA.getLevel())))
                 .withAlignment(Enums.TextAlignment.RIGHT)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
 
         mainPanel.addChild(new UIText(37, 96, () -> Component.translatable("gui.tyzs_skills.SP"))
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
-        mainPanel.addChild(new UIText(63, 96, () -> Component.literal(FormatTools.bigFloat(cache.getSp())))
+        mainPanel.addChild(new UIText(63, 96, () -> Component.literal(FormatTools.bigFloat(cache.METADATA.getSp())))
                 .withAlignment(Enums.TextAlignment.RIGHT)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
     }

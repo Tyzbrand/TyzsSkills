@@ -53,7 +53,7 @@ public class SpellLoader {
         if(description == null) description = "Missing description";
 
 
-        if(!source.get("properties").isJsonArray()) {
+        if(!source.has("properties") || !source.get("properties").isJsonArray()) {
             /*ErrorManager.registerSkillError(id, "invalid modifier structure");*/return;}
 
         var properties = new ArrayList<SpellProperty>();
@@ -69,11 +69,14 @@ public class SpellLoader {
             if(key == null) /*REGISTER AN ERROR*/continue;
             if(key.equals("cooldown")) hasCooldown = true;
 
+            Float baseValue = JsonLoadTools.getSafeElement(obj, "baseValue", JsonPrimitive::getAsFloat);
+            if(baseValue == null) baseValue = 0f;
+
             List<Integer> prices = JsonLoadTools.getSafeList(obj, "prices", JsonElement::getAsInt);
-            if(prices == null || prices.isEmpty()) /*REGISTER AN ERROR*/continue;
+            if(prices == null) /*REGISTER AN ERROR*/continue;
 
             List<Float> values = JsonLoadTools.getSafeList(obj, "values", JsonElement::getAsFloat);
-            if(values == null || values.isEmpty()) /*REGISTER AN ERROR*/continue;
+            if(values == null || values.size() < prices.size()) /*REGISTER AN ERROR*/continue;
 
             String propDisplayName = JsonLoadTools.getSafeElement(obj, "displayName", JsonPrimitive::getAsString);
             if(propDisplayName == null) propDisplayName = "Unknown property";
@@ -81,7 +84,10 @@ public class SpellLoader {
             String propDescription = JsonLoadTools.getSafeElement(obj, "description", JsonPrimitive::getAsString);
             if(propDescription == null) propDescription = "Missing description";
 
-            properties.add(new SpellProperty(key, prices, values, propDisplayName, propDescription));
+            String propUnit = JsonLoadTools.getSafeElement(obj, "unit", JsonPrimitive::getAsString);
+            if(propUnit == null) propUnit = "";
+
+            properties.add(new SpellProperty(key, prices, baseValue, values, propDisplayName, propDescription, propUnit));
         }
         if(!hasCooldown) /*REGISTER AN ERROR*/return;
         SpellManager.registerSpell(new Spell(true, id, price, icon, displayName, description, properties));

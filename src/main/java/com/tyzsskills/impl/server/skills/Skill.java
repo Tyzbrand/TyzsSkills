@@ -50,8 +50,6 @@ public class Skill implements ISkill {
         maximumLevel = this.prices.size();
     }
 
-    protected transient SkillBehavior behaviour;
-
     //Common data -----------------------
     protected boolean active;
     protected final String id;
@@ -126,16 +124,6 @@ public class Skill implements ISkill {
     @Override
     public @NotNull CompoundTag getSpecificParameters() {
         return config.parameters();
-    }
-
-
-    public @Nullable SkillBehavior getBehavior(){return behaviour;}
-    public boolean hasBehaviour(){return behaviour != null;}
-
-
-    //Setters
-    public void setBehaviour(@NotNull SkillBehavior behaviour){
-        this.behaviour = behaviour;
     }
 
 

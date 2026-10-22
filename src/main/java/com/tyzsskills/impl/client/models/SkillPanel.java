@@ -95,7 +95,7 @@ public class SkillPanel extends UIContainer {
     //INITIALIZATION
     private void buildTabs(){
         tabsPanel.clear();
-        var categories = cache.getAllCategories();
+        var categories = cache.SKILLS.getAllCategories();
         var total = categories.size();
 
         tabsPanel.addChild(new UIButton(97, 12, () -> PREV_TAB, this::handleTabBack)
@@ -162,7 +162,7 @@ public class SkillPanel extends UIContainer {
     //IMPLEMENTATION
     private void initOffset(){
         var activeCat = SortingManager.getCurrentCategory();
-        var categories = cache.getAllCategories();
+        var categories = cache.SKILLS.getAllCategories();
 
         for (int i = 0; i < categories.size(); i++) {
             if (categories.get(i) == activeCat) {
@@ -267,7 +267,7 @@ public class SkillPanel extends UIContainer {
         return categoryOffset <= 0;
     }
     private boolean isTabNextDisabled(){
-        var total = cache.getAllCategories().size();
+        var total = cache.SKILLS.getAllCategories().size();
         return categoryOffset + Constants.MAX_CATEGORIES_PER_LINE >= total;
     }
 

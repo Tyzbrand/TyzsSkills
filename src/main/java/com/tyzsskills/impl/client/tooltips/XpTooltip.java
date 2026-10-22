@@ -41,9 +41,9 @@ public class XpTooltip extends UITooltip {
 
     private MutableComponent getXpLine(){
         return Component.empty()
-                .append(Component.literal(FormatTools.defaultFloat(cache.getXp()) + "/"))
-                .append(Component.literal(FormatTools.defaultFloat(cache.getXpGoal()) + " "))
-                .append(Component.literal("[+" + cache.getSpReward() + " ").withStyle(ChatFormatting.GREEN))
+                .append(Component.literal(FormatTools.defaultFloat(cache.METADATA.getXp()) + "/"))
+                .append(Component.literal(FormatTools.defaultFloat(cache.METADATA.getXpGoal()) + " "))
+                .append(Component.literal("[+" + cache.METADATA.getSpReward() + " ").withStyle(ChatFormatting.GREEN))
                 .append(Component.translatable("gui.tyzs_skills.SP").withStyle(ChatFormatting.GREEN))
                 .append(Component.literal("]").withStyle(ChatFormatting.GREEN));
     }

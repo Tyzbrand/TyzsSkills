@@ -101,6 +101,10 @@ public class Tyzsskills {
         if (!event.has(EntityType.PLAYER, AttributeRegistry.SP_MULTIPLIER)) {
             event.add(EntityType.PLAYER, AttributeRegistry.SP_MULTIPLIER);
         }
+
+        if (!event.has(EntityType.PLAYER, AttributeRegistry.MAX_SPELL_SLOTS)) {
+            event.add(EntityType.PLAYER, AttributeRegistry.MAX_SPELL_SLOTS);
+        }
     }
 
     @SubscribeEvent
@@ -191,6 +195,24 @@ public class Tyzsskills {
                 ExportPayload.TYPE,
                 ExportPayload.STREAM_CODEC,
                 ExportPayload::Handle
+        );
+
+        registrar.playToClient(
+                UpdatePayloads.SpellPurchasePayload.TYPE,
+                UpdatePayloads.SpellPurchasePayload.STREAM_CODEC,
+                UpdatePayloads.SpellPurchasePayload::Handle
+        );
+
+        registrar.playToClient(
+                UpdatePayloads.PropertyLevelPayload.TYPE,
+                UpdatePayloads.PropertyLevelPayload.STREAM_CODEC,
+                UpdatePayloads.PropertyLevelPayload::Handle
+        );
+
+        registrar.playToClient(
+                UpdatePayloads.SpellSlotChange.TYPE,
+                UpdatePayloads.SpellSlotChange.STREAM_CODEC,
+                UpdatePayloads.SpellSlotChange::Handle
         );
 
 

@@ -38,7 +38,7 @@ public class RefundTooltip extends UITooltip {
         statContainer = new UIContainer(0, 11);
         this.addChild(statContainer);
 
-        this.withVisibility(() -> skill.isRefundable() && cache.getConfigBool(Config.REFUND_SYSTEM_KEY, true) && cache.getSkillLevel(skill.getID()) > 0);
+        this.withVisibility(() -> skill.isRefundable() && cache.getConfigBool(Config.REFUND_SYSTEM_KEY, true) && cache.SKILLS.getSkillLevel(skill.getID()) > 0);
 
         updateData();
     }
@@ -59,7 +59,7 @@ public class RefundTooltip extends UITooltip {
 
         refundPercentage = cache.getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30d);
 
-        var currentLvl = cache.getSkillLevel(skill.getID());
+        var currentLvl = cache.SKILLS.getSkillLevel(skill.getID());
         var targetLvl = getTargetedLevel(currentLvl);
 
         refreshPriceLine(currentLvl, targetLvl);

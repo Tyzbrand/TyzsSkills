@@ -38,11 +38,11 @@ public class FovHandler {
     private static float calculateSpeedFactor(ClientCache cache){
         float total = 0f;
 
-        for (var kvp : cache.getOwnedSkills().entrySet()){
+        for (var kvp : cache.SKILLS.getOwnedSkills().entrySet()){
             var level = kvp.getValue();
             if(level <= 0) continue;
 
-            var skill = cache.getSkill(kvp.getKey());
+            var skill = cache.SKILLS.getSkill(kvp.getKey());
             if(skill == null) continue;
 
             for(var modifier : skill.getModifiers()){

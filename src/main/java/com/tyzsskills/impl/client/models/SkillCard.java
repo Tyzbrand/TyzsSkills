@@ -132,34 +132,34 @@ public class SkillCard extends UIContainer {
         if(latestCacheVersion == currentCacheVersion) return;
         else latestCacheVersion = currentCacheVersion;
 
-        var sCtx = cache.getSkillContext(skill.getID());
+        var sCtx = cache.SKILLS.getSkillContext(skill.getID());
         var pCtx = cache.getPlayerContext();
 
         this.isLocked = !SkillRules.isAvailable(sCtx, pCtx);
-        this.isMaxed = cache.getSkillLevel(skill.getID()) >= skill.getMaximumLevel();
-        this.isBookmarked = cache.isSkillBookMarked(skill.getID());
-        this.isDeactivated = cache.isSkillDeactivated(skill.getID());
+        this.isMaxed = cache.SKILLS.getSkillLevel(skill.getID()) >= skill.getMaximumLevel();
+        this.isBookmarked = cache.SKILLS.isSkillBookMarked(skill.getID());
+        this.isDeactivated = cache.SKILLS.isSkillDeactivated(skill.getID());
         this.canAffordPurchase = SkillRules.canBuy(sCtx, pCtx, cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
         this.canAffordRefund = SkillRules.canRefund(sCtx, pCtx, cache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
         this.canBuy = cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true) && skill.isPurchasable();
         this.canRefund = cache.getConfigBool(Config.REFUND_SYSTEM_KEY, true) && skill.isRefundable();
 
-        this.currentLevel = cache.getSkillLevel(skill.getID());
+        this.currentLevel = cache.SKILLS.getSkillLevel(skill.getID());
     }
 
     //region EXTRACTED LOGIC
     // ==================== BUTTON CLICKS ====================
     private boolean handlePurchase(){
-        return cache.triggerAction(skill, isShiftPressed() ? Enums.ClientAction.BULK_PURCHASE : Enums.ClientAction.PURCHASE);
+        return cache.SKILLS.triggerAction(skill, isShiftPressed() ? Enums.ClientAction.BULK_PURCHASE : Enums.ClientAction.PURCHASE);
     }
     private boolean handleRefund(){
-        return cache.triggerAction(skill, isShiftPressed() ? Enums.ClientAction.BULK_REFUND : Enums.ClientAction.REFUND);
+        return cache.SKILLS.triggerAction(skill, isShiftPressed() ? Enums.ClientAction.BULK_REFUND : Enums.ClientAction.REFUND);
     }
     private boolean handleBookmark(){
-        return cache.triggerAction(skill, Enums.ClientAction.BOOKMARK);
+        return cache.SKILLS.triggerAction(skill, Enums.ClientAction.BOOKMARK);
     }
     private boolean handleDeactivation(){
-        return cache.triggerAction(skill, Enums.ClientAction.DEACTIVATION);
+        return cache.SKILLS.triggerAction(skill, Enums.ClientAction.DEACTIVATION);
     }
 
     // ==================== CONDITIONS ====================

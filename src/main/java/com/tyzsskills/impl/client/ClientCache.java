@@ -4,9 +4,11 @@ import com.tyzsskills.Config;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.api.records.Category;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.api.model.Context;
+import com.tyzsskills.api.records.SpellProperty;
 import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.overlay.XpTriggerOverlay;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
@@ -38,56 +40,13 @@ public class ClientCache {
     public static boolean isReady() {return INSTANCE != null;}
 
     public final Update UPDATE = new Update();
+    public final Skills SKILLS = new Skills();
+    public final Spells SPELLS = new Spells();
+    public final Metadata METADATA = new Metadata();
     public final SkillGraph GRAPH = new SkillGraph();
 
     private int cacheVersion = 0;
     public int getVersion(){return cacheVersion;}
-
-
-    //METADATA
-    private int level;
-    public int getLevel() {return level;}
-
-    private int sp;
-    public int getSp() {return sp;}
-
-    private float xp;
-    public float getXp() {
-        return xp;
-    }
-
-    private LevelData levelData;
-    public float getXpGoal() {
-        return levelData != null ? levelData.goal() : 999999;
-    }
-    public int getSpReward() {
-        return levelData != null ? levelData.reward() : 0;
-    }
-
-    private final Map<String, Integer> skillLevels = new HashMap<>();
-    private final Map<String, Integer> skillLevelsView = Collections.unmodifiableMap(skillLevels);
-    public int getSkillLevel(@NotNull String skillId) {
-        return skillLevels.getOrDefault(skillId, 0);
-    }
-    public @NotNull @UnmodifiableView Map<String, Integer> getOwnedSkills(){return skillLevelsView;}
-
-    private final Set<String> bookmarks = new HashSet<>();
-    private final Set<String> bookmarksView = Collections.unmodifiableSet(bookmarks);
-    public boolean isSkillBookMarked(@NotNull String skillId) {
-        return bookmarks.contains(skillId);
-    }
-    public @NotNull @UnmodifiableView Set<String> getBookmarkedSkills() {
-        return bookmarksView;
-    }
-
-    private final Set<String> deactivations = new HashSet<>();
-    private final Set<String> deactivationsView = Collections.unmodifiableSet(deactivations);
-    public boolean isSkillDeactivated(@NotNull String skillId) {
-        return deactivations.contains(skillId);
-    }
-    public @NotNull @UnmodifiableView Set<String> getDeactivatedSkills() {
-        return deactivationsView;
-    }
 
     //STATISTICS
     private float allTimeXp;
@@ -124,113 +83,105 @@ public class ClientCache {
     public boolean isSpamming(){return System.currentTimeMillis() - lastClickTime < Constants.PAYLOAD_COOLDOWN_MS;}
 
     //SERVER
-    private final List<Category> categories = new ArrayList<>();
-    private final Map<String, Category> categoriesMap = new HashMap<>();
-    private final List<Category> categoriesView = Collections.unmodifiableList(categories);
-    public @NotNull @UnmodifiableView List<Category> getAllCategories(){return categoriesView;}
-    public @Nullable Category getCategory(@NotNull String categoryId){return categoriesMap.getOrDefault(categoryId, null);}
-
-
-    private final Map<String, ISkill> skills = new HashMap<>();
-    private final Map<String, ISkill> skillsView = Collections.unmodifiableMap(skills);
-    public boolean isSkillLoaded(@NotNull String skillId) {
-        return skills.containsKey(skillId.toLowerCase());
-    }
-    public @Nullable ISkill getSkill(@NotNull String skillId) {return skills.getOrDefault(skillId.toLowerCase(), null);}
-    public @NotNull @UnmodifiableView Map<String, ISkill> getAllSkills() {return skillsView;}
-
     private final Map<String, Object> configMap = new HashMap<>();
 
 
     public class Update {
 
         public void updateInit(@NotNull UpdatePayloads.InitPayload payload){
-            var playerData = payload.playerData(); var configData = payload.configData();
-            var serverData = payload.serverData();
+            var serverData = payload.serverData(); var configData = payload.configData();
+            var playerSkillData = payload.playerSkillData(); var playerSpellData = payload.playerSpellData();
+            var playerData = payload.playerData();
 
-           skills.clear(); configMap.clear(); bookmarks.clear();
-           deactivations.clear(); skillLevels.clear();
+            SKILLS.update(playerSkillData, serverData);
+            SPELLS.update(playerSpellData, serverData);
+            METADATA.update(playerData, payload.levelData());
 
-            for(var skill : serverData.skills()) skills.put(skill.getID(), skill);
-            GRAPH.build(getAllSkills().values());
+           configMap.clear();
 
-            bookmarks.addAll(serverData.bookmarks());
-            deactivations.addAll(serverData.deactivations());
-            skillLevels.putAll(serverData.playerSkillLevels());
-
-            sortCategories(serverData.categories());
-
-            level = playerData.level();
-            sp = playerData.sp();
-            xp = playerData.xp();
             allTimeXp = playerData.totalXp();
             spEarned = playerData.spEarned();
             spSpent = playerData.spSpent();
-            levelData = payload.levelData();
 
             configMap.putAll(configData.booleanMap());
             configMap.putAll(configData.doubleMap());
-
-            ownedSkills = skillLevels.values().stream().mapToInt(i -> i).sum();
-
-            totalSkills = 0;
-            for (var skill : skills.values()) totalSkills += skill.getMaximumLevel();
 
             registerUpdate("Initial Synchronization");
         }
 
         public void updateLevel(@NotNull UpdatePayloads.LevelPayload payload) {
-            level = payload.level();
+            METADATA.level = payload.level();
 
-            registerUpdate("Level Synced: New Cached Level [" + level + "]");
+            registerUpdate("Level Synced: New Cached Level [" + METADATA.level + "]");
         }
 
         public void updateSp(@NotNull UpdatePayloads.SpPayload payload) {
-            var old = sp;
-            sp = payload.sp();
+            var old = METADATA.sp;
+            METADATA.sp = payload.sp();
 
-            var diff = sp - old;
+            var diff = METADATA.sp - old;
             if(diff < 0) spSpent += Math.abs(diff);
             else if(diff > 0) spEarned += diff;
 
-            registerUpdate("Sp Synced: New Cached Sp Value [" + sp + "]");
+            registerUpdate("Sp Synced: New Cached Sp Value [" + METADATA.sp + "]");
         }
 
         public void updateXp(@NotNull UpdatePayloads.XpPayload payload) {
             if (payload.gained() > 0) XpTriggerOverlay.AddXp(payload.gained(), payload.triggersOverlay());
-            xp = payload.xp();
+            METADATA.xp = payload.xp();
 
             allTimeXp += payload.gained();
             sessionXp += payload.gained();
 
-            registerUpdate("Xp Synced: New Cached Xp Value [" + xp + "]");
+            registerUpdate("Xp Synced: New Cached Xp Value [" + METADATA.xp + "]");
         }
 
         public void updateSkillLevel(@NotNull UpdatePayloads.SkillLevelPayload payload) {
-            var diff = payload.level() - getSkillLevel(payload.id());
+            var diff = payload.level() - SKILLS.getSkillLevel(payload.id());
             ownedSkills += diff;
 
-            if (payload.level() <= 0) skillLevels.remove(payload.id().toLowerCase());
-            else skillLevels.put(payload.id().toLowerCase(), payload.level());
+            if (payload.level() <= 0) SKILLS.skillLevels.remove(payload.id().toLowerCase());
+            else SKILLS.skillLevels.put(payload.id().toLowerCase(), payload.level());
             registerUpdate("Skill Level Synced: New Cached Skill Level [" + payload.id() + ", " + payload.level() + "]");
         }
 
         public void updateLevelData(@NotNull UpdatePayloads.LevelDataPayload payload) {
-            levelData = payload.data();
+            METADATA.levelData = payload.data();
             registerUpdate("Level Data Synced: New Cached Level Data [" + payload.data().goal() + " xp, " + payload.data().reward() + "sp]");
         }
 
         public void updateBookmarks(@NotNull UpdatePayloads.BookmarksPayload payload) {
             var id = payload.id().toLowerCase();
-            if (payload.state()) bookmarks.add(id);
-            else bookmarks.remove(id);
+            if (payload.state()) SKILLS.bookmarks.add(id);
+            else SKILLS.bookmarks.remove(id);
             registerUpdate("Bookmark Synced: New Cached Bookmark [" + id + ", " + payload.state() + "]");
         }
 
         public void updateDeactivations(@NotNull UpdatePayloads.DeactivationsPayload payload) {
-            if (payload.state()) deactivations.add(payload.id());
-            else deactivations.remove(payload.id());
+            if (payload.state()) SKILLS.deactivations.add(payload.id());
+            else SKILLS.deactivations.remove(payload.id());
             registerUpdate("Deactivation Synced: New Cached Deactivation [" + payload.id() + ", " + payload.state() + "]");
+        }
+
+        public void updateSpellPurchase(@NotNull UpdatePayloads.SpellPurchasePayload payload) {
+            if(!SPELLS.isSpellPurchased(payload.id()))SPELLS.purchasedSpells.add(payload.id());
+            registerUpdate("Spell Purchase: New Purchased Spell [" + payload.id() + "]");
+        }
+
+        public void updatePropertyLevel(@NotNull UpdatePayloads.PropertyLevelPayload payload) {
+            if (payload.level() <= 0) SPELLS.propertyLevels.remove(payload.id().toLowerCase());
+            else SPELLS.propertyLevels.put(payload.id().toLowerCase(), payload.level());
+            registerUpdate("Property Level Synced: New Cached Spell Property Level [" + payload.id() + ", " + payload.level() + "]");
+        }
+
+        public void updateSpellSlot(@NotNull UpdatePayloads.SpellSlotChange payload) {
+            if (payload.id().isEmpty()) SPELLS.spellSlots.remove(payload.slot());
+            else {
+                SPELLS.spellSlots.values().remove(payload.id());
+                SPELLS.spellSlots.put(payload.slot(), payload.id());
+            }
+
+            registerUpdate("Slot Synced: New Cached Spell in Slot [" + payload.slot() + "]");
         }
 
         private void registerUpdate(String message) {
@@ -241,117 +192,257 @@ public class ClientCache {
         }
     }
 
-    //ACTIONS
-    public boolean triggerAction(@NotNull ISkill skill, Enums.ClientAction actionType){
-        if(isSpamming()) return false;
-        var success = false;
+    public class Skills{
+        public void update(UpdatePayloads.PlayerSyncSkillData playerSkillData, UpdatePayloads.ServerSyncData serverData){
+            skills.clear(); bookmarks.clear();
+            deactivations.clear(); skillLevels.clear();
 
-        switch(actionType){
-            case PURCHASE -> success = predictPurchase(skill);
-            case REFUND -> success =  predictRefund(skill);
-            case BULK_PURCHASE -> success = predictBulkPurchase(skill);
-            case BULK_REFUND -> success = predictBulkRefund(skill);
-            case BOOKMARK -> {
-                predictBookmark(skill);
-                success = true;
+            for(var skill : serverData.skills()) skills.put(skill.getID(), skill);
+            GRAPH.build(getAllSkills().values());
+
+            bookmarks.addAll(playerSkillData.bookmarks());
+            deactivations.addAll(playerSkillData.deactivations());
+            skillLevels.putAll(playerSkillData.playerSkillLevels());
+
+            sortCategories(playerSkillData.categories());
+
+            ownedSkills = skillLevels.values().stream().mapToInt(i -> i).sum();
+
+            totalSkills = 0;
+            for (var skill : skills.values()) totalSkills += skill.getMaximumLevel();
+        }
+
+
+        private final Map<String, Integer> skillLevels = new HashMap<>();
+        private final Map<String, Integer> skillLevelsView = Collections.unmodifiableMap(skillLevels);
+        public int getSkillLevel(@NotNull String skillId) {
+            return skillLevels.getOrDefault(skillId, 0);
+        }
+        public @NotNull @UnmodifiableView Map<String, Integer> getOwnedSkills(){return skillLevelsView;}
+
+        private final Set<String> bookmarks = new HashSet<>();
+        private final Set<String> bookmarksView = Collections.unmodifiableSet(bookmarks);
+        public boolean isSkillBookMarked(@NotNull String skillId) {
+            return bookmarks.contains(skillId);
+        }
+
+        private final Set<String> deactivations = new HashSet<>();
+        private final Set<String> deactivationsView = Collections.unmodifiableSet(deactivations);
+        public boolean isSkillDeactivated(@NotNull String skillId) {
+            return deactivations.contains(skillId);
+        }
+
+        private final List<Category> categories = new ArrayList<>();
+        private final Map<String, Category> categoriesMap = new HashMap<>();
+        private final List<Category> categoriesView = Collections.unmodifiableList(categories);
+        public @NotNull @UnmodifiableView List<Category> getAllCategories(){return categoriesView;}
+        public @Nullable Category getCategory(@NotNull String categoryId){return categoriesMap.getOrDefault(categoryId, null);}
+
+
+        private final Map<String, ISkill> skills = new HashMap<>();
+        private final Map<String, ISkill> skillsView = Collections.unmodifiableMap(skills);
+        public @Nullable ISkill getSkill(@NotNull String skillId) {return skills.getOrDefault(skillId.toLowerCase(), null);}
+        public @NotNull @UnmodifiableView Map<String, ISkill> getAllSkills() {return skillsView;}
+
+        public boolean triggerAction(@NotNull ISkill skill, Enums.ClientAction actionType){
+            if(isSpamming()) return false;
+            var success = false;
+
+            switch(actionType){
+                case PURCHASE -> success = predictPurchase(skill);
+                case REFUND -> success =  predictRefund(skill);
+                case BULK_PURCHASE -> success = predictBulkPurchase(skill);
+                case BULK_REFUND -> success = predictBulkRefund(skill);
+                case BOOKMARK -> {
+                    predictBookmark(skill);
+                    success = true;
+                }
+                case DEACTIVATION -> success = predictDeactivation(skill);
+
+
             }
-            case DEACTIVATION -> success = predictDeactivation(skill);
 
-
+            if(success){
+                registerNewClick();
+                PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID(), actionType));
+            }
+            return success;
         }
 
-        if(success){
-            registerNewClick();
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID(), actionType));
+        //PREDICTIONS
+        private void predictBookmark(ISkill skill) {
+            String id = skill.getID().toLowerCase();
+            if (isSkillBookMarked(id)) bookmarks.remove(id);
+            else bookmarks.add(id);
+            cacheVersion++;
         }
-        return success;
-    }
+        private boolean predictDeactivation(ISkill skill) {
+            String id = skill.getID();
+            if(skill.isPermanent() || getSkillLevel(id) <= 0) return false;
 
-    //PREDICTIONS
-    private void predictBookmark(ISkill skill) {
-        String id = skill.getID().toLowerCase();
-        if (isSkillBookMarked(id)) bookmarks.remove(id);
-        else bookmarks.add(id);
-        cacheVersion++;
-    }
+            if (isSkillDeactivated(id)) deactivations.remove(id);
+            else deactivations.add(id);
 
-    //PREDICTIONS
-    private boolean predictDeactivation(ISkill skill) {
-        String id = skill.getID();
-        if(skill.isPermanent() || getSkillLevel(id) <= 0) return false;
-
-        if (isSkillDeactivated(id)) deactivations.remove(id);
-        else deactivations.add(id);
-
-        cacheVersion++;
-        return true;
-    }
-
-    private boolean predictPurchase(ISkill skill) {
-        String id = skill.getID().toLowerCase();
-        int currentLvl = getSkillLevel(id);
-
-        if (!SkillRules.canBuy(getSkillContext(id), getPlayerContext(), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return false;
-        int price = skill.getPrices().get(currentLvl);
-
-
-        sp -= price;
-        skillLevels.put(id, currentLvl + 1);
-        cacheVersion++;
-        return true;
-    }
-
-    private boolean predictBulkPurchase(ISkill skill) {
-        String id = skill.getID().toLowerCase();
-        int currentLvl = getSkillLevel(id);
-
-        var bulkResult = SkillRules.checkBulkBuy(getSkillContext(id), getPlayerContext(), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
-
-        if (bulkResult.levelToAdd() > 0) {
-            sp -= bulkResult.spToWithdraw();
-            skillLevels.put(id, currentLvl + bulkResult.levelToAdd());
             cacheVersion++;
             return true;
         }
-        return false;
-    }
+        private boolean predictPurchase(ISkill skill) {
+            String id = skill.getID().toLowerCase();
+            int currentLvl = getSkillLevel(id);
 
-    private boolean predictRefund(ISkill skill) {
-        String id = skill.getID().toLowerCase();
-        int currentLvl = getSkillLevel(id);
+            if (!SkillRules.canBuy(getSkillContext(id), getPlayerContext(), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return false;
+            int price = skill.getPrices().get(currentLvl);
 
-        if (!SkillRules.canRefund(getSkillContext(id), getPlayerContext(), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return false;
 
-        skillLevels.put(id, currentLvl - 1);
-        float percentage = (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
-
-        List<Integer> prices = skill.getPrices();
-        if (currentLvl - 1 < prices.size()) {
-            int initialPrice = prices.get(currentLvl - 1);
-            float refundPercentage = percentage / 100f;
-            int refundAmount = (initialPrice <= 0) ? 0 : Math.round(initialPrice * refundPercentage);
-
-            if (refundAmount > 0) sp += refundAmount;
+            METADATA.sp -= price;
+            skillLevels.put(id, currentLvl + 1);
+            cacheVersion++;
+            return true;
         }
-        cacheVersion++;
-        return true;
-    }
+        private boolean predictBulkPurchase(ISkill skill) {
+            String id = skill.getID().toLowerCase();
+            int currentLvl = getSkillLevel(id);
 
-    private boolean predictBulkRefund(ISkill skill) {
-        String id = skill.getID().toLowerCase();
+            var bulkResult = SkillRules.checkBulkBuy(getSkillContext(id), getPlayerContext(), getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
 
-        if (getSkillLevel(id) <= 0) return false;
+            if (bulkResult.levelToAdd() > 0) {
+                METADATA.sp -= bulkResult.spToWithdraw();
+                skillLevels.put(id, currentLvl + bulkResult.levelToAdd());
+                cacheVersion++;
+                return true;
+            }
+            return false;
+        }
+        private boolean predictRefund(ISkill skill) {
+            String id = skill.getID().toLowerCase();
+            int currentLvl = getSkillLevel(id);
 
-        var spToRefund = SkillRules.checkBulkRefund(getSkillContext(id), getPlayerContext(),
-                (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), getConfigBool(Config.REFUND_SYSTEM_KEY, false));
+            if (!SkillRules.canRefund(getSkillContext(id), getPlayerContext(), getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return false;
 
-        if (spToRefund > 0) {
-            sp += spToRefund;
+            skillLevels.put(id, currentLvl - 1);
+            float percentage = (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
+
+            List<Integer> prices = skill.getPrices();
+            if (currentLvl - 1 < prices.size()) {
+                int initialPrice = prices.get(currentLvl - 1);
+                float refundPercentage = percentage / 100f;
+                int refundAmount = (initialPrice <= 0) ? 0 : Math.round(initialPrice * refundPercentage);
+
+                if (refundAmount > 0) METADATA.sp += refundAmount;
+            }
+            cacheVersion++;
+            return true;
+        }
+        private boolean predictBulkRefund(ISkill skill) {
+            String id = skill.getID().toLowerCase();
+
+            if (getSkillLevel(id) <= 0) return false;
+
+            var spToRefund = SkillRules.checkBulkRefund(getSkillContext(id), getPlayerContext(),
+                    (float) getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), getConfigBool(Config.REFUND_SYSTEM_KEY, false));
+
+            if (spToRefund > 0) {
+                METADATA.sp += spToRefund;
+            }
+
+            skillLevels.put(id, 0);
+            cacheVersion++;
+            return true;
         }
 
-        skillLevels.put(id, 0);
-        cacheVersion++;
-        return true;
+        //CONTEXT
+        private final Context.Skill skillContext = new Context.Skill();
+        public @NotNull Context.Skill getSkillContext(String skillID){
+            var skill = getSkill(skillID);
+            Objects.requireNonNull(skill, "Attempt to access SkillContext with null skill (client side).");
+            return skillContext.updateContext(skill, getSkillLevel(skillID), GRAPH);
+        }
+
+        //UTILS
+        private void sortCategories(List<Category> categories){
+            this.categories.clear();
+
+            var sortedCategories = new ArrayList<>(categories);
+            sortedCategories.sort(Comparator.comparingInt(Category::order));
+
+            this.categories.addAll(sortedCategories);
+            for(var cat : categories) categoriesMap.put(cat.id(), cat);
+            if(!this.categories.isEmpty()) SortingManager.setCategory(this.categories.getFirst());
+        }
+    }
+    public class Spells{
+        public void update(UpdatePayloads.PlayerSyncSpellData playerSpellData, UpdatePayloads.ServerSyncData serverData){
+            purchasedSpells.clear(); propertyLevels.clear(); spells.clear(); spellSlots.clear();
+
+            for(var spell : serverData.spells()) spells.put(spell.getID(), spell);
+            purchasedSpells.addAll(playerSpellData.purchasedSpells());
+            propertyLevels.putAll(playerSpellData.playerPropertyLevels());
+            spellSlots.putAll(playerSpellData.playerSlots());
+        }
+
+        private final List<String> purchasedSpells = new ArrayList<>();
+        private final List<String> purchasedSpellsView = Collections.unmodifiableList(purchasedSpells);
+        public boolean isSpellPurchased(@NotNull String spellId) {
+            return purchasedSpells.contains(spellId);
+        }
+
+        private final Map<String, Integer> propertyLevels = new HashMap<>();
+        private final Map<String, Integer> propertyLevelsView = Collections.unmodifiableMap(propertyLevels);
+        public int getPropertyLevel(@NotNull String spellId, @NotNull String propertyKey) {
+            return propertyLevels.getOrDefault((spellId + ":" + propertyKey).toLowerCase(), 0);
+        }
+
+        private final Map<Integer, String> spellSlots = new HashMap<>();
+        private final Map<Integer, String> spellSlotsView = Collections.unmodifiableMap(spellSlots);
+        public boolean isSpellAssigned(@NotNull String spellId){return  spellSlots.containsValue(spellId);}
+        public boolean isSlotFree(int slot){
+            return !spellSlots.containsKey(slot);
+        }
+        public @NotNull @UnmodifiableView Map<Integer, String> getSlots(){return spellSlotsView;}
+
+        private final Map<String, ISpell> spells = new HashMap<>();
+        private final Map<String, ISpell> spellsView = Collections.unmodifiableMap(spells);
+        public @Nullable ISpell getSpell(@NotNull String spellId) {return spells.getOrDefault(spellId.toLowerCase(), null);}
+        public @NotNull @UnmodifiableView Map<String, ISpell> getAllSpells() {return spellsView;}
+
+        private final Context.Spell spellContext = new Context.Spell();
+        public @NotNull Context.Spell getSpellContext(@NotNull String spellId) {
+            var spell = getSpell(spellId);
+            Objects.requireNonNull(spell, "Attempt to access SpellContext with null spell.");
+            return spellContext.updateContext(spell, isSpellPurchased(spellId));
+        }
+
+        private final Context.Property propertyContext = new Context.Property();
+        public @NotNull Context.Property getPropertyContext(@NotNull SpellProperty property, @NotNull String spellId) {
+            return propertyContext.updateContext(property, getPropertyLevel(spellId, property.key()));
+        }
+    }
+    public class Metadata{
+        public void update(UpdatePayloads.PlayerSyncData playerData, LevelData levelData){
+            level = playerData.level();
+            sp = playerData.sp();
+            xp = playerData.xp();
+            this.levelData = levelData;
+        }
+
+        private int level;
+        public int getLevel() {return level;}
+
+        private int sp;
+        public int getSp() {return sp;}
+
+        private float xp;
+        public float getXp() {
+            return xp;
+        }
+
+        private LevelData levelData;
+        public float getXpGoal() {
+            return levelData != null ? levelData.goal() : 999999;
+        }
+        public int getSpReward() {
+            return levelData != null ? levelData.reward() : 0;
+        }
     }
 
 
@@ -360,14 +451,7 @@ public class ClientCache {
     public @NotNull Context.Player getPlayerContext() {
         var player = Minecraft.getInstance().player;
         Objects.requireNonNull(player, "Attempt to access PlayerContext with null client.");
-        return playerContext.updateContext(player, level, sp, getOwnedSkills());
-    }
-
-    private final Context.Skill skillContext = new Context.Skill();
-    public @NotNull Context.Skill getSkillContext(String skillID){
-        var skill = getSkill(skillID);
-        Objects.requireNonNull(skill, "Attempt to access SkillContext with null skill (client side).");
-        return skillContext.updateContext(skill, getSkillLevel(skillID), GRAPH);
+        return playerContext.updateContext(player, METADATA.level, METADATA.sp, SKILLS.getOwnedSkills());
     }
 
     public int getTotalXpPerHour() {
@@ -409,16 +493,6 @@ public class ClientCache {
         }
     }
 
-    private void sortCategories(List<Category> categories){
-        this.categories.clear();
-
-        var sortedCategories = new ArrayList<>(categories);
-        sortedCategories.sort(Comparator.comparingInt(Category::order));
-
-        this.categories.addAll(sortedCategories);
-        for(var cat : categories) categoriesMap.put(cat.id(), cat);
-        if(!this.categories.isEmpty()) SortingManager.setCategory(this.categories.getFirst());
-    }
 
     //CONFIG
     public boolean getConfigBool(@NotNull String id, boolean fallback) {

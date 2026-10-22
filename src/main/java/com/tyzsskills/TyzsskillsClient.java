@@ -59,36 +59,7 @@ public class TyzsskillsClient {
 
     @SubscribeEvent
     static void onTyzsSkillsClientSetup(TyzsSkillsClientSetupEvent event){
-        event.wrapper().registerSortingType(new SortType(
-                "gui.tyzs_skills.sorting.name",
-                Comparator.comparing(
-                        (ISkill skill) -> Component.translatable(skill.getDisplayName()).getString(),
-                        String.CASE_INSENSITIVE_ORDER
-                ).thenComparing(ISkill::getID),
-                94, 151,
-                126, 151
-        ));
 
-        event.wrapper().registerSortingType(new SortType(
-                "gui.tyzs_skills.sorting.price",
-                Comparator.comparingInt((ISkill skill) -> skill.getPrice(ClientCache.get().getSkillLevel(skill.getID()) + 1)).thenComparing(ISkill::getID),
-                78, 151,
-                110, 151
-        ));
-
-        event.wrapper().registerSortingType(new SortType(
-                "gui.tyzs_skills.sorting.level",
-                Comparator.comparingInt((ISkill skill) -> ClientCache.get().getSkillLevel(skill.getID())).thenComparing(ISkill::getID),
-                126, 167,
-                142, 167
-        ));
-
-        event.wrapper().registerSortingType(new SortType(
-                "gui.tyzs_skills.sorting.random",
-                null,
-                95, 167,
-                111, 167
-        ));
     }
 
 

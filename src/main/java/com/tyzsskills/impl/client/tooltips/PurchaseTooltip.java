@@ -55,8 +55,8 @@ public class PurchaseTooltip extends UITooltip {
         if (latestCacheVersion == currentCacheVersion && latestShiftState == currentShiftState) return;
         latestCacheVersion = currentCacheVersion; latestShiftState = currentShiftState;
 
-        var currentLvl = cache.getSkillLevel(skill.getID());
-        var currentSp = cache.getSp();
+        var currentLvl = cache.SKILLS.getSkillLevel(skill.getID());
+        var currentSp = cache.METADATA.getSp();
         var targetLvl = getTargetedLevel(currentLvl, currentSp);
 
         refreshPriceLine(currentLvl, targetLvl, currentSp);

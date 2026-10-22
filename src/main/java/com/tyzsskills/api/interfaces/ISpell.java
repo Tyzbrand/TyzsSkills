@@ -1,7 +1,6 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.records.SpellProperty;
-import com.tyzsskills.api.records.PropertyContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -37,7 +36,4 @@ public interface ISpell {
         var property = getProperty(propertyKey);
         return property != null ? property.getMaximumLevel() : 0;
     }
-
-    boolean canBuyProperty(@NotNull PropertyContext ctx, boolean purchaseEnabled);
-    boolean canBuySpell(int playerSp, boolean purchaseEnabled);
 }

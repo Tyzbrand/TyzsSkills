@@ -88,9 +88,9 @@ public class SkillTooltip extends UITooltip {
         if(cacheChanged){
             latestCacheVersion = currentCacheVersion;
 
-            var sCtx = cache.getSkillContext(skill.getID());
+            var sCtx = cache.SKILLS.getSkillContext(skill.getID());
             var pCtx = cache.getPlayerContext();
-            var currentLvl = cache.getSkillLevel(skill.getID());
+            var currentLvl = cache.SKILLS.getSkillLevel(skill.getID());
 
             isSkillAvailable = SkillRules.isAvailable(sCtx, pCtx);
             title = Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE);
@@ -141,8 +141,8 @@ public class SkillTooltip extends UITooltip {
         var tags = skill.getTags();
         var scale = .57f;
 
-        var stateText = new UIText(0, 0, () -> cache.isSkillDeactivated(skill.getID()) ? inactive : active)
-                .withBackground(() -> cache.isSkillDeactivated(skill.getID()) ? inactiveStyle : activeStyle, () -> true)
+        var stateText = new UIText(0, 0, () -> cache.SKILLS.isSkillDeactivated(skill.getID()) ? inactive : active)
+                .withBackground(() -> cache.SKILLS.isSkillDeactivated(skill.getID()) ? inactiveStyle : activeStyle, () -> true)
                 .withScale(scale, Enums.ScalePivot.TOP_LEFT);
 
         tagContainer.addChild(stateText);
@@ -178,7 +178,7 @@ public class SkillTooltip extends UITooltip {
         var tempComponent = Component.empty();
 
         if(requiredLvl != 0) {
-            var color = requiredLvl <= cache.getLevel() ? ChatFormatting.GREEN : ChatFormatting.RED;
+            var color = requiredLvl <= cache.METADATA.getLevel() ? ChatFormatting.GREEN : ChatFormatting.RED;
             appendLine(tempComponent, Component.empty()
                     .append(Component.literal("◆").withStyle(ChatFormatting.BLUE))
                     .append(Component.translatable("gui.tyzs_skills.level_lock").withStyle(ChatFormatting.BLUE))
@@ -193,10 +193,10 @@ public class SkillTooltip extends UITooltip {
                     .append(Component.literal(":")).withStyle(ChatFormatting.BLUE));
 
             for (var conflict : incompatibilities) {
-                var conflictSkill = cache.getSkill(conflict);
+                var conflictSkill = cache.SKILLS.getSkill(conflict);
                 if (conflictSkill == null) continue;
 
-                var color = cache.getSkillLevel(conflict) > 0 ? ChatFormatting.RED : ChatFormatting.DARK_GRAY;
+                var color = cache.SKILLS.getSkillLevel(conflict) > 0 ? ChatFormatting.RED : ChatFormatting.DARK_GRAY;
                 appendLine(tempComponent, Component.empty()
                         .append(Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY))
                         .append(Component.translatable(conflictSkill.getDisplayName()).withStyle(color)));
@@ -211,11 +211,11 @@ public class SkillTooltip extends UITooltip {
             for (var prerequisite : prerequisites.entrySet()) {
                 var id = prerequisite.getKey();
                 var requiredLevel = prerequisite.getValue();
-                var prerequisiteSkill = cache.getSkill(id);
+                var prerequisiteSkill = cache.SKILLS.getSkill(id);
 
                 if (prerequisiteSkill == null) continue;
 
-                var color = cache.getSkillLevel(id) < requiredLevel ? ChatFormatting.RED : ChatFormatting.GREEN;
+                var color = cache.SKILLS.getSkillLevel(id) < requiredLevel ? ChatFormatting.RED : ChatFormatting.GREEN;
                 appendLine(tempComponent, Component.empty()
                         .append(Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY))
                         .append(Component.translatable(prerequisiteSkill.getDisplayName()).withStyle(ChatFormatting.DARK_GRAY))
