@@ -4,10 +4,9 @@ public class Enums {
 
     public enum SkillType {GENERIC, CUSTOM, IMMUTABLE}
     public enum ResetType {ALL, METADATA, SKILLS, STATS}
-    public enum TooltipType {REFUND, PURCHASE}
 
     public enum SortingDirection {ASCENDING, DESCENDING}
-    public enum SortingCategory {ALL, BOOKMARKS}
+    public enum SortingType {DEFAULT, NAME, PRICE, LEVEL}
     public enum MenuFocus {SKILL, SPELL}
 
     public enum ClientAction {PURCHASE, REFUND, BULK_PURCHASE, BULK_REFUND, BOOKMARK, DEACTIVATION}

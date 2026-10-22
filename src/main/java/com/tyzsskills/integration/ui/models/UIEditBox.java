@@ -138,6 +138,12 @@ public class UIEditBox extends UIElement {
         return true;
     }
 
+    @Override
+    public UITooltip getHoveredTooltip(int mouseX, int mouseY) {
+        if(isFocused) return null;
+        return super.getHoveredTooltip(mouseX, mouseY);
+    }
+
     //UTILS
     private void updateDisplayOffset(int availableWidth) {
         var cursorPos = Mth.clamp(textHelper.getCursorPos(), 0, value.length());

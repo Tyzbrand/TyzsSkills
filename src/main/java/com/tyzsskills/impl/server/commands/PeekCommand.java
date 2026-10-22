@@ -3,7 +3,6 @@ package com.tyzsskills.impl.server.commands;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.tools.FormatTools;
-import com.tyzsskills.impl.client.active.ComponentManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
