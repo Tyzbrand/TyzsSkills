@@ -4,13 +4,16 @@ import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.Styles;
-import com.tyzsskills.impl.client.ClientCache;
+import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.tooltips.PurchaseTooltip;
 import com.tyzsskills.impl.client.tooltips.RefundTooltip;
 import com.tyzsskills.impl.client.tooltips.SkillTooltip;
 import com.tyzsskills.impl.server.skills.SkillRules;
+import com.tyzsskills.integration.ui.models.UIButton;
+import com.tyzsskills.integration.ui.models.UIContainer;
+import com.tyzsskills.integration.ui.models.UIImage;
+import com.tyzsskills.integration.ui.models.UIText;
 import com.tyzsskills.integration.ui.records.UIStyles;
-import com.tyzsskills.integration.ui.models.*;
 import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -150,16 +153,16 @@ public class SkillCard extends UIContainer {
     //region EXTRACTED LOGIC
     // ==================== BUTTON CLICKS ====================
     private boolean handlePurchase(){
-        return cache.SKILLS.triggerAction(skill, isShiftPressed() ? Enums.ClientAction.BULK_PURCHASE : Enums.ClientAction.PURCHASE);
+        return cache.SKILLS.triggerAction(skill, isShiftPressed() ? Enums.SkillAction.BULK_PURCHASE : Enums.SkillAction.PURCHASE);
     }
     private boolean handleRefund(){
-        return cache.SKILLS.triggerAction(skill, isShiftPressed() ? Enums.ClientAction.BULK_REFUND : Enums.ClientAction.REFUND);
+        return cache.SKILLS.triggerAction(skill, isShiftPressed() ? Enums.SkillAction.BULK_REFUND : Enums.SkillAction.REFUND);
     }
     private boolean handleBookmark(){
-        return cache.SKILLS.triggerAction(skill, Enums.ClientAction.BOOKMARK);
+        return cache.SKILLS.triggerAction(skill, Enums.SkillAction.BOOKMARK);
     }
     private boolean handleDeactivation(){
-        return cache.SKILLS.triggerAction(skill, Enums.ClientAction.DEACTIVATION);
+        return cache.SKILLS.triggerAction(skill, Enums.SkillAction.DEACTIVATION);
     }
 
     // ==================== CONDITIONS ====================

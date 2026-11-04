@@ -1,7 +1,5 @@
 package com.tyzsskills.impl.server.skills;
 
-import java.util.*;
-
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.SkillActionEvent;
@@ -9,14 +7,19 @@ import com.tyzsskills.api.events.SkillLoadEvent;
 import com.tyzsskills.api.model.Context;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.active.BehaviorRegistry;
-import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.effects.GenericEffects;
-import com.tyzsskills.impl.server.payloads.*;
+import com.tyzsskills.impl.server.payloads.UpdatePayloads;
+import com.tyzsskills.impl.server.sp.SpManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
+
+import java.util.*;
 
 @ApiStatus.Internal
 public class SkillManager {

@@ -1,7 +1,5 @@
 package com.tyzsskills.api.interfaces;
 
-import com.tyzsskills.api.records.SkillPrefab;
-import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;

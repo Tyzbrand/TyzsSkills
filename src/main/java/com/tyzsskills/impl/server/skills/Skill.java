@@ -8,7 +8,6 @@ import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.STag;
 import com.tyzsskills.api.records.ValueSet;
-import com.tyzsskills.api.model.SkillBehavior;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

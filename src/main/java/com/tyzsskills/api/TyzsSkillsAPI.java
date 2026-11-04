@@ -1,6 +1,9 @@
 package com.tyzsskills.api;
 
-import com.tyzsskills.api.interfaces.*;
+import com.tyzsskills.api.interfaces.ILevelManager;
+import com.tyzsskills.api.interfaces.ISkillManager;
+import com.tyzsskills.api.interfaces.ISpManager;
+import com.tyzsskills.api.interfaces.IXpManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,7 +1,6 @@
 package com.tyzsskills.api.events;
 
 import com.tyzsskills.api.interfaces.ITyzsSkillsClientRegistration;
-import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
 import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.IModBusEvent;
 

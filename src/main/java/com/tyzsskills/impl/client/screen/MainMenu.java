@@ -3,10 +3,11 @@ package com.tyzsskills.impl.client.screen;
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.tools.FormatTools;
-import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.active.SortingManager;
+import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.models.SkillPanel;
+import com.tyzsskills.impl.client.models.SpellPanel;
 import com.tyzsskills.impl.client.tooltips.XpTooltip;
 import com.tyzsskills.integration.ui.UITooltipRenderer;
 import com.tyzsskills.integration.ui.models.*;
@@ -22,7 +23,7 @@ public class MainMenu extends Screen {
     protected final ClientCache cache;
 
     private final SkillPanel skillPanel;
-//    private EditBox searchBar;
+    private final SpellPanel spellPanel;
 
     private int leftPos;
     private int topPos;
@@ -49,6 +50,9 @@ public class MainMenu extends Screen {
 
         skillPanel = new SkillPanel(0, 0);
         skillPanel.withVisibility(() -> SortingManager.getCurrentMenuType() == Enums.MenuFocus.SKILL);
+
+        spellPanel = new SpellPanel(0, 0);
+        spellPanel.withVisibility(() -> SortingManager.getCurrentMenuType() == Enums.MenuFocus.SPELL);
     }
 
     @Override
@@ -62,6 +66,7 @@ public class MainMenu extends Screen {
 
         buildDefaultUis();
         mainPanel.addChild(skillPanel);
+        mainPanel.addChild(spellPanel);
     }
 
     //IMPLEMENTATION
@@ -158,11 +163,6 @@ public class MainMenu extends Screen {
     public boolean isPauseScreen(){
         return false;
     }
-    //  @Override
-//    public void removed() {
-//        if(!Config.KEEP_SEARCH_QUERY.getAsBoolean()) SortingTools.setSearchQuery("");
-//        super.removed();
-//    }
 
     //region EXTRACTED LOGIC
     // ==================== BUTTON CLICKS ====================
@@ -171,5 +171,4 @@ public class MainMenu extends Screen {
         return true;
     }
     //endregion
-
 }

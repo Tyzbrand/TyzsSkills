@@ -1,22 +1,19 @@
 package com.tyzsskills;
 
 import com.tyzsskills.api.events.TyzsSkillsClientSetupEvent;
-import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.api.records.SortType;
-import com.tyzsskills.impl.client.ClientCache;
+import com.tyzsskills.impl.client.active.SortingManager;
+import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.key.MainKeybind;
 import com.tyzsskills.impl.client.models.InventoryButton;
 import com.tyzsskills.impl.client.overlay.LevelTriggerOverlay;
 import com.tyzsskills.impl.client.overlay.SkillTriggerOverlay;
 import com.tyzsskills.impl.client.overlay.XpTriggerOverlay;
-import com.tyzsskills.impl.client.screen.*;
-import com.tyzsskills.impl.client.active.SortingManager;
+import com.tyzsskills.impl.client.screen.MainMenu;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -29,9 +26,6 @@ import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import net.neoforged.neoforge.common.NeoForge;
-
-import java.util.Comparator;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = Tyzsskills.MODID, dist = Dist.CLIENT)

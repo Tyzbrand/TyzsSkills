@@ -60,9 +60,6 @@ public class SpellManager {
         setPropertyLevelInternal(player, spell, property, newLevel, true);
     }
 
-    public static void resetPropertyLevels(@NotNull ServerPlayer player){
-        player.getData(PlayerData.DATA).resetPropertyLevels();
-    }
 
     public static boolean tryBuyProperty(@NotNull ServerPlayer player, @NotNull String spellId, @NotNull String propertyKey)
     {
@@ -103,7 +100,7 @@ public class SpellManager {
 
             SpManager.tryRemoveSp(player, price);
             player.getData(PlayerData.DATA).purchaseSpell(spellId);
-            PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellPurchasePayload(spellId));
+            PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellPurchasePayload(spellId, true));
             return true;
         }
         return false;
@@ -142,6 +139,14 @@ public class SpellManager {
         PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellSlotChange(slot, ""));
     }
 
+    public static void resetSpells(@NotNull ServerPlayer player){
+        var data = player.getData(PlayerData.DATA);
+
+        data.resetPropertyLevels();
+        data.resetSpellLevels();
+        data.resetSlots();
+    }
+
 
     //API
     public static void registerSpell(@NotNull Spell spell) {
@@ -166,6 +171,9 @@ public class SpellManager {
         var maxSlots =(int) player.getAttributeValue(AttributeRegistry.MAX_SPELL_SLOTS);
         if (slot <= 0 || slot > maxSlots) return false;
         return player.getData(PlayerData.DATA).isSlotFree(slot);
+    }
+    public static @NotNull String getSpellInSlot(@NotNull ServerPlayer player, int slot){
+        return getPlayerSlots(player).getOrDefault(slot, "");
     }
 
     public static @NotNull @UnmodifiableView Map<String, Integer> getPlayerProperties(@NotNull ServerPlayer player){

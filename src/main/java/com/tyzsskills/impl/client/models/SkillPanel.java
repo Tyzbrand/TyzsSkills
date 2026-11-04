@@ -4,9 +4,9 @@ import com.tyzsskills.Config;
 import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.Category;
-import com.tyzsskills.impl.client.ClientCache;
-import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.Styles;
+import com.tyzsskills.impl.client.active.SortingManager;
+import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.tooltips.SearchBarTooltip;
 import com.tyzsskills.impl.client.tooltips.SortingDirectionTooltip;
 import com.tyzsskills.impl.client.tooltips.SortingTypeTooltip;
@@ -71,7 +71,7 @@ public class SkillPanel extends UIContainer {
         tabsPanel = new UIContainer(0, 0);
         scrollView = new UIScrollView(98, 25, 214, 108);
 
-        //TO SEE SCROLL VIEW SHAPE =>scrollView.addChild(new UIBackground(0, 0, 214, 150, 0xFFD6AD55));
+        //TO SEE SCROLL VIEW SHAPE => scrollView.addChild(new UIBackground(0, 0, 214, 150, () -> Styles.DEFAULT_BACKGROUND));
 
         categoryDisplayName = getCategoryDisplayName(SortingManager.getCurrentCategory());
         this.addChild(new UIText(307, 10, () -> categoryDisplayName)

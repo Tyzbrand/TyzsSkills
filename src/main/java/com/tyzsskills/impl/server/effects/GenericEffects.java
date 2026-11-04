@@ -2,8 +2,8 @@ package com.tyzsskills.impl.server.effects;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.skills.Skill;
+import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;

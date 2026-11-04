@@ -1,9 +1,7 @@
 package com.tyzsskills.integration.ui;
 
 import com.tyzsskills.integration.ui.models.UIBackground;
-import com.tyzsskills.integration.ui.models.UIContainer;
 import com.tyzsskills.integration.ui.models.UITooltip;
-import com.tyzsskills.integration.ui.records.UIStyles;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class UITooltipRenderer {

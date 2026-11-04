@@ -1,6 +1,5 @@
 package com.tyzsskills.api.records;
 
-import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

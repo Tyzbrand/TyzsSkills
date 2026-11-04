@@ -4,7 +4,7 @@ import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.records.Category;
 import com.tyzsskills.api.records.LevelData;
-import com.tyzsskills.impl.client.ClientCache;
+import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.categories.CategoryLoader;
@@ -23,7 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -128,7 +127,7 @@ public class UpdatePayloads {
             }
 
             public static void Handle(final LevelPayload payload, final IPayloadContext ctx){
-                ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateLevel(payload);} );
+                ctx.enqueueWork(() -> {ClientCache.get().METADATA.UPDATE.updateLevel(payload);} );
             }
 
     }
@@ -146,7 +145,7 @@ public class UpdatePayloads {
         }
 
         public static void Handle(final SpPayload payload, final IPayloadContext ctx){
-            ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateSp(payload);} );
+            ctx.enqueueWork(() -> {ClientCache.get().METADATA.UPDATE.updateSp(payload);} );
         }
     }
     public record XpPayload(float xp, float gained, boolean triggersOverlay) implements CustomPacketPayload{
@@ -165,7 +164,7 @@ public class UpdatePayloads {
             }
 
             public static void Handle(final XpPayload payload, final IPayloadContext ctx){
-                ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateXp(payload);} );
+                ctx.enqueueWork(() -> {ClientCache.get().METADATA.UPDATE.updateXp(payload);} );
             }
 
     }
@@ -185,7 +184,7 @@ public class UpdatePayloads {
         }
 
         public static void Handle(final LevelDataPayload payload, final IPayloadContext ctx){
-            ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateLevelData(payload);});
+            ctx.enqueueWork(() -> {ClientCache.get().METADATA.UPDATE.updateLevelData(payload);});
         }
     }
     //-----skills-----
@@ -204,7 +203,7 @@ public class UpdatePayloads {
         }
 
         public static void Handle(final SkillLevelPayload payload, final IPayloadContext ctx){
-            ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateSkillLevel(payload);} );
+            ctx.enqueueWork(() -> {ClientCache.get().SKILLS.UPDATE.updateSkillLevel(payload);} );
         }
 
     }
@@ -223,7 +222,7 @@ public class UpdatePayloads {
         }
 
         public static void Handle(final BookmarksPayload payload, final IPayloadContext ctx){
-            ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateBookmarks(payload);} );
+            ctx.enqueueWork(() -> {ClientCache.get().SKILLS.UPDATE.updateBookmarks(payload);} );
         }
 
     }
@@ -242,16 +241,17 @@ public class UpdatePayloads {
         }
 
         public static void Handle(final DeactivationsPayload payload, final IPayloadContext ctx){
-            ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateDeactivations(payload);} );
+            ctx.enqueueWork(() -> {ClientCache.get().SKILLS.UPDATE.updateDeactivations(payload);} );
         }
 
     }
     //-----spells-----
-    public record SpellPurchasePayload(String id) implements CustomPacketPayload{
+    public record SpellPurchasePayload(String id, boolean state) implements CustomPacketPayload{
         public static final Type<SpellPurchasePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "spell_purchase_payload"));
 
         public static final StreamCodec<ByteBuf, SpellPurchasePayload> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.STRING_UTF8, SpellPurchasePayload::id,
+                ByteBufCodecs.BOOL, SpellPurchasePayload::state,
                 SpellPurchasePayload::new
         );
 
@@ -261,7 +261,7 @@ public class UpdatePayloads {
         }
 
         public static void Handle(final SpellPurchasePayload payload, final IPayloadContext ctx){
-            ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateSpellPurchase(payload);} );
+            ctx.enqueueWork(() -> {ClientCache.get().SPELLS.UPDATE.updateSpellPurchase(payload);} );
         }
 
     }
@@ -280,7 +280,7 @@ public class UpdatePayloads {
         }
 
         public static void Handle(final PropertyLevelPayload payload, final IPayloadContext ctx){
-            ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updatePropertyLevel(payload);} );
+            ctx.enqueueWork(() -> {ClientCache.get().SPELLS.UPDATE.updatePropertyLevel(payload);} );
         }
 
     }
@@ -299,7 +299,7 @@ public class UpdatePayloads {
         }
 
         public static void Handle(final SpellSlotChange payload, final IPayloadContext ctx){
-            ctx.enqueueWork(() -> {ClientCache.get().UPDATE.updateSpellSlot(payload);} );
+            ctx.enqueueWork(() -> {ClientCache.get().SPELLS.UPDATE.updateSpellSlot(payload);} );
         }
 
     }

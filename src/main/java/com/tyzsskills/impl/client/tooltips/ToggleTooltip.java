@@ -6,7 +6,6 @@ import com.tyzsskills.integration.ui.models.UITooltip;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
-import java.awt.*;
 import java.util.function.Supplier;
 
 

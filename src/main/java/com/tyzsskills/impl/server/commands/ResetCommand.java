@@ -26,6 +26,14 @@ public class ResetCommand {
                                         DebugManager.RESET.reset(player, Enums.ResetType.SKILLS);
                                     return players.size();
                                 })))
+                .then(Commands.literal("spells")
+                        .then(Commands.argument("targets", EntityArgument.players())
+                                .executes(ctx -> {
+                                    var players = EntityArgument.getPlayers(ctx, "targets");
+                                    for(var player : players)
+                                        DebugManager.RESET.reset(player, Enums.ResetType.SPELLS);
+                                    return players.size();
+                                })))
                 .then(Commands.literal("metadata")
                         .then(Commands.argument("targets", EntityArgument.players())
                                 .executes(ctx -> {

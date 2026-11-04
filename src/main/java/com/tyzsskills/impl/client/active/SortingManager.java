@@ -4,7 +4,7 @@ import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.records.Category;
-import com.tyzsskills.impl.client.ClientCache;
+import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;

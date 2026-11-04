@@ -4,8 +4,8 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.tools.ColorTools;
 import com.tyzsskills.api.tools.FormatTools;
-import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.Styles;
+import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.integration.ui.models.*;
 import com.tyzsskills.integration.ui.records.UIStyles;
@@ -15,7 +15,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-
 
 
 public class SkillTooltip extends UITooltip {
@@ -164,8 +163,8 @@ public class SkillTooltip extends UITooltip {
 
     private void updateRequirements(){
         var requiredLvl = skill.getRequiredLevel();
-        var incompatibilities = cache.GRAPH.getIncompatibilitiesFor(skill.getID());
-        var prerequisites = cache.GRAPH.getPrerequisitesFor(skill.getID());
+        var incompatibilities = cache.SKILLS.GRAPH.getIncompatibilitiesFor(skill.getID());
+        var prerequisites = cache.SKILLS.GRAPH.getPrerequisitesFor(skill.getID());
 
         var hasInfos = requiredLvl != 0 || !incompatibilities.isEmpty() || !prerequisites.isEmpty();
         if(!hasInfos) {currentRequirements = null; return;}

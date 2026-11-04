@@ -4,7 +4,6 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.api.records.SpellProperty;
 import com.tyzsskills.impl.server.skills.SkillGraph;
-import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 

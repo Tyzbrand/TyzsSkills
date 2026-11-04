@@ -8,7 +8,9 @@ import com.tyzsskills.impl.server.active.ErrorManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class CategoryLoader {
     private static final List<Category> CATEGORIES = new ArrayList<>();

@@ -1,16 +1,9 @@
 package com.tyzsskills.integration.ui;
 
-import com.mojang.datafixers.util.Either;
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.integration.ui.models.UIContainer;
 import com.tyzsskills.integration.ui.models.UITooltip;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 public abstract class UIElement {

@@ -1,8 +1,8 @@
 package com.tyzsskills.impl.client.overlay;
 
 import com.tyzsskills.Config;
-import com.tyzsskills.impl.client.ClientCache;
 import com.tyzsskills.impl.client.SoundPlayer;
+import com.tyzsskills.impl.client.cache.ClientCache;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

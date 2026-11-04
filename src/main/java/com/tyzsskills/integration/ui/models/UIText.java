@@ -1,7 +1,6 @@
 package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.integration.ui.UIElement;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import net.minecraft.client.Minecraft;

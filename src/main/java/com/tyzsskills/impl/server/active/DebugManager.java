@@ -8,8 +8,8 @@ import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.ExplorationProgression;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.effects.GenericEffects;
-import com.tyzsskills.impl.server.skills.Skill;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
+import com.tyzsskills.impl.server.skills.Skill;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.impl.server.sp.SpManager;
@@ -149,12 +149,14 @@ public class DebugManager {
             switch (type){
                 case ALL -> {
                     resetSkills(player);
+                    resetSpells(player);
                     resetMetaData(player);
                     resetStats(player);
                 }
                 case METADATA -> resetMetaData(player);
                 case STATS -> resetStats(player);
                 case SKILLS -> resetSkills(player);
+                case SPELLS -> resetSpells(player);
             }
             NeoForge.EVENT_BUS.post(new PlayerResetEvent(player));
             PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
@@ -172,5 +174,6 @@ public class DebugManager {
         }
 
         private static void resetSkills(ServerPlayer player){SkillManager.resetSkillLevels(player);}
+        private static void resetSpells(ServerPlayer player){SpellManager.resetSpells(player);}
     }
 }

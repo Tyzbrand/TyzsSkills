@@ -1,40 +1,37 @@
 package com.tyzsskills;
 
+import com.mojang.logging.LogUtils;
 import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.events.TyzsSkillsCommonSetupEvent;
 import com.tyzsskills.impl.server.Level.LevelWrapper;
-import com.tyzsskills.impl.server.active.*;
+import com.tyzsskills.impl.server.active.AttributeRegistry;
+import com.tyzsskills.impl.server.active.SoundRegistry;
 import com.tyzsskills.impl.server.attachments.*;
-import com.tyzsskills.impl.server.events.XpGainsEvents;
-import com.tyzsskills.impl.server.skills.SkillPresets;
 import com.tyzsskills.impl.server.events.RuntimeEvents;
+import com.tyzsskills.impl.server.events.XpGainsEvents;
 import com.tyzsskills.impl.server.payloads.*;
+import com.tyzsskills.impl.server.skills.SkillPresets;
 import com.tyzsskills.impl.server.skills.SkillWrapper;
 import com.tyzsskills.impl.server.sp.SpWrapper;
-import com.tyzsskills.impl.server.wrappers.*;
+import com.tyzsskills.impl.server.spells.SpellPresets;
+import com.tyzsskills.impl.server.wrappers.TyzsSkillsCommonRegistrationWrapper;
 import com.tyzsskills.impl.server.xp.XpWrapper;
 import com.tyzsskills.integration.kubejs.JsEventsDelegate;
 import net.minecraft.world.entity.EntityType;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
-
-
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.neoforge.common.NeoForge;
-
-import java.io.IOException;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Tyzsskills.MODID)
@@ -179,6 +176,12 @@ public class Tyzsskills {
                 CActionSkillPayload::Handle
         );
 
+        registrar.playToServer(
+                CActionSpellPayload.TYPE,
+                CActionSpellPayload.STREAM_CODEC,
+                CActionSpellPayload::Handle
+        );
+
         registrar.playToClient(
                 SkillTriggerPayload.TYPE,
                 SkillTriggerPayload.STREAM_CODEC,
@@ -228,6 +231,10 @@ public class Tyzsskills {
     public void onTyzsSkillsCommonSetup(TyzsSkillsCommonSetupEvent event){
         for(var prefab : SkillPresets.getDefaultSkills()){
             event.wrapper().registerSkill(prefab);
+        }
+
+        for(var prefab : SpellPresets.getDefaultSpells()){
+            event.wrapper().registerSpell(prefab);
         }
     }
 }

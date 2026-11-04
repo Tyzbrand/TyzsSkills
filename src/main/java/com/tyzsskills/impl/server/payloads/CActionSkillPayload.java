@@ -16,13 +16,13 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 
-public record CActionSkillPayload(String id, Enums.ClientAction actionType) implements CustomPacketPayload{
+public record CActionSkillPayload(String id, Enums.SkillAction actionType) implements CustomPacketPayload{
     public static final Type<CActionSkillPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "action_skill_payload"));
 
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CActionSkillPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, CActionSkillPayload::id,
-            StreamCodec.of(FriendlyByteBuf::writeEnum, buf -> buf.readEnum(Enums.ClientAction.class)), CActionSkillPayload::actionType,
+            StreamCodec.of(FriendlyByteBuf::writeEnum, buf -> buf.readEnum(Enums.SkillAction.class)), CActionSkillPayload::actionType,
             CActionSkillPayload::new
     );
 

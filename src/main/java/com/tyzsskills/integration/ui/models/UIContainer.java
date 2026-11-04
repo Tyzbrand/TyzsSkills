@@ -2,7 +2,6 @@ package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.integration.ui.UIElement;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.util.Mth;
 
 import java.util.ArrayList;
 import java.util.List;

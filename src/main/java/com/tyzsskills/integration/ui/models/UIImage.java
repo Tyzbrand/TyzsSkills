@@ -1,10 +1,9 @@
 package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.integration.ui.UIElement;
-import com.tyzsskills.integration.ui.records.UIStyles.*;
+import com.tyzsskills.integration.ui.records.UIStyles.ImageStyle;
 import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Supplier;
 

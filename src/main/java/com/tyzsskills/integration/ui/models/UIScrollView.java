@@ -1,12 +1,7 @@
 package com.tyzsskills.integration.ui.models;
 
-import com.mojang.datafixers.util.Either;
 import com.tyzsskills.integration.ui.UIElement;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
-
-import java.util.List;
 
 public class UIScrollView extends UIContainer{
     private int contentHeight;

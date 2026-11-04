@@ -2,9 +2,9 @@ package com.tyzsskills.impl.server.xp;
 
 import com.tyzsskills.api.events.SkillXPChangeEvent;
 import com.tyzsskills.impl.server.Level.LevelManager;
-import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
+import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;

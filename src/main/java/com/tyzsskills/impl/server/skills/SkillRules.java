@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.server.skills;
 
-import com.tyzsskills.api.records.BulkPurchaseResult;
 import com.tyzsskills.api.model.Context;
+import com.tyzsskills.api.records.BulkPurchaseResult;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

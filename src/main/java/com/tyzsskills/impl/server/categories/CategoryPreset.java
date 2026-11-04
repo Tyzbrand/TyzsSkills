@@ -3,7 +3,8 @@ package com.tyzsskills.impl.server.categories;
 import com.tyzsskills.api.records.Category;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CategoryPreset {
 

@@ -3,6 +3,7 @@ package com.tyzsskills.impl.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tyzsskills.api.records.ExportData;
+import com.tyzsskills.impl.client.cache.ClientCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -36,7 +37,6 @@ public class ExportManager {
                 cache.METADATA.getLevel(),
                 cache.METADATA.getXp(),
                 cache.METADATA.getSp(),
-                cache.getTotalXpPerHour(),
                 purchasedSkills
         );
 

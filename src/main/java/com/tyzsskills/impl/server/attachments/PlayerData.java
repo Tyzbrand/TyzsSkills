@@ -10,7 +10,8 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -123,6 +124,9 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         playerSpellSlots.remove(slot);
     }
 
+    public void resetSlots(){
+        playerSpellSlots.clear();
+    }
 
     public boolean isSpellAssigned(String spellId){
         return spellId != null && playerSpellSlots.containsValue(spellId);

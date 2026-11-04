@@ -1,7 +1,9 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.records.*;
+import com.tyzsskills.api.records.Modifier;
+import com.tyzsskills.api.records.STag;
+import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;

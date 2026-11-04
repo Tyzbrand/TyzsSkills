@@ -1,7 +1,5 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
-import com.tyzsskills.api.model.SkillBehavior;
-
 public class RootCleaverEffect {
 
 

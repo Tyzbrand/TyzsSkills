@@ -4,7 +4,6 @@ import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.api.model.SkillConfiguration;
-import net.neoforged.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
