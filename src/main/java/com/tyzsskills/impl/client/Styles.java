@@ -28,9 +28,9 @@ public class Styles {
             new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png"), 400);
 
 
-    public static final UITexture DEFAULT_SKILL_ICON =
+    public static final UITexture DEFAULT_ICON =
             new UITexture(ResourceLocation.parse("minecraft:textures/item/barrier.png"), 16);
-    public static final UITexture LOCKED_SKILL_ICON =
+    public static final UITexture LOCKED_ICON =
             new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/lock_icon.png"), 16);
 
 

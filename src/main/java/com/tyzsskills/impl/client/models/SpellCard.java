@@ -1,9 +1,11 @@
 package com.tyzsskills.impl.client.models;
 
+import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.cache.ClientCache;
+import com.tyzsskills.impl.server.spells.SpellRules;
 import com.tyzsskills.integration.ui.models.UIButton;
 import com.tyzsskills.integration.ui.models.UIContainer;
 import com.tyzsskills.integration.ui.models.UIImage;
@@ -38,14 +40,14 @@ public class SpellCard extends UIContainer {
         cache = ClientCache.get();
 
         var tempIcon = ResourceLocation.tryParse(spell.getIcon());
-        if(tempIcon == null) tempIcon = Styles.DEFAULT_SKILL_ICON.texture();
+        if(tempIcon == null) tempIcon = Styles.DEFAULT_ICON.texture();
         icon = new UITexture(tempIcon, 16);
 
-        addChild(new UIButton(0, 0, this::getCardStyle, this::handleFocus)
-                .withDisabled(() -> !isPurchased()));
+        addChild(new UIButton(0, 0, this::getCardStyle, this::handleFocus));
 
         addChild(new UIImage(11, 10, 16, 16, () -> icon));
-        addChild(new UIButton(7, 33, () -> ACTION_BTN, this::handleAction));
+        addChild(new UIButton(7, 33, () -> ACTION_BTN, this::handleAction)
+                .withDisabled(this::isButtonDisabled));
     }
 
     //region EXTRACTED LOGIC
@@ -61,6 +63,10 @@ public class SpellCard extends UIContainer {
     // ==================== CONDITIONS ====================
     private boolean isAssigned(){return cache.SPELLS.isSpellAssigned(spell.getID());}
     private boolean isPurchased(){return cache.SPELLS.isSpellPurchased(spell.getID());}
+    private boolean isButtonDisabled(){
+        return !isPurchased() && !SpellRules.canBuySpell(cache.SPELLS.getSpellContext(spell.getID()), cache.getPlayerContext(),
+                cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
+    }
 
     // ==================== STYLES ====================
     private UIStyles.ButtonStyle getCardStyle(){return isPurchased() ? isAssigned() ? CARD_ASSIGNED : CARD_UNLOCKED : CARD_LOCKED;}

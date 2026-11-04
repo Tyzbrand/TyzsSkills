@@ -86,7 +86,6 @@ public class RuntimeEvents {
         if (player.hasPermissions(2) && ErrorManager.hasErrorsOrWarns()) {
             ErrorManager.printErrors(player);
         }
-
     }
 
     @SubscribeEvent

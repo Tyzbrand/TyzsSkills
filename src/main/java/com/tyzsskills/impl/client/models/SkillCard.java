@@ -84,7 +84,7 @@ public class SkillCard extends UIContainer {
         cache = ClientCache.get();
 
         var tempIcon = ResourceLocation.tryParse(skill.getIcon());
-        if(tempIcon == null) tempIcon = Styles.DEFAULT_SKILL_ICON.texture();
+        if(tempIcon == null) tempIcon = Styles.DEFAULT_ICON.texture();
         icon = new UITexture(tempIcon, 16);
 
         updateData();

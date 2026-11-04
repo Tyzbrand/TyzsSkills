@@ -68,7 +68,7 @@ public class UIScrollView extends UIContainer{
     }
 
     @Override
-    public boolean isHovering(int mouseX, int mouseY) {
+    public boolean checkHover(int mouseX, int mouseY) {
         var visualWidth = getVisualWidth();
         var visualHeight = getVisualHeight();
         if (visualWidth <= 0 || visualHeight <= 0) return false;

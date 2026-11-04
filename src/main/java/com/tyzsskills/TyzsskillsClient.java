@@ -1,5 +1,6 @@
 package com.tyzsskills;
 
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.TyzsSkillsClientSetupEvent;
 import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.cache.ClientCache;
@@ -9,6 +10,7 @@ import com.tyzsskills.impl.client.overlay.LevelTriggerOverlay;
 import com.tyzsskills.impl.client.overlay.SkillTriggerOverlay;
 import com.tyzsskills.impl.client.overlay.XpTriggerOverlay;
 import com.tyzsskills.impl.client.screen.MainMenu;
+import com.tyzsskills.impl.client.screen.SpellWheel;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -84,14 +86,21 @@ public class TyzsskillsClient {
 
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event){
-        event.register(MainKeybind.OPEN_SKILL_KEY);
+        event.register(MainKeybind.OPEN_SKILL_MENU);
+        event.register(MainKeybind.OPEN_SPELL_WHEEL);
     }
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event){
-        while (MainKeybind.OPEN_SKILL_KEY.consumeClick()){
+        while (MainKeybind.OPEN_SKILL_MENU.consumeClick()){
             if (Minecraft.getInstance().screen == null) {
                 Minecraft.getInstance().setScreen(new MainMenu());
+            }
+        }
+
+        while (MainKeybind.OPEN_SPELL_WHEEL.consumeClick()){
+            if (Minecraft.getInstance().screen == null) {
+                Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.CAST));
             }
         }
     }

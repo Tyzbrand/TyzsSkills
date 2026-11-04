@@ -77,6 +77,7 @@ public class SpellCache {
         return !spellSlots.containsKey(slot);
     }
     public @NotNull @UnmodifiableView Map<Integer, String> getSlots(){return spellSlotsView;}
+    public @Nullable ISpell getSpellInSlot(int slot){return getSpell(spellSlots.getOrDefault(slot, ""));}
 
     private final Map<String, ISpell> spells = new HashMap<>();
     private final Map<String, ISpell> spellsView = Collections.unmodifiableMap(spells);
@@ -101,6 +102,7 @@ public class SpellCache {
 
         switch(actionType){
             case PURCHASE -> success = predictPurchase(spell);
+            case CAST -> success = true;
         }
 
         if(success){

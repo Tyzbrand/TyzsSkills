@@ -8,9 +8,10 @@ public class Enums {
     public enum SortingDirection {ASCENDING, DESCENDING}
     public enum SortingType {DEFAULT, NAME, PRICE, LEVEL}
     public enum MenuFocus {SKILL, SPELL}
+    public enum WheelMode {CAST, ASSIGN}
 
     public enum SkillAction {PURCHASE, REFUND, BULK_PURCHASE, BULK_REFUND, BOOKMARK, DEACTIVATION}
-    public enum SpellAction{PURCHASE, ASSIGNMENT, UNASSIGNMENT}
+    public enum SpellAction{PURCHASE, ASSIGNMENT, UNASSIGNMENT, CAST}
 
     //UI
     public enum ScalePivot {TOP_LEFT, CENTER}

@@ -101,8 +101,8 @@ public class UIContainer extends UIElement {
     }
 
     @Override
-    public boolean isHovering(int mouseX, int mouseY) {
-        if (super.getRawWidth() > 0 && super.getRawHeight() > 0 && super.isHovering(mouseX, mouseY)) return true;
+    public boolean checkHover(int mouseX, int mouseY) {
+        if (super.getRawWidth() > 0 && super.getRawHeight() > 0 && super.checkHover(mouseX, mouseY)) return true;
         for (var child : children) {
             if (child.isVisible() && child.isHovering(mouseX, mouseY)) return true;
         }

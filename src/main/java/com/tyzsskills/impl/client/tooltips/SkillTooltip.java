@@ -48,7 +48,7 @@ public class SkillTooltip extends UITooltip {
         this.skill = skill;
 
         var icon = ResourceLocation.tryParse(skill.getIcon());
-        if(icon == null) icon = Styles.DEFAULT_SKILL_ICON.texture();
+        if(icon == null) icon = Styles.DEFAULT_ICON.texture();
         skillIcon = new UITexture(icon, 16);
 
         tagContainer = new UIContainer(25 ,14);
@@ -61,7 +61,7 @@ public class SkillTooltip extends UITooltip {
         var imageScale = 1.1f;
         this.addChild(new UIBackground(0, 0, 20, 20, () -> Styles.DEFAULT_BACKGROUND)
                 .withScale(imageScale, Enums.ScalePivot.CENTER));
-        this.addChild(new UIImage(2, 2, 16, 16, () -> isSkillAvailable ? skillIcon : Styles.LOCKED_SKILL_ICON)
+        this.addChild(new UIImage(2, 2, 16, 16, () -> isSkillAvailable ? skillIcon : Styles.LOCKED_ICON)
                 .withScale(imageScale, Enums.ScalePivot.CENTER));
 
         this.addChild(new UIText(23, 1, () -> title));

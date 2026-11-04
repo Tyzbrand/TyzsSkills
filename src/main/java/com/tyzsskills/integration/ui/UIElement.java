@@ -4,6 +4,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.integration.ui.models.UITooltip;
 import net.minecraft.client.gui.GuiGraphics;
 
+import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
 public abstract class UIElement {
@@ -18,6 +19,7 @@ public abstract class UIElement {
 
     private boolean currentHovered = false;
     public boolean isHovered() { return currentHovered; }
+    protected BiPredicate<Integer, Integer> customHover;
 
     protected Supplier<UITooltip> tooltip = () -> null;
     protected Supplier<Boolean> visibleWhen = () -> true;
@@ -36,7 +38,7 @@ public abstract class UIElement {
     public UIElement withShade(Supplier<Boolean> supplier) {this.shadedWhen = supplier; return this;}
     public UIElement withScale(float scale, Enums.ScalePivot scalePivot) {this.scale = scale; this.scalePivot = scalePivot; return this;}
     public UIElement withTooltip(Supplier<UITooltip> supplier){tooltip = supplier; return this;}
-
+    public UIElement withCustomHover(BiPredicate<Integer, Integer> predicate){customHover = predicate; return this;}
 
     //Draws
     protected abstract void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick);
@@ -132,15 +134,22 @@ public abstract class UIElement {
         return null;
     }
 
+    //Hovering
+    public final boolean isHovering(int mouseX, int mouseY){
+        if(customHover != null) return customHover.test(mouseX, mouseY);
+        return checkHover(mouseX, mouseY);
+    }
 
-    //Tools
-    public boolean isHovering(int mouseX, int mouseY){
+    protected boolean checkHover(int mouseX, int mouseY){
         var visualWidth = getVisualWidth(); var visualHeight = getVisualHeight();
         if (visualWidth <= 0 || visualHeight <= 0) return false;
 
         var visualX = getVisualX(); var visualY = getVisualY();
         return mouseX >= visualX && mouseX < visualX + visualWidth && mouseY >= visualY && mouseY < visualY + visualHeight;
     }
+
+
+    //Tools
     public void updatePosition(int parentX, int parentY){
         this.rawX = parentX + this.offsetX;
         this.rawY = parentY + this.offsetY;
