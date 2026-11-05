@@ -45,6 +45,7 @@ public record CActionSpellPayload(String id, Enums.SpellAction actionType, int s
                 switch(payload.actionType()){
                     case PURCHASE -> success = SpellManager.tryBuySpell(player, payload.id());
                     case ASSIGNMENT -> success = SpellManager.tryAssignSpell(player, payload.id(), payload.slot);
+                    case UNASSIGNMENT -> SpellManager.unassignSpell(player, payload.slot());
                     case CAST -> success = SpellManager.tryCastSpell(player, payload.id());
                 }
 

@@ -3,7 +3,6 @@ package com.tyzsskills.impl.server.commands;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.impl.server.payloads.ExportPayload;
-import com.tyzsskills.impl.server.spells.SpellManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -14,7 +13,6 @@ public class DebugCommands {
     public static LiteralArgumentBuilder<CommandSourceStack> debug(){
         return Commands.literal("debug")
                 .then(export())
-                .then(temp())
                 .then(errors().requires(src -> src.hasPermission(3)));
     }
 
@@ -43,21 +41,4 @@ public class DebugCommands {
                     return 1;
                 });
     }
-
-    private static LiteralArgumentBuilder<CommandSourceStack> temp(){
-        return Commands.literal("temps")
-                .executes(ctx -> {
-                    var player = ctx.getSource().getPlayer();
-                    if(player == null) {
-                        ctx.getSource().sendFailure(Component.literal("Unable to find player."));
-                        return 0;
-                    }
-                    SpellManager.tryAssignSpell(player, "dash", 1);
-                    return 1;
-                });
-    }
-
-
-
-
 }

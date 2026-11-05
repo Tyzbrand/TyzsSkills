@@ -5,9 +5,11 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.api.model.Context;
 import com.tyzsskills.api.records.SpellProperty;
+import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.payloads.CActionSpellPayload;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.spells.SpellRules;
+import net.minecraft.client.Minecraft;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -78,6 +80,12 @@ public class SpellCache {
     }
     public @NotNull @UnmodifiableView Map<Integer, String> getSlots(){return spellSlotsView;}
     public @Nullable ISpell getSpellInSlot(int slot){return getSpell(spellSlots.getOrDefault(slot, ""));}
+    public int getSpellSlot(@NotNull String spellId) {
+        for (var entry : spellSlots.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase(spellId)) return entry.getKey();
+        }
+        return -1;
+    }
 
     private final Map<String, ISpell> spells = new HashMap<>();
     private final Map<String, ISpell> spellsView = Collections.unmodifiableMap(spells);
@@ -102,6 +110,8 @@ public class SpellCache {
 
         switch(actionType){
             case PURCHASE -> success = predictPurchase(spell);
+            case ASSIGNMENT -> success = predictAssignment(spell, affectedSlot);
+            case UNASSIGNMENT -> success = predictUnassignment(affectedSlot);
             case CAST -> success = true;
         }
 
@@ -113,7 +123,7 @@ public class SpellCache {
     }
 
     //PREDICTIONS
-    public boolean predictPurchase(ISpell spell){
+    private boolean predictPurchase(ISpell spell){
         var spellId = spell.getID();
         if(isSpellPurchased(spellId)) return false;
 
@@ -126,5 +136,26 @@ public class SpellCache {
             return true;
         }
         return false;
+    }
+
+    private boolean predictAssignment(ISpell spell, int slot){
+        var player = Minecraft.getInstance().player;
+        if(player == null) return false;
+
+        var maxSlots = (int)player.getAttributeValue(AttributeRegistry.MAX_SPELL_SLOTS);
+        if (slot <= 0 || slot > maxSlots) return false;
+
+        if(!isSpellPurchased(spell.getID())) return false;
+
+        spellSlots.put(slot, spell.getID());
+        CACHE.incrVersion();
+        return true;
+    }
+
+    private boolean predictUnassignment(int slot){
+        if(isSlotFree(slot)) return false;
+        spellSlots.remove(slot);
+        CACHE.incrVersion();
+        return true;
     }
 }

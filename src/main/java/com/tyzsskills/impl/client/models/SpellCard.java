@@ -5,12 +5,14 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.cache.ClientCache;
+import com.tyzsskills.impl.client.screen.SpellWheel;
 import com.tyzsskills.impl.server.spells.SpellRules;
 import com.tyzsskills.integration.ui.models.UIButton;
 import com.tyzsskills.integration.ui.models.UIContainer;
 import com.tyzsskills.integration.ui.models.UIImage;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.records.UITexture;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
 public class SpellCard extends UIContainer {
@@ -56,7 +58,10 @@ public class SpellCard extends UIContainer {
         return true;
     }
     private boolean handleAction(){
-        if(!cache.SPELLS.isSpellPurchased(spell.getID())) return cache.SPELLS.triggerAction(spell, Enums.SpellAction.PURCHASE, -1);
+        var spellId = spell.getID();
+        if(!cache.SPELLS.isSpellPurchased(spellId)) return cache.SPELLS.triggerAction(spell, Enums.SpellAction.PURCHASE, -1);
+        if(cache.SPELLS.isSpellAssigned(spellId)) return cache.SPELLS.triggerAction(spell, Enums.SpellAction.UNASSIGNMENT, cache.SPELLS.getSpellSlot(spellId));
+        else Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.ASSIGN, spell));
         return true;
     }
 

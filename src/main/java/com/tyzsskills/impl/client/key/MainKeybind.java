@@ -16,7 +16,7 @@ public class MainKeybind {
             //TODO: translation
             "Open Spell Wheel",
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_F,
+            GLFW.GLFW_KEY_R,
             "key.categories.tyzs_skills"
     );
 }

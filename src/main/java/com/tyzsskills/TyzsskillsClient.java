@@ -100,7 +100,7 @@ public class TyzsskillsClient {
 
         while (MainKeybind.OPEN_SPELL_WHEEL.consumeClick()){
             if (Minecraft.getInstance().screen == null) {
-                Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.CAST));
+                Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.CAST, null));
             }
         }
     }
