@@ -54,6 +54,9 @@ public record CActionSpellPayload(String id, Enums.SpellAction actionType, int s
                     PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellPurchasePayload(payload.id(), SpellManager.isSpellPurchased(player, payload.id())));
 
 
+                    var backupCooldown = SpellManager.getSpellCooldown(player, payload.id());
+                    if(backupCooldown != null) PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellCooldownChange(payload.id(), backupCooldown));
+
                     if(payload.slot() > 0){
                         PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellSlotChange(payload.slot(), SpellManager.getSpellInSlot(player, payload.slot())));
                     }

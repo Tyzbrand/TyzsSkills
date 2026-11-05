@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.attachments;
 
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.api.records.Cooldown;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -11,6 +12,7 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
@@ -28,11 +30,13 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
 
     //SPELLS
     private final List<String> playerSpells = new ArrayList<>();
-    private final List<String> playerSpellsView = Collections.unmodifiableList(playerSpells);;
+    private final List<String> playerSpellsView = Collections.unmodifiableList(playerSpells);
     private final Map<String, Integer> playerSpellsProperties = new HashMap<>();
     private final Map<String, Integer> playerSpellsPropertiesView = Collections.unmodifiableMap(playerSpellsProperties);
     private final Map<Integer, String> playerSpellSlots = new HashMap<>();
     private final Map<Integer, String> playerSpellSlotsView = Collections.unmodifiableMap(playerSpellSlots);
+    private final Map<String, Cooldown> playerSpellCooldowns = new HashMap<>();
+    private final Map<String, Cooldown> playerSpellCooldownsView = Collections.unmodifiableMap(playerSpellCooldowns);
 
     //METADATA
     private int playerLevel = 1;
@@ -136,6 +140,23 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     }
 
     public @NotNull @UnmodifiableView Map<Integer, String> getPlayerSlots(){return playerSpellSlotsView;}
+
+    //-----------------Cooldowns-----------------
+    public void addCooldown(String spellId, Cooldown cooldown){
+        playerSpellCooldowns.put(spellId, cooldown);
+    }
+    public void removeCooldown(String spellId){
+        playerSpellCooldowns.remove(spellId);
+    }
+    public @Nullable Cooldown getCooldown(String spellId){
+        return playerSpellCooldowns.get(spellId);
+    }
+    public @NotNull @UnmodifiableView Map<String, Cooldown> getPlayerSpellCooldowns(){
+        return playerSpellCooldownsView;
+    }
+
+    public void resetCooldowns(){playerSpellCooldowns.clear();}
+
     //endregion
 
     //region DATA
@@ -188,6 +209,10 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         for(var entry : playerSpellSlots.entrySet()) spellSlots.putString(String.valueOf(entry.getKey()), entry.getValue());
         tag.put("spell_slots", spellSlots);
 
+        CompoundTag spellCooldowns = new CompoundTag();
+        for (var entry : playerSpellCooldowns.entrySet()) spellCooldowns.put(entry.getKey(), entry.getValue().toNBT());
+        tag.put("spell_cooldowns", spellCooldowns);
+
         tag.putInt("skill_level", playerLevel);
         tag.putInt("skill_point", playerSP);
         tag.putFloat("skill_xp", playerXP);
@@ -208,7 +233,7 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         playerSpellsProperties.clear();
         playerSpells.clear();
         playerSpellSlots.clear();
-
+        playerSpellCooldowns.clear();
 
         if(compoundTag.contains("skill_levels")) {
             CompoundTag skillsTag = compoundTag.getCompound("skill_levels");
@@ -241,6 +266,13 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         if(compoundTag.contains("spell_slots")) {
             CompoundTag propTag = compoundTag.getCompound("spell_slots");
             for(String key : propTag.getAllKeys()) playerSpellSlots.put(Integer.parseInt(key), propTag.getString(key));
+        }
+
+        if (compoundTag.contains("spell_cooldowns")) {
+            CompoundTag cooldownsTag = compoundTag.getCompound("spell_cooldowns");
+            for (String key : cooldownsTag.getAllKeys()) {
+                playerSpellCooldowns.put(key, Cooldown.fromNBT(cooldownsTag.getCompound(key)));
+            }
         }
 
         if(compoundTag.contains("skill_level")) playerLevel = compoundTag.getInt("skill_level");

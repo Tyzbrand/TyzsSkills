@@ -3,6 +3,7 @@ package com.tyzsskills.impl.server.payloads;
 import com.tyzsskills.Config;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.records.Category;
+import com.tyzsskills.api.records.Cooldown;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.server.Level.LevelManager;
@@ -69,11 +70,12 @@ public class UpdatePayloads {
         );
     }
 
-    public record PlayerSyncSpellData(List<String> purchasedSpells, Map<String, Integer> playerPropertyLevels, Map<Integer, String> playerSlots){
+    public record PlayerSyncSpellData(List<String> purchasedSpells, Map<String, Integer> playerPropertyLevels, Map<Integer, String> playerSlots, Map<String, Cooldown> playerCooldowns){
         public static final StreamCodec<RegistryFriendlyByteBuf, PlayerSyncSpellData> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.STRING_UTF8), PlayerSyncSpellData::purchasedSpells,
                 ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.INT), PlayerSyncSpellData::playerPropertyLevels,
                 ByteBufCodecs.map(HashMap::new, ByteBufCodecs.INT, ByteBufCodecs.STRING_UTF8), PlayerSyncSpellData::playerSlots,
+                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, Cooldown.STREAM_CODEC), PlayerSyncSpellData::playerCooldowns,
                 PlayerSyncSpellData::new
         );
     }
@@ -304,6 +306,26 @@ public class UpdatePayloads {
 
     }
 
+    public record SpellCooldownChange(String id, Cooldown newCooldown) implements CustomPacketPayload{
+        public static final Type<SpellCooldownChange> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "spell_cooldown_payload"));
+
+        public static final StreamCodec<ByteBuf, SpellCooldownChange> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, SpellCooldownChange::id,
+                Cooldown.STREAM_CODEC, SpellCooldownChange::newCooldown,
+                SpellCooldownChange::new
+        );
+
+        @Override
+        public @NotNull Type<? extends CustomPacketPayload> type(){
+            return TYPE;
+        }
+
+        public static void Handle(final SpellCooldownChange payload, final IPayloadContext ctx){
+            ctx.enqueueWork(() -> {ClientCache.get().SPELLS.UPDATE.updateSpellCooldown(payload);} );
+        }
+
+    }
+
 
     //UTILS
     public static UpdatePayloads.InitPayload getInitPayload(ServerPlayer player){
@@ -319,7 +341,8 @@ public class UpdatePayloads {
                 new PlayerSyncSkillData(SkillManager.getAllBookmarkIDs(player), SkillManager.getAllDeactivatedIds(player),
                         CategoryLoader.getCategories(), SkillManager.getPlayerSkillLevels(player)),
 
-                new PlayerSyncSpellData(SpellManager.getPlayerSpells(player), SpellManager.getPlayerProperties(player), SpellManager.getPlayerSlots(player)),
+                new PlayerSyncSpellData(SpellManager.getPlayerSpells(player), SpellManager.getPlayerProperties(player),
+                        SpellManager.getPlayerSlots(player), SpellManager.getPlayerCooldowns(player)),
 
                 new UpdatePayloads.ConfigSyncData(
                         Map.of(Config.REFUND_SYSTEM_KEY, Config.REFUND_SYSTEM.get(),

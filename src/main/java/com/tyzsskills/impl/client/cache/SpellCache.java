@@ -4,6 +4,7 @@ import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.api.model.Context;
+import com.tyzsskills.api.records.Cooldown;
 import com.tyzsskills.api.records.SpellProperty;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.payloads.CActionSpellPayload;
@@ -26,12 +27,13 @@ public class SpellCache {
 
     public class Update{
         void init(UpdatePayloads.PlayerSyncSpellData playerSpellData, UpdatePayloads.ServerSyncData serverData){
-            purchasedSpells.clear(); propertyLevels.clear(); spells.clear(); spellSlots.clear();
+            purchasedSpells.clear(); propertyLevels.clear(); spells.clear(); spellSlots.clear(); spellCooldowns.clear();
 
             for(var spell : serverData.spells()) spells.put(spell.getID(), spell);
             purchasedSpells.addAll(playerSpellData.purchasedSpells());
             propertyLevels.putAll(playerSpellData.playerPropertyLevels());
             spellSlots.putAll(playerSpellData.playerSlots());
+            spellCooldowns.putAll(playerSpellData.playerCooldowns());
         }
 
         public void updateSpellPurchase(@NotNull UpdatePayloads.SpellPurchasePayload payload) {
@@ -56,24 +58,27 @@ public class SpellCache {
             }
             CACHE.UPDATE.registerUpdate("Slot Synced: New Cached Spell in Slot [" + payload.slot() + "]");
         }
+
+        public void updateSpellCooldown(@NotNull UpdatePayloads.SpellCooldownChange payload) {
+            spellCooldowns.put(payload.id(), payload.newCooldown());
+            CACHE.UPDATE.registerUpdate("Cooldown Added: New Cached Cooldown for [" + payload.id() + "] for " + payload.newCooldown().duration()/20 + " sec");
+        }
     }
 
 
-
-    private final List<String> purchasedSpells = new ArrayList<>();
-    private final List<String> purchasedSpellsView = Collections.unmodifiableList(purchasedSpells);
-    public boolean isSpellPurchased(@NotNull String spellId) {
-        return purchasedSpells.contains(spellId);
-    }
-
+    //DATA
+    //==============Properties==============
     private final Map<String, Integer> propertyLevels = new HashMap<>();
     private final Map<String, Integer> propertyLevelsView = Collections.unmodifiableMap(propertyLevels);
+
     public int getPropertyLevel(@NotNull String spellId, @NotNull String propertyKey) {
         return propertyLevels.getOrDefault((spellId + ":" + propertyKey).toLowerCase(), 0);
     }
 
+    //==============Slots==============
     private final Map<Integer, String> spellSlots = new HashMap<>();
     private final Map<Integer, String> spellSlotsView = Collections.unmodifiableMap(spellSlots);
+
     public boolean isSpellAssigned(@NotNull String spellId){return  spellSlots.containsValue(spellId);}
     public boolean isSlotFree(int slot){
         return !spellSlots.containsKey(slot);
@@ -87,23 +92,48 @@ public class SpellCache {
         return -1;
     }
 
+    //==============Cooldowns==============
+    private final Map<String, Cooldown> spellCooldowns = new HashMap<>();
+    private final Map<String, Cooldown> spellCooldownsView = Collections.unmodifiableMap(spellCooldowns);
+
+    public @Nullable Cooldown getSpellCooldown(@NotNull String spellId){
+        var cooldown = spellCooldowns.get(spellId);
+        var level = Minecraft.getInstance().level;
+        if(level == null) return null;
+
+        if(cooldown != null && cooldown.isCooldownOver(level.getGameTime())) {
+            spellCooldowns.remove(spellId);
+            return null;
+        }
+        return cooldown;
+    }
+    public @NotNull @UnmodifiableView Map<String, Cooldown> getAllCooldowns(){return spellCooldownsView;}
+
+    //==============Spells==============
+    private final List<String> purchasedSpells = new ArrayList<>();
+    private final List<String> purchasedSpellsView = Collections.unmodifiableList(purchasedSpells);
     private final Map<String, ISpell> spells = new HashMap<>();
     private final Map<String, ISpell> spellsView = Collections.unmodifiableMap(spells);
+
     public @Nullable ISpell getSpell(@NotNull String spellId) {return spells.getOrDefault(spellId.toLowerCase(), null);}
     public @NotNull @UnmodifiableView Map<String, ISpell> getAllSpells() {return spellsView;}
+    public boolean isSpellPurchased(@NotNull String spellId) {
+        return purchasedSpells.contains(spellId);
+    }
 
+    //==============Contexts==============
     private final Context.Spell spellContext = new Context.Spell();
     public @NotNull Context.Spell getSpellContext(@NotNull String spellId) {
         var spell = getSpell(spellId);
         Objects.requireNonNull(spell, "Attempt to access SpellContext with null spell.");
         return spellContext.updateContext(spell, isSpellPurchased(spellId));
     }
-
     private final Context.Property propertyContext = new Context.Property();
     public @NotNull Context.Property getPropertyContext(@NotNull SpellProperty property, @NotNull String spellId) {
         return propertyContext.updateContext(property, getPropertyLevel(spellId, property.key()));
     }
 
+    //ACTIONS
     public boolean triggerAction(@NotNull ISpell spell, Enums.SpellAction actionType, int affectedSlot){
         if(CACHE.isSpamming()) return false;
         var success = false;
@@ -112,7 +142,7 @@ public class SpellCache {
             case PURCHASE -> success = predictPurchase(spell);
             case ASSIGNMENT -> success = predictAssignment(spell, affectedSlot);
             case UNASSIGNMENT -> success = predictUnassignment(affectedSlot);
-            case CAST -> success = true;
+            case CAST -> success = predictCast(spell);
         }
 
         if(success){
@@ -157,5 +187,12 @@ public class SpellCache {
         spellSlots.remove(slot);
         CACHE.incrVersion();
         return true;
+    }
+
+    private boolean predictCast(ISpell spell){
+        var spellId = spell.getID();
+        if(!isSpellPurchased(spellId) || !isSpellAssigned(spellId)) return false;
+
+        return getSpellCooldown(spellId) == null;
     }
 }

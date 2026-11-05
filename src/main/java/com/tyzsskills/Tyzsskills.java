@@ -218,7 +218,11 @@ public class Tyzsskills {
                 UpdatePayloads.SpellSlotChange::Handle
         );
 
-
+        registrar.playToClient(
+                UpdatePayloads.SpellCooldownChange.TYPE,
+                UpdatePayloads.SpellCooldownChange.STREAM_CODEC,
+                UpdatePayloads.SpellCooldownChange::Handle
+        );
     }
 
 

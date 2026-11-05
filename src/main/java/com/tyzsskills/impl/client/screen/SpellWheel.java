@@ -9,13 +9,16 @@ import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.integration.ui.models.UIButton;
 import com.tyzsskills.integration.ui.models.UIContainer;
 import com.tyzsskills.integration.ui.models.UIImage;
+import com.tyzsskills.integration.ui.models.UIText;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 
 public class SpellWheel extends Screen {
@@ -92,7 +95,12 @@ public class SpellWheel extends Screen {
 
             if(currentMode == Enums.WheelMode.CAST){
                 mainPanel.addChild(new UIButton(slotPos.x, slotPos.y, () ->  CADRE_CAST_DEFAULT, () -> handleCast(spellInSlot, currentSlot))
-                        .withCustomHover((mx, my) -> hoveredSlot == currentSlot));
+                        .withCustomHover((mx, my) -> hoveredSlot == currentSlot)
+                        .withShade(() -> hasActiveCooldown(spellInSlot)));
+
+                mainPanel.addChild(new UIText(slotPos.x + SLOT_SIZE/2, slotPos.y + SLOT_SIZE - 9, () -> getCooldownTimer(spellInSlot))
+                        .withAlignment(Enums.TextAlignment.CENTER)
+                        .withVisibility(() -> hasActiveCooldown(spellInSlot)));
             }
             else{
                 mainPanel.addChild(new UIButton(slotPos.x, slotPos.y, () ->  CADRE_ASSIGN_DEFAULT, () -> handleAssignation(currentSlot)));
@@ -104,7 +112,8 @@ public class SpellWheel extends Screen {
             var iconTexture = icon == null ? Styles.DEFAULT_ICON : new UITexture(icon, 16);
 
             mainPanel.addChild(new UIImage(slotPos.x + 7, slotPos.y + 7, iconTexture.size(), iconTexture.size(), () -> iconTexture)
-                    .withScale(2f, Enums.ScalePivot.TOP_LEFT));
+                    .withScale(2f, Enums.ScalePivot.TOP_LEFT)
+                    .withShade(() -> currentMode == Enums.WheelMode.CAST && hasActiveCooldown(spellInSlot)));
         }
 
         if(currentMode == Enums.WheelMode.CAST){
@@ -172,7 +181,6 @@ public class SpellWheel extends Screen {
          }
          return false;
     }
-
     private boolean handleCast(ISpell spell, int slot){
         if(spell == null) return false;
         if(cache.SPELLS.triggerAction(spell, Enums.SpellAction.CAST, slot)) {
@@ -180,6 +188,24 @@ public class SpellWheel extends Screen {
             return true;
         }
         return false;
+    }
+
+    // ==================== CONDITIONS ====================
+    private boolean hasActiveCooldown(@Nullable ISpell spell){
+        if(spell == null) return false;
+        return cache.SPELLS.getSpellCooldown(spell.getID()) != null;
+    }
+
+    // ==================== ASSETS ====================
+    private MutableComponent getCooldownTimer(@Nullable ISpell spell){
+        if(spell == null) return Component.empty();
+
+        var cooldown = cache.SPELLS.getSpellCooldown(spell.getID());
+        var level = Minecraft.getInstance().level;
+
+        if(cooldown == null || level == null) return Component.empty();
+
+        return Component.literal(cooldown.getFormatedTimer(level.getGameTime()));
     }
     //endregion
 
