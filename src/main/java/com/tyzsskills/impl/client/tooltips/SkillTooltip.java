@@ -7,7 +7,10 @@ import com.tyzsskills.api.tools.FormatTools;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.server.skills.SkillRules;
-import com.tyzsskills.integration.ui.models.*;
+import com.tyzsskills.integration.ui.models.UIContainer;
+import com.tyzsskills.integration.ui.models.UIImage;
+import com.tyzsskills.integration.ui.models.UIText;
+import com.tyzsskills.integration.ui.models.UITooltip;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.ChatFormatting;
@@ -44,28 +47,34 @@ public class SkillTooltip extends UITooltip {
     private static final UIStyles.BackgroundStyle inactiveStyle =
             new UIStyles.BackgroundStyle(0xFF753636, ColorTools.darken(0xFF753636), 4, 4);
 
+    private static final UIStyles.BackgroundStyle TOOLTIP_STYLE =
+            new UIStyles.BackgroundStyle(Styles.TOOLTIP_BACKGROUND_START, Styles.TOOLTIP_BACKGROUND_END, 0xFFA27C4F, 0xFF724C20, 4, 4);
+
+    private static final UIStyles.ImageStyle SLOT =
+            new UIStyles.ImageStyle(32, 32, 96, 346, Styles.MAIN_TEXTURE);
+
     public SkillTooltip(ISkill skill){
+        super(() -> TOOLTIP_STYLE);
         this.skill = skill;
 
         var icon = ResourceLocation.tryParse(skill.getIcon());
         if(icon == null) icon = Styles.DEFAULT_ICON.texture();
         skillIcon = new UITexture(icon, 16);
 
-        tagContainer = new UIContainer(25 ,14);
+        tagContainer = new UIContainer(40 ,22);
         this.addChild(tagContainer);
 
         cache = ClientCache.get();
 
         updateData();
 
-        var imageScale = 1.1f;
-        this.addChild(new UIBackground(0, 0, 20, 20, () -> Styles.DEFAULT_BACKGROUND)
-                .withScale(imageScale, Enums.ScalePivot.CENTER));
-        this.addChild(new UIImage(2, 2, 16, 16, () -> isSkillAvailable ? skillIcon : Styles.LOCKED_ICON)
-                .withScale(imageScale, Enums.ScalePivot.CENTER));
+        this.addChild(new UIImage(2, 2, () -> SLOT));
+        this.addChild(new UIImage(10, 10, 16, 16, () -> isSkillAvailable ? skillIcon : Styles.LOCKED_ICON)
+                .withScale(1.27f, Enums.ScalePivot.CENTER));
 
-        this.addChild(new UIText(23, 1, () -> title));
-        this.addChild(new UIText(0, 25, () -> fullBodyText).withWrapWidth(150));
+        this.addChild(new UIText(38, 5, () -> title)
+                .withScale(1.2f, Enums.ScalePivot.TOP_LEFT));
+        this.addChild(new UIText(2, 40, () -> fullBodyText).withWrapWidth(150));
     }
 
     @Override

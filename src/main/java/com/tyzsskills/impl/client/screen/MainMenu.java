@@ -30,7 +30,7 @@ public class MainMenu extends Screen {
 
     //region STYLES
     private static final UIStyles.ImageStyle BACKGROUND =
-            new UIStyles.ImageStyle(MainMenu.WIDTH, MainMenu.HEIGHT, 0, 0, Styles.MAIN_TEXTURE);
+            new UIStyles.ImageStyle(66, 112, 0, 0, Styles.MAIN_TEXTURE);
 
     private static final UIStyles.ImageStyle XP_BAR =
             new UIStyles.ImageStyle(62, 5, 8, 217, Styles.MAIN_TEXTURE);
@@ -48,10 +48,10 @@ public class MainMenu extends Screen {
 
         mainPanel = new UIContainer(0, 0);
 
-        skillPanel = new SkillPanel(0, 0);
+        skillPanel = new SkillPanel(93, 0);
         skillPanel.withVisibility(() -> SortingManager.getCurrentMenuType() == Enums.MenuFocus.SKILL);
 
-        spellPanel = new SpellPanel(0, 0);
+        spellPanel = new SpellPanel(93, 1);
         spellPanel.withVisibility(() -> SortingManager.getCurrentMenuType() == Enums.MenuFocus.SPELL);
     }
 

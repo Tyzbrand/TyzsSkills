@@ -3,6 +3,7 @@ package com.tyzsskills.impl.server.commands;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.tools.FormatTools;
+import com.tyzsskills.impl.server.spells.SpellManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -59,6 +60,31 @@ public class PeekCommand {
         }
 
         if(skillCount == 0) root.append(Component.literal("▶ No skills.").withStyle(ChatFormatting.RED));
+
+        root.append("\n");
+
+        var spellBand = Component.literal("Spells").withStyle(ChatFormatting.UNDERLINE, ChatFormatting.BLUE);
+        root.append(spellBand).append("\n");
+
+        //TODO: Make API calls instead
+        var spells = SpellManager.getAllSpells();
+        var spellCount = 0;
+        for(var spell : spells){
+            if(!SpellManager.isSpellPurchased(player, spell.getID())) continue;
+
+            var message = Component.empty()
+                    .append(Component.literal("▶ "))
+                    .append(Component.translatable(spell.getDisplayName()))
+                    .append(Component.literal(String.format(" [%s]", spell.getID())).withStyle(ChatFormatting.GRAY));
+
+            if(SpellManager.isSpellAssigned(player, spell.getID())) message.append(Component.literal(" (Assigned).").withStyle(ChatFormatting.DARK_PURPLE));
+            else message.append(Component.literal("."));
+
+            root.append(message).append("\n");
+            spellCount++;
+        }
+
+        if(spellCount == 0) root.append(Component.literal("▶ No Spells.").withStyle(ChatFormatting.RED));
 
         return root;
     }

@@ -11,7 +11,7 @@ import java.util.List;
 
 public class SpellPresets {
     public static List<SpellPrefab> getDefaultSpells(){
-        return List.of(DASH, WIRELESS);
+        return List.of(DASH, WIRELESS, TEMP1, TEMP2, TEMP3, TEMP4, TEMP5, TEMP6, TEMP7);
     }
 
 
@@ -28,4 +28,54 @@ public class SpellPresets {
                     .withBehavior(new WirelessEffect())
                     .addProperty(new SpellProperty("cooldown", List.of(5, 4, 3), 8, List.of(6f, 3f, 2f), "Cooldown", "unknown", "sec"))
                     .build();
+
+    private static final SpellPrefab TEMP1 =
+            SpellPrefab.builder("temp1", 10)
+                    .withIcon("minecraft:textures/item/stone_sword.png")
+                    .withBehavior(new DashEffect())
+                    .addProperty(new SpellProperty("cooldown", List.of(5, 4, 3), 8, List.of(6f, 3f, 2f), "Cooldown", "unknown", "sec"))
+                    .build();
+
+    private static final SpellPrefab TEMP2 =
+            SpellPrefab.builder("temp2", 10)
+                    .withIcon("minecraft:textures/item/stone_shovel.png")
+                    .withBehavior(new DashEffect())
+                    .addProperty(new SpellProperty("cooldown", List.of(5, 4, 3), 8, List.of(6f, 3f, 2f), "Cooldown", "unknown", "sec"))
+                    .build();
+
+    private static final SpellPrefab TEMP3 =
+            SpellPrefab.builder("temp3", 10)
+                    .withIcon("minecraft:textures/item/stone_pickaxe.png")
+                    .withBehavior(new DashEffect())
+                    .addProperty(new SpellProperty("cooldown", List.of(5, 4, 3), 8, List.of(6f, 3f, 2f), "Cooldown", "unknown", "sec"))
+                    .build();
+
+    private static final SpellPrefab TEMP4 =
+            SpellPrefab.builder("temp4", 10)
+                    .withIcon("minecraft:textures/item/stone_axe.png")
+                    .withBehavior(new DashEffect())
+                    .addProperty(new SpellProperty("cooldown", List.of(5, 4, 3), 8, List.of(6f, 3f, 2f), "Cooldown", "unknown", "sec"))
+                    .build();
+
+    private static final SpellPrefab TEMP5 =
+            SpellPrefab.builder("temp5", 10)
+                    .withIcon("minecraft:textures/item/diamond.png")
+                    .withBehavior(new DashEffect())
+                    .addProperty(new SpellProperty("cooldown", List.of(5, 4, 3), 8, List.of(6f, 3f, 2f), "Cooldown", "unknown", "sec"))
+                    .build();
+
+    private static final SpellPrefab TEMP6 =
+            SpellPrefab.builder("temp6", 10)
+                    .withIcon("minecraft:textures/item/emerald.png")
+                    .withBehavior(new DashEffect())
+                    .addProperty(new SpellProperty("cooldown", List.of(5, 4, 3), 8, List.of(6f, 3f, 2f), "Cooldown", "unknown", "sec"))
+                    .build();
+
+    private static final SpellPrefab TEMP7 =
+            SpellPrefab.builder("temp7", 10)
+                    .withIcon("minecraft:textures/item/iron_ingot.png")
+                    .withBehavior(new DashEffect())
+                    .addProperty(new SpellProperty("cooldown", List.of(5, 4, 3), 8, List.of(6f, 3f, 2f), "Cooldown", "unknown", "sec"))
+                    .build();
+
 }

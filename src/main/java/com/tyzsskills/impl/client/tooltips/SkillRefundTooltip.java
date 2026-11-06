@@ -16,7 +16,7 @@ import net.minecraft.network.chat.MutableComponent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RefundTooltip extends UITooltip {
+public class SkillRefundTooltip extends UITooltip {
     private final ISkill skill;
     private final ClientCache cache;
     private final UIContainer statContainer;
@@ -29,7 +29,7 @@ public class RefundTooltip extends UITooltip {
     private MutableComponent currentRefundLine;
     private final List<MutableComponent> currentDataLines = new ArrayList<>();
 
-    public RefundTooltip(ISkill skill) {
+    public SkillRefundTooltip(ISkill skill) {
         this.skill = skill;
         this.cache = ClientCache.get();
 

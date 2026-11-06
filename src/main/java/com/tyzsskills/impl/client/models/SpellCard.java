@@ -6,6 +6,7 @@ import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.screen.SpellWheel;
+import com.tyzsskills.impl.client.tooltips.SpellActionTooltip;
 import com.tyzsskills.impl.server.spells.SpellRules;
 import com.tyzsskills.integration.ui.models.UIButton;
 import com.tyzsskills.integration.ui.models.UIContainer;
@@ -48,8 +49,11 @@ public class SpellCard extends UIContainer {
         addChild(new UIButton(0, 0, this::getCardStyle, this::handleFocus));
 
         addChild(new UIImage(11, 10, 16, 16, () -> icon));
+
+        var actionTooltip = new SpellActionTooltip(spell);
         addChild(new UIButton(7, 33, () -> ACTION_BTN, this::handleAction)
-                .withDisabled(this::isButtonDisabled));
+                .withDisabled(this::isButtonDisabled)
+                .withTooltip(() -> actionTooltip));
     }
 
     //region EXTRACTED LOGIC

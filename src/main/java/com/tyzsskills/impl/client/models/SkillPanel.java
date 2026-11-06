@@ -31,6 +31,9 @@ public class SkillPanel extends UIContainer {
 
 
     //region STYLES
+    private static final UIStyles.ImageStyle BACKGROUND =
+            new UIStyles.ImageStyle(226, 139, 0, 0, Styles.MAIN_TEXTURE_BACKGROUNDS);
+
     private static final UIStyles.ButtonStyle TAB_BTN_SELECTED =
             new UIStyles.ButtonStyle(29, 20, 87, 240, 87, 240, Styles.MAIN_TEXTURE);
     private static final UIStyles.ButtonStyle TAB_BTN_UNSELECTED =
@@ -68,15 +71,17 @@ public class SkillPanel extends UIContainer {
 
         cache = ClientCache.get();
 
+        this.addChild(new UIImage(0, 0, () -> BACKGROUND));
+
         tabsPanel = new UIContainer(0, 0);
-        scrollView = new UIScrollView(98, 25, 214, 108);
+        scrollView = new UIScrollView(6, 25, 214, 108);
 
         //TO SEE SCROLL VIEW SHAPE => scrollView.addChild(new UIBackground(0, 0, 214, 150, () -> Styles.DEFAULT_BACKGROUND));
 
         categoryDisplayName = getCategoryDisplayName(SortingManager.getCurrentCategory());
-        this.addChild(new UIText(307, 10, () -> categoryDisplayName)
+        this.addChild(new UIText(215, 10, () -> categoryDisplayName)
                 .withAlignment(Enums.TextAlignment.RIGHT)
-                .withBackground(() -> Styles.DEFAULT_BACKGROUND, () -> true)
+                .withBackground(() -> Styles.DEFAULT_BACKGROUND, () -> false)
                 .withScale(.85f, Enums.ScalePivot.CENTER));
 
         this.addChild(tabsPanel);
@@ -98,10 +103,10 @@ public class SkillPanel extends UIContainer {
         var categories = cache.SKILLS.getAllCategories();
         var total = categories.size();
 
-        tabsPanel.addChild(new UIButton(97, 12, () -> PREV_TAB, this::handleTabBack)
+        tabsPanel.addChild(new UIButton(5, 12, () -> PREV_TAB, this::handleTabBack)
                 .withDisabled(this::isTabBackDisabled).withShade(this::isTabBackDisabled));
 
-        var x = 106;
+        var x = 13;
         var y = 5;
         var end = Math.min(categoryOffset + Constants.MAX_CATEGORIES_PER_LINE, total);
 
@@ -122,9 +127,9 @@ public class SkillPanel extends UIContainer {
                 .withDisabled(this::isTabNextDisabled).withShade(this::isTabNextDisabled));
     }
     private void buildFilterTools(){
-        this.addChild(new UIImage(97, -17, () -> SEARCH_BAR));
+        this.addChild(new UIImage(5, -17, () -> SEARCH_BAR));
 
-        int startX = 214;
+        int startX = 122;
 
         //TODO: translation
         var maxedTooltip = new ToggleTooltip("Show Maxed", SortingManager::showMaxed);
@@ -145,15 +150,15 @@ public class SkillPanel extends UIContainer {
                 .withScale(.85f, Enums.ScalePivot.TOP_LEFT));
 
         var sortingDirTooltip = new SortingDirectionTooltip(SortingManager::getSortingDirection);
-        this.addChild(new UIButton(294, -10, this::getSortingDirectionStyle, this::handleSortingDirectionChange)
+        this.addChild(new UIButton(201, -10, this::getSortingDirectionStyle, this::handleSortingDirectionChange)
                 .withTooltip(() -> sortingDirTooltip));
 
         var sortingTypeTooltip = new SortingTypeTooltip(SortingManager::getSortingType);
-        this.addChild(new UIButton(277, -10, this::getSortingTypeStyle, this::handleSortingTypeChange)
+        this.addChild(new UIButton(184, -10, this::getSortingTypeStyle, this::handleSortingTypeChange)
                 .withTooltip(() -> sortingTypeTooltip));
 
         var searchBarTooltip = new SearchBarTooltip();
-        this.addChild(new UIEditBox(106, -10, 84, 9, this::handleSearchChange, SortingManager::getSearchQuery)
+        this.addChild(new UIEditBox(14, -10, 84, 9, this::handleSearchChange, SortingManager::getSearchQuery)
                 .withTooltip(() -> searchBarTooltip));
 
     }

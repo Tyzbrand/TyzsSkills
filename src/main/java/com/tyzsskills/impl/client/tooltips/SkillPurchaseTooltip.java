@@ -16,7 +16,7 @@ import net.minecraft.network.chat.MutableComponent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PurchaseTooltip extends UITooltip {
+public class SkillPurchaseTooltip extends UITooltip {
     private final ISkill skill;
     private final ClientCache cache;
     private final UIContainer statContainer;
@@ -27,7 +27,7 @@ public class PurchaseTooltip extends UITooltip {
     private MutableComponent currentPriceLine;
     private final List<MutableComponent> currentDataLines = new ArrayList<>();
 
-    public PurchaseTooltip(ISkill skill) {
+    public SkillPurchaseTooltip(ISkill skill) {
         this.skill = skill;
         this.cache = ClientCache.get();
 

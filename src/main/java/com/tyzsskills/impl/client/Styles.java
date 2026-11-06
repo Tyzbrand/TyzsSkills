@@ -25,7 +25,10 @@ public class Styles {
 
     //Styles
     public static final UITexture MAIN_TEXTURE =
-            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/background.png"), 400);
+            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/main_texture.png"), 400);
+
+    public static final UITexture MAIN_TEXTURE_BACKGROUNDS =
+            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/main_texture_backgrounds.png"), 400);
 
 
     public static final UITexture DEFAULT_ICON =

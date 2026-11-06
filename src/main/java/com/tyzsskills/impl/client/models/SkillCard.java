@@ -5,8 +5,8 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.cache.ClientCache;
-import com.tyzsskills.impl.client.tooltips.PurchaseTooltip;
-import com.tyzsskills.impl.client.tooltips.RefundTooltip;
+import com.tyzsskills.impl.client.tooltips.SkillPurchaseTooltip;
+import com.tyzsskills.impl.client.tooltips.SkillRefundTooltip;
 import com.tyzsskills.impl.client.tooltips.SkillTooltip;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.integration.ui.models.UIButton;
@@ -117,12 +117,12 @@ public class SkillCard extends UIContainer {
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
 
         //BUTTONS
-        var purchaseTooltip = new PurchaseTooltip(skill);
+        var purchaseTooltip = new SkillPurchaseTooltip(skill);
         this.addChild(new UIButton(38, 17, () -> isShiftPressed() && this.isHovered() ? BULK_PURCHASE_BTN : PURCHASE_BTN, this::handlePurchase)
                 .withDisabled(this::isPurchaseDisabled)
                 .withTooltip(() -> purchaseTooltip));
 
-        var refundTooltip = new RefundTooltip(skill);
+        var refundTooltip = new SkillRefundTooltip(skill);
         this.addChild(new UIButton(27, 17, () -> isShiftPressed() && this.isHovered() ? BULK_REFUND_BTN : REFUND_BTN, this::handleRefund)
                 .withDisabled(this::isRefundDisabled)
                 .withTooltip(() -> refundTooltip));

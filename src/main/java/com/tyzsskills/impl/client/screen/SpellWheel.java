@@ -98,7 +98,7 @@ public class SpellWheel extends Screen {
                         .withCustomHover((mx, my) -> hoveredSlot == currentSlot)
                         .withShade(() -> hasActiveCooldown(spellInSlot)));
 
-                mainPanel.addChild(new UIText(slotPos.x + SLOT_SIZE/2, slotPos.y + SLOT_SIZE - 9, () -> getCooldownTimer(spellInSlot))
+                mainPanel.addChild(new UIText(slotPos.x + SLOT_SIZE/2, slotPos.y + SLOT_SIZE - 11, () -> getCooldownTimer(spellInSlot), false)
                         .withAlignment(Enums.TextAlignment.CENTER)
                         .withVisibility(() -> hasActiveCooldown(spellInSlot)));
             }

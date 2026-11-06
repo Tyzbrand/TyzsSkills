@@ -120,6 +120,7 @@ public class SpellCache {
     public boolean isSpellPurchased(@NotNull String spellId) {
         return purchasedSpells.contains(spellId);
     }
+    public @NotNull @UnmodifiableView List<String> getAllPurchasedSpells(){return purchasedSpellsView;}
 
     //==============Contexts==============
     private final Context.Spell spellContext = new Context.Spell();
