@@ -74,6 +74,19 @@ public class SpellCache {
     public int getPropertyLevel(@NotNull String spellId, @NotNull String propertyKey) {
         return propertyLevels.getOrDefault((spellId + ":" + propertyKey).toLowerCase(), 0);
     }
+    public float getPropertiesProgress(@NotNull String spellId){
+        var spell = getSpell(spellId);
+        if(spell == null) return 0f;
+
+        var total = 0f;
+        var current = 0f;
+        for(var property : spell.getProperties()){
+            total += property.getMaximumLevel();
+            current += getPropertyLevel(spellId, property.key());
+        }
+
+        return current/total;
+    }
 
     //==============Slots==============
     private final Map<Integer, String> spellSlots = new HashMap<>();

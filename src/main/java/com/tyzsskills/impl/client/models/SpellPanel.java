@@ -14,7 +14,7 @@ public class SpellPanel extends UIContainer {
     protected final ClientCache cache;
 
     protected final int SCROLL_ITEM_SPACING = 4;
-    protected final int SCROLL_ITEM_PER_LINE = 5;
+    protected final int SCROLL_ITEM_PER_LINE = 3;
 
     protected final UIScrollView scrollView;
 
