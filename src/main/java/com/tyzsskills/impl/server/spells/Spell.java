@@ -4,8 +4,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializer;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.api.records.SpellProperty;
+import com.tyzsskills.impl.client.Styles;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -22,7 +24,10 @@ public class Spell implements ISpell {
         this.id = id;
         this.price = price;
 
-        this.icon = icon;
+        var tempIcon = ResourceLocation.tryParse(icon);
+        if(tempIcon == null) tempIcon = Styles.DEFAULT_ICON.texture();
+        this.icon = tempIcon;
+
         this.displayName = displayName;
         this.description = description;
 
@@ -34,7 +39,7 @@ public class Spell implements ISpell {
     protected String id;
     protected int price;
 
-    protected String icon;
+    protected ResourceLocation icon;
     protected String displayName;
     protected String description;
 
@@ -43,7 +48,7 @@ public class Spell implements ISpell {
     @Override
     public @NotNull String getID() {return id;}
     @Override
-    public @NotNull String getIcon() {return icon;}
+    public @NotNull ResourceLocation getIcon() {return icon;}
     @Override
     public @NotNull String getDisplayName() {return displayName;}
     @Override
@@ -64,7 +69,7 @@ public class Spell implements ISpell {
         json.addProperty("active", src.active);
         json.addProperty("id", src.id);
         json.add("price", ctx.serialize(src.price));
-        json.addProperty("icon", src.icon);
+        json.addProperty("icon", src.icon.toString());
         json.addProperty("displayName", src.displayName);
         json.addProperty("description", src.description);
 
@@ -86,7 +91,7 @@ public class Spell implements ISpell {
         buffer.writeUtf(id);
         buffer.writeInt(price);
 
-        buffer.writeUtf(icon);
+        buffer.writeUtf(icon.toString());
         buffer.writeUtf(displayName);
         buffer.writeUtf(description);
 

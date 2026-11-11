@@ -109,7 +109,7 @@ public class FileManager {
                     prefab.icon(), prefab.displayName(), prefab.description(), prefab.modifiers(), prefab.customValues(),
                     prefab.config()
             );
-            writeFile(skill , getDefaultSkillPath(server), skill.getID());
+            writeFile(skill , getDefaultSkillPath(server), skill.getId());
         }
 
         for(var prefab : spellPrefabQueue){

@@ -8,9 +8,11 @@ import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.STag;
 import com.tyzsskills.api.records.ValueSet;
+import com.tyzsskills.impl.client.Styles;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -31,7 +33,10 @@ public class Skill implements ISkill {
         this.type = type;
         this.category = category;
 
-        this.icon = icon;
+        var tempIcon = ResourceLocation.tryParse(icon);
+        if(tempIcon == null) tempIcon = Styles.DEFAULT_ICON.texture();
+        this.icon = tempIcon;
+
         this.displayName = displayName;
         this.description = description;
 
@@ -57,7 +62,7 @@ public class Skill implements ISkill {
     protected final String category;
 
     //Visual -----------------------
-    protected final String icon;
+    protected final ResourceLocation icon;
     protected final String displayName;
     protected final String description;
 
@@ -78,7 +83,7 @@ public class Skill implements ISkill {
     //Getters
     public boolean isSkillActive(){return active;}
     @Override
-    public @NotNull String getID() {return id;}
+    public @NotNull String getId() {return id;}
     @Override
     public int getMaximumLevel() {return maximumLevel;}
     @Override
@@ -101,7 +106,7 @@ public class Skill implements ISkill {
     @Override
     public boolean isPermanent() {return config.permanent();}
     @Override
-    public @NotNull String getIcon(){return icon;}
+    public @NotNull ResourceLocation getIcon(){return icon;}
     @Override
     public @NotNull String getDisplayName(){return displayName;}
     @Override
@@ -134,7 +139,7 @@ public class Skill implements ISkill {
         json.addProperty("id", src.id);
         json.addProperty("type", src.type.name());
         json.addProperty("category", src.category);
-        json.addProperty("icon", src.icon);
+        json.addProperty("icon", src.icon.toString());
         json.addProperty("displayName", src.displayName);
         json.addProperty("description", src.description);
 
@@ -170,7 +175,7 @@ public class Skill implements ISkill {
         buffer.writeEnum(type);
         buffer.writeUtf(category);
 
-        buffer.writeUtf(icon);
+        buffer.writeUtf(icon.toString());
         buffer.writeUtf(displayName);
         buffer.writeUtf(description);
 

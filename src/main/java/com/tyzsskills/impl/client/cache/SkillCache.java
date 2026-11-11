@@ -30,7 +30,7 @@ public class SkillCache {
             skills.clear(); bookmarks.clear();
             deactivations.clear(); skillLevels.clear();
 
-            for(var skill : serverData.skills()) skills.put(skill.getID(), skill);
+            for(var skill : serverData.skills()) skills.put(skill.getId(), skill);
             GRAPH.build(getAllSkills().values());
 
             bookmarks.addAll(playerSkillData.bookmarks());
@@ -113,20 +113,20 @@ public class SkillCache {
 
         if(success){
             CACHE.registerNewClick();
-            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getID(), actionType));
+            PacketDistributor.sendToServer(new CActionSkillPayload(skill.getId(), actionType));
         }
         return success;
     }
 
     //PREDICTIONS
     private void predictBookmark(ISkill skill) {
-        String id = skill.getID().toLowerCase();
+        String id = skill.getId().toLowerCase();
         if (isSkillBookMarked(id)) bookmarks.remove(id);
         else bookmarks.add(id);
         CACHE.incrVersion();
     }
     private boolean predictDeactivation(ISkill skill) {
-        String id = skill.getID();
+        String id = skill.getId();
         if(skill.isPermanent() || getSkillLevel(id) <= 0) return false;
 
         if (isSkillDeactivated(id)) deactivations.remove(id);
@@ -136,7 +136,7 @@ public class SkillCache {
         return true;
     }
     private boolean predictPurchase(ISkill skill) {
-        String id = skill.getID().toLowerCase();
+        String id = skill.getId().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
         if (!SkillRules.canBuy(getSkillContext(id), CACHE.getPlayerContext(), CACHE.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return false;
@@ -149,7 +149,7 @@ public class SkillCache {
         return true;
     }
     private boolean predictBulkPurchase(ISkill skill) {
-        String id = skill.getID().toLowerCase();
+        String id = skill.getId().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
         var bulkResult = SkillRules.checkBulkBuy(getSkillContext(id), CACHE.getPlayerContext(), CACHE.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
@@ -163,7 +163,7 @@ public class SkillCache {
         return false;
     }
     private boolean predictRefund(ISkill skill) {
-        String id = skill.getID().toLowerCase();
+        String id = skill.getId().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
         if (!SkillRules.canRefund(getSkillContext(id), CACHE.getPlayerContext(), CACHE.getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return false;
@@ -183,7 +183,7 @@ public class SkillCache {
         return true;
     }
     private boolean predictBulkRefund(ISkill skill) {
-        String id = skill.getID().toLowerCase();
+        String id = skill.getId().toLowerCase();
 
         if (getSkillLevel(id) <= 0) return false;
 

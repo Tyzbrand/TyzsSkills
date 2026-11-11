@@ -16,7 +16,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 
 
 public class SpellTooltip extends UITooltip {
@@ -60,9 +59,7 @@ public class SpellTooltip extends UITooltip {
         super(() -> TOOLTIP_STYLE);
         this.spell = spell;
 
-        var icon = ResourceLocation.tryParse(spell.getIcon());
-        if(icon == null) icon = Styles.DEFAULT_ICON.texture();
-        spellIcon = new UITexture(icon, 16);
+        spellIcon = new UITexture(spell.getIcon(), 16);
 
         tagContainer = new UIContainer(40 ,22);
         this.addChild(tagContainer);

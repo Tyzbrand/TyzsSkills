@@ -15,10 +15,10 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 public class GreenThumbEffect extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
-                skillId,
+                skill,
                 BlockEvent.BreakEvent.class,
                 BlockEvent.BreakEvent::getPlayer,
                 this::onPlayerBreakBlock

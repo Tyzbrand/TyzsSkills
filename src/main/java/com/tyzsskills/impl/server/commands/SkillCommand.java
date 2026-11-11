@@ -20,7 +20,7 @@ public class SkillCommand {
                         .then(Commands.argument("targets", EntityArgument.players())
                                 .then(Commands.argument("skillId", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                TyzsSkillsAPI.skills().getSkillList().stream().map(ISkill::getID), builder
+                                                TyzsSkillsAPI.skills().getSkillList().stream().map(ISkill::getId), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, Constants.SKILL_MAX_LEVEL))
                                                 .executes(ctx -> {
@@ -37,8 +37,8 @@ public class SkillCommand {
                                                     }
 
                                                     for(var player : players) {
-                                                        var levelToAdd = Math.min(level, skill.getMaximumLevel() - TyzsSkillsAPI.skills().getSkillLevel(player, id));
-                                                        if(levelToAdd > 0 && TyzsSkillsAPI.skills().tryAddSkillLevel(player, id, levelToAdd)) {
+                                                        var levelToAdd = Math.min(level, skill.getMaximumLevel() - TyzsSkillsAPI.skills().getSkillLevel(player, skill));
+                                                        if(levelToAdd > 0 && TyzsSkillsAPI.skills().tryAddSkillLevel(player, skill, levelToAdd)) {
                                                             successCount++;
                                                             total += levelToAdd;
                                                         }
@@ -53,7 +53,7 @@ public class SkillCommand {
                         .then(Commands.argument("targets", EntityArgument.players())
                                 .then(Commands.argument("skillId", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                TyzsSkillsAPI.skills().getSkillList().stream().map(ISkill::getID), builder
+                                                TyzsSkillsAPI.skills().getSkillList().stream().map(ISkill::getId), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, Constants.SKILL_MAX_LEVEL))
                                                 .executes(ctx -> {
@@ -69,8 +69,8 @@ public class SkillCommand {
                                                         return 0;
                                                     }
                                                     for(var player : players){
-                                                        var levelToRemove = Math.min(level, TyzsSkillsAPI.skills().getSkillLevel(player, id));
-                                                        if(levelToRemove > 0 && TyzsSkillsAPI.skills().tryRemoveSkillLevel(player, id, levelToRemove)) {
+                                                        var levelToRemove = Math.min(level, TyzsSkillsAPI.skills().getSkillLevel(player, skill));
+                                                        if(levelToRemove > 0 && TyzsSkillsAPI.skills().tryRemoveSkillLevel(player, skill, levelToRemove)) {
                                                             successCount++;
                                                             total += levelToRemove;
                                                         }
@@ -85,7 +85,7 @@ public class SkillCommand {
                         .then(Commands.argument("targets", EntityArgument.players())
                                 .then(Commands.argument("skillId", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
-                                                TyzsSkillsAPI.skills().getSkillList().stream().map(ISkill::getID), builder
+                                                TyzsSkillsAPI.skills().getSkillList().stream().map(ISkill::getId), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(0, Constants.SKILL_MAX_LEVEL))
                                                 .executes(ctx -> {
@@ -101,7 +101,7 @@ public class SkillCommand {
                                                     var level = Math.min(IntegerArgumentType.getInteger(ctx, "level"), skill.getMaximumLevel());
 
                                                     for(var player : players) {
-                                                        TyzsSkillsAPI.skills().setSkillLevel(player, id, level);
+                                                        TyzsSkillsAPI.skills().setSkillLevel(player, skill, level);
                                                     }
                                                     ctx.getSource().sendSuccess(() -> Component.literal(String.format("[%s] level set to %d for %d player(s)", id, level, players.size())), true);
                                                     return players.size();})))));

@@ -5,6 +5,7 @@ import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.STag;
 import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -17,7 +18,7 @@ import java.util.Map;
  */
 public interface ISkill {
 
-    @NotNull String getID();
+    @NotNull String getId();
 
     int getMaximumLevel();
 
@@ -44,9 +45,9 @@ public interface ISkill {
 
 
     /**
-     * @return a resourceLocation path as a string
+     * @return an icon
      */
-    @NotNull String getIcon();
+    @NotNull ResourceLocation getIcon();
 
     /**
      * @return a localization key

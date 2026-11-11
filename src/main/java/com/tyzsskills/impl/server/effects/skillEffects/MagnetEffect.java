@@ -14,10 +14,10 @@ import java.util.List;
 public class MagnetEffect extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
-                skillId,
+                skill,
                 PlayerTickEvent.Post.class,
                 PlayerTickEvent.Post::getEntity,
                 this::onPlayerTick

@@ -13,10 +13,10 @@ public class ResilienceEffect extends SkillBehavior {
     public static final ThreadLocal<Boolean> IS_MODIFYING = ThreadLocal.withInitial(() -> false);
 
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
-                skillId,
+                skill,
                 MobEffectEvent.Added.class,
                 MobEffectEvent.Added::getEntity,
                 this::onStartingEffect

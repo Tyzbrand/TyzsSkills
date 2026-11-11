@@ -20,13 +20,13 @@ public class SkillWrapper implements ISkillManager {
     }
 
     @Override
-    public int getSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId) {
-        return SkillManager.getPlayerSkillLevel(player, skillId);
+    public int getSkillLevel(@NotNull ServerPlayer player, @NotNull ISkill skill) {
+        return SkillManager.getPlayerSkillLevel(player, skill);
     }
 
     @Override
-    public void setSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int newLevel) {
-        SkillManager.setSkillLevel(player, skillId, newLevel);
+    public void setSkillLevel(@NotNull ServerPlayer player, @NotNull ISkill skill, int newLevel) {
+        SkillManager.setSkillLevel(player, skill, newLevel);
     }
 
     @Override
@@ -35,33 +35,33 @@ public class SkillWrapper implements ISkillManager {
     }
 
     @Override
-    public boolean tryAddSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int amount) {
-        return SkillManager.tryAddSkillLevel(player, skillId, amount);
+    public boolean tryAddSkillLevel(@NotNull ServerPlayer player, @NotNull ISkill skill, int amount) {
+        return SkillManager.tryAddSkillLevel(player, skill, amount);
     }
 
     @Override
-    public boolean tryRemoveSkillLevel(@NotNull ServerPlayer player, @NotNull String skillId, int amount) {
-        return SkillManager.tryRemoveSkillLevel(player, skillId, amount);
+    public boolean tryRemoveSkillLevel(@NotNull ServerPlayer player, @NotNull ISkill skill, int amount) {
+        return SkillManager.tryRemoveSkillLevel(player, skill, amount);
     }
 
     @Override
-    public boolean tryBuySkill(@NotNull ServerPlayer player, @NotNull String skillId) {
-        return SkillManager.tryBuySkill(player, skillId);
+    public boolean tryBuySkill(@NotNull ServerPlayer player, @NotNull ISkill skill) {
+        return SkillManager.tryBuySkill(player, skill);
     }
 
     @Override
-    public boolean tryRefundSkill(@NotNull ServerPlayer player, @NotNull String skillId) {
-        return SkillManager.tryRefundSkill(player, skillId);
+    public boolean tryRefundSkill(@NotNull ServerPlayer player, @NotNull ISkill skill) {
+        return SkillManager.tryRefundSkill(player, skill);
     }
 
     @Override
-    public boolean tryBulkBuy(@NotNull ServerPlayer player, @NotNull String skillId) {
-        return SkillManager.tryBulkBuy(player, skillId);
+    public boolean tryBulkBuy(@NotNull ServerPlayer player, @NotNull ISkill skill) {
+        return SkillManager.tryBulkBuy(player, skill);
     }
 
     @Override
-    public boolean tryBulkRefund(@NotNull ServerPlayer player, @NotNull String skillId) {
-        return SkillManager.tryBulkRefund(player, skillId);
+    public boolean tryBulkRefund(@NotNull ServerPlayer player, @NotNull ISkill skill) {
+        return SkillManager.tryBulkRefund(player, skill);
     }
 
     @Override
@@ -73,13 +73,13 @@ public class SkillWrapper implements ISkillManager {
     }
 
     @Override
-    public void triggerSkillBookmark(@NotNull ServerPlayer player, @NotNull String skillID) {
-        SkillManager.bookmarkSkill(player, skillID);
+    public void triggerSkillBookmark(@NotNull ServerPlayer player, @NotNull ISkill skill) {
+        SkillManager.bookmarkSkill(player, skill);
     }
 
     @Override
-    public boolean isSkillBookmarked(@NotNull ServerPlayer player, @NotNull String skillID) {
-        return SkillManager.isSkillBookmarked(player, skillID);
+    public boolean isSkillBookmarked(@NotNull ServerPlayer player, @NotNull ISkill skill) {
+        return SkillManager.isSkillBookmarked(player, skill);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class SkillWrapper implements ISkillManager {
     }
 
     @Override
-    public void triggerSkillActivationOverlay(@NotNull ServerPlayer player, @NotNull String skillId) {
-        PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(skillId));
+    public void triggerSkillActivationOverlay(@NotNull ServerPlayer player, @NotNull ISkill skill) {
+        PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(skill.getId()));
     }
 }

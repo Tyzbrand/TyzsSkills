@@ -23,10 +23,10 @@ public class TwistOfFateEffect extends SkillBehavior {
     private static final Set<GlobalPos> PROCESSING_CHESTS = ConcurrentHashMap.newKeySet();
 
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
-                skillId,
+                skill,
                 PlayerInteractEvent.RightClickBlock.class,
                 PlayerInteractEvent.RightClickBlock::getEntity,
                 this::onRightClickBlock

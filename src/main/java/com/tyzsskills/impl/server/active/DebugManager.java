@@ -4,12 +4,12 @@ import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.PlayerResetEvent;
 import com.tyzsskills.api.events.SkillReloadEvent;
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.ExplorationProgression;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
-import com.tyzsskills.impl.server.skills.Skill;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.impl.server.sp.SpManager;
@@ -81,9 +81,9 @@ public class DebugManager {
                     var skill = SkillManager.getSkill(id);
                     if(skill == null) continue;
 
-                    if(skill.isPermanent() && SkillManager.isSkillDeactivated(player, id)) SkillManager.tryToggleSkillDeactivation(player, id);
+                    if(skill.isPermanent() && SkillManager.isSkillDeactivated(player, skill)) SkillManager.tryToggleSkillDeactivation(player, skill);
 
-                    int lvl = SkillManager.getPlayerSkillLevel(player, id);
+                    int lvl = SkillManager.getPlayerSkillLevel(player, skill);
                     if(lvl <= 0) continue;
 
                     if(skill.getRequiredLevel() > playerContext.playerLevel()){
@@ -92,7 +92,7 @@ public class DebugManager {
                         continue;
                     }
 
-                    var skillContext = SkillManager.getSkillContext(player, id);
+                    var skillContext = SkillManager.getSkillContext(player, skill);
 
                     var incompatibilities = SkillRules.getActiveIncompatibilities(skillContext, playerContext);
                     if(!incompatibilities.isEmpty()){
@@ -101,7 +101,7 @@ public class DebugManager {
                         for(var conflict : incompatibilities) {
                             var conflictSkill = SkillManager.getSkill(conflict);
                             if(conflictSkill != null)
-                                cleanRefund(0, SkillManager.getPlayerSkillLevel(player, conflict), player, conflictSkill);
+                                cleanRefund(0, SkillManager.getPlayerSkillLevel(player, conflictSkill), player, conflictSkill);
                         }
                         hasChanged = true;
                         continue;
@@ -127,7 +127,7 @@ public class DebugManager {
             }
         }
 
-        private static void cleanRefund(int targetLvl, int currentLvl, @NotNull ServerPlayer player, @NotNull Skill skill){
+        private static void cleanRefund(int targetLvl, int currentLvl, @NotNull ServerPlayer player, @NotNull ISkill skill){
             if (currentLvl == targetLvl) return;
 
             var spToRefund = 0;
@@ -136,11 +136,11 @@ public class DebugManager {
                 spToRefund += skill.getPrices().get(i);
             }
 
-            SkillManager.setSkillLevel(player, skill.getID(), targetLvl);
+            SkillManager.setSkillLevel(player, skill, targetLvl);
 
             if(spToRefund <= 0) return;
             SpManager.tryAddSp(player, spToRefund);
-            player.sendSystemMessage(Component.literal("Skill §9[" + skill.getID() + "] §rrules changed. §6" + spToRefund + " §rSP refunded."));
+            player.sendSystemMessage(Component.literal("Skill §9[" + skill.getId() + "] §rrules changed. §6" + spToRefund + " §rSP refunded."));
         }
     }
 

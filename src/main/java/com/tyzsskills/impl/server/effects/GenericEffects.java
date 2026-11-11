@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.effects;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.impl.server.skills.Skill;
+import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -15,13 +15,13 @@ import java.util.HashSet;
 
 @ApiStatus.Internal
 public class GenericEffects {
-    public static void applyEffects(Skill skill, ServerPlayer player){
+    public static void applyEffects(ISkill skill, ServerPlayer player){
         if(skill.getType() != Enums.SkillType.GENERIC && skill.getType() != Enums.SkillType.CUSTOM) return;
 
         var healthSnapshot = player.getHealth();
         var attributeChanged = false;
-        var currentLvl = SkillManager.getPlayerSkillLevel(player, skill.getID());
-        var deactivated = SkillManager.isSkillDeactivated(player, skill.getID());
+        var currentLvl = SkillManager.getPlayerSkillLevel(player, skill);
+        var deactivated = SkillManager.isSkillDeactivated(player, skill);
 
         var expectedAttributes = new HashSet<>();
         if (currentLvl > 0 && !deactivated) {
@@ -38,8 +38,8 @@ public class GenericEffects {
             var attributeID = attributeKey.location();
             var safeAttributeName = attributeID.getPath().replace(".", "_");
 
-            var modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeAttributeName);
-            var legacyID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID());
+            var modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getId() + "_" + safeAttributeName);
+            var legacyID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getId());
 
             if (instance.hasModifier(legacyID)) {
                 instance.removeModifier(legacyID);
@@ -72,7 +72,7 @@ public class GenericEffects {
                 if(instance == null) continue;
 
                 var safeAttributeName = attributeID.getPath().replace(".", "_");
-                var modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getID() + "_" + safeAttributeName);
+                var modifierID = ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_modifier_" + skill.getId() + "_" + safeAttributeName);
 
                 float expectedValue = modifier.getValue(currentLvl);
                 if(modifier.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE ||

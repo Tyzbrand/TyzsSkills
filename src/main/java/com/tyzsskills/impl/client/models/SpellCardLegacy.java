@@ -14,7 +14,6 @@ import com.tyzsskills.integration.ui.models.UIImage;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
 
 public class SpellCardLegacy extends UIContainer {
     public static final int WIDTH = 38, HEIGHT = 48;
@@ -41,10 +40,7 @@ public class SpellCardLegacy extends UIContainer {
 
         this.spell = spell;
         cache = ClientCache.get();
-
-        var tempIcon = ResourceLocation.tryParse(spell.getIcon());
-        if(tempIcon == null) tempIcon = Styles.DEFAULT_ICON.texture();
-        icon = new UITexture(tempIcon, 16);
+        icon = new UITexture(spell.getIcon(), 16);
 
         addChild(new UIButton(0, 0, this::getCardStyle, this::handleFocus));
 

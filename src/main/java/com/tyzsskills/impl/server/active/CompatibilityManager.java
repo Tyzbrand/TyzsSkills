@@ -112,7 +112,8 @@ public class CompatibilityManager {
 
     private static void migrateSkill(ServerPlayer player, LegacyData data, String oldKey, String newId){
         double value = data.getOldValue(oldKey);
-        if(value > 0) SkillManager.setSkillLevel(player, newId, (int)value);
+        var skill = SkillManager.getSkill(newId);
+        if(value > 0 && skill != null) SkillManager.setSkillLevel(player, skill, (int)value);
     }
 
 
@@ -150,67 +151,17 @@ public class CompatibilityManager {
 
 
             for (var skill : SkillManager.getAllSkills()){
-                var id = skill.getID().toLowerCase();
+                var id = skill.getId().toLowerCase();
                 var lvlKey = id + "_lvl";
                 var bkKey = id + "_bookmark";
 
-                if(oldData.contains(lvlKey)) SkillManager.setSkillLevel(player, id, oldData.getInt(lvlKey));
+                if(oldData.contains(lvlKey)) SkillManager.setSkillLevel(player, skill, oldData.getInt(lvlKey));
 
-                if(oldData.contains(bkKey)) SkillManager.bookmarkSkill(player, id);
+                if(oldData.contains(bkKey)) SkillManager.bookmarkSkill(player, skill);
             }
         }
         data.putTag(MIGRATION_TAG_V2);
     }
 
-    //Migration for refund old purchased Traits
-    private static final String MIGRATION_TAG_V3 = "tyzs_migrated_v3";
-    public static void processMigrationV3(ServerPlayer player){
-        var data = getData(player);
-        boolean didMigrate = data.hasMigrated(MIGRATION_TAG_V3);
-
-        if(!didMigrate){
-
-            int totalRefund = 0;
-
-            totalRefund += checkAndRefundTrait(player, "cinder_blood", 65);
-            totalRefund += checkAndRefundTrait(player, "deep_lode", 55);
-            totalRefund += checkAndRefundTrait(player, "root_cleaver", 25);
-            totalRefund += checkAndRefundTrait(player, "iron_gut", 10);
-            totalRefund += checkAndRefundTrait(player, "gilded_aura", 20);
-            totalRefund += checkAndRefundTrait(player, "silver_tongue", 15);
-            totalRefund += checkAndRefundTrait(player, "soundless", 45);
-            totalRefund += checkAndRefundTrait(player, "refiner", 35);
-            totalRefund += checkAndRefundTrait(player, "deep_sight", 40);
-            totalRefund += checkAndRefundTrait(player, "deep_rest", 30);
-            totalRefund += checkAndRefundTrait(player, "keepsake", 65);
-
-            var traitSurgeLvl = SkillManager.getPlayerSkillLevel(player, "trait_surge");
-            if(traitSurgeLvl > 0){
-                var prices = new int[]{10, 15, 20, 30, 45};
-                traitSurgeLvl = Math.min(traitSurgeLvl, 5);
-
-                SkillManager.setSkillLevel(player, "trait_surge", 0);
-
-                for(int i = 0; i < traitSurgeLvl; i++){
-                    var price = prices[i];
-
-                    totalRefund += price;
-                    SpManager.tryAddSp(player, price);
-                }
-            }
-
-            if(totalRefund > 0) player.sendSystemMessage(Component.literal("§e[Tyzs Skills] §rRemoved traits refund: §6+" + totalRefund + " SP"));
-        }
-        data.putTag(MIGRATION_TAG_V3);
-    }
-
-    private static int checkAndRefundTrait(ServerPlayer player, String id, int price){
-        if(SkillManager.getPlayerSkillLevel(player, id) > 0) {
-            SkillManager.setSkillLevel(player, id, 0);
-            SpManager.tryAddSp(player, price);
-
-            return price;
-        }
-        return 0;
-    }
+    //MIGRATION V3 DELETED
 }

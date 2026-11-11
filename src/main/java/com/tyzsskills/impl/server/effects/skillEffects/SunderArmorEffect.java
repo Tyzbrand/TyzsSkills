@@ -18,11 +18,11 @@ public class SunderArmorEffect extends SkillBehavior {
     private final EquipmentSlot[] ARMOR_SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
                 EventPriority.LOWEST,
-                skillId,
+                skill,
                 LivingIncomingDamageEvent.class,
                 event -> event.getSource().getEntity(),
                 this::onPlayerAttack

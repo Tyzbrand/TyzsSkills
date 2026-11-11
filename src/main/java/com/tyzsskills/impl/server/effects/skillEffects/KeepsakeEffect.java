@@ -20,10 +20,10 @@ public class KeepsakeEffect extends SkillBehavior {
     private final Map<UUID, Map<Integer, ItemStack>> SAVED_HOTBARS = new HashMap<>();
 
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
-                skillId,
+                skill,
                 LivingDeathEvent.class,
                 LivingDeathEvent::getEntity,
                 this::onPlayerDeath
@@ -32,7 +32,7 @@ public class KeepsakeEffect extends SkillBehavior {
         registerAction(
                 eventBus,
                 EventPriority.LOWEST,
-                skillId,
+                skill,
                 PlayerEvent.Clone.class,
                 PlayerEvent.Clone::getEntity,
                 this::onPlayerClone

@@ -15,7 +15,7 @@ public class SkillRules {
     }
 
     public static @NotNull List<String> getActiveIncompatibilities(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx) {
-        var rawIncompatibilities = sCtx.graph().getIncompatibilitiesFor(sCtx.skill().getID());
+        var rawIncompatibilities = sCtx.graph().getIncompatibilitiesFor(sCtx.skill().getId());
         if(rawIncompatibilities.isEmpty() || pCtx.ownedSkillLevels().isEmpty()) return Collections.emptyList();
 
         var intersections = new ArrayList<String>();
@@ -26,7 +26,7 @@ public class SkillRules {
         return intersections;
     }
     public static @NotNull Map<String, Integer> getActivePrerequisites(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx) {
-        var prerequisites = sCtx.graph().getPrerequisitesFor(sCtx.skill().getID());
+        var prerequisites = sCtx.graph().getPrerequisitesFor(sCtx.skill().getId());
         if(prerequisites.isEmpty()) return Map.of();
 
         var stillPrerequisites = new HashMap<String, Integer>();
@@ -43,7 +43,7 @@ public class SkillRules {
 
     public static @NotNull List<String> getActiveDependents(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx){return getActiveDependents(sCtx, pCtx, sCtx.skillLevel());}
     public static @NotNull List<String> getActiveDependents(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx, int targetedLevel){
-        var rawDependents = sCtx.graph().getSkillThatDependsOn(sCtx.skill().getID());
+        var rawDependents = sCtx.graph().getSkillThatDependsOn(sCtx.skill().getId());
         if(rawDependents.isEmpty()) return List.of();
 
         var stillDependents = new ArrayList<String>();

@@ -17,9 +17,9 @@ import java.util.function.Function;
 
 public abstract class SkillBehavior implements ISkillBehavior {
 
-    public abstract void registerEvent(IEventBus eventBus, String skillId);
+    public abstract void registerEvent(IEventBus eventBus, ISkill skill);
 
-    protected final <T extends Event> void registerAction(IEventBus eventBus, EventPriority priority, String skillId,
+    protected final <T extends Event> void registerAction(IEventBus eventBus, EventPriority priority, ISkill skill,
                                                           Class<T> eventClass, Function<T, Entity> entityExtractor, SkillAction<T> skillAction){
         eventBus.addListener(priority, eventClass, event -> {
             if(event instanceof ICancellableEvent cancellable && cancellable.isCanceled()) return;
@@ -27,25 +27,24 @@ public abstract class SkillBehavior implements ISkillBehavior {
             var entity = entityExtractor.apply(event);
             if(!(entity instanceof ServerPlayer player)) return;
 
-            var skill = SkillManager.getSkill(skillId);
-            if(skill == null || SkillManager.isSkillDeactivated(player, skillId)) return;
+            if(SkillManager.isSkillDeactivated(player, skill)) return;
 
-            var lvl = SkillManager.getPlayerSkillLevel(player, skillId);
+            var lvl = SkillManager.getPlayerSkillLevel(player, skill);
             if(lvl <= 0) return;
 
             skillAction.execute(event, player, skill, lvl);
         });
     }
 
-    protected final <T extends Event> void registerAction(IEventBus eventBus, String skillId,
+    protected final <T extends Event> void registerAction(IEventBus eventBus, ISkill skill,
                                                           Class<T> eventClass, Function<T, Entity> entityExtractor, SkillAction<T> skillAction){
-        this.registerAction(eventBus, EventPriority.NORMAL, skillId, eventClass, entityExtractor, skillAction);
+        this.registerAction(eventBus, EventPriority.NORMAL, skill, eventClass, entityExtractor, skillAction);
     }
 
 
     //Tools
-    protected void notifyClient(@NotNull ServerPlayer player, @NotNull ISkill skill ){
-        PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(skill.getID()));
+    protected void notifyClient(@NotNull ServerPlayer player, @NotNull ISkill skill){
+        PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(skill.getId()));
     }
 
     //Utils

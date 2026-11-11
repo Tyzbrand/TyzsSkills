@@ -17,7 +17,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 
 
 public class SkillTooltip extends UITooltip {
@@ -59,9 +58,7 @@ public class SkillTooltip extends UITooltip {
         super(() -> TOOLTIP_STYLE);
         this.skill = skill;
 
-        var icon = ResourceLocation.tryParse(skill.getIcon());
-        if(icon == null) icon = Styles.DEFAULT_ICON.texture();
-        skillIcon = new UITexture(icon, 16);
+        skillIcon = new UITexture(skill.getIcon(), 16);
 
         tagContainer = new UIContainer(40 ,22);
         this.addChild(tagContainer);
@@ -98,9 +95,9 @@ public class SkillTooltip extends UITooltip {
         if(cacheChanged){
             latestCacheVersion = currentCacheVersion;
 
-            var sCtx = cache.SKILLS.getSkillContext(skill.getID());
+            var sCtx = cache.SKILLS.getSkillContext(skill.getId());
             var pCtx = cache.getPlayerContext();
-            var currentLvl = cache.SKILLS.getSkillLevel(skill.getID());
+            var currentLvl = cache.SKILLS.getSkillLevel(skill.getId());
 
             isSkillAvailable = SkillRules.isAvailable(sCtx, pCtx);
             title = Component.translatable(skill.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE);
@@ -151,8 +148,8 @@ public class SkillTooltip extends UITooltip {
         var tags = skill.getTags();
         var scale = .57f;
 
-        var stateText = new UIText(0, 0, () -> cache.SKILLS.isSkillDeactivated(skill.getID()) ? inactive : active)
-                .withBackground(() -> cache.SKILLS.isSkillDeactivated(skill.getID()) ? inactiveStyle : activeStyle, () -> true)
+        var stateText = new UIText(0, 0, () -> cache.SKILLS.isSkillDeactivated(skill.getId()) ? inactive : active)
+                .withBackground(() -> cache.SKILLS.isSkillDeactivated(skill.getId()) ? inactiveStyle : activeStyle, () -> true)
                 .withScale(scale, Enums.ScalePivot.TOP_LEFT);
 
         tagContainer.addChild(stateText);
@@ -174,8 +171,8 @@ public class SkillTooltip extends UITooltip {
 
     private void updateRequirements(){
         var requiredLvl = skill.getRequiredLevel();
-        var incompatibilities = cache.SKILLS.GRAPH.getIncompatibilitiesFor(skill.getID());
-        var prerequisites = cache.SKILLS.GRAPH.getPrerequisitesFor(skill.getID());
+        var incompatibilities = cache.SKILLS.GRAPH.getIncompatibilitiesFor(skill.getId());
+        var prerequisites = cache.SKILLS.GRAPH.getPrerequisitesFor(skill.getId());
 
         var hasInfos = requiredLvl != 0 || !incompatibilities.isEmpty() || !prerequisites.isEmpty();
         if(!hasInfos) {currentRequirements = null; return;}

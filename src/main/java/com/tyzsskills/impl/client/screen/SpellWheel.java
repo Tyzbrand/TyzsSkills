@@ -17,7 +17,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
 
@@ -103,8 +102,7 @@ public class SpellWheel extends Screen {
 
             if(spellInSlot == null) continue;
 
-            var icon = ResourceLocation.tryParse(spellInSlot.getIcon());
-            var iconTexture = icon == null ? Styles.DEFAULT_ICON : new UITexture(icon, 16);
+            var iconTexture = new UITexture(spellInSlot.getIcon(), 16);
 
             mainPanel.addChild(new UIImage(slotPos.x + 7, slotPos.y + 7, iconTexture.size(), iconTexture.size(), () -> iconTexture)
                     .withScale(2f, Enums.ScalePivot.TOP_LEFT)

@@ -40,20 +40,23 @@ public record CActionSkillPayload(String id, Enums.SkillAction actionType) imple
                     return;
                 }
 
+                var skill = SkillManager.getSkill(payload.id());
+                if(skill == null) return;
+
                 var success = true;
                 switch(payload.actionType()){
-                    case PURCHASE -> success = SkillManager.tryBuySkill(player, payload.id());
-                    case REFUND -> success = SkillManager.tryRefundSkill(player, payload.id());
-                    case BULK_PURCHASE -> success = SkillManager.tryBulkBuy(player, payload.id());
-                    case BULK_REFUND -> success = SkillManager.tryBulkRefund(player, payload.id());
-                    case BOOKMARK -> SkillManager.bookmarkSkill(player, payload.id());
-                    case DEACTIVATION -> success = SkillManager.tryToggleSkillDeactivation(player, payload.id());
+                    case PURCHASE -> success = SkillManager.tryBuySkill(player, skill);
+                    case REFUND -> success = SkillManager.tryRefundSkill(player, skill);
+                    case BULK_PURCHASE -> success = SkillManager.tryBulkBuy(player, skill);
+                    case BULK_REFUND -> success = SkillManager.tryBulkRefund(player, skill);
+                    case BOOKMARK -> SkillManager.bookmarkSkill(player, skill);
+                    case DEACTIVATION -> success = SkillManager.tryToggleSkillDeactivation(player, skill);
                 }
 
                 if(!success){
                     PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpPayload(SpManager.getSP(player)));
-                    PacketDistributor.sendToPlayer(player, new UpdatePayloads.DeactivationsPayload(payload.id(), SkillManager.isSkillDeactivated(player, payload.id())));
-                    PacketDistributor.sendToPlayer(player, new UpdatePayloads.SkillLevelPayload(payload.id(), SkillManager.getPlayerSkillLevel(player, payload.id())));
+                    PacketDistributor.sendToPlayer(player, new UpdatePayloads.DeactivationsPayload(payload.id(), SkillManager.isSkillDeactivated(player, skill)));
+                    PacketDistributor.sendToPlayer(player, new UpdatePayloads.SkillLevelPayload(payload.id(), SkillManager.getPlayerSkillLevel(player, skill)));
                 }
             }
 

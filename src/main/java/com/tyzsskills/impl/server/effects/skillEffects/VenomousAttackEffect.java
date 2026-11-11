@@ -13,10 +13,10 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 public class VenomousAttackEffect extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
-                skillId,
+                skill,
                 LivingIncomingDamageEvent.class,
                 event -> event.getSource().getEntity(),
                 this::onPlayerAttack

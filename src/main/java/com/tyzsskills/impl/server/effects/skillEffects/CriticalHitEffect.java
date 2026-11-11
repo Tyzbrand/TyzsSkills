@@ -14,11 +14,11 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 public class CriticalHitEffect extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
                 EventPriority.HIGH,
-                skillId,
+                skill,
                 LivingIncomingDamageEvent.class,
                 event -> event.getSource().getEntity(),
                 this::onPlayerAttack

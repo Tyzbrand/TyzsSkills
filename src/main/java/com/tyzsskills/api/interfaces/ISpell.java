@@ -1,6 +1,7 @@
 package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.records.SpellProperty;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -14,9 +15,9 @@ public interface ISpell {
     int getPrice();
 
     /**
-     * @return a resourceLocation path as a string
+     * @return a resourceLocation
      */
-    @NotNull String getIcon();
+    @NotNull ResourceLocation getIcon();
 
     /**
      * @return a localization key

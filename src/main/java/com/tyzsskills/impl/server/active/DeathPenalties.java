@@ -44,10 +44,10 @@ public class DeathPenalties {
         float lossProbability = (float)Config.SKILL_LOSS.getAsDouble() / 100f;
 
         for(var skill : SkillManager.getAllSkills()){
-            if(SkillManager.getPlayerSkillLevel(player, skill.getID()) < 1) continue;
+            if(SkillManager.getPlayerSkillLevel(player, skill) < 1) continue;
 
             if (player.getRandom().nextFloat() < lossProbability){
-                SkillManager.tryRemoveSkillLevel(player, skill.getID(), 1);
+                SkillManager.tryRemoveSkillLevel(player, skill, 1);
             }
         }
     }

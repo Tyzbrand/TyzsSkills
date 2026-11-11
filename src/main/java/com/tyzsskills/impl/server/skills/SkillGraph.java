@@ -23,7 +23,7 @@ public class SkillGraph {
         DEPENDENTS.clear();
 
         for(var skill : skillRegistry){
-            var currentId = skill.getID();
+            var currentId = skill.getId();
 
             INCOMPATIBILITIES.put(currentId, new ArrayList<>());
             PREREQUISITES.put(currentId, new HashMap<>());
@@ -31,7 +31,7 @@ public class SkillGraph {
         }
 
         for(var skill : skillRegistry){
-            var currentId = skill.getID();
+            var currentId = skill.getId();
 
             for(var incompatibility : skill.getRawIncompatibilities()){
                 if(!SkillManager.isSkillLoaded(incompatibility)) continue;

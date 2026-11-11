@@ -11,10 +11,10 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 public class BloodlustEffect extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
-                skillId,
+                skill,
                 LivingDeathEvent.class,
                 event -> event.getSource().getEntity(),
                 this::onPlayerKill

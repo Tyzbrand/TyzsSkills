@@ -55,7 +55,7 @@ public class SkillPurchaseTooltip extends UITooltip {
         if (latestCacheVersion == currentCacheVersion && latestShiftState == currentShiftState) return;
         latestCacheVersion = currentCacheVersion; latestShiftState = currentShiftState;
 
-        var currentLvl = cache.SKILLS.getSkillLevel(skill.getID());
+        var currentLvl = cache.SKILLS.getSkillLevel(skill.getId());
         var currentSp = cache.METADATA.getSp();
         var targetLvl = getTargetedLevel(currentLvl, currentSp);
 

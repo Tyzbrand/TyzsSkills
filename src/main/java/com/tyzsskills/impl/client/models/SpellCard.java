@@ -17,7 +17,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Supplier;
 
@@ -62,12 +61,10 @@ public class SpellCard extends UIContainer {
         super(offsetX, offsetY, WIDTH, HEIGHT);
 
         this.spell = spell;
-        cache = ClientCache.get();
         this.focusSpell = focusSpell;
 
-        var tempIcon = ResourceLocation.tryParse(spell.getIcon());
-        if(tempIcon == null) tempIcon = Styles.DEFAULT_ICON.texture();
-        icon = new UITexture(tempIcon, 16);
+        cache = ClientCache.get();
+        icon = new UITexture(spell.getIcon(), 16);
 
         updateData();
 

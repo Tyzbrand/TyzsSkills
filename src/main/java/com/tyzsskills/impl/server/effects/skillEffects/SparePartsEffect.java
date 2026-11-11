@@ -16,10 +16,10 @@ import java.util.List;
 
 public class SparePartsEffect extends SkillBehavior {
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
-                skillId,
+                skill,
                 PlayerEvent.ItemCraftedEvent.class,
                 PlayerEvent.ItemCraftedEvent::getEntity,
                 this::onItemCrafted

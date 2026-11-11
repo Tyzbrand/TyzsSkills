@@ -19,7 +19,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Supplier;
 
@@ -88,9 +87,7 @@ public class SkillCard extends UIContainer {
         this.refreshScroll = refreshScroll;
         cache = ClientCache.get();
 
-        var tempIcon = ResourceLocation.tryParse(skill.getIcon());
-        if(tempIcon == null) tempIcon = Styles.DEFAULT_ICON.texture();
-        icon = new UITexture(tempIcon, 16);
+        icon = new UITexture(skill.getIcon(), 16);
 
         updateData();
 
@@ -140,19 +137,19 @@ public class SkillCard extends UIContainer {
         if(latestCacheVersion == currentCacheVersion) return;
         else latestCacheVersion = currentCacheVersion;
 
-        var sCtx = cache.SKILLS.getSkillContext(skill.getID());
+        var sCtx = cache.SKILLS.getSkillContext(skill.getId());
         var pCtx = cache.getPlayerContext();
 
         this.isLocked = !SkillRules.isAvailable(sCtx, pCtx);
-        this.isMaxed = cache.SKILLS.getSkillLevel(skill.getID()) >= skill.getMaximumLevel();
-        this.isBookmarked = cache.SKILLS.isSkillBookMarked(skill.getID());
-        this.isDeactivated = cache.SKILLS.isSkillDeactivated(skill.getID());
+        this.isMaxed = cache.SKILLS.getSkillLevel(skill.getId()) >= skill.getMaximumLevel();
+        this.isBookmarked = cache.SKILLS.isSkillBookMarked(skill.getId());
+        this.isDeactivated = cache.SKILLS.isSkillDeactivated(skill.getId());
         this.canAffordPurchase = SkillRules.canBuy(sCtx, pCtx, cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
         this.canAffordRefund = SkillRules.canRefund(sCtx, pCtx, cache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
         this.canBuy = cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true) && skill.isPurchasable();
         this.canRefund = cache.getConfigBool(Config.REFUND_SYSTEM_KEY, true) && skill.isRefundable();
 
-        this.currentLevel = cache.SKILLS.getSkillLevel(skill.getID());
+        this.currentLevel = cache.SKILLS.getSkillLevel(skill.getId());
     }
 
     //region EXTRACTED LOGIC

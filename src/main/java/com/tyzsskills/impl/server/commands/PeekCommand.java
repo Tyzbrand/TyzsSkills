@@ -46,13 +46,13 @@ public class PeekCommand {
         var skills = TyzsSkillsAPI.skills().getSkillList();
         var skillCount = 0;
         for(var skill : skills){
-            var skillLvl =TyzsSkillsAPI.skills().getSkillLevel(player, skill.getID());
+            var skillLvl =TyzsSkillsAPI.skills().getSkillLevel(player, skill);
             if(skillLvl <= 0) continue;
 
             var message = Component.empty()
                     .append(Component.literal("▶ "))
                     .append(Component.translatable(skill.getDisplayName()))
-                    .append(Component.literal(String.format(" [%s] ", skill.getID())).withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(String.format(" [%s] ", skill.getId())).withStyle(ChatFormatting.GRAY))
                     .append(Component.literal(String.format("(%d/%d).", skillLvl, skill.getMaximumLevel())));
 
             root.append(message).append("\n");

@@ -10,10 +10,10 @@ import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 public class NutritionEffect extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
-                skillId,
+                skill,
                 LivingEntityUseItemEvent.Finish.class,
                 LivingEntityUseItemEvent.Finish::getEntity,
                 this::onPlayerFinishUsingItem

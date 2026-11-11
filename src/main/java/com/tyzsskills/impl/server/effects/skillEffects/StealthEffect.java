@@ -12,10 +12,10 @@ public class StealthEffect extends SkillBehavior {
 
 
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
-                skillId,
+                skill,
                 LivingEvent.LivingVisibilityEvent.class,
                 LivingEvent.LivingVisibilityEvent::getEntity,
                 this::onLivingVisibility

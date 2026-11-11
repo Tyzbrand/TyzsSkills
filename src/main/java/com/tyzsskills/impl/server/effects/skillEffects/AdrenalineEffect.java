@@ -12,10 +12,10 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 public class AdrenalineEffect extends SkillBehavior {
 
     @Override
-    public void registerEvent(IEventBus eventBus, String skillId) {
+    public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
-                skillId,
+                skill,
                 LivingIncomingDamageEvent.class,
                 LivingIncomingDamageEvent::getEntity,
                 this::onIncomingDamage
@@ -41,7 +41,7 @@ public class AdrenalineEffect extends SkillBehavior {
         if(currentHealth <= healthFlag && !player.hasEffect(MobEffects.MOVEMENT_SPEED)){
             player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, durationInTick, 2));
             player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, durationInTick, 0));
-            TyzsSkillsAPI.skills().tryRemoveSkillLevel(player, skill.getID(), 1);
+            TyzsSkillsAPI.skills().tryRemoveSkillLevel(player, skill, 1);
             notifyClient(player, skill);
         }
     }
