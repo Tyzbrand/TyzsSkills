@@ -5,9 +5,9 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.cache.ClientCache;
-import com.tyzsskills.impl.client.tooltips.SkillPurchaseTooltip;
-import com.tyzsskills.impl.client.tooltips.SkillRefundTooltip;
-import com.tyzsskills.impl.client.tooltips.SkillTooltip;
+import com.tyzsskills.impl.client.tooltips.skills.SkillPurchaseTooltip;
+import com.tyzsskills.impl.client.tooltips.skills.SkillRefundTooltip;
+import com.tyzsskills.impl.client.tooltips.skills.SkillTooltip;
 import com.tyzsskills.impl.server.skills.SkillRules;
 import com.tyzsskills.integration.ui.models.UIButton;
 import com.tyzsskills.integration.ui.models.UIContainer;
@@ -21,12 +21,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.function.Supplier;
+
 public class SkillCard extends UIContainer {
     public static final int WIDTH = 64, HEIGHT = 30;
 
     protected final ISkill skill;
     protected final UITexture icon;
     protected final ClientCache cache;
+
+    private final Supplier<Boolean> refreshScroll;
 
     protected boolean isLocked;
     protected boolean isMaxed;
@@ -77,10 +81,11 @@ public class SkillCard extends UIContainer {
     //endregion
 
     //DIRECT
-    public SkillCard(ISkill skill, int offsetX, int offsetY){
+    public SkillCard(ISkill skill, int offsetX, int offsetY, Supplier<Boolean> refreshScroll){
         super(offsetX, offsetY, WIDTH, HEIGHT);
 
         this.skill = skill;
+        this.refreshScroll = refreshScroll;
         cache = ClientCache.get();
 
         var tempIcon = ResourceLocation.tryParse(skill.getIcon());
@@ -159,7 +164,11 @@ public class SkillCard extends UIContainer {
         return cache.SKILLS.triggerAction(skill, isShiftPressed() ? Enums.SkillAction.BULK_REFUND : Enums.SkillAction.REFUND);
     }
     private boolean handleBookmark(){
-        return cache.SKILLS.triggerAction(skill, Enums.SkillAction.BOOKMARK);
+        if(cache.SKILLS.triggerAction(skill, Enums.SkillAction.BOOKMARK)){
+            refreshScroll.get();
+            return true;
+        }
+        return false;
     }
     private boolean handleDeactivation(){
         return cache.SKILLS.triggerAction(skill, Enums.SkillAction.DEACTIVATION);

@@ -6,7 +6,7 @@ import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.screen.SpellWheel;
-import com.tyzsskills.impl.client.tooltips.SpellActionTooltip;
+import com.tyzsskills.impl.client.tooltips.spells.SpellPurchaseTooltip;
 import com.tyzsskills.impl.server.spells.SpellRules;
 import com.tyzsskills.integration.ui.models.UIButton;
 import com.tyzsskills.integration.ui.models.UIContainer;
@@ -50,7 +50,7 @@ public class SpellCardLegacy extends UIContainer {
 
         addChild(new UIImage(11, 10, 16, 16, () -> icon));
 
-        var actionTooltip = new SpellActionTooltip(spell);
+        var actionTooltip = new SpellPurchaseTooltip(spell);
         addChild(new UIButton(7, 33, () -> ACTION_BTN, this::handleAction)
                 .withDisabled(this::isButtonDisabled)
                 .withTooltip(() -> actionTooltip));
@@ -63,8 +63,8 @@ public class SpellCardLegacy extends UIContainer {
     }
     private boolean handleAction(){
         var spellId = spell.getID();
-        if(!cache.SPELLS.isSpellPurchased(spellId)) return cache.SPELLS.triggerAction(spell, Enums.SpellAction.PURCHASE, -1);
-        if(cache.SPELLS.isSpellAssigned(spellId)) return cache.SPELLS.triggerAction(spell, Enums.SpellAction.UNASSIGNMENT, cache.SPELLS.getSpellSlot(spellId));
+        if(!cache.SPELLS.isSpellPurchased(spellId)) return cache.SPELLS.triggerSpellAction(spell, Enums.SpellAction.PURCHASE, -1);
+        if(cache.SPELLS.isSpellAssigned(spellId)) return cache.SPELLS.triggerSpellAction(spell, Enums.SpellAction.UNASSIGNMENT, cache.SPELLS.getSpellSlot(spellId));
         else Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.ASSIGN, spell));
         return true;
     }

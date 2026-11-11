@@ -16,12 +16,13 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 
-public record CActionSpellPayload(String id, Enums.SpellAction actionType, int slot) implements CustomPacketPayload{
+public record CActionSpellPayload(String id, String propertyKey, Enums.SpellAction actionType, int slot) implements CustomPacketPayload{
     public static final Type<CActionSpellPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "action_spell_payload"));
 
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CActionSpellPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, CActionSpellPayload::id,
+            ByteBufCodecs.STRING_UTF8, CActionSpellPayload::propertyKey,
             StreamCodec.of(FriendlyByteBuf::writeEnum, buf -> buf.readEnum(Enums.SpellAction.class)), CActionSpellPayload::actionType,
             ByteBufCodecs.INT, CActionSpellPayload::slot,
             CActionSpellPayload::new
@@ -47,12 +48,17 @@ public record CActionSpellPayload(String id, Enums.SpellAction actionType, int s
                     case ASSIGNMENT -> success = SpellManager.tryAssignSpell(player, payload.id(), payload.slot);
                     case UNASSIGNMENT -> SpellManager.unassignSpell(player, payload.slot());
                     case CAST -> success = SpellManager.tryCastSpell(player, payload.id());
+                    case PROPERTY_PURCHASE -> success = SpellManager.tryBuyProperty(player, payload.id(), payload.propertyKey());
                 }
 
                 if(!success){
                     PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpPayload(SpManager.getSP(player)));
                     PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellPurchasePayload(payload.id(), SpellManager.isSpellPurchased(player, payload.id())));
 
+                    if(!payload.propertyKey().isEmpty()){
+                        var propertyFullKey = payload.id() + ":" + payload.propertyKey();
+                        PacketDistributor.sendToPlayer(player, new UpdatePayloads.PropertyLevelPayload(propertyFullKey,  SpellManager.getPlayerPropertyLevel(player, payload.id(), payload.propertyKey())));
+                    }
 
                     var backupCooldown = SpellManager.getSpellCooldown(player, payload.id());
                     if(backupCooldown != null) PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellCooldownChange(payload.id(), backupCooldown));

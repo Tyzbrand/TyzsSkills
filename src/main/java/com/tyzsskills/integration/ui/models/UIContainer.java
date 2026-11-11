@@ -86,7 +86,7 @@ public class UIContainer extends UIElement {
     }
 
     public UITooltip resolveTooltip(int mouseX, int mouseY) {
-        if (!isVisible() || !isHovering(mouseX, mouseY)) return null;
+        if (!isVisible() || !isInteractive() || !isHovering(mouseX, mouseY)) return null;
         for (int i = children.size() - 1; i >= 0; i--) {
             var child = children.get(i);
             if (child instanceof UIContainer containerChild) {

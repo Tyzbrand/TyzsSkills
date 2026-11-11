@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.client.tooltips;
+package com.tyzsskills.impl.client.tooltips.skills;
 
 public class SkillTooltipLegacy {
 //    public SkillTooltip(@NotNull SkillTooltipData data){

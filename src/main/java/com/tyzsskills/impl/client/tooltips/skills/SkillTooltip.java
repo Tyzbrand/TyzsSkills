@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.client.tooltips;
+package com.tyzsskills.impl.client.tooltips.skills;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
@@ -41,6 +41,7 @@ public class SkillTooltip extends UITooltip {
     //TODO: translation
     private static final MutableComponent inactive = Component.literal("inactive");
 
+    //region STYLES
     private static final UIStyles.BackgroundStyle activeStyle =
             new UIStyles.BackgroundStyle(0xFF367536, ColorTools.darken(0xFF367536), 4, 4);
 
@@ -52,6 +53,7 @@ public class SkillTooltip extends UITooltip {
 
     private static final UIStyles.ImageStyle SLOT =
             new UIStyles.ImageStyle(32, 32, 96, 346, Styles.MAIN_TEXTURE);
+    //endregion
 
     public SkillTooltip(ISkill skill){
         super(() -> TOOLTIP_STYLE);

@@ -11,7 +11,7 @@ public class Enums {
     public enum WheelMode {CAST, ASSIGN}
 
     public enum SkillAction {PURCHASE, REFUND, BULK_PURCHASE, BULK_REFUND, BOOKMARK, DEACTIVATION}
-    public enum SpellAction{PURCHASE, ASSIGNMENT, UNASSIGNMENT, CAST}
+    public enum SpellAction{PURCHASE, ASSIGNMENT, UNASSIGNMENT, CAST, PROPERTY_PURCHASE}
 
     //UI
     public enum ScalePivot {TOP_LEFT, CENTER}

@@ -6,18 +6,20 @@ import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.screen.SpellWheel;
-import com.tyzsskills.impl.client.tooltips.SpellActionTooltip;
-import com.tyzsskills.impl.client.tooltips.SpellTooltip;
+import com.tyzsskills.impl.client.tooltips.spells.SpellAssignTooltip;
+import com.tyzsskills.impl.client.tooltips.spells.SpellPurchaseTooltip;
+import com.tyzsskills.impl.client.tooltips.spells.SpellTooltip;
 import com.tyzsskills.impl.server.spells.SpellRules;
-import com.tyzsskills.integration.ui.models.UIButton;
-import com.tyzsskills.integration.ui.models.UIContainer;
-import com.tyzsskills.integration.ui.models.UIImage;
-import com.tyzsskills.integration.ui.models.UIProgressBar;
+import com.tyzsskills.integration.ui.models.*;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.function.Supplier;
 
 public class SpellCard extends UIContainer {
     public static final int WIDTH = 64, HEIGHT = 30;
@@ -25,6 +27,11 @@ public class SpellCard extends UIContainer {
     protected final ISpell spell;
     protected final UITexture icon;
     protected final ClientCache cache;
+    protected final Supplier<Boolean> focusSpell;
+
+    private MutableComponent text;
+
+    private boolean canBuySpell;
 
     protected int latestCacheVersion = -1;
 
@@ -39,25 +46,24 @@ public class SpellCard extends UIContainer {
     private static final UIStyles.ButtonStyle CADRE_UNASSIGNED =
             new UIStyles.ButtonStyle(22, 22, 182, 267,  Styles.MAIN_TEXTURE);
 
-    private static final UIStyles.ButtonStyle ACTION_BUTTON =
-            new UIStyles.ButtonStyle(15, 9, 136, 216, 151, 216, 166, 216, Styles.MAIN_TEXTURE);
-    private static final UIStyles.ButtonStyle INFO_BUTTON =
-            new UIStyles.ButtonStyle(15, 9, 182, 216, 197, 216, Styles.MAIN_TEXTURE);
+    private static final UIStyles.ButtonStyle PURCHASE_BTN =
+            new UIStyles.ButtonStyle(31, 9, 139, 217, 170, 217, 201, 217, Styles.MAIN_TEXTURE);
+    private static final UIStyles.ButtonStyle UPGRADE_BTN =
+            new UIStyles.ButtonStyle(15, 9, 108, 217, 123, 217, Styles.MAIN_TEXTURE);
+    private static final UIStyles.ButtonStyle ASSIGN_BTN =
+            new UIStyles.ButtonStyle(15, 9, 77, 217, 92, 217, Styles.MAIN_TEXTURE);
 
-    private static final UIStyles.ImageStyle PROGRESS_EMPTY =
-            new UIStyles.ImageStyle(31, 5, 102, 217, Styles.MAIN_TEXTURE);
-    private static final UIStyles.ImageStyle PROGRESS_FILL =
-            new UIStyles.ImageStyle(31, 5, 71, 217, Styles.MAIN_TEXTURE);
-
-
+    private static final UIStyles.BackgroundStyle CUSTOM_BACK =
+            new UIStyles.BackgroundStyle(Styles.COLOR_BG, Styles.COLOR_BORDER, 3, 3);
     //endregion
 
     //DIRECT
-    public SpellCard(ISpell spell, int offsetX, int offsetY){
+    public SpellCard(ISpell spell, int offsetX, int offsetY, Supplier<Boolean> focusSpell){
         super(offsetX, offsetY, WIDTH, HEIGHT);
 
         this.spell = spell;
         cache = ClientCache.get();
+        this.focusSpell = focusSpell;
 
         var tempIcon = ResourceLocation.tryParse(spell.getIcon());
         if(tempIcon == null) tempIcon = Styles.DEFAULT_ICON.texture();
@@ -87,43 +93,59 @@ public class SpellCard extends UIContainer {
                 .withScale(.95f, Enums.ScalePivot.CENTER));
 
         //PROGRESS BAR
-        this.addChild(new UIImage(28, 8, () -> PROGRESS_EMPTY));
-        this.addChild(new UIProgressBar(28, 8, () -> PROGRESS_FILL, () -> cache.SPELLS.getPropertiesProgress(spell.getID())));
-
+        this.addChild(new UIText(30, 8, () -> text)
+                .withBackground(() -> CUSTOM_BACK, () -> false)
+                .withScale(.75f, Enums.ScalePivot.TOP_LEFT));
 
 
         //BUTTONS
-        var actionTooltip = new SpellActionTooltip(spell);
-        this.addChild(new UIButton(28, 15, () -> ACTION_BUTTON, this::handleAction)
-                .withDisabled(this::isActionDisabled)
-                .withTooltip(() -> actionTooltip));
+        var purchaseTooltip = new SpellPurchaseTooltip(spell);
+        this.addChild(new UIButton(28, 17, () -> PURCHASE_BTN, this::handlePurchase)
+                .withDisabled(() -> !canBuySpell)
+                .withVisibility(() -> !isPurchased())
+                .withTooltip(() -> purchaseTooltip));
 
-        this.addChild(new UIButton(44, 15, () -> INFO_BUTTON, this::handleInfo));
+        var assignTooltip = new SpellAssignTooltip(spell);
+        this.addChild(new UIButton(28, 17, () -> ASSIGN_BTN, this::handleAssignation)
+                .withVisibility(this::isPurchased)
+                .withTooltip(() -> assignTooltip));
+
+        //TODO: translation
+        var upgradeTooltip = new UITooltip(Component.literal("Upgrade"));
+        this.addChild(new UIButton(44, 17, () -> UPGRADE_BTN, this::handleInfo)
+                .withVisibility(this::isPurchased)
+                .withTooltip(() -> upgradeTooltip));
     }
-
     private void updateData(){
         var currentCacheVersion = ClientCache.get().getVersion();
         if(latestCacheVersion == currentCacheVersion) return;
         else latestCacheVersion = currentCacheVersion;
+
+        var pCtx = cache.getPlayerContext();
+        var sCtx = cache.SPELLS.getSpellContext(spell.getID());
+
+        canBuySpell = SpellRules.canBuySpell(sCtx, pCtx, cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
+
+        text = getText();
     }
 
     //region EXTRACTED LOGIC
     // ==================== BUTTON CLICKS ====================
     private boolean handleAssignation(){
         if(!isPurchased()) return false;
-        if(isAssigned()) return cache.SPELLS.triggerAction(spell, Enums.SpellAction.UNASSIGNMENT, cache.SPELLS.getSpellSlot(spell.getID()));
+        if(isAssigned()) return cache.SPELLS.triggerSpellAction(spell, Enums.SpellAction.UNASSIGNMENT, cache.SPELLS.getSpellSlot(spell.getID()));
 
         Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.ASSIGN, spell));
         return true;
     }
 
-    private boolean handleAction(){
-        if(!isPurchased()) return cache.SPELLS.triggerAction(spell, Enums.SpellAction.PURCHASE, -1);
-        return handleAssignation();
+    private boolean handlePurchase(){
+        if(isPurchased()) return false;
+        return cache.SPELLS.triggerSpellAction(spell, Enums.SpellAction.PURCHASE, -1);
     }
 
     private boolean handleInfo(){
-        return true;
+        return focusSpell.get();
     }
 
     // ==================== CONDITIONS ====================
@@ -135,13 +157,19 @@ public class SpellCard extends UIContainer {
         return cache.SPELLS.isSpellAssigned(spell.getID());
     }
 
-    private boolean isActionDisabled(){
-        return !isPurchased() && !SpellRules.canBuySpell(cache.SPELLS.getSpellContext(spell.getID()), cache.getPlayerContext(),
-                cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
-    }
 
     // ==================== DATA ====================
+    private MutableComponent getText(){
+        var part = 0;
+        var total = 0;
 
+        for(var property : spell.getProperties()){
+            part += cache.SPELLS.getPropertyLevel(spell.getID(), property.key());
+            total += property.getMaximumLevel();
+        }
+
+        return Component.literal(part + "/" + total);
+    }
 
     // ==================== STYLES ====================
     private UIStyles.ButtonStyle getCadreStyle(){

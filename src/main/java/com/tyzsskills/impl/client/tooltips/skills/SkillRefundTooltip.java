@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.client.tooltips;
+package com.tyzsskills.impl.client.tooltips.skills;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;

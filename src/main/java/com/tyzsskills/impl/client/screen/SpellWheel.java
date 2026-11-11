@@ -97,14 +97,9 @@ public class SpellWheel extends Screen {
                 mainPanel.addChild(new UIButton(slotPos.x, slotPos.y, () ->  CADRE_CAST_DEFAULT, () -> handleCast(spellInSlot, currentSlot))
                         .withCustomHover((mx, my) -> hoveredSlot == currentSlot)
                         .withShade(() -> hasActiveCooldown(spellInSlot)));
+            }
+            else mainPanel.addChild(new UIButton(slotPos.x, slotPos.y, () ->  CADRE_ASSIGN_DEFAULT, () -> handleAssignation(currentSlot)));
 
-                mainPanel.addChild(new UIText(slotPos.x + SLOT_SIZE/2, slotPos.y + SLOT_SIZE - 11, () -> getCooldownTimer(spellInSlot), false)
-                        .withAlignment(Enums.TextAlignment.CENTER)
-                        .withVisibility(() -> hasActiveCooldown(spellInSlot)));
-            }
-            else{
-                mainPanel.addChild(new UIButton(slotPos.x, slotPos.y, () ->  CADRE_ASSIGN_DEFAULT, () -> handleAssignation(currentSlot)));
-            }
 
             if(spellInSlot == null) continue;
 
@@ -114,6 +109,12 @@ public class SpellWheel extends Screen {
             mainPanel.addChild(new UIImage(slotPos.x + 7, slotPos.y + 7, iconTexture.size(), iconTexture.size(), () -> iconTexture)
                     .withScale(2f, Enums.ScalePivot.TOP_LEFT)
                     .withShade(() -> currentMode == Enums.WheelMode.CAST && hasActiveCooldown(spellInSlot)));
+
+            if(currentMode == Enums.WheelMode.CAST) {
+                mainPanel.addChild(new UIText(slotPos.x + SLOT_SIZE/2, slotPos.y + SLOT_SIZE - 11, () -> getCooldownTimer(spellInSlot), false)
+                        .withAlignment(Enums.TextAlignment.CENTER)
+                        .withVisibility(() -> hasActiveCooldown(spellInSlot)));
+            }
         }
 
         if(currentMode == Enums.WheelMode.CAST){
@@ -146,7 +147,7 @@ public class SpellWheel extends Screen {
         if (currentMode == Enums.WheelMode.CAST && MainKeybind.OPEN_SPELL_WHEEL.matches(keyCode, scanCode)) {
             if (hoveredSlot > 0) {
                 var spellInSlot = cache.SPELLS.getSpellInSlot(hoveredSlot);
-                if (spellInSlot != null) cache.SPELLS.triggerAction(spellInSlot, Enums.SpellAction.CAST, hoveredSlot);
+                if (spellInSlot != null) cache.SPELLS.triggerSpellAction(spellInSlot, Enums.SpellAction.CAST, hoveredSlot);
 
             }
             this.onClose();
@@ -175,7 +176,7 @@ public class SpellWheel extends Screen {
     // ==================== CLICKS ====================
     private boolean handleAssignation(int slot){
          if(currentSpell == null) return false;
-         if(cache.SPELLS.triggerAction(currentSpell, Enums.SpellAction.ASSIGNMENT, slot)) {
+         if(cache.SPELLS.triggerSpellAction(currentSpell, Enums.SpellAction.ASSIGNMENT, slot)) {
              this.onClose();
              return true;
          }
@@ -183,7 +184,7 @@ public class SpellWheel extends Screen {
     }
     private boolean handleCast(ISpell spell, int slot){
         if(spell == null) return false;
-        if(cache.SPELLS.triggerAction(spell, Enums.SpellAction.CAST, slot)) {
+        if(cache.SPELLS.triggerSpellAction(spell, Enums.SpellAction.CAST, slot)) {
             this.onClose();
             return true;
         }

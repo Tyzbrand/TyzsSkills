@@ -46,7 +46,7 @@ public class SpellCache {
 
         public void updatePropertyLevel(@NotNull UpdatePayloads.PropertyLevelPayload payload) {
             if (payload.level() <= 0) propertyLevels.remove(payload.id().toLowerCase());
-            else propertyLevels.put(payload.id().toLowerCase(), payload.level());
+            else propertyLevels.put(payload.id(), payload.level());
             CACHE.UPDATE.registerUpdate("Property Level Synced: New Cached Spell Property Level [" + payload.id() + ", " + payload.level() + "]");
         }
 
@@ -72,21 +72,11 @@ public class SpellCache {
     private final Map<String, Integer> propertyLevelsView = Collections.unmodifiableMap(propertyLevels);
 
     public int getPropertyLevel(@NotNull String spellId, @NotNull String propertyKey) {
-        return propertyLevels.getOrDefault((spellId + ":" + propertyKey).toLowerCase(), 0);
+        return propertyLevels.getOrDefault(getPropertyId(spellId, propertyKey), 0);
     }
-    public float getPropertiesProgress(@NotNull String spellId){
-        var spell = getSpell(spellId);
-        if(spell == null) return 0f;
 
-        var total = 0f;
-        var current = 0f;
-        for(var property : spell.getProperties()){
-            total += property.getMaximumLevel();
-            current += getPropertyLevel(spellId, property.key());
-        }
+    private String getPropertyId(String spellId, String propertyKey){return spellId + ":" + propertyKey;}
 
-        return current/total;
-    }
 
     //==============Slots==============
     private final Map<Integer, String> spellSlots = new HashMap<>();
@@ -148,7 +138,7 @@ public class SpellCache {
     }
 
     //ACTIONS
-    public boolean triggerAction(@NotNull ISpell spell, Enums.SpellAction actionType, int affectedSlot){
+    private boolean triggerAction(@NotNull ISpell spell, @NotNull String propertyKey, Enums.SpellAction actionType, int affectedSlot){
         if(CACHE.isSpamming()) return false;
         var success = false;
 
@@ -157,14 +147,24 @@ public class SpellCache {
             case ASSIGNMENT -> success = predictAssignment(spell, affectedSlot);
             case UNASSIGNMENT -> success = predictUnassignment(affectedSlot);
             case CAST -> success = predictCast(spell);
+            case PROPERTY_PURCHASE -> success = predictPropertyPurchase(spell, propertyKey);
         }
 
         if(success){
             CACHE.registerNewClick();
-            PacketDistributor.sendToServer(new CActionSpellPayload(spell.getID(), actionType, affectedSlot));
+            PacketDistributor.sendToServer(new CActionSpellPayload(spell.getID(), propertyKey, actionType, affectedSlot));
         }
         return success;
     }
+
+    public boolean triggerSpellAction(@NotNull ISpell spell, Enums.SpellAction actionType, int affectedSlot){
+        return triggerAction(spell, "", actionType, affectedSlot);
+    }
+
+    public boolean triggerPropertyAction(@NotNull ISpell spell, @NotNull String propertyId, Enums.SpellAction actionType){
+        return triggerAction(spell, propertyId, actionType, -1);
+    }
+
 
     //PREDICTIONS
     private boolean predictPurchase(ISpell spell){
@@ -176,6 +176,24 @@ public class SpellCache {
 
             CACHE.METADATA.sp -= price;
             purchasedSpells.add(spellId);
+            CACHE.incrVersion();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean predictPropertyPurchase(ISpell spell, String propertyId){
+        var spellId = spell.getID();
+        var property = spell.getProperty(propertyId);
+        if(!isSpellPurchased(spellId) || property == null) return false;
+
+        var propertyCtx = getPropertyContext(property, spellId);
+
+        if(SpellRules.canBuyProperty(propertyCtx, CACHE.getPlayerContext(), CACHE.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))){
+            var price = property.getPrice(getPropertyLevel(spellId, propertyId) + 1);
+
+            CACHE.METADATA.sp -= price;
+            propertyLevels.put(getPropertyId(spellId, propertyId), propertyCtx.propertyLevel() + 1);
             CACHE.incrVersion();
             return true;
         }

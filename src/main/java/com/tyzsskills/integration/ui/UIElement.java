@@ -11,9 +11,11 @@ public abstract class UIElement {
 
     private int offsetX, offsetY;
     private int rawX, rawY, rawWidth, rawHeight;
+    private float zOffset = 0f;
     private float scale = 1f;
     protected Enums.ScalePivot scalePivot = Enums.ScalePivot.TOP_LEFT;
 
+    protected Supplier<Boolean> shadedWhen = () -> false;
     private boolean currentShaded = false;
     protected boolean isCurrentShaded(){return currentShaded;}
 
@@ -21,9 +23,11 @@ public abstract class UIElement {
     public boolean isHovered() { return currentHovered; }
     protected BiPredicate<Integer, Integer> customHover;
 
+    protected Supplier<Boolean> interactiveWhen = () -> true;
+    public boolean isInteractive() { return interactiveWhen.get(); }
+
     protected Supplier<UITooltip> tooltip = () -> null;
     protected Supplier<Boolean> visibleWhen = () -> true;
-    protected Supplier<Boolean> shadedWhen = () -> false;
 
     public UIElement(int offsetX, int offsetY, int width, int height){
         this.offsetX = offsetX;
@@ -38,7 +42,9 @@ public abstract class UIElement {
     public UIElement withShade(Supplier<Boolean> supplier) {this.shadedWhen = supplier; return this;}
     public UIElement withScale(float scale, Enums.ScalePivot scalePivot) {this.scale = scale; this.scalePivot = scalePivot; return this;}
     public UIElement withTooltip(Supplier<UITooltip> supplier){tooltip = supplier; return this;}
+    public UIElement withInteraction(Supplier<Boolean> supplier){interactiveWhen = supplier; return this;}
     public UIElement withCustomHover(BiPredicate<Integer, Integer> predicate){customHover = predicate; return this;}
+    public UIElement withZOffset(float zOffset) { this.zOffset = zOffset; return this; }
 
     //Draws
     protected abstract void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick);
@@ -50,12 +56,22 @@ public abstract class UIElement {
             return;
         }
 
-        currentHovered = isHovering(mouseX, mouseY);
+        var interactive = interactiveWhen.get();
+        var effectiveMouseX = interactive ? mouseX : -1;
+        var effectiveMouseY = interactive ? mouseY : -1;
+
+        currentHovered = interactive && isHovering(effectiveMouseX, effectiveMouseY);
         currentShaded = inheritedShaded || shadedWhen.get();
 
+        if (zOffset != 0f) {
+            gui.pose().pushPose();
+            gui.pose().translate(0f, 0f, zOffset);
+        }
 
-        if(scale != 1f) drawScaled(gui, mouseX, mouseY, partialTick, currentShaded);
-        else drawShadedOrNot(gui, mouseX, mouseY, partialTick, currentShaded);
+        if (scale != 1f) drawScaled(gui, effectiveMouseX, effectiveMouseY, partialTick, currentShaded);
+        else drawShadedOrNot(gui, effectiveMouseX, effectiveMouseY, partialTick, currentShaded);
+
+        if (zOffset != 0f) gui.pose().popPose();
     }
 
     public final void draw(GuiGraphics gui, int mouseX, int mouseY, float partialTick){
@@ -66,7 +82,7 @@ public abstract class UIElement {
     protected boolean onClick(int mouseX, int mouseY){return false;}
     public final boolean handleClick(int mouseX, int mouseY, boolean inheritedVisible) {
         boolean visible = inheritedVisible && visibleWhen.get();
-        if (!visible) return false;
+        if (!visible || !interactiveWhen.get()) return false;
         return onClick(mouseX, mouseY);
     }
     public final boolean handleClick(int mouseX, int mouseY){
@@ -77,7 +93,7 @@ public abstract class UIElement {
     protected boolean onKeyPressed(int keyCode, int scanCode, int modifiers) { return false; }
     public final boolean handleKeyPressed(int keyCode, int scanCode, int modifiers, boolean inheritedVisible) {
         var visible = inheritedVisible && visibleWhen.get();
-        if (!visible) return false;
+        if (!visible || !interactiveWhen.get()) return false;
         return onKeyPressed(keyCode, scanCode, modifiers);
     }
     public final boolean handleKeyPressed(int keyCode, int scanCode, int modifiers) {
@@ -88,7 +104,7 @@ public abstract class UIElement {
     protected boolean onCharTyped(char codePoint, int modifiers) { return false; }
     public final boolean handleCharTyped(char codePoint, int modifiers, boolean inheritedVisible) {
         var visible = inheritedVisible && visibleWhen.get();
-        if (!visible) return false;
+        if (!visible || !interactiveWhen.get()) return false;
         return onCharTyped(codePoint, modifiers);
     }
     public final boolean handleCharTyped(char codePoint, int modifiers) {
@@ -99,7 +115,7 @@ public abstract class UIElement {
     protected boolean onScroll(double mouseX, double mouseY, double deltaY) {return false;}
     public final boolean handleScroll(double mouseX, double mouseY, double deltaY, boolean inheritedVisible) {
         boolean visible = inheritedVisible && visibleWhen.get();
-        if (!visible) return false;
+        if (!visible || !interactiveWhen.get()) return false;
         return onScroll(mouseX, mouseY, deltaY);
     }
     public final boolean handleScroll(double mouseX, double mouseY, double deltaY){
@@ -110,7 +126,7 @@ public abstract class UIElement {
     protected boolean onDrag(double mouseX, double mouseY, int button, double dragX, double dragY){return false;}
     public final boolean handleDrag(double mouseX, double mouseY, int button, double dragX, double dragY, boolean inheritedVisible) {
         boolean visible = inheritedVisible && visibleWhen.get();
-        if (!visible) return false;
+        if (!visible || !interactiveWhen.get()) return false;
         return onDrag(mouseX, mouseY, button, dragX, dragY);
     }
     public boolean handleDrag(double mouseX, double mouseY, int button, double dragX, double dragY) {
@@ -121,7 +137,7 @@ public abstract class UIElement {
     protected boolean onRelease(double mouseX, double mouseY, int button) { return false; }
     public boolean handleRelease(double mouseX, double mouseY, int button, boolean inheritedVisible) {
         boolean visible = inheritedVisible && visibleWhen.get();
-        if (!visible) return false;
+        if (!visible || !interactiveWhen.get()) return false;
         return onRelease(mouseX, mouseY, button);
     }
     public boolean handleRelease(double mouseX, double mouseY, int button) {
@@ -130,7 +146,7 @@ public abstract class UIElement {
 
     //Tooltips
     public UITooltip getHoveredTooltip(int mouseX, int mouseY) {
-        if (visibleWhen.get() && isHovering(mouseX, mouseY)) return tooltip.get();
+        if (visibleWhen.get() && interactiveWhen.get() && isHovering(mouseX, mouseY)) return tooltip.get();
         return null;
     }
 

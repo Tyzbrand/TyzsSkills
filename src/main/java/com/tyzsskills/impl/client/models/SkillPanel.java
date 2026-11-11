@@ -206,7 +206,7 @@ public class SkillPanel extends UIContainer {
             x += SCROLL_ITEM_SPACING;
             if(rowCount > 0) x += SkillCard.WIDTH;
 
-            scrollView.addChild(new SkillCard(skill, x, y));
+            scrollView.addChild(new SkillCard(skill, x, y, this::handleBookmarkRefresh));
 
             rowCount++;
         }
@@ -265,6 +265,16 @@ public class SkillPanel extends UIContainer {
         SortingManager.toggleSortingDirection();
         refreshScrollView();
         return true;
+    }
+
+    private boolean handleBookmarkRefresh(){
+        var currentCategory = SortingManager.getCurrentCategory();
+        if(currentCategory == null) return false;
+        if(currentCategory.is("bookmarks")){
+            refreshScrollView();
+            return true;
+        }
+        return false;
     }
 
     // ==================== CONDITIONS ====================

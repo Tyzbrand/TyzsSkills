@@ -19,7 +19,11 @@ public class SpellPresets {
             SpellPrefab.builder("dash", 10)
                     .withIcon("minecraft:textures/item/elytra.png")
                     .withBehavior(new DashEffect())
-                    .addProperty(new SpellProperty("cooldown", List.of(5, 4, 3), 8, List.of(6f, 3f, 2f), "Cooldown", "unknown", "sec"))
+                    .withDisplayName("Dash")
+                    .withDescription("Missing")
+                    .addProperty(new SpellProperty("cooldown", List.of(3, 4, 5), 8, List.of(6f, 3f, 2f), "Cooldown", "Reduit le temps d'attente entre chaque utilisation", "sec"))
+                    .addProperty(new SpellProperty("vitesse", List.of(3, 4, 5), 8, List.of(6f, 3f, 2f), "Vitesse", "Augmente la vitesse de dash", "m.s"))
+                    .addProperty(new SpellProperty("distance", List.of(3, 4, 5), 8, List.of(6f, 3f, 2f), "Distance", "Augmente la distance de dash", "block(s)"))
                     .build();
 
     private static final SpellPrefab WIRELESS =
