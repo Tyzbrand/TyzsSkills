@@ -60,8 +60,15 @@ public class SpellCache {
         }
 
         public void updateSpellCooldown(@NotNull UpdatePayloads.SpellCooldownChange payload) {
-            spellCooldowns.put(payload.id(), payload.newCooldown());
-            CACHE.UPDATE.registerUpdate("Cooldown Added: New Cached Cooldown for [" + payload.id() + "] for " + payload.newCooldown().duration()/20 + " sec");
+            var cooldown = payload.newCooldown();
+            if(cooldown.duration() <= 0L) {
+                spellCooldowns.remove(payload.id());
+                CACHE.UPDATE.registerUpdate("Cooldown Removed: [" + payload.id() + "]");
+            }
+            else {
+                spellCooldowns.put(payload.id(), payload.newCooldown());
+                CACHE.UPDATE.registerUpdate("Cooldown Added: New Cached Cooldown for [" + payload.id() + "] for " + payload.newCooldown().duration()/20 + " sec");
+            }
         }
     }
 

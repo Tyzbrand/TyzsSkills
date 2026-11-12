@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.impl.server.active.DebugManager;
+import com.tyzsskills.impl.server.debug.Reset;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -15,7 +15,7 @@ public class ResetCommand {
                                 .executes(ctx -> {
                                     var players = EntityArgument.getPlayers(ctx, "targets");
                                     for(var player : players)
-                                        DebugManager.RESET.reset(player, Enums.ResetType.ALL);
+                                        Reset.reset(player, Enums.ResetType.ALL);
                                     return players.size();
                                 })))
                 .then(Commands.literal("skills")
@@ -23,7 +23,7 @@ public class ResetCommand {
                                 .executes(ctx -> {
                                     var players = EntityArgument.getPlayers(ctx, "targets");
                                     for(var player : players)
-                                        DebugManager.RESET.reset(player, Enums.ResetType.SKILLS);
+                                        Reset.reset(player, Enums.ResetType.SKILLS);
                                     return players.size();
                                 })))
                 .then(Commands.literal("spells")
@@ -31,7 +31,7 @@ public class ResetCommand {
                                 .executes(ctx -> {
                                     var players = EntityArgument.getPlayers(ctx, "targets");
                                     for(var player : players)
-                                        DebugManager.RESET.reset(player, Enums.ResetType.SPELLS);
+                                        Reset.reset(player, Enums.ResetType.SPELLS);
                                     return players.size();
                                 })))
                 .then(Commands.literal("metadata")
@@ -39,7 +39,7 @@ public class ResetCommand {
                                 .executes(ctx -> {
                                     var players = EntityArgument.getPlayers(ctx, "targets");
                                     for(var player : players)
-                                        DebugManager.RESET.reset(player, Enums.ResetType.METADATA);
+                                        Reset.reset(player, Enums.ResetType.METADATA);
                                     return players.size();
                                 })))
                 .then(Commands.literal("stats")
@@ -47,7 +47,7 @@ public class ResetCommand {
                                 .executes(ctx -> {
                                     var players = EntityArgument.getPlayers(ctx, "targets");
                                     for(var player : players)
-                                        DebugManager.RESET.reset(player, Enums.ResetType.STATS);
+                                        Reset.reset(player, Enums.ResetType.STATS);
                                     return players.size();
                                 })));
     }

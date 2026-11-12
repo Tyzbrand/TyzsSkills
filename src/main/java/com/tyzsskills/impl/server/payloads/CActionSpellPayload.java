@@ -50,7 +50,7 @@ public record CActionSpellPayload(String id, String propertyKey, Enums.SpellActi
                 switch(payload.actionType()){
                     case PURCHASE -> success = SpellManager.tryBuySpell(player, spell);
                     case ASSIGNMENT -> success = SpellManager.tryAssignSpell(player, spell, payload.slot);
-                    case UNASSIGNMENT -> SpellManager.unassignSpell(player, payload.slot());
+                    case UNASSIGNMENT -> success = SpellManager.tryUnassignSpell(player, payload.slot());
                     case CAST -> success = SpellManager.tryCastSpell(player, spell);
                     case PROPERTY_PURCHASE -> success = property != null && SpellManager.tryBuyProperty(player, property);
                 }

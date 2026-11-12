@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.server.xp;
 
-import com.tyzsskills.api.events.SkillXPChangeEvent;
+import com.tyzsskills.api.events.metadata.XpChangeEvent;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
@@ -21,7 +21,7 @@ public class XpManager {
         float oldAmount = getXP(player);
         if (oldAmount == newAmount) return false;
 
-        var event = new SkillXPChangeEvent(player, oldAmount, newAmount);
+        var event = new XpChangeEvent(player, oldAmount, newAmount);
         NeoForge.EVENT_BUS.post(event);
         if(event.isCanceled()) return false;
 

@@ -1,15 +1,15 @@
-package com.tyzsskills.api.events;
+package com.tyzsskills.api.events.metadata;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
 
-public class SkillLevelChangeEvent extends Event implements ICancellableEvent{
+public class LevelChangeEvent extends Event implements ICancellableEvent{
     private final int oldLevel;
     private int newLevel;
     private final ServerPlayer player;
 
-    public SkillLevelChangeEvent(ServerPlayer player, int oldLevel, int newLevel){
+    public LevelChangeEvent(ServerPlayer player, int oldLevel, int newLevel){
         this.player = player;
         this.oldLevel = oldLevel;
         this.newLevel = newLevel;

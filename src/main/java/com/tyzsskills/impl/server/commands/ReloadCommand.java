@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.server.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.tyzsskills.impl.server.active.DebugManager;
+import com.tyzsskills.impl.server.debug.Reload;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
@@ -12,7 +12,7 @@ public class ReloadCommand {
         return Commands.literal("reload")
                 .executes(ctx -> {
                     try {
-                        DebugManager.RELOAD.reload(ctx.getSource().getServer());
+                        Reload.reload(ctx.getSource().getServer());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.server.sp;
 
-import com.tyzsskills.api.events.SkillPointChangeEvent;
+import com.tyzsskills.api.events.metadata.PointsChangeEvent;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
@@ -20,7 +20,7 @@ public class SpManager {
         if(oldAmount == newAmount) return false;
 
         //Event
-        var event = new SkillPointChangeEvent(player, oldAmount, newAmount);
+        var event = new PointsChangeEvent(player, oldAmount, newAmount);
         NeoForge.EVENT_BUS.post(event);
         if(event.isCanceled()) return false;
 

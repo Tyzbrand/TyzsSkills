@@ -6,6 +6,8 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 public record Cooldown(long endTick, long duration) {
+    public static final Cooldown EMPTY = new Cooldown(0L, 0L);
+
     public boolean isCooldownOver(long currentTick){return endTick <= currentTick;}
 
     public String getFormatedTimer(long gameTime){

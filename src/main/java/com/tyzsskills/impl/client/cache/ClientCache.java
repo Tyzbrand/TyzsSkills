@@ -2,10 +2,13 @@ package com.tyzsskills.impl.client.cache;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.Constants;
+import com.tyzsskills.api.events.client.ClientInitSynchronizationEvent;
+import com.tyzsskills.api.events.client.ClientUpdateEvent;
 import com.tyzsskills.api.model.Context;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -48,7 +51,6 @@ public class ClientCache {
 
 
     public class Update {
-
         public void updateInit(@NotNull UpdatePayloads.InitPayload payload){
             var serverData = payload.serverData(); var configData = payload.configData();
             var playerSkillData = payload.playerSkillData(); var playerSpellData = payload.playerSpellData();
@@ -63,11 +65,16 @@ public class ClientCache {
             configMap.putAll(configData.booleanMap());
             configMap.putAll(configData.doubleMap());
 
-            registerUpdate("Initial Synchronization");
+            registerUpdate("Initial Synchronization", true);
         }
 
-         void registerUpdate(String message) {
+        void registerUpdate(String message){registerUpdate(message, false);}
+        void registerUpdate(String message, boolean initialSynchronization) {
             cacheVersion++;
+
+            if(!initialSynchronization) NeoForge.EVENT_BUS.post(new ClientUpdateEvent());
+            else NeoForge.EVENT_BUS.post(new ClientInitSynchronizationEvent());
+
             var player = Minecraft.getInstance().player;
             if (player == null || !Config.SHOW_DEBUG_MESSAGES.get()) return;
             player.displayClientMessage(Component.literal(message), false);

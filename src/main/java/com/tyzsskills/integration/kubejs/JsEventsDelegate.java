@@ -1,6 +1,11 @@
 package com.tyzsskills.integration.kubejs;
 
-import com.tyzsskills.api.events.*;
+import com.tyzsskills.api.events.PlayerResetEvent;
+import com.tyzsskills.api.events.metadata.LevelChangeEvent;
+import com.tyzsskills.api.events.metadata.PointsChangeEvent;
+import com.tyzsskills.api.events.metadata.XpChangeEvent;
+import com.tyzsskills.api.events.skills.SkillActionEvent;
+import com.tyzsskills.api.events.skills.SkillLoadEvent;
 import com.tyzsskills.integration.Integrations;
 import net.neoforged.bus.api.SubscribeEvent;
 import org.jetbrains.annotations.ApiStatus;
@@ -9,7 +14,7 @@ import org.jetbrains.annotations.ApiStatus;
 public class JsEventsDelegate {
 
     @SubscribeEvent
-    public static void onSpChange(SkillPointChangeEvent event){
+    public static void onSpChange(PointsChangeEvent event){
         if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSpEvent(event);
     }
 
@@ -44,7 +49,7 @@ public class JsEventsDelegate {
     }
 
     @SubscribeEvent
-    public static void onSkillLevelChange(SkillLevelChangeEvent event){
+    public static void onSkillLevelChange(LevelChangeEvent event){
         if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillLevelChange(event);
     }
 
@@ -69,7 +74,7 @@ public class JsEventsDelegate {
     }
 
     @SubscribeEvent
-    public static void onXpChange(SkillXPChangeEvent event){
+    public static void onXpChange(XpChangeEvent event){
         if(Integrations.isKubeJSLoaded()) KubeJSBridge.postXpEvent(event);
     }
 

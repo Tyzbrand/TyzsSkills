@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.Level;
 
 import com.google.gson.JsonObject;
 import com.tyzsskills.Tyzsskills;
-import com.tyzsskills.api.events.SkillLevelChangeEvent;
+import com.tyzsskills.api.events.metadata.LevelChangeEvent;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.attachments.PlayerData;
@@ -31,7 +31,7 @@ public class LevelManager {
         int oldLevel = getLevel(player);
         if(oldLevel == newLevel) return false;
 
-        var event = new SkillLevelChangeEvent(player, oldLevel, newLevel);
+        var event = new LevelChangeEvent(player, oldLevel, newLevel);
         NeoForge.EVENT_BUS.post(event);
         if(event.isCanceled()) return false;
 

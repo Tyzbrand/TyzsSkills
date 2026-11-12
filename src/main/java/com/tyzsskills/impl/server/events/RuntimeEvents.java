@@ -2,11 +2,15 @@ package com.tyzsskills.impl.server.events;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.impl.server.Level.LevelManager;
-import com.tyzsskills.impl.server.active.*;
+import com.tyzsskills.impl.server.active.CompatibilityManager;
+import com.tyzsskills.impl.server.active.DeathPenalties;
+import com.tyzsskills.impl.server.active.ErrorManager;
+import com.tyzsskills.impl.server.active.FileManager;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.categories.CategoryLoader;
 import com.tyzsskills.impl.server.commands.MainCommand;
+import com.tyzsskills.impl.server.debug.Repair;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.payloads.PayloadSecurity;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
@@ -76,11 +80,9 @@ public class RuntimeEvents {
         CompatibilityManager.processMigration(player);
         CompatibilityManager.processMigrationV2(player);
 
+        Repair.repair(player);
+
         PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
-
-        DebugManager.SANITIZER.repairInconsistencies(player);
-
-        GenericEffects.restoreEffects(player);
 
         if (player.hasPermissions(2) && ErrorManager.hasErrorsOrWarns()) {
             ErrorManager.printErrors(player);

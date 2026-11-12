@@ -1,6 +1,11 @@
 package com.tyzsskills.integration.kubejs;
 
-import com.tyzsskills.api.events.*;
+import com.tyzsskills.api.events.PlayerResetEvent;
+import com.tyzsskills.api.events.metadata.LevelChangeEvent;
+import com.tyzsskills.api.events.metadata.PointsChangeEvent;
+import com.tyzsskills.api.events.metadata.XpChangeEvent;
+import com.tyzsskills.api.events.skills.SkillActionEvent;
+import com.tyzsskills.api.events.skills.SkillLoadEvent;
 import com.tyzsskills.integration.kubejs.events.*;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import org.jetbrains.annotations.ApiStatus;
@@ -9,7 +14,7 @@ import org.jetbrains.annotations.ApiStatus;
 public class KubeJSBridge {
 
 
-    public static void postSpEvent(SkillPointChangeEvent event){
+    public static void postSpEvent(PointsChangeEvent event){
 
         var jsEvent = new SkillPointChangeEventJS(event.getPlayer(), event.getOldAmount(), event.getNewAmount());
         TyzsKubePlugin.SP_CHANGE.post(ScriptType.SERVER, jsEvent);
@@ -48,7 +53,7 @@ public class KubeJSBridge {
         TyzsKubePlugin.SKILL_BOOKMARK.post(ScriptType.SERVER, new SkillBookmarkEventJS(event.getSkill(), event.getPlayer()));
     }
 
-    public static void postSkillLevelChange(SkillLevelChangeEvent event){
+    public static void postSkillLevelChange(LevelChangeEvent event){
         var jsEvent = new SkillLevelChangeEventJS(event.getPlayer(), event.getOldLevel(), event.getNewLevel());
         TyzsKubePlugin.SKILL_LEVEL_CHANGE.post(ScriptType.SERVER, jsEvent);
 
@@ -80,7 +85,7 @@ public class KubeJSBridge {
         TyzsKubePlugin.SKILL_RELOAD.post(ScriptType.SERVER, new SkillReloadEventJS());
     }
 
-    public static void postXpEvent(SkillXPChangeEvent event){
+    public static void postXpEvent(XpChangeEvent event){
 
         var jsEvent = new SkillXPChangeEventJS(event.getPlayer(), event.getOldAmount(), event.getNewAmount());
         TyzsKubePlugin.XP_CHANGE.post(ScriptType.SERVER, jsEvent);

@@ -1,4 +1,4 @@
-package com.tyzsskills.api.events;
+package com.tyzsskills.api.events.client;
 
 import com.tyzsskills.api.interfaces.ITyzsSkillsClientRegistration;
 import net.neoforged.bus.api.Event;

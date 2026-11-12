@@ -1,11 +1,12 @@
 package com.tyzsskills.api.interfaces;
 
+import com.tyzsskills.api.events.client.TyzsSkillsClientSetupEvent;
 import com.tyzsskills.api.records.SortType;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface used to register your custom mod elements on the client side.
- * This is provided via the {@link com.tyzsskills.api.events.TyzsSkillsClientSetupEvent} on the mod {@code MOD BUS}.
+ * This is provided via the {@link TyzsSkillsClientSetupEvent} on the mod {@code MOD BUS}.
  */
 public interface ITyzsSkillsClientRegistration {
 

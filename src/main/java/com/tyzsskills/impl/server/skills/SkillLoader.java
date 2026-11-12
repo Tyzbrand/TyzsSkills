@@ -62,7 +62,6 @@ public class SkillLoader {
     }
 
 
-
     //Utils
     private static void loadSkill(String id, JsonObject source){
         Boolean state = JsonLoadTools.getSafeElement(source, "active", JsonPrimitive::getAsBoolean);

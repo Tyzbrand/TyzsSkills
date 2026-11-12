@@ -2,8 +2,7 @@ package com.tyzsskills.impl.server.skills;
 
 import com.tyzsskills.Config;
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.events.SkillActionEvent;
-import com.tyzsskills.api.events.SkillLoadEvent;
+import com.tyzsskills.api.events.skills.*;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.Context;
 import com.tyzsskills.impl.server.Level.LevelManager;
@@ -43,8 +42,7 @@ public class SkillManager {
         if(oldLvl == newLevel) return false;
 
         player.getData(PlayerData.DATA).setSkillLevel(skill.getId(), newLevel);
-
-        NeoForge.EVENT_BUS.post(new SkillActionEvent.LevelChange(skill, player, oldLvl, newLevel));
+        NeoForge.EVENT_BUS.post(new SkillLevelChangeEvent(player, skill, oldLvl, newLevel));
 
         if(syncClient) PacketDistributor.sendToPlayer(player, new UpdatePayloads.SkillLevelPayload(skill.getId(), newLevel));
 
@@ -69,28 +67,24 @@ public class SkillManager {
         for(var skill : SKILL_COLLECTION.values()) setSkillLevelInternal(player, skill, 0, false);
     }
     public static boolean tryBuySkill(@NotNull ServerPlayer player, @NotNull ISkill skill) {
-        var event = new SkillActionEvent.PurchasePre(skill, player);
-        NeoForge.EVENT_BUS.post(event);
-        if(event.isCanceled()) return false;
-
         int currentLvl = getPlayerSkillLevel(player, skill);
 
         if(SkillRules.canBuy(getSkillContext(player, skill), getPlayerContext(player), Config.PURCHASE_SYSTEM.get())){
             var price = skill.getPrices().get(currentLvl);
 
+            var event = new SkillPurchaseEvent.Pre(player, skill, currentLvl, currentLvl + 1);
+            NeoForge.EVENT_BUS.post(event);
+            if(event.isCanceled()) return false;
+
             if(setSkillLevelInternal(player, skill, currentLvl + 1, true)) {
                 SpManager.tryRemoveSp(player, price);
-                NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
+                NeoForge.EVENT_BUS.post(new SkillPurchaseEvent.Post(player, skill, currentLvl, currentLvl + 1));
                 return true;
             }
         }
         return false;
     }
     public static boolean tryBulkBuy(@NotNull ServerPlayer player, @NotNull ISkill skill){
-        var event = new SkillActionEvent.PurchasePre(skill, player);
-        NeoForge.EVENT_BUS.post(event);
-        if (event.isCanceled()) return false;
-
         var currentLvl = player.getData(PlayerData.DATA).getSkillLevel(skill.getId());
         var maxLvl = skill.getMaximumLevel();
 
@@ -99,9 +93,13 @@ public class SkillManager {
         var bulkResult = SkillRules.checkBulkBuy(getSkillContext(player, skill), getPlayerContext(player), Config.PURCHASE_SYSTEM.get());
 
         if (bulkResult.levelToAdd() > 0) {
+            var event = new SkillPurchaseEvent.Pre(player, skill, currentLvl, currentLvl + bulkResult.levelToAdd());
+            NeoForge.EVENT_BUS.post(event);
+            if(event.isCanceled()) return false;
+
             if(setSkillLevelInternal(player, skill, currentLvl + bulkResult.levelToAdd(), true)){
                 SpManager.tryRemoveSp(player, bulkResult.spToWithdraw());
-                NeoForge.EVENT_BUS.post(new SkillActionEvent.PurchasePost(skill, player));
+                NeoForge.EVENT_BUS.post(new SkillPurchaseEvent.Post(player, skill, currentLvl, currentLvl + bulkResult.levelToAdd()));
 
                 return true;
             }
@@ -110,10 +108,6 @@ public class SkillManager {
     }
     public static boolean tryRefundSkill(@NotNull ServerPlayer player, @NotNull ISkill skill) {
         if(!SkillRules.canRefund(getSkillContext(player, skill), getPlayerContext(player), Config.REFUND_SYSTEM.getAsBoolean())) return false;
-
-        var event = new SkillActionEvent.RefundPre(skill, player);
-        NeoForge.EVENT_BUS.post(event);
-        if(event.isCanceled()) return false;
 
         int currentLvl = player.getData(PlayerData.DATA).getSkillLevel(skill.getId());
 
@@ -124,28 +118,32 @@ public class SkillManager {
         if(initialPrice == 0) finalPrice = 0;
         else finalPrice = Math.round(initialPrice * refundRate);
 
+        var event = new SkillRefundEvent.Pre(player, skill, currentLvl, currentLvl - 1);
+        NeoForge.EVENT_BUS.post(event);
+        if(event.isCanceled()) return false;
+
         if(setSkillLevelInternal(player, skill, currentLvl - 1, true)) {
             if(finalPrice > 0) SpManager.tryAddSp(player, finalPrice);
-            NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
+            NeoForge.EVENT_BUS.post(new SkillRefundEvent.Post(player, skill, currentLvl, currentLvl - 1));
             return true;
         }
 
         return false;
     }
     public static boolean tryBulkRefund(@NotNull ServerPlayer player, @NotNull ISkill skill){
-        var event = new SkillActionEvent.RefundPre(skill, player);
-        NeoForge.EVENT_BUS.post(event);
-        if (event.isCanceled()) return false;
-
         int currentLvl = player.getData(PlayerData.DATA).getSkillLevel(skill.getId());
         if (currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
         var spToRefund = SkillRules.checkBulkRefund(getSkillContext(player, skill), getPlayerContext(player),
                 (float)Config.REFUND_PERCENTAGE.getAsDouble(), Config.REFUND_SYSTEM.getAsBoolean());
 
+        var event = new SkillRefundEvent.Pre(player, skill, currentLvl, 0);
+        NeoForge.EVENT_BUS.post(event);
+        if (event.isCanceled()) return false;
+
         if(setSkillLevelInternal(player, skill, 0, true)) {
             if (spToRefund > 0) SpManager.tryAddSp(player, spToRefund);
-            NeoForge.EVENT_BUS.post(new SkillActionEvent.RefundPost(skill, player));
+            NeoForge.EVENT_BUS.post(new SkillRefundEvent.Post(player, skill, currentLvl, 0));
             return true;
         }
 
@@ -158,8 +156,10 @@ public class SkillManager {
         var newValue = !isCurrentlyBookmarked;
 
         data.triggerBookmark(skill.getId());
-        NeoForge.EVENT_BUS.post(new SkillActionEvent.Bookmark(skill, player));
         PacketDistributor.sendToPlayer(player, new UpdatePayloads.BookmarksPayload(skill.getId(), newValue));
+
+        var event = newValue ? new SkillBookmarkEvent(player, skill) : new SkillUnbookmarkEvent(player, skill);
+        NeoForge.EVENT_BUS.post(event);
     }
     public static boolean tryToggleSkillDeactivation(@NotNull ServerPlayer player, @NotNull ISkill skill){
         if(getPlayerSkillLevel(player, skill) <= 0) return false;
@@ -170,8 +170,15 @@ public class SkillManager {
         var isCurrentlyDeactivated = data.isDeactivated(skill.getId());
         var newValue = !isCurrentlyDeactivated;
 
+        var preEvent = !newValue ? new SkillActivationEvent.Pre(player, skill) : new SkillDeactivationEvent.Pre(player, skill);
+        NeoForge.EVENT_BUS.post(preEvent);
+        if(preEvent.isCanceled()) return false;
+
         data.triggerDeactivation(skill.getId());
         PacketDistributor.sendToPlayer(player, new UpdatePayloads.DeactivationsPayload(skill.getId(), newValue));
+
+        var postEvent = !newValue ? new SkillActivationEvent.Post(player, skill) : new SkillDeactivationEvent.Post(player, skill);
+        NeoForge.EVENT_BUS.post(postEvent);
 
         if(skill.getType() == Enums.SkillType.GENERIC || skill.getType() == Enums.SkillType.CUSTOM){
             GenericEffects.applyEffects(skill, player);

@@ -1,7 +1,7 @@
 package com.tyzsskills;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.api.events.TyzsSkillsClientSetupEvent;
+import com.tyzsskills.api.events.client.TyzsSkillsClientSetupEvent;
 import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.key.MainKeybind;
