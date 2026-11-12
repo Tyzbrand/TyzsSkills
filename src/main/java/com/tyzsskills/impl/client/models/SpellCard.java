@@ -119,7 +119,7 @@ public class SpellCard extends UIContainer {
         else latestCacheVersion = currentCacheVersion;
 
         var pCtx = cache.getPlayerContext();
-        var sCtx = cache.SPELLS.getSpellContext(spell.getID());
+        var sCtx = cache.SPELLS.getSpellContext(spell.getId());
 
         canBuySpell = SpellRules.canBuySpell(sCtx, pCtx, cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
 
@@ -130,7 +130,7 @@ public class SpellCard extends UIContainer {
     // ==================== BUTTON CLICKS ====================
     private boolean handleAssignation(){
         if(!isPurchased()) return false;
-        if(isAssigned()) return cache.SPELLS.triggerSpellAction(spell, Enums.SpellAction.UNASSIGNMENT, cache.SPELLS.getSpellSlot(spell.getID()));
+        if(isAssigned()) return cache.SPELLS.triggerSpellAction(spell, Enums.SpellAction.UNASSIGNMENT, cache.SPELLS.getSpellSlot(spell.getId()));
 
         Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.ASSIGN, spell));
         return true;
@@ -147,11 +147,11 @@ public class SpellCard extends UIContainer {
 
     // ==================== CONDITIONS ====================
     private boolean isPurchased(){
-        return cache.SPELLS.isSpellPurchased(spell.getID());
+        return cache.SPELLS.isSpellPurchased(spell.getId());
     }
 
     private boolean isAssigned(){
-        return cache.SPELLS.isSpellAssigned(spell.getID());
+        return cache.SPELLS.isSpellAssigned(spell.getId());
     }
 
 
@@ -161,7 +161,7 @@ public class SpellCard extends UIContainer {
         var total = 0;
 
         for(var property : spell.getProperties()){
-            part += cache.SPELLS.getPropertyLevel(spell.getID(), property.key());
+            part += cache.SPELLS.getPropertyLevel(spell.getId(), property.key());
             total += property.getMaximumLevel();
         }
 

@@ -116,7 +116,7 @@ public class FileManager {
             var spell = new Spell(prefab.active(), prefab.id(), prefab.price(),
                     prefab.icon(), prefab.displayName(), prefab.description(), prefab.properties()
             );
-            writeFile(spell , getDefaultSpellPath(server), spell.getID());
+            writeFile(spell , getDefaultSpellPath(server), spell.getId());
         }
     }
 

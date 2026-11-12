@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.spells;
 
 import com.tyzsskills.Config;
+import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.api.model.Context;
 import com.tyzsskills.api.records.Cooldown;
 import com.tyzsskills.api.records.SpellProperty;
@@ -28,55 +29,42 @@ public class SpellManager {
     private static final Context.Property PROPERTY_CONTEXT = new Context.Property();
 
     //CORE
-    private static boolean setPropertyLevelInternal(@NotNull ServerPlayer player, @NotNull Spell spell, @NotNull SpellProperty property, int newLevel, boolean syncClient){
-        if(!isSpellPurchased(player, spell.getID())) return false;
-        if(newLevel < 0 || newLevel > spell.getMaximumLevelForProperty(property.key())) return false;
-        int oldLvl = getPlayerPropertyLevel(player, spell.getID(), property.key());
+    private static boolean setPropertyLevelInternal(@NotNull ServerPlayer player, @NotNull SpellProperty property, int newLevel, boolean syncClient){
+        var spell = getSpell(property.spellId());
+        if(spell == null || !isSpellPurchased(player, spell)) return false;
+
+        if(newLevel < 0 || newLevel > property.getMaximumLevel()) return false;
+        int oldLvl = getPropertyLevel(player, property);
 
         if(oldLvl == newLevel) return false;
 
-        player.getData(PlayerData.DATA).setSpellPropertyLevel(spell.getID(), property.key(), newLevel);
+        player.getData(PlayerData.DATA).setSpellPropertyLevel(property.getFullId(), newLevel);
 
-        if(syncClient) PacketDistributor.sendToPlayer(player, new UpdatePayloads.PropertyLevelPayload(spell.getID() + ":" + property.key(), newLevel));
+        if(syncClient) PacketDistributor.sendToPlayer(player, new UpdatePayloads.PropertyLevelPayload(property.getFullId(), newLevel));
 
         return true;
     }
 
     //PROPERTIES
-    public static boolean tryAddPropertyLevel(@NotNull ServerPlayer player, @NotNull String spellId, @NotNull String propertyKey, int amount){
-        var spell = getSpell(spellId.toLowerCase()); if(spell == null) return false;
-        var property = spell.getProperty(propertyKey); if(property == null) return false;
-        return setPropertyLevelInternal(player, spell, property, getPlayerPropertyLevel(player, spellId, propertyKey) + amount, true);
+    public static boolean tryAddPropertyLevel(@NotNull ServerPlayer player, @NotNull SpellProperty property, int amount){
+        return setPropertyLevelInternal(player, property, getPropertyLevel(player, property) + amount, true);
     }
-    public static boolean tryRemovePropertyLevel(@NotNull ServerPlayer player, @NotNull String spellId, @NotNull String propertyKey, int amount){
-        var spell = getSpell(spellId.toLowerCase()); if(spell == null) return false;
-        var property = spell.getProperty(propertyKey); if(property == null) return false;
-        return setPropertyLevelInternal(player, spell, property, getPlayerPropertyLevel(player, spellId, propertyKey) - amount, true);
+    public static boolean tryRemovePropertyLevel(@NotNull ServerPlayer player, @NotNull SpellProperty property, int amount){
+        return setPropertyLevelInternal(player, property, getPropertyLevel(player, property) - amount, true);
     }
-    public static void setPropertiesLevel(@NotNull ServerPlayer player, @NotNull String spellId, @NotNull String propertyKey, int newLevel){
-        var spell = getSpell(spellId.toLowerCase()); if(spell == null) return;
-        var property = spell.getProperty(propertyKey); if(property == null) return;
-        setPropertyLevelInternal(player, spell, property, newLevel, true);
+    public static void setPropertiesLevel(@NotNull ServerPlayer player, @NotNull SpellProperty property, int newLevel){
+        setPropertyLevelInternal(player, property, newLevel, true);
     }
-    public static boolean tryBuyProperty(@NotNull ServerPlayer player, @NotNull String spellId, @NotNull String propertyKey) {
-        spellId = spellId.toLowerCase();
-        propertyKey = propertyKey.toLowerCase();
+    public static boolean tryBuyProperty(@NotNull ServerPlayer player, @NotNull SpellProperty property) {
+        var spell = getSpell(property.spellId());
+        if(spell == null || !isSpellPurchased(player, spell)) return false;
 
-        if(!isSpellPurchased(player, spellId)) return false;
+        int currentLvl = getPropertyLevel(player, property);
 
-        var spell = getSpell(spellId);
-        if(spell == null) return false;
-
-
-        var property = spell.getProperty(propertyKey);
-        if(property == null) return false;
-
-        int currentLvl = getPlayerPropertyLevel(player, spellId, propertyKey);
-
-        if(SpellRules.canBuyProperty(getPropertyContext(player, spellId, propertyKey), SkillManager.getPlayerContext(player), Config.PURCHASE_SYSTEM.get())){
+        if(SpellRules.canBuyProperty(getPropertyContext(player, property), SkillManager.getPlayerContext(player), Config.PURCHASE_SYSTEM.get())){
             var price = property.getPrice(currentLvl + 1);
 
-            if(setPropertyLevelInternal(player, spell, property, currentLvl + 1, true)) {
+            if(setPropertyLevelInternal(player, property, currentLvl + 1, true)) {
                 SpManager.tryRemoveSp(player, price);
                 return true;
             }
@@ -85,48 +73,39 @@ public class SpellManager {
     }
 
     //SPELLS
-    public static boolean tryBuySpell(@NotNull ServerPlayer player, @NotNull String spellId){
-        var spell = getSpell(spellId);
-        if(spell == null) return false;
+    public static boolean tryBuySpell(@NotNull ServerPlayer player, @NotNull ISpell spell){
+        if(isSpellPurchased(player, spell)) return false;
 
-        if(isSpellPurchased(player, spellId)) return false;
-
-        if(SpellRules.canBuySpell(getSpellContext(player, spellId), SkillManager.getPlayerContext(player), Config.PURCHASE_SYSTEM.get())){
+        if(SpellRules.canBuySpell(getSpellContext(player, spell), SkillManager.getPlayerContext(player), Config.PURCHASE_SYSTEM.get())){
             var price = spell.getPrice();
 
             SpManager.tryRemoveSp(player, price);
-            player.getData(PlayerData.DATA).purchaseSpell(spellId);
-            PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellPurchasePayload(spellId, true));
+            player.getData(PlayerData.DATA).purchaseSpell(spell.getId());
+            PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellPurchasePayload(spell.getId(), true));
             return true;
         }
         return false;
     }
-    public static boolean tryCastSpell(@NotNull ServerPlayer player, @NotNull String spellId){
-        var behavior = BehaviorRegistry.getSpellBehavior(spellId);
+    public static boolean tryCastSpell(@NotNull ServerPlayer player, @NotNull ISpell spell){
+        var behavior = BehaviorRegistry.getSpellBehavior(spell);
+
         if(behavior == null) return false;
-
-        var spell = getSpell(spellId);
-        if(spell == null) return false;
-
-        if(!isSpellPurchased(player, spellId) || !isSpellAssigned(player, spellId)) return false;
-        if(getSpellCooldown(player, spellId) != null) return false;
+        if(!isSpellPurchased(player, spell) || !isSpellAssigned(player, spell)) return false;
+        if(getSpellCooldown(player, spell) != null) return false;
 
         if(behavior.onSpellCast(player, spell)){
-            initSpellCooldown(player, spellId);
+            initSpellCooldown(player, spell);
             return true;
         }
         return false;
     }
-    public static boolean tryAssignSpell(@NotNull ServerPlayer player, @NotNull String spellId, int slot){
-        var spell = getSpell(spellId);
-        if(spell == null) return false;
-
+    public static boolean tryAssignSpell(@NotNull ServerPlayer player, @NotNull ISpell spell, int slot){
         var maxSlots = (int)player.getAttributeValue(AttributeRegistry.MAX_SPELL_SLOTS);
         if (slot <= 0 || slot > maxSlots) return false;
 
 
-        if(player.getData(PlayerData.DATA).tryAssignSpell(spellId, slot)){
-            PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellSlotChange(slot, spellId));
+        if(player.getData(PlayerData.DATA).tryAssignSpell(spell.getId(), slot)){
+            PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellSlotChange(slot, spell.getId()));
             return true;
         }
 
@@ -146,39 +125,34 @@ public class SpellManager {
     }
 
     //COOLDOWNS
-    private static final String COOLDOWN_KEY = "cooldown";
-    public static void initSpellCooldown(@NotNull ServerPlayer player, @NotNull String spellId){
-        var spell = getSpell(spellId);
-        if(spell == null) return;
-
-        var cooldownProp = spell.getProperty(COOLDOWN_KEY);
+    public static void initSpellCooldown(@NotNull ServerPlayer player, @NotNull ISpell spell){
+        var cooldownProp = spell.getProperty("cooldown");
         if(cooldownProp == null) return;
 
-        var propertyLevel = getPlayerPropertyLevel(player, spellId, COOLDOWN_KEY);
+        var propertyLevel = getPropertyLevel(player, cooldownProp);
         var cooldownValue = (long)(cooldownProp.getValue(propertyLevel) * 20f);
         if(cooldownValue <= 0) return;
 
         var endTick = player.server.overworld().getGameTime() + cooldownValue;
         var cooldown = new Cooldown(endTick, cooldownValue);
 
-        player.getData(PlayerData.DATA).addCooldown(spellId, cooldown);
-        PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellCooldownChange(spellId, cooldown));
+        player.getData(PlayerData.DATA).addCooldown(spell.getId(), cooldown);
+        PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellCooldownChange(spell.getId(), cooldown));
     }
 
     //API
     public static void registerSpell(@NotNull Spell spell) {
-        spellCollection.put(spell.getID().toLowerCase(), spell);
+        spellCollection.put(spell.getId().toLowerCase(), spell);
     }
     public static void clearSpells() {spellCollection.clear();}
 
     //Getters
     public static @Nullable Spell getSpell(@NotNull String spellId){return spellCollection.getOrDefault(spellId.toLowerCase(), null);}
-    public static boolean isSpellLoaded(@NotNull String spellId){return spellCollection.containsKey(spellId);}
-    public static boolean isSpellPurchased(@NotNull ServerPlayer player, @NotNull String spellId){
-        return player.getData(PlayerData.DATA).isSpellPurchased(spellId);
+    public static boolean isSpellPurchased(@NotNull ServerPlayer player, @NotNull ISpell spell){
+        return player.getData(PlayerData.DATA).isSpellPurchased(spell.getId());
     }
-    public static boolean isSpellAssigned(@NotNull ServerPlayer player, @NotNull String spellId){
-        return player.getData(PlayerData.DATA).isSpellAssigned(spellId);
+    public static boolean isSpellAssigned(@NotNull ServerPlayer player, @NotNull ISpell spell){
+        return player.getData(PlayerData.DATA).isSpellAssigned(spell.getId());
     }
     public static boolean isSlotFree(@NotNull ServerPlayer player, int slot){
         var maxSlots =(int) player.getAttributeValue(AttributeRegistry.MAX_SPELL_SLOTS);
@@ -198,18 +172,17 @@ public class SpellManager {
     public static @NotNull @UnmodifiableView Map<Integer, String> getPlayerSlots(@NotNull ServerPlayer player){
         return player.getData(PlayerData.DATA).getPlayerSlots();
     }
-    public static int getPlayerPropertyLevel(@NotNull ServerPlayer player, @NotNull String spellId, @NotNull String propertyKey) {
-        return player.getData(PlayerData.DATA).getPropertyLevel(spellId, propertyKey);}
+    public static int getPropertyLevel(@NotNull ServerPlayer player, @NotNull SpellProperty property) {
+        var spell = getSpell(property.spellId());
+        if(spell == null || !isSpellPurchased(player, spell)) return 0;
+        return player.getData(PlayerData.DATA).getPropertyLevel(property.getFullId());}
 
-    public static @Nullable Cooldown getSpellCooldown(@NotNull ServerPlayer player, @NotNull String spellId){
-        var spell = getSpell(spellId);
-        if(spell == null) return null;
-
+    public static @Nullable Cooldown getSpellCooldown(@NotNull ServerPlayer player, @NotNull ISpell spell){
         var data = player.getData(PlayerData.DATA);
-        var cooldown = data.getCooldown(spellId);
+        var cooldown = data.getCooldown(spell.getId());
 
         if(cooldown != null && cooldown.isCooldownOver(player.server.overworld().getGameTime())) {
-            data.removeCooldown(spellId);
+            data.removeCooldown(spell.getId());
             return null;
         }
         return cooldown;
@@ -218,17 +191,11 @@ public class SpellManager {
         return player.getData(PlayerData.DATA).getPlayerSpellCooldowns();
     }
 
-    public static @NotNull Context.Spell getSpellContext(@NotNull ServerPlayer player, @NotNull String spellId){
-        var spell = getSpell(spellId);
-        Objects.requireNonNull(spell, "Attempt to access SpellContext with null spell (server side).");
-        return SPELL_CONTEXT.updateContext(spell, isSpellPurchased(player, spellId));
+    public static @NotNull Context.Spell getSpellContext(@NotNull ServerPlayer player, @NotNull ISpell spell){
+        return SPELL_CONTEXT.updateContext(spell, isSpellPurchased(player, spell));
     }
-    public static @NotNull Context.Property getPropertyContext(@NotNull ServerPlayer player, @NotNull String spellId, @NotNull String propertyKey){
-        var spell = getSpell(spellId);
-        Objects.requireNonNull(spell, "Attempt to access Property with null spell (server side).");
-        var property = spell.getProperty(propertyKey);
-        Objects.requireNonNull(property, "Attempt to access PropertyContext with null property (server side).");
-        return PROPERTY_CONTEXT.updateContext(property, getPlayerPropertyLevel(player, spellId, propertyKey));
+    public static @NotNull Context.Property getPropertyContext(@NotNull ServerPlayer player, @NotNull SpellProperty property){
+        return PROPERTY_CONTEXT.updateContext(property, getPropertyLevel(player, property));
     }
 
     //CORE

@@ -50,7 +50,7 @@ public class PropertyPurchaseTooltip extends UITooltip {
         if (latestCacheVersion == currentCacheVersion && latestShiftState == currentShiftState) return;
         latestCacheVersion = currentCacheVersion; latestShiftState = currentShiftState;
 
-        var currentLvl = cache.SPELLS.getPropertyLevel(spell.getID(), property.key());
+        var currentLvl = cache.SPELLS.getPropertyLevel(spell.getId(), property.key());
         var currentSp = cache.METADATA.getSp();
 
         refreshPriceLine(currentLvl, currentSp);

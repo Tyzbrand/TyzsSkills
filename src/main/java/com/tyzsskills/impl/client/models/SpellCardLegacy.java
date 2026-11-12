@@ -58,7 +58,7 @@ public class SpellCardLegacy extends UIContainer {
         return true;
     }
     private boolean handleAction(){
-        var spellId = spell.getID();
+        var spellId = spell.getId();
         if(!cache.SPELLS.isSpellPurchased(spellId)) return cache.SPELLS.triggerSpellAction(spell, Enums.SpellAction.PURCHASE, -1);
         if(cache.SPELLS.isSpellAssigned(spellId)) return cache.SPELLS.triggerSpellAction(spell, Enums.SpellAction.UNASSIGNMENT, cache.SPELLS.getSpellSlot(spellId));
         else Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.ASSIGN, spell));
@@ -66,10 +66,10 @@ public class SpellCardLegacy extends UIContainer {
     }
 
     // ==================== CONDITIONS ====================
-    private boolean isAssigned(){return cache.SPELLS.isSpellAssigned(spell.getID());}
-    private boolean isPurchased(){return cache.SPELLS.isSpellPurchased(spell.getID());}
+    private boolean isAssigned(){return cache.SPELLS.isSpellAssigned(spell.getId());}
+    private boolean isPurchased(){return cache.SPELLS.isSpellPurchased(spell.getId());}
     private boolean isButtonDisabled(){
-        return !isPurchased() && !SpellRules.canBuySpell(cache.SPELLS.getSpellContext(spell.getID()), cache.getPlayerContext(),
+        return !isPurchased() && !SpellRules.canBuySpell(cache.SPELLS.getSpellContext(spell.getId()), cache.getPlayerContext(),
                 cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
     }
 

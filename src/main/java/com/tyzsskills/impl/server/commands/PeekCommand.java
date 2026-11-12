@@ -70,14 +70,14 @@ public class PeekCommand {
         var spells = SpellManager.getAllSpells();
         var spellCount = 0;
         for(var spell : spells){
-            if(!SpellManager.isSpellPurchased(player, spell.getID())) continue;
+            if(!SpellManager.isSpellPurchased(player, spell)) continue;
 
             var message = Component.empty()
                     .append(Component.literal("▶ "))
                     .append(Component.translatable(spell.getDisplayName()))
-                    .append(Component.literal(String.format(" [%s]", spell.getID())).withStyle(ChatFormatting.GRAY));
+                    .append(Component.literal(String.format(" [%s]", spell.getId())).withStyle(ChatFormatting.GRAY));
 
-            if(SpellManager.isSpellAssigned(player, spell.getID())) message.append(Component.literal(" (Assigned).").withStyle(ChatFormatting.DARK_PURPLE));
+            if(SpellManager.isSpellAssigned(player, spell)) message.append(Component.literal(" (Assigned).").withStyle(ChatFormatting.DARK_PURPLE));
             else message.append(Component.literal("."));
 
             root.append(message).append("\n");

@@ -192,14 +192,14 @@ public class SpellWheel extends Screen {
     // ==================== CONDITIONS ====================
     private boolean hasActiveCooldown(@Nullable ISpell spell){
         if(spell == null) return false;
-        return cache.SPELLS.getSpellCooldown(spell.getID()) != null;
+        return cache.SPELLS.getSpellCooldown(spell.getId()) != null;
     }
 
     // ==================== ASSETS ====================
     private MutableComponent getCooldownTimer(@Nullable ISpell spell){
         if(spell == null) return Component.empty();
 
-        var cooldown = cache.SPELLS.getSpellCooldown(spell.getID());
+        var cooldown = cache.SPELLS.getSpellCooldown(spell.getId());
         var level = Minecraft.getInstance().level;
 
         if(cooldown == null || level == null) return Component.empty();

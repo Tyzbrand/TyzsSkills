@@ -27,12 +27,13 @@ public abstract class SkillBehavior implements ISkillBehavior {
             var entity = entityExtractor.apply(event);
             if(!(entity instanceof ServerPlayer player)) return;
 
-            if(SkillManager.isSkillDeactivated(player, skill)) return;
+            var currentSkill = SkillManager.getSkill(skill.getId());
+            if(currentSkill == null || SkillManager.isSkillDeactivated(player, currentSkill)) return;
 
-            var lvl = SkillManager.getPlayerSkillLevel(player, skill);
+            var lvl = SkillManager.getPlayerSkillLevel(player, currentSkill);
             if(lvl <= 0) return;
 
-            skillAction.execute(event, player, skill, lvl);
+            skillAction.execute(event, player, currentSkill, lvl);
         });
     }
 

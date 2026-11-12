@@ -41,26 +41,29 @@ public record CActionSpellPayload(String id, String propertyKey, Enums.SpellActi
                     player.sendSystemMessage(Component.literal("ANTI DDOS"));
                     return;
                 }
+                var spell = SpellManager.getSpell(payload.id());
+                if (spell == null) return;
+
+                var property = spell.getProperty(payload.propertyKey());
 
                 var success = true;
                 switch(payload.actionType()){
-                    case PURCHASE -> success = SpellManager.tryBuySpell(player, payload.id());
-                    case ASSIGNMENT -> success = SpellManager.tryAssignSpell(player, payload.id(), payload.slot);
+                    case PURCHASE -> success = SpellManager.tryBuySpell(player, spell);
+                    case ASSIGNMENT -> success = SpellManager.tryAssignSpell(player, spell, payload.slot);
                     case UNASSIGNMENT -> SpellManager.unassignSpell(player, payload.slot());
-                    case CAST -> success = SpellManager.tryCastSpell(player, payload.id());
-                    case PROPERTY_PURCHASE -> success = SpellManager.tryBuyProperty(player, payload.id(), payload.propertyKey());
+                    case CAST -> success = SpellManager.tryCastSpell(player, spell);
+                    case PROPERTY_PURCHASE -> success = property != null && SpellManager.tryBuyProperty(player, property);
                 }
 
                 if(!success){
                     PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpPayload(SpManager.getSP(player)));
-                    PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellPurchasePayload(payload.id(), SpellManager.isSpellPurchased(player, payload.id())));
+                    PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellPurchasePayload(payload.id(), SpellManager.isSpellPurchased(player, spell)));
 
-                    if(!payload.propertyKey().isEmpty()){
-                        var propertyFullKey = payload.id() + ":" + payload.propertyKey();
-                        PacketDistributor.sendToPlayer(player, new UpdatePayloads.PropertyLevelPayload(propertyFullKey,  SpellManager.getPlayerPropertyLevel(player, payload.id(), payload.propertyKey())));
+                    if(!payload.propertyKey().isEmpty() && property != null){
+                        PacketDistributor.sendToPlayer(player, new UpdatePayloads.PropertyLevelPayload(property.getFullId(),  SpellManager.getPropertyLevel(player, property)));
                     }
 
-                    var backupCooldown = SpellManager.getSpellCooldown(player, payload.id());
+                    var backupCooldown = SpellManager.getSpellCooldown(player, spell);
                     if(backupCooldown != null) PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpellCooldownChange(payload.id(), backupCooldown));
 
                     if(payload.slot() > 0){

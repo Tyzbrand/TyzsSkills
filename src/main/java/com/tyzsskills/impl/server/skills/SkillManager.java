@@ -187,7 +187,7 @@ public class SkillManager {
 
         var id = skill.getId();
 
-        var behaviour = BehaviorRegistry.getSkillBehavior(id);
+        var behaviour = BehaviorRegistry.getSkillBehavior(skill);
         if(behaviour != null && !SUBSCRIBED_SKILL_BEHAVIORS.contains(id)){
             behaviour.registerEvent(NeoForge.EVENT_BUS, skill);
             SUBSCRIBED_SKILL_BEHAVIORS.add(id);
@@ -201,8 +201,8 @@ public class SkillManager {
     public static void buildGraph() {GRAPH.build(getAllSkills());}
 
     //getters
-    public static @Nullable ISkill getSkill(@NotNull String skillId){return SKILL_COLLECTION.getOrDefault(skillId, null);}
-    public static boolean isSkillLoaded(@NotNull String skillId){return SKILL_COLLECTION.containsKey(skillId);}
+    public static @Nullable ISkill getSkill(@NotNull String skillId){return SKILL_COLLECTION.get(skillId.toLowerCase());}
+    public static boolean isSkillLoaded(@NotNull String skillId){return getSkill(skillId) != null;}
     public static boolean isSkillBookmarked(@NotNull ServerPlayer player, @NotNull ISkill skill) {return player.getData(PlayerData.DATA).isBookmarked(skill.getId());}
     public static boolean isSkillDeactivated(@NotNull ServerPlayer player, @NotNull ISkill skill){return player.getData(PlayerData.DATA).isDeactivated(skill.getId());}
 

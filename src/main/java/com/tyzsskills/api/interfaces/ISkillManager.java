@@ -82,7 +82,9 @@ public interface ISkillManager {
      * @param skillId Skill id to check.
      * @return {@code true} if the server skill list contains the skill for the specified id, {@code false} otherwise.
      */
-    boolean isSkillLoaded(@NotNull String skillId);
+    default boolean isSkillLoaded(@NotNull String skillId){
+        return getSkill(skillId) != null;
+    }
 
     /**
      * @param skill Valid id of the targeted skill (in lowercase).

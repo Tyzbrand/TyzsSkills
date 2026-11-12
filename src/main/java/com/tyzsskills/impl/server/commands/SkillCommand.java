@@ -18,14 +18,14 @@ public class SkillCommand {
 
                 .then(Commands.literal("add")
                         .then(Commands.argument("targets", EntityArgument.players())
-                                .then(Commands.argument("skillId", StringArgumentType.string())
+                                .then(Commands.argument("spellId", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
                                                 TyzsSkillsAPI.skills().getSkillList().stream().map(ISkill::getId), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, Constants.SKILL_MAX_LEVEL))
                                                 .executes(ctx -> {
                                                     var players = EntityArgument.getPlayers(ctx, "targets");
-                                                    var id = StringArgumentType.getString(ctx, "skillId");
+                                                    var id = StringArgumentType.getString(ctx, "spellId");
                                                     var level = IntegerArgumentType.getInteger(ctx, "level");
                                                     var successCount = 0;
                                                     var total = 0;
@@ -51,14 +51,14 @@ public class SkillCommand {
                                                     return finalCount;})))))
                 .then(Commands.literal("remove")
                         .then(Commands.argument("targets", EntityArgument.players())
-                                .then(Commands.argument("skillId", StringArgumentType.string())
+                                .then(Commands.argument("spellId", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
                                                 TyzsSkillsAPI.skills().getSkillList().stream().map(ISkill::getId), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(1, Constants.SKILL_MAX_LEVEL))
                                                 .executes(ctx -> {
                                                     var players = EntityArgument.getPlayers(ctx, "targets");
-                                                    var id = StringArgumentType.getString(ctx, "skillId");
+                                                    var id = StringArgumentType.getString(ctx, "spellId");
                                                     var level = IntegerArgumentType.getInteger(ctx, "level");
                                                     var successCount = 0;
                                                     var total = 0;
@@ -83,14 +83,14 @@ public class SkillCommand {
                                                     return finalCount;})))))
                 .then(Commands.literal("set")
                         .then(Commands.argument("targets", EntityArgument.players())
-                                .then(Commands.argument("skillId", StringArgumentType.string())
+                                .then(Commands.argument("spellId", StringArgumentType.string())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
                                                 TyzsSkillsAPI.skills().getSkillList().stream().map(ISkill::getId), builder
                                         ))
                                         .then(Commands.argument("level", IntegerArgumentType.integer(0, Constants.SKILL_MAX_LEVEL))
                                                 .executes(ctx -> {
                                                     var players = EntityArgument.getPlayers(ctx, "targets");
-                                                    var id = StringArgumentType.getString(ctx, "skillId");
+                                                    var id = StringArgumentType.getString(ctx, "spellId");
 
                                                     var skill = TyzsSkillsAPI.skills().getSkill(id);
                                                     if(skill == null) {

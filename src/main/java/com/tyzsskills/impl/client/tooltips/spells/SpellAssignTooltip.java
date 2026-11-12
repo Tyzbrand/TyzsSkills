@@ -12,6 +12,6 @@ public class SpellAssignTooltip extends UITooltip {
 
         //TODO: translation
         this.addChild(new UIText(0, 0,
-                () -> cache.SPELLS.isSpellAssigned(spell.getID()) ? Component.literal("Unassign") : Component.literal("Assign")));
+                () -> cache.SPELLS.isSpellAssigned(spell.getId()) ? Component.literal("Unassign") : Component.literal("Assign")));
     }
 }

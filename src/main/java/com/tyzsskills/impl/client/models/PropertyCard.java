@@ -82,7 +82,7 @@ public class PropertyCard extends UIContainer {
         latestCacheVersion = cache.getVersion();
 
         var playerCtx = cache.getPlayerContext();
-        var propertyCtx = cache.SPELLS.getPropertyContext(property, spell.getID());
+        var propertyCtx = cache.SPELLS.getPropertyContext(property, spell.getId());
 
         canBuyProperty = SpellRules.canBuyProperty(propertyCtx, playerCtx, cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
     }
@@ -93,7 +93,7 @@ public class PropertyCard extends UIContainer {
     }
 
     private float getPropertyProgress(){
-        return (float)cache.SPELLS.getPropertyLevel(spell.getID(), property.key()) / property.getMaximumLevel();
+        return (float)cache.SPELLS.getPropertyLevel(spell.getId(), property.key()) / property.getMaximumLevel();
     }
     //endregion
 }

@@ -2,13 +2,13 @@ package com.tyzsskills.impl.server.skills;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializer;
+import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.api.records.Modifier;
 import com.tyzsskills.api.records.STag;
 import com.tyzsskills.api.records.ValueSet;
-import com.tyzsskills.impl.client.Styles;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -34,7 +34,7 @@ public class Skill implements ISkill {
         this.category = category;
 
         var tempIcon = ResourceLocation.tryParse(icon);
-        if(tempIcon == null) tempIcon = Styles.DEFAULT_ICON.texture();
+        if(tempIcon == null) tempIcon = Constants.DEFAULT_ICON.texture();
         this.icon = tempIcon;
 
         this.displayName = displayName;

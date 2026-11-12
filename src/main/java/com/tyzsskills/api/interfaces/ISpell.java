@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ISpell {
 
-    @NotNull String getID();
+    @NotNull String getId();
 
     int getPrice();
 
@@ -32,9 +32,4 @@ public interface ISpell {
     @Nullable SpellProperty getProperty(@NotNull String propertyKey);
 
     @NotNull @Unmodifiable List<SpellProperty> getProperties();
-
-    default int getMaximumLevelForProperty(@NotNull String propertyKey){
-        var property = getProperty(propertyKey);
-        return property != null ? property.getMaximumLevel() : 0;
-    }
 }

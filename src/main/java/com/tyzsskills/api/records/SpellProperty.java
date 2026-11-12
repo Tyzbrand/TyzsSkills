@@ -5,11 +5,31 @@ import net.minecraft.network.FriendlyByteBuf;
 import java.util.ArrayList;
 import java.util.List;
 
-public record SpellProperty(String key, List<Integer> prices, float baseValue, List<Float> values, String displayName, String description, String unit) {
-
-    public SpellProperty{
+public record SpellProperty(String key, String spellId, List<Integer> prices, float baseValue, List<Float> values, String displayName, String description, String unit) {
+    public SpellProperty {
         prices = prices == null ? List.of() : List.copyOf(prices);
         values = values == null ? List.of() : List.copyOf(values);
+    }
+
+    public SpellProperty(String key, List<Integer> prices, float baseValue, List<Float> values, String displayName, String description, String unit){
+        this(key, null, prices, baseValue, values, displayName, description, unit);
+    }
+
+    public SpellProperty withSpellId(String spellId) {
+        if(this.spellId != null && this.spellId.equalsIgnoreCase(spellId)) return this;
+        return new SpellProperty(
+                key, spellId, prices, baseValue, values,
+                displayName, description, unit
+        );
+    }
+
+    public String spellId(){
+        if(spellId == null) throw new IllegalStateException("Property with missing spell Id.");
+        return spellId;
+    }
+
+    public String getFullId() {
+        return spellId() + ":" + key;
     }
 
     public float getValue(int lvl){
@@ -35,6 +55,7 @@ public record SpellProperty(String key, List<Integer> prices, float baseValue, L
     //Network
     public void writeToBuffer(FriendlyByteBuf buffer){
         buffer.writeUtf(key);
+        buffer.writeUtf(spellId());
         buffer.writeFloat(baseValue);
 
         buffer.writeCollection(prices, FriendlyByteBuf::writeInt);
@@ -47,6 +68,7 @@ public record SpellProperty(String key, List<Integer> prices, float baseValue, L
 
     public static SpellProperty readFromBuffer(FriendlyByteBuf buffer){
         var readKey = buffer.readUtf();
+        var readSkillId = buffer.readUtf();
         var readBaseValue = buffer.readFloat();
 
         var readPrices = buffer.readCollection(ArrayList::new, FriendlyByteBuf::readInt);
@@ -56,6 +78,6 @@ public record SpellProperty(String key, List<Integer> prices, float baseValue, L
         var readDescription = buffer.readUtf();
         var readUnit = buffer.readUtf();
 
-        return new SpellProperty(readKey, readPrices, readBaseValue, readValues, readDisplayName, readDescription, readUnit);
+        return new SpellProperty(readKey, readSkillId, readPrices, readBaseValue, readValues, readDisplayName, readDescription, readUnit);
     }
 }

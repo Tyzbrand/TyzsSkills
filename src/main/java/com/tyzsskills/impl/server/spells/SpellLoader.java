@@ -87,7 +87,7 @@ public class SpellLoader {
             String propUnit = JsonLoadTools.getSafeElement(obj, "unit", JsonPrimitive::getAsString);
             if(propUnit == null) propUnit = "";
 
-            properties.add(new SpellProperty(key, prices, baseValue, values, propDisplayName, propDescription, propUnit));
+            properties.add(new SpellProperty(key, id, prices, baseValue, values, propDisplayName, propDescription, propUnit));
         }
         if(!hasCooldown) /*REGISTER AN ERROR*/return;
         SpellManager.registerSpell(new Spell(true, id, price, icon, displayName, description, properties));

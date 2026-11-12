@@ -29,7 +29,7 @@ public class SpellCache {
         void init(UpdatePayloads.PlayerSyncSpellData playerSpellData, UpdatePayloads.ServerSyncData serverData){
             purchasedSpells.clear(); propertyLevels.clear(); spells.clear(); spellSlots.clear(); spellCooldowns.clear();
 
-            for(var spell : serverData.spells()) spells.put(spell.getID(), spell);
+            for(var spell : serverData.spells()) spells.put(spell.getId(), spell);
             purchasedSpells.addAll(playerSpellData.purchasedSpells());
             propertyLevels.putAll(playerSpellData.playerPropertyLevels());
             spellSlots.putAll(playerSpellData.playerSlots());
@@ -152,7 +152,7 @@ public class SpellCache {
 
         if(success){
             CACHE.registerNewClick();
-            PacketDistributor.sendToServer(new CActionSpellPayload(spell.getID(), propertyKey, actionType, affectedSlot));
+            PacketDistributor.sendToServer(new CActionSpellPayload(spell.getId(), propertyKey, actionType, affectedSlot));
         }
         return success;
     }
@@ -168,7 +168,7 @@ public class SpellCache {
 
     //PREDICTIONS
     private boolean predictPurchase(ISpell spell){
-        var spellId = spell.getID();
+        var spellId = spell.getId();
         if(isSpellPurchased(spellId)) return false;
 
         if(SpellRules.canBuySpell(getSpellContext(spellId), CACHE.getPlayerContext(), CACHE.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))){
@@ -183,7 +183,7 @@ public class SpellCache {
     }
 
     private boolean predictPropertyPurchase(ISpell spell, String propertyId){
-        var spellId = spell.getID();
+        var spellId = spell.getId();
         var property = spell.getProperty(propertyId);
         if(!isSpellPurchased(spellId) || property == null) return false;
 
@@ -207,9 +207,9 @@ public class SpellCache {
         var maxSlots = (int)player.getAttributeValue(AttributeRegistry.MAX_SPELL_SLOTS);
         if (slot <= 0 || slot > maxSlots) return false;
 
-        if(!isSpellPurchased(spell.getID())) return false;
+        if(!isSpellPurchased(spell.getId())) return false;
 
-        spellSlots.put(slot, spell.getID());
+        spellSlots.put(slot, spell.getId());
         CACHE.incrVersion();
         return true;
     }
@@ -222,7 +222,7 @@ public class SpellCache {
     }
 
     private boolean predictCast(ISpell spell){
-        var spellId = spell.getID();
+        var spellId = spell.getId();
         if(!isSpellPurchased(spellId) || !isSpellAssigned(spellId)) return false;
 
         return getSpellCooldown(spellId) == null;

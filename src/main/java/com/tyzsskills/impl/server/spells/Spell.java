@@ -2,9 +2,9 @@ package com.tyzsskills.impl.server.spells;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializer;
+import com.tyzsskills.Constants;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.api.records.SpellProperty;
-import com.tyzsskills.impl.client.Styles;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +25,7 @@ public class Spell implements ISpell {
         this.price = price;
 
         var tempIcon = ResourceLocation.tryParse(icon);
-        if(tempIcon == null) tempIcon = Styles.DEFAULT_ICON.texture();
+        if(tempIcon == null) tempIcon = Constants.DEFAULT_ICON.texture();
         this.icon = tempIcon;
 
         this.displayName = displayName;
@@ -46,7 +46,7 @@ public class Spell implements ISpell {
     protected final Map<String, SpellProperty> properties = new LinkedHashMap<>();
 
     @Override
-    public @NotNull String getID() {return id;}
+    public @NotNull String getId() {return id;}
     @Override
     public @NotNull ResourceLocation getIcon() {return icon;}
     @Override

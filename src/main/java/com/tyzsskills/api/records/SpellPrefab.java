@@ -10,6 +10,10 @@ import java.util.List;
 public record SpellPrefab(boolean active, @NotNull String id, int price, @NotNull String icon, @NotNull String displayName,
                           @NotNull String description, @NotNull List<SpellProperty> properties, @NotNull SpellBehavior behavior) {
 
+    public SpellPrefab {
+        properties = List.copyOf(properties);
+    }
+
     public static Builder builder(@NotNull String spellId, int price){
         return new Builder(Tyzsskills.MODID, spellId, price);
     }
@@ -39,7 +43,7 @@ public record SpellPrefab(boolean active, @NotNull String id, int price, @NotNul
         private String icon;
         private String displayName;
         private String description;
-        private List<SpellProperty> properties;
+        private final List<SpellProperty> properties = new ArrayList<>();
         private SpellBehavior behavior;
 
         //Fluents
@@ -49,10 +53,13 @@ public record SpellPrefab(boolean active, @NotNull String id, int price, @NotNul
         public Builder withDescription(@NotNull String descriptionKey){description = descriptionKey; return this;}
         public Builder withBehavior(@NotNull SpellBehavior behavior){this.behavior = behavior; return this;}
 
-        public Builder withProperties(@NotNull List<SpellProperty> properties){this.properties = new ArrayList<>(properties); return this;}
+        public Builder withProperties(@NotNull List<SpellProperty> properties){
+            this.properties.clear();
+            properties.forEach(p -> this.properties.add(p.withSpellId(spellId)));
+            return this;
+        }
         public Builder addProperty(@NotNull SpellProperty property){
-            if(properties == null) properties = new ArrayList<>();
-            properties.add(property);
+            properties.add(property.withSpellId(spellId));
             return this;
         }
 

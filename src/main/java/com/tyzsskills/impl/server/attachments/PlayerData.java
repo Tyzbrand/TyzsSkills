@@ -77,30 +77,26 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
 
     //region SPELLS
     //-----------------Properties-----------------
-    private String getPropertyId(String spellId, String propertyKey){return spellId + ":" + propertyKey;}
-    public void setSpellPropertyLevel(String spellId, String propertyKey, int lvl){
-        if(spellId == null || propertyKey == null || lvl < 0) return;
+    public void setSpellPropertyLevel(String propertyFullId, int lvl){
+        if(propertyFullId == null  || lvl < 0) return;
 
-        var finalId = getPropertyId(spellId, propertyKey);
-
-        if(lvl == 0 && playerSpellsProperties.containsKey(finalId)) playerSpellsProperties.remove(finalId);
-        else playerSpellsProperties.put(finalId, lvl);
+        if(lvl == 0 && playerSpellsProperties.containsKey(propertyFullId)) playerSpellsProperties.remove(propertyFullId);
+        else playerSpellsProperties.put(propertyFullId, lvl);
     }
 
     public void resetPropertyLevels(){
         playerSpellsProperties.clear();
     }
 
-    public int getPropertyLevel(String spellId, String propertyKey){
-        if(isSpellPurchased(spellId)) return playerSpellsProperties.getOrDefault(getPropertyId(spellId, propertyKey), 0);
-        else return 0;
+    public int getPropertyLevel(String propertyFullId){
+        return playerSpellsProperties.getOrDefault(propertyFullId, 0);
     }
 
     public @NotNull @UnmodifiableView Map<String, Integer> getPlayerProperties(){return playerSpellsPropertiesView;}
 
     //-----------------Spells-----------------
     public void purchaseSpell(String spellId){
-        if(spellId == null || isSpellPurchased(spellId)) return;
+        if(spellId == null) return;
         playerSpells.add(spellId);
     }
 

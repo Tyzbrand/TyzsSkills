@@ -1,5 +1,7 @@
 package com.tyzsskills.impl.server.active;
 
+import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.api.model.SpellBehavior;
 import org.jetbrains.annotations.ApiStatus;
@@ -16,22 +18,20 @@ public class BehaviorRegistry {
     private static final Map<String, SpellBehavior> SPELL_BEHAVIORS = new HashMap<>();
 
     //Skills
-    public static void registerSkillBehavior(String id, SkillBehavior behavior) {
-        if (id == null || id.isBlank() || behavior == null) return;
-        SKILL_BEHAVIORS.put(id.toLowerCase(), behavior);
+    public static void registerSkillBehavior(@NotNull String skillId, @NotNull SkillBehavior behavior) {
+        SKILL_BEHAVIORS.put(skillId, behavior);
     }
 
-    public static @Nullable SkillBehavior getSkillBehavior(@NotNull String id) {
-        return SKILL_BEHAVIORS.getOrDefault(id.toLowerCase(), null);
+    public static @Nullable SkillBehavior getSkillBehavior(@NotNull ISkill skill) {
+        return SKILL_BEHAVIORS.getOrDefault(skill.getId(), null);
     }
 
     //Spells
-    public static void registerSpellBehavior(String id, SpellBehavior behavior) {
-        if (id == null || id.isBlank() || behavior == null) return;
-        SPELL_BEHAVIORS.put(id.toLowerCase(), behavior);
+    public static void registerSpellBehavior(@NotNull String spellId, @NotNull SpellBehavior behavior) {
+        SPELL_BEHAVIORS.put(spellId, behavior);
     }
 
-    public static @Nullable SpellBehavior getSpellBehavior(@NotNull String id) {
-        return SPELL_BEHAVIORS.getOrDefault(id.toLowerCase(), null);
+    public static @Nullable SpellBehavior getSpellBehavior(@NotNull ISpell spell) {
+        return SPELL_BEHAVIORS.getOrDefault(spell.getId(), null);
     }
 }

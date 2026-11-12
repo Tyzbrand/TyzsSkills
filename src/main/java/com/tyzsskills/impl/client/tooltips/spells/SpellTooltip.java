@@ -126,7 +126,7 @@ public class SpellTooltip extends UITooltip {
                     .withStyle(ChatFormatting.GRAY);
 
 
-            var value = property.getValue(cache.SPELLS.getPropertyLevel(spell.getID(), property.key()));
+            var value = property.getValue(cache.SPELLS.getPropertyLevel(spell.getId(), property.key()));
             var valueLabel = Component.empty()
                     .append(Component.literal(FormatTools.defaultFloat(value)).withStyle(ChatFormatting.GREEN))
                     .append(Component.literal(" "))
@@ -141,8 +141,8 @@ public class SpellTooltip extends UITooltip {
         tagContainer.clear();
         var scale = .57f;
 
-        var isPurchased = cache.SPELLS.isSpellPurchased(spell.getID());
-        var isAssigned = cache.SPELLS.isSpellAssigned(spell.getID());
+        var isPurchased = cache.SPELLS.isSpellPurchased(spell.getId());
+        var isAssigned = cache.SPELLS.isSpellAssigned(spell.getId());
 
         var text = isPurchased ? isAssigned ? ASSIGNED : UNASSIGNED : LOCKED;
         var style = isPurchased ? isAssigned ? ASSIGNED_STYLE : UNASSIGNED_STYLE : LOCKED_STYLE;

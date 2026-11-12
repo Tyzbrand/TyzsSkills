@@ -13,12 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SkillWrapper implements ISkillManager {
-
-    @Override
-    public boolean isSkillLoaded(@NotNull String skillId) {
-        return SkillManager.isSkillLoaded(skillId);
-    }
-
     @Override
     public int getSkillLevel(@NotNull ServerPlayer player, @NotNull ISkill skill) {
         return SkillManager.getPlayerSkillLevel(player, skill);
