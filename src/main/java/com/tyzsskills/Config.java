@@ -51,27 +51,23 @@ public class Config {
 
     //Overlays
     public static final ModConfigSpec.BooleanValue SHOW_OVERLAYS_IN_CREATIVE;
-    //===Xp overlay===
+    //===Metadata overlay===
     public static final ModConfigSpec.BooleanValue SHOW_XP_OVERLAY;
-    public static final ModConfigSpec.IntValue XP_OFFSET_X;
-    public static final ModConfigSpec.IntValue XP_OFFSET_Y;
+    public static final ModConfigSpec.BooleanValue SHOW_LEVEL_OVERLAY;
+    public static final ModConfigSpec.IntValue METADATA_OFFSET_X;
+    public static final ModConfigSpec.IntValue METADATA_OFFSET_Y;
+    public static final ModConfigSpec.DoubleValue METADATA_SCALE;
     public static final ModConfigSpec.DoubleValue XP_DURATION;
+    public static final ModConfigSpec.DoubleValue LEVEL_DURATION;
     public static final ModConfigSpec.ConfigValue<String> XP_BG_COLOR;
     public static final ModConfigSpec.ConfigValue<String> XP_BD_COLOR;
-    public static final ModConfigSpec.ConfigValue<String> XP_TEXT_COLOR;
-    //===Level up overlay===
-    public static final ModConfigSpec.BooleanValue SHOW_LEVEL_OVERLAY;
-    public static final ModConfigSpec.IntValue LEVEL_OFFSET_X;
-    public static final ModConfigSpec.IntValue LEVEL_OFFSET_Y;
-    public static final ModConfigSpec.DoubleValue LEVEL_DURATION;
     public static final ModConfigSpec.ConfigValue<String> LEVEL_BG_COLOR;
     public static final ModConfigSpec.ConfigValue<String> LEVEL_BD_COLOR;
-    public static final ModConfigSpec.ConfigValue<String> LEVEL_TEXT_COLOR;
-    public static final ModConfigSpec.ConfigValue<String> LEVEL_SCD_TEXT_COLOR;
     //===skill overlay===
     public static final ModConfigSpec.BooleanValue SHOW_SKILL_OVERLAY;
     public static final ModConfigSpec.IntValue SKILL_OFFSET_X;
     public static final ModConfigSpec.IntValue SKILL_OFFSET_Y;
+    public static final ModConfigSpec.DoubleValue SKILL_SCALE;
     public static final ModConfigSpec.DoubleValue SKILL_DURATION;
     public static final ModConfigSpec.ConfigValue<String> SKILL_BG_COLOR;
     public static final ModConfigSpec.ConfigValue<String> SKILL_BD_COLOR;
@@ -235,34 +231,36 @@ public class Config {
                 .translation("config.client.tyzs_skills.creative_overlays")
                 .define("show_overlays_in_creative", false);
 
+        //TODO: translation
+        clientBuilder.push("metadata_overlay");
+        METADATA_OFFSET_X = clientBuilder.comment("X offset").translation("config.client.tyzs_skills.x_offset").defineInRange("meta_x_offset", 0, -10000, 10000);
+        METADATA_OFFSET_Y = clientBuilder.comment("Y offset").translation("config.client.tyzs_skills.y_offset").defineInRange("meta_y_offset", 0, -10000, 10000);
+        //TODO: translation
+        METADATA_SCALE = clientBuilder.comment("scale").translation("config.client.tyzs_skills.scale").defineInRange("meta_scale", .8D, .1D, 30D);
         clientBuilder.push("xp_overlay");
         SHOW_XP_OVERLAY = clientBuilder.comment("Display xp gain overlay").translation("config.client.tyzs_skills.xp_overlay").define("show_xp_overlay", true);
-        XP_OFFSET_X = clientBuilder.comment("X offset").translation("config.client.tyzs_skills.x_offset").defineInRange("xp_x_offset", 0, -10000, 10000);
-        XP_OFFSET_Y = clientBuilder.comment("Y offset").translation("config.client.tyzs_skills.y_offset").defineInRange("xp_y_offset", 0, -10000, 10000);
         XP_DURATION= clientBuilder.comment("Duration (sec)").translation("config.client.tyzs_skills.duration").defineInRange("xp_duration", 3D, 0.5D, 60D);
         XP_BG_COLOR = clientBuilder.comment("Background color (Hex)").translation("config.client.tyzs_skills.bg_color").define("xp_background_color", "#FF000000", colorValidator);
         XP_BD_COLOR = clientBuilder.comment("Border color (Hex)").translation("config.client.tyzs_skills.bd_color").define("xp_border_color", "#FFFFFFFF", colorValidator);
-        XP_TEXT_COLOR = clientBuilder.comment("Text color (Hex)").translation("config.client.tyzs_skills.text_color").define("xp_text_color", "#FFFFFFFF", colorValidator);
         clientBuilder.pop();
-
+        //TODO: translation
         clientBuilder.push("level_up_overlay");
         SHOW_LEVEL_OVERLAY = clientBuilder.comment("Display Level up overlay").translation("config.client.tyzs_skills.level_overlay").define("show_level_overlay", true);
-        LEVEL_OFFSET_X = clientBuilder.comment("X offset").translation("config.client.tyzs_skills.x_offset").defineInRange("level_x_offset", 0, -10000, 10000);
-        LEVEL_OFFSET_Y = clientBuilder.comment("Y offset").translation("config.client.tyzs_skills.y_offset").defineInRange("level_y_offset", 0, -10000, 10000);
         LEVEL_DURATION= clientBuilder.comment("Duration (sec)").translation("config.client.tyzs_skills.duration").defineInRange("level_duration", 4D, 0.5D, 60D);
         LEVEL_BG_COLOR = clientBuilder.comment("Background color (Hex)").translation("config.client.tyzs_skills.bg_color").define("level_background_color", "#FF000000", colorValidator);
         LEVEL_BD_COLOR = clientBuilder.comment("Border color (Hex)").translation("config.client.tyzs_skills.bd_color").define("level_border_color", "#FFD6AD55", colorValidator);
-        LEVEL_TEXT_COLOR = clientBuilder.comment("Text color (Hex)").translation("config.client.tyzs_skills.text_color").define("level_text_color", "#FFFFFFFF", colorValidator);
-        LEVEL_SCD_TEXT_COLOR = clientBuilder.comment("Secondary text color (Hex)").translation("config.client.tyzs_skills.scd_text_color").define("level_second_text_color", "#FFD6AD55", colorValidator);
+        clientBuilder.pop();
         clientBuilder.pop();
 
         clientBuilder.push("skill_overlay");
         SHOW_SKILL_OVERLAY = clientBuilder.comment("Display skill activation icons").translation("config.client.tyzs_skills.skill_overlay").define("show_skill_overlay", true);
         SKILL_OFFSET_X = clientBuilder.comment("X offset").translation("config.client.tyzs_skills.x_offset").defineInRange("skill_x_offset", 0, -10000, 10000);
         SKILL_OFFSET_Y = clientBuilder.comment("Y offset").translation("config.client.tyzs_skills.y_offset").defineInRange("skill_y_offset", 0, -10000, 10000);
-        SKILL_DURATION= clientBuilder.comment("Duration (sec)").translation("config.client.tyzs_skills.duration").defineInRange("skill_duration", 2D, 0.5D, 60D);
+        //TODO: translation
+        SKILL_SCALE = clientBuilder.comment("scale").translation("config.client.tyzs_skills.scale").defineInRange("skill_scale", .8D, .1D, 30D);
+        SKILL_DURATION= clientBuilder.comment("Duration (sec)").translation("config.client.tyzs_skills.duration").defineInRange("skill_duration", 3D, 0.5D, 60D);
         SKILL_BG_COLOR = clientBuilder.comment("Background color (Hex)").translation("config.client.tyzs_skills.bg_color").define("skill_background_color", "#FF000000", colorValidator);
-        SKILL_BD_COLOR = clientBuilder.comment("Border color (Hex)").translation("config.client.tyzs_skills.bd_color").define("skill_border_color", "#FFD6AD55", colorValidator);
+        SKILL_BD_COLOR = clientBuilder.comment("Border color (Hex)").translation("config.client.tyzs_skills.bd_color").define("skill_border_color", "#FFFFFFFF", colorValidator);
         clientBuilder.pop();
         clientBuilder.pop();
 

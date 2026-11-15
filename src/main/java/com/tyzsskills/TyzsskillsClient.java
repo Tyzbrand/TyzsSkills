@@ -6,12 +6,10 @@ import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.key.MainKeybind;
 import com.tyzsskills.impl.client.models.InventoryButton;
-import com.tyzsskills.impl.client.overlay.LevelTriggerOverlay;
-import com.tyzsskills.impl.client.overlay.SkillTriggerOverlay;
-import com.tyzsskills.impl.client.overlay.XpTriggerOverlay;
 import com.tyzsskills.impl.client.screen.MainMenu;
 import com.tyzsskills.impl.client.screen.SpellWheel;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
+import com.tyzsskills.integration.ui.UIOverlayRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
@@ -53,34 +51,19 @@ public class TyzsskillsClient {
         getModBus().post(new TyzsSkillsClientSetupEvent(new TyzsSkillsClientRegistrationWrapper()));
     }
 
-    @SubscribeEvent
-    static void onTyzsSkillsClientSetup(TyzsSkillsClientSetupEvent event){
-
-    }
-
-
 
     @SubscribeEvent
     public static void registerGuiLayers(RegisterGuiLayersEvent event){
         event.registerAbove(VanillaGuiLayers.CROSSHAIR,
-                ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "skill_notification"),
-                new SkillTriggerOverlay());
-
-        event.registerAbove(VanillaGuiLayers.CROSSHAIR,
-                ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "xp_notification"),
-                new XpTriggerOverlay());
-
-        event.registerAbove(VanillaGuiLayers.CROSSHAIR,
-                ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "level_notification"),
-                new LevelTriggerOverlay());
+                ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "overlay_renderer"),
+                new UIOverlayRenderer());
     }
 
     @SubscribeEvent
     public static void onClientLogOut(ClientPlayerNetworkEvent.LoggingOut event){
         ClientCache.deleteCache();
         SortingManager.clearData();
-        SkillTriggerOverlay.Clear();
-        XpTriggerOverlay.Clear();
+        UIOverlayRenderer.clear();
         Tyzsskills.LOGGER.info("CACHE CLEARED");
     }
 

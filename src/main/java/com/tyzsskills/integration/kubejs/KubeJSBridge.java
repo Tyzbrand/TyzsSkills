@@ -4,7 +4,6 @@ import com.tyzsskills.api.events.PlayerResetEvent;
 import com.tyzsskills.api.events.metadata.LevelChangeEvent;
 import com.tyzsskills.api.events.metadata.PointsChangeEvent;
 import com.tyzsskills.api.events.metadata.XpChangeEvent;
-import com.tyzsskills.api.events.skills.SkillActionEvent;
 import com.tyzsskills.api.events.skills.SkillLoadEvent;
 import com.tyzsskills.integration.kubejs.events.*;
 import dev.latvian.mods.kubejs.script.ScriptType;
@@ -27,31 +26,31 @@ public class KubeJSBridge {
         TyzsKubePlugin.PLAYER_RESET.post(ScriptType.SERVER, new PlayerResetEventJS(event.getPlayer()));
     }
 
-    public static void postSkillPurchasePre(SkillActionEvent.PurchasePre event){
-        var jsEvent = new SkillPurchasePreEventJS(event.getSkill(), event.getPlayer());
-        TyzsKubePlugin.SKILL_PURCHASE_PRE.post(ScriptType.SERVER, jsEvent);
-
-        if(jsEvent.isCanceled()) event.setCanceled(true);
-    }
-
-    public static void postSkillPurchasePost(SkillActionEvent.PurchasePost event){
-        TyzsKubePlugin.SKILL_PURCHASE_POST.post(ScriptType.SERVER, new SkillPurchasePostEventJS(event.getSkill(), event.getPlayer()));
-    }
-
-    public static void postSkillRefundPre(SkillActionEvent.RefundPre event){
-        var jsEvent = new SkillRefundPreEventJS(event.getSkill(), event.getPlayer());
-        TyzsKubePlugin.SKILL_REFUND_PRE.post(ScriptType.SERVER, jsEvent);
-
-        if(jsEvent.isCanceled()) event.setCanceled(true);
-    }
-
-    public static void postSkillRefundPost(SkillActionEvent.RefundPost event){
-        TyzsKubePlugin.SKILL_REFUND_POST.post(ScriptType.SERVER, new SkillRefundPostEventJS(event.getSkill(), event.getPlayer()));
-    }
-
-    public static void postSkillBookmark(SkillActionEvent.Bookmark event){
-        TyzsKubePlugin.SKILL_BOOKMARK.post(ScriptType.SERVER, new SkillBookmarkEventJS(event.getSkill(), event.getPlayer()));
-    }
+//    public static void postSkillPurchasePre(SkillActionEvent.PurchasePre event){
+//        var jsEvent = new SkillPurchasePreEventJS(event.getSkill(), event.getPlayer());
+//        TyzsKubePlugin.SKILL_PURCHASE_PRE.post(ScriptType.SERVER, jsEvent);
+//
+//        if(jsEvent.isCanceled()) event.setCanceled(true);
+//    }
+//
+//    public static void postSkillPurchasePost(SkillActionEvent.PurchasePost event){
+//        TyzsKubePlugin.SKILL_PURCHASE_POST.post(ScriptType.SERVER, new SkillPurchasePostEventJS(event.getSkill(), event.getPlayer()));
+//    }
+//
+//    public static void postSkillRefundPre(SkillActionEvent.RefundPre event){
+//        var jsEvent = new SkillRefundPreEventJS(event.getSkill(), event.getPlayer());
+//        TyzsKubePlugin.SKILL_REFUND_PRE.post(ScriptType.SERVER, jsEvent);
+//
+//        if(jsEvent.isCanceled()) event.setCanceled(true);
+//    }
+//
+//    public static void postSkillRefundPost(SkillActionEvent.RefundPost event){
+//        TyzsKubePlugin.SKILL_REFUND_POST.post(ScriptType.SERVER, new SkillRefundPostEventJS(event.getSkill(), event.getPlayer()));
+//    }
+//
+//    public static void postSkillBookmark(SkillActionEvent.Bookmark event){
+//        TyzsKubePlugin.SKILL_BOOKMARK.post(ScriptType.SERVER, new SkillBookmarkEventJS(event.getSkill(), event.getPlayer()));
+//    }
 
     public static void postSkillLevelChange(LevelChangeEvent event){
         var jsEvent = new SkillLevelChangeEventJS(event.getPlayer(), event.getOldLevel(), event.getNewLevel());
@@ -72,18 +71,18 @@ public class KubeJSBridge {
         TyzsKubePlugin.SKILL_LOAD_POST.post(ScriptType.SERVER, new SkillLoadPostEventJS(event.getSkill()));
     }
 
-    public static void postPowerEvent(SkillPowerChangeEvent event){
-
-        var jsEvent = new SkillPowerChangeEventJS(event.getPlayer(), event.getOldPower(), event.getNewPower());
-        TyzsKubePlugin.POWER_CHANGE.post(ScriptType.SERVER, jsEvent);
-
-        if(jsEvent.isCanceled()) event.setCanceled(true);
-        else if (jsEvent.getNewPower() != event.getNewPower()) event.setNewPower(jsEvent.getNewPower());
-    }
-
-    public static void postSkillReload(SkillReloadEvent event){
-        TyzsKubePlugin.SKILL_RELOAD.post(ScriptType.SERVER, new SkillReloadEventJS());
-    }
+//    public static void postPowerEvent(SkillPowerChangeEvent event){
+//
+//        var jsEvent = new SkillPowerChangeEventJS(event.getPlayer(), event.getOldPower(), event.getNewPower());
+//        TyzsKubePlugin.POWER_CHANGE.post(ScriptType.SERVER, jsEvent);
+//
+//        if(jsEvent.isCanceled()) event.setCanceled(true);
+//        else if (jsEvent.getNewPower() != event.getNewPower()) event.setNewPower(jsEvent.getNewPower());
+//    }
+//
+//    public static void postSkillReload(SkillReloadEvent event){
+//        TyzsKubePlugin.SKILL_RELOAD.post(ScriptType.SERVER, new SkillReloadEventJS());
+//    }
 
     public static void postXpEvent(XpChangeEvent event){
 

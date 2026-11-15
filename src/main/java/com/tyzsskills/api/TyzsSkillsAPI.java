@@ -1,52 +1,27 @@
 package com.tyzsskills.api;
 
-import com.tyzsskills.api.interfaces.ILevelManager;
-import com.tyzsskills.api.interfaces.ISkillManager;
-import com.tyzsskills.api.interfaces.ISpManager;
-import com.tyzsskills.api.interfaces.IXpManager;
-import org.jetbrains.annotations.ApiStatus;
+import com.tyzsskills.api.interfaces.*;
+import com.tyzsskills.impl.server.Level.LevelWrapper;
+import com.tyzsskills.impl.server.skills.SkillWrapper;
+import com.tyzsskills.impl.server.sp.SpWrapper;
+import com.tyzsskills.impl.server.spells.SpellWrapper;
+import com.tyzsskills.impl.server.xp.XpWrapper;
 import org.jetbrains.annotations.NotNull;
 
 public class TyzsSkillsAPI {
 
-    private static ISpManager spManager;
-    private static ILevelManager levelManager;
-    private static IXpManager xpManager;
-    private static ISkillManager skillManager;
+    private static final ISpManager spManager = new SpWrapper();
+    public static @NotNull ISpManager sp(){return spManager;}
 
-    @ApiStatus.Internal
-    public static void  registerSpManager(ISpManager manager){spManager = manager;}
-    @ApiStatus.Internal
-    public static void registerLevelManager(ILevelManager manager){levelManager = manager;}
-    @ApiStatus.Internal
-    public static void registerXpManager(IXpManager manager){xpManager = manager;}
-    @ApiStatus.Internal
-    public static void registerSkillManager(ISkillManager manager){skillManager = manager;}
+    private static final ILevelManager levelManager = new LevelWrapper();
+    public static @NotNull ILevelManager level(){return levelManager;}
 
+    private static final IXpManager xpManager = new XpWrapper();
+    public static @NotNull IXpManager xp(){return xpManager;}
 
+    private static final ISkillManager skillManager = new SkillWrapper();
+    public static @NotNull ISkillManager skills(){return skillManager;}
 
-    public static ISpManager sp(){
-        if(spManager == null) ex("SpManager");
-        return spManager;
-    }
-
-    public static ILevelManager level(){
-        if(levelManager == null) ex("LevelManager");
-        return levelManager;
-    }
-
-    public static IXpManager xp(){
-        if(xpManager == null) ex("XpManager");
-        return xpManager;
-    }
-
-    public static ISkillManager skills(){
-        if(skillManager == null) ex("SkillManager");
-        return skillManager;
-    }
-
-
-    //Util
-    private static void ex(@NotNull String id){throw new RuntimeException("TyzsSkillsAPI Error: " + id + " is not registered! " +
-            "Make sure Tyz's Skills mod is properly loaded.");}
+    private static final ISpellManager spellManager = new SpellWrapper();
+    public static @NotNull ISpellManager spells(){return spellManager;}
 }

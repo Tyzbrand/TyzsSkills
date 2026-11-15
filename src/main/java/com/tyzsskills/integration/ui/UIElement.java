@@ -1,5 +1,6 @@
 package com.tyzsskills.integration.ui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.integration.ui.models.UITooltip;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,6 +19,10 @@ public abstract class UIElement {
     protected Supplier<Boolean> shadedWhen = () -> false;
     private boolean currentShaded = false;
     protected boolean isCurrentShaded(){return currentShaded;}
+
+    protected Supplier<Float> alpha = () -> 1f;
+    private float currentAlpha = 1f;
+    protected float getCurrentAlpha(){return currentAlpha;}
 
     private boolean currentHovered = false;
     public boolean isHovered() { return currentHovered; }
@@ -40,6 +45,7 @@ public abstract class UIElement {
     //Fluents
     public UIElement withVisibility(Supplier<Boolean> supplier) {this.visibleWhen = supplier; return this;}
     public UIElement withShade(Supplier<Boolean> supplier) {this.shadedWhen = supplier; return this;}
+    public UIElement withAlpha(Supplier<Float> supplier){this.alpha = supplier; return this;}
     public UIElement withScale(float scale, Enums.ScalePivot scalePivot) {this.scale = scale; this.scalePivot = scalePivot; return this;}
     public UIElement withTooltip(Supplier<UITooltip> supplier){tooltip = supplier; return this;}
     public UIElement withInteraction(Supplier<Boolean> supplier){interactiveWhen = supplier; return this;}
@@ -49,9 +55,15 @@ public abstract class UIElement {
     //Draws
     protected abstract void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick);
 
-    public final void draw(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean inheritedVisible, boolean inheritedShaded){
+    public final void draw(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean inheritedVisible, boolean inheritedShaded, float inheritedAlpha){
         var visible = inheritedVisible && visibleWhen.get();
         if(!visible) {
+            currentHovered = false;
+            return;
+        }
+
+        currentAlpha = Math.clamp(inheritedAlpha * alpha.get(), 0f, 1f);
+        if (currentAlpha <= .05f) {
             currentHovered = false;
             return;
         }
@@ -68,14 +80,14 @@ public abstract class UIElement {
             gui.pose().translate(0f, 0f, zOffset);
         }
 
-        if (scale != 1f) drawScaled(gui, effectiveMouseX, effectiveMouseY, partialTick, currentShaded);
-        else drawShadedOrNot(gui, effectiveMouseX, effectiveMouseY, partialTick, currentShaded);
+        if (scale != 1f) drawScaled(gui, effectiveMouseX, effectiveMouseY, partialTick, currentShaded, currentAlpha);
+        else drawShadedOrNot(gui, effectiveMouseX, effectiveMouseY, partialTick, currentShaded, currentAlpha);
 
         if (zOffset != 0f) gui.pose().popPose();
     }
 
     public final void draw(GuiGraphics gui, int mouseX, int mouseY, float partialTick){
-        draw(gui, mouseX, mouseY, partialTick, true, false);
+        draw(gui, mouseX, mouseY, partialTick, true, false, 1f);
     }
 
     //Clicks
@@ -171,14 +183,24 @@ public abstract class UIElement {
         this.rawY = parentY + this.offsetY;
     }
 
-    //Utils
-    private void drawShadedOrNot(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean shaded) {
-        if (!shaded) { render(gui, mouseX, mouseY, partialTick); return; }
-        gui.setColor(0.3f, 0.3f, 0.3f, 1.0f);
-        render(gui, mouseX, mouseY, partialTick);
-        gui.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+    public void setOffsets(int offsetX, int offsetY){
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
     }
-    private void drawScaled(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean shaded) {
+
+    //Utils
+    private void drawShadedOrNot(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean shaded, float alpha) {
+        if (!shaded && alpha >= 1f) { render(gui, mouseX, mouseY, partialTick); return; }
+
+        var color = shaded ? .3f : 1f;
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+
+        gui.setColor(color, color, color, alpha);
+        render(gui, mouseX, mouseY, partialTick);
+        gui.setColor(1f, 1f, 1f, 1f);
+    }
+    private void drawScaled(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean shaded, float alpha) {
         var pivotX = getPivotX();
         var pivotY = getPivotY();
 
@@ -187,13 +209,25 @@ public abstract class UIElement {
         gui.pose().scale(scale, scale, 1.0f);
         gui.pose().translate(-pivotX, -pivotY, 0);
 
-        drawShadedOrNot(gui, mouseX, mouseY, partialTick, shaded);
+        drawShadedOrNot(gui, mouseX, mouseY, partialTick, shaded, alpha);
 
         gui.pose().popPose();
     }
-    protected float getPivotX(){return scalePivot == Enums.ScalePivot.CENTER ? getRawX() + getRawWidth() / 2f : getRawX();}
-    protected float getPivotY(){return scalePivot == Enums.ScalePivot.CENTER ? getRawY() + getRawHeight() / 2f : getRawY();}
+    protected float getPivotX(){
+        return switch (scalePivot) {
+            case CENTER -> getRawX() + getRawWidth() / 2f;
+            case TOP_RIGHT, BOTTOM_RIGHT -> getRawX() + getRawWidth();
+            case TOP_LEFT, BOTTOM_LEFT -> getRawX();
+        };
+    }
 
+    protected float getPivotY(){
+        return switch (scalePivot) {
+            case CENTER -> getRawY() + getRawHeight() / 2f;
+            case BOTTOM_LEFT, BOTTOM_RIGHT -> getRawY() + getRawHeight();
+            case TOP_LEFT, TOP_RIGHT -> getRawY();
+        };
+    }
 
     //GETTERS
     //=============RAW=============

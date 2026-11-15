@@ -37,12 +37,13 @@ public class SkillManager {
     //CORE
     private static boolean setSkillLevelInternal(@NotNull ServerPlayer player, @NotNull ISkill skill, int newLevel, boolean syncClient){
         if(newLevel < 0 || newLevel > skill.getMaximumLevel()) return false;
-        int oldLvl = getPlayerSkillLevel(player, skill);
+        int oldLvl = getSkillLevel(player, skill);
 
         if(oldLvl == newLevel) return false;
 
         player.getData(PlayerData.DATA).setSkillLevel(skill.getId(), newLevel);
         NeoForge.EVENT_BUS.post(new SkillLevelChangeEvent(player, skill, oldLvl, newLevel));
+        if(newLevel == 0 && isSkillDeactivated(player, skill)) tryToggleSkillDeactivation(player, skill);
 
         if(syncClient) PacketDistributor.sendToPlayer(player, new UpdatePayloads.SkillLevelPayload(skill.getId(), newLevel));
 
@@ -55,10 +56,10 @@ public class SkillManager {
 
     //PUBLIC
     public static boolean tryAddSkillLevel(@NotNull ServerPlayer player, @NotNull ISkill skill, int amount){
-        return setSkillLevelInternal(player, skill, getPlayerSkillLevel(player, skill) + amount, true);
+        return setSkillLevelInternal(player, skill, getSkillLevel(player, skill) + amount, true);
     }
     public static boolean tryRemoveSkillLevel(@NotNull ServerPlayer player, @NotNull ISkill skill, int amount){
-        return setSkillLevelInternal(player, skill, getPlayerSkillLevel(player, skill) - amount, true);
+        return setSkillLevelInternal(player, skill, getSkillLevel(player, skill) - amount, true);
     }
     public static void setSkillLevel(@NotNull ServerPlayer player, @NotNull ISkill skill, int newLevel){
         setSkillLevelInternal(player, skill, newLevel, true);
@@ -67,7 +68,7 @@ public class SkillManager {
         for(var skill : SKILL_COLLECTION.values()) setSkillLevelInternal(player, skill, 0, false);
     }
     public static boolean tryBuySkill(@NotNull ServerPlayer player, @NotNull ISkill skill) {
-        int currentLvl = getPlayerSkillLevel(player, skill);
+        int currentLvl = getSkillLevel(player, skill);
 
         if(SkillRules.canBuy(getSkillContext(player, skill), getPlayerContext(player), Config.PURCHASE_SYSTEM.get())){
             var price = skill.getPrices().get(currentLvl);
@@ -162,12 +163,12 @@ public class SkillManager {
         NeoForge.EVENT_BUS.post(event);
     }
     public static boolean tryToggleSkillDeactivation(@NotNull ServerPlayer player, @NotNull ISkill skill){
-        if(getPlayerSkillLevel(player, skill) <= 0) return false;
+        var isCurrentlyDeactivated = isSkillDeactivated(player, skill);
+        if(!isCurrentlyDeactivated && getSkillLevel(player, skill) <= 0) return false;
 
-        if(skill.isPermanent() && !isSkillDeactivated(player, skill)) return false;
+        if(skill.isPermanent() && !isCurrentlyDeactivated) return false;
 
         var data = player.getData(PlayerData.DATA);
-        var isCurrentlyDeactivated = data.isDeactivated(skill.getId());
         var newValue = !isCurrentlyDeactivated;
 
         var preEvent = !newValue ? new SkillActivationEvent.Pre(player, skill) : new SkillDeactivationEvent.Pre(player, skill);
@@ -205,7 +206,7 @@ public class SkillManager {
         NeoForge.EVENT_BUS.post(new SkillLoadEvent.Post(skill));
     }
     public static void clearSkills() {SKILL_COLLECTION.clear();}
-    public static void buildGraph() {GRAPH.build(getAllSkills());}
+    public static void buildGraph() {GRAPH.build(getServerSkills());}
 
     //getters
     public static @Nullable ISkill getSkill(@NotNull String skillId){return SKILL_COLLECTION.get(skillId.toLowerCase());}
@@ -214,24 +215,22 @@ public class SkillManager {
     public static boolean isSkillDeactivated(@NotNull ServerPlayer player, @NotNull ISkill skill){return player.getData(PlayerData.DATA).isDeactivated(skill.getId());}
 
     public static @NotNull Context.Player getPlayerContext(@NotNull ServerPlayer player){
-        return PLAYER_CONTEXT.updateContext(player, LevelManager.getLevel(player), SpManager.getSP(player), getPlayerSkillLevels(player));
+        return PLAYER_CONTEXT.updateContext(player, LevelManager.getLevel(player), SpManager.getSP(player), getOwnedSkill(player));
     }
     public static @NotNull Context.Skill getSkillContext(@NotNull ServerPlayer player, @NotNull ISkill skill){
-        return SKILL_CONTEXT.updateContext(skill, getPlayerSkillLevel(player, skill), GRAPH);
+        return SKILL_CONTEXT.updateContext(skill, getSkillLevel(player, skill), GRAPH);
     }
 
-    public static int getPlayerSkillLevel(@NotNull ServerPlayer player, @NotNull ISkill skill) {
+    public static int getSkillLevel(@NotNull ServerPlayer player, @NotNull ISkill skill) {
         return player.getData(PlayerData.DATA).getSkillLevel(skill.getId());}
 
-    public static @NotNull @UnmodifiableView Map<String, Integer> getPlayerSkillLevels(@NotNull ServerPlayer player){
+    public static @NotNull @UnmodifiableView Map<String, Integer> getOwnedSkill(@NotNull ServerPlayer player){
         return player.getData(PlayerData.DATA).getOwnedSkill();
     }
 
-    public static @NotNull @UnmodifiableView List<String> getAllBookmarkIDs(@NotNull ServerPlayer player){return player.getData(PlayerData.DATA).getBookmarks();}
-    public static @NotNull @UnmodifiableView List<String> getAllDeactivatedIds(@NotNull ServerPlayer player){return player.getData(PlayerData.DATA).getDeactivatedSkills();}
+    public static @NotNull @UnmodifiableView List<String> getBookmarkedSkills(@NotNull ServerPlayer player){return player.getData(PlayerData.DATA).getBookmarks();}
+    public static @NotNull @UnmodifiableView List<String> getDeactivatedSkills(@NotNull ServerPlayer player){return player.getData(PlayerData.DATA).getDeactivatedSkills();}
 
-
-    //CORE
-    @ApiStatus.Internal public static @NotNull Collection<Skill> getAllSkills() {return SKILL_COLLECTION_VIEW.values();}
+    public static @NotNull Collection<Skill> getServerSkills() {return SKILL_COLLECTION_VIEW.values();}
 
 }

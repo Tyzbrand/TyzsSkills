@@ -35,7 +35,7 @@ public class Repair {
     private static void repairSkillInconsistencies(@NotNull ServerPlayer player) {
         GenericEffects.restoreEffects(player);
 
-        var skillIdsSnapshot = List.copyOf(SkillManager.getPlayerSkillLevels(player).keySet());
+        var skillIdsSnapshot = List.copyOf(SkillManager.getOwnedSkill(player).keySet());
 
         var rollCount = 0;
         var hasChanged = true;
@@ -53,7 +53,7 @@ public class Repair {
                 if (skill.isPermanent() && SkillManager.isSkillDeactivated(player, skill))
                     SkillManager.tryToggleSkillDeactivation(player, skill);
 
-                int lvl = SkillManager.getPlayerSkillLevel(player, skill);
+                int lvl = SkillManager.getSkillLevel(player, skill);
                 if (lvl <= 0) continue;
 
                 if (skill.getRequiredLevel() > playerContext.playerLevel()) {
@@ -71,7 +71,7 @@ public class Repair {
                     for (var conflict : incompatibilities) {
                         var conflictSkill = SkillManager.getSkill(conflict);
                         if (conflictSkill != null)
-                            cleanRefund(0, SkillManager.getPlayerSkillLevel(player, conflictSkill), player, conflictSkill);
+                            cleanRefund(0, SkillManager.getSkillLevel(player, conflictSkill), player, conflictSkill);
                     }
                     hasChanged = true;
                     continue;
@@ -98,10 +98,10 @@ public class Repair {
     }
 
     private static void repairSpellInconsistencies(@NotNull ServerPlayer player){
-        var purchasedSpellsSnapshot = List.copyOf(SpellManager.getPlayerSpells(player));
-        var purchasedPropertiesSnapshot = Map.copyOf(SpellManager.getPlayerProperties(player));
+        var purchasedSpellsSnapshot = List.copyOf(SpellManager.getPurchasedSpells(player));
+        var purchasedPropertiesSnapshot = Map.copyOf(SpellManager.getPurchasedProperties(player));
         var slotsSnapshot = Map.copyOf(SpellManager.getPlayerSlots(player));
-        var cooldownsSnapshot = Map.copyOf(SpellManager.getPlayerCooldowns(player));
+        var cooldownsSnapshot = Map.copyOf(SpellManager.getActiveCooldowns(player));
 
         //GHOST COOLDOWNS
         for(var kvp : cooldownsSnapshot.entrySet()){

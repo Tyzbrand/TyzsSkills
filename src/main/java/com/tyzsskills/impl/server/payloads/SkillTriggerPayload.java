@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.server.payloads;
 
 import com.tyzsskills.Tyzsskills;
-import com.tyzsskills.impl.client.overlay.SkillTriggerOverlay;
+import com.tyzsskills.impl.client.cache.ClientCache;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -24,7 +24,8 @@ public record SkillTriggerPayload(String id) implements CustomPacketPayload{
 
     public static void Handle(final SkillTriggerPayload payload, final IPayloadContext ctx){
         ctx.enqueueWork(() -> {
-            SkillTriggerOverlay.ShowSkillIcon(payload.id());
+            var sCache = ClientCache.get().SKILLS;
+            sCache.triggerSkillOverlay(sCache.getSkill(payload.id()));
         } );
     }
 

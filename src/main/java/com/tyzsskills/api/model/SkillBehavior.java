@@ -30,7 +30,7 @@ public abstract class SkillBehavior implements ISkillBehavior {
             var currentSkill = SkillManager.getSkill(skill.getId());
             if(currentSkill == null || SkillManager.isSkillDeactivated(player, currentSkill)) return;
 
-            var lvl = SkillManager.getPlayerSkillLevel(player, currentSkill);
+            var lvl = SkillManager.getSkillLevel(player, currentSkill);
             if(lvl <= 0) return;
 
             skillAction.execute(event, player, currentSkill, lvl);

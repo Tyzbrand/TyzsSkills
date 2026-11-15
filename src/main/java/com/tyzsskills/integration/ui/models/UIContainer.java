@@ -29,7 +29,7 @@ public class UIContainer extends UIElement {
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         for(var child : children){
             child.updatePosition(getRawX(), getRawY());
-            child.draw(gui, mouseX, mouseY, partialTick, true, isCurrentShaded());
+            child.draw(gui, mouseX, mouseY, partialTick, true, isCurrentShaded(), getCurrentAlpha());
         }
     }
 

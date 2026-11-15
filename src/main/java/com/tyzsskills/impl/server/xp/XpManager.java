@@ -33,11 +33,10 @@ public class XpManager {
 
         if(updateStats && diff > 0){player.getData(StatsTracker.DATA).addXp(diff);}
 
+        if(syncClient) updateClient(player, gainsForClient, triggersOverlay);
         float leftoverXp = LevelManager.checkForLevelUp(player, finalAmount);
 
         player.getData(PlayerData.DATA).setXP(leftoverXp);
-
-        if(syncClient) updateClient(player, gainsForClient, triggersOverlay);
 
         return true;
     }

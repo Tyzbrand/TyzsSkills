@@ -6,10 +6,12 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.Context;
 import com.tyzsskills.api.records.Category;
 import com.tyzsskills.impl.client.active.SortingManager;
+import com.tyzsskills.impl.client.overlay.SkillOverlay;
 import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.skills.SkillGraph;
 import com.tyzsskills.impl.server.skills.SkillRules;
+import com.tyzsskills.integration.ui.UIOverlayRenderer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -178,6 +180,10 @@ public class SkillCache {
             int refundAmount = (initialPrice <= 0) ? 0 : Math.round(initialPrice * refundPercentage);
 
             if (refundAmount > 0) CACHE.METADATA.sp += refundAmount;
+            if(currentLvl - 1 <= 0 && isSkillDeactivated(id)) {
+                triggerAction(skill, Enums.SkillAction.DEACTIVATION);
+                deactivations.remove(id);
+            }
         }
         CACHE.incrVersion();
         return true;
@@ -192,6 +198,11 @@ public class SkillCache {
 
         if (spToRefund > 0) {
             CACHE.METADATA.sp += spToRefund;
+        }
+
+        if(isSkillDeactivated(id)) {
+            triggerAction(skill, Enums.SkillAction.DEACTIVATION);
+            deactivations.remove(id);
         }
 
         skillLevels.put(id, 0);
@@ -217,5 +228,13 @@ public class SkillCache {
         this.categories.addAll(sortedCategories);
         for(var cat : categories) categoriesMap.put(cat.id(), cat);
         if(!this.categories.isEmpty()) SortingManager.setCategory(this.categories.getFirst());
+    }
+
+    public void triggerSkillOverlay(ISkill skill){
+        if(skill == null) return;
+
+        var overlay = UIOverlayRenderer.get(SkillOverlay.ID, SkillOverlay.class);
+        if(overlay == null) UIOverlayRenderer.add(new SkillOverlay(4 + Config.SKILL_OFFSET_X.get(), 57 + Config.SKILL_OFFSET_Y.get(), skill));
+        else overlay.addSkill(skill);
     }
 }

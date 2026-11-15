@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.server.payloads;
 
 import com.tyzsskills.Tyzsskills;
-import com.tyzsskills.impl.client.overlay.LevelTriggerOverlay;
+import com.tyzsskills.impl.client.cache.ClientCache;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -26,7 +26,7 @@ public record LevelToastPayload(int level, int spGain) implements CustomPacketPa
 
     public static void Handle(final LevelToastPayload payload, final IPayloadContext ctx){
         ctx.enqueueWork(() -> {
-            LevelTriggerOverlay.ShowLevelUp(payload.level(), payload.spGain());
+            ClientCache.get().METADATA.triggerLevelOverlay(payload.level(), payload.spGain());
             } );
     }
 

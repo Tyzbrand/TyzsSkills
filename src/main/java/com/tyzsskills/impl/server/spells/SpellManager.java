@@ -217,10 +217,10 @@ public class SpellManager {
         return getPlayerSlots(player).getOrDefault(slot, "");
     }
 
-    public static @NotNull @UnmodifiableView Map<String, Integer> getPlayerProperties(@NotNull ServerPlayer player){
+    public static @NotNull @UnmodifiableView Map<String, Integer> getPurchasedProperties(@NotNull ServerPlayer player){
         return player.getData(PlayerData.DATA).getPlayerProperties();
     }
-    public static @NotNull @UnmodifiableView List<String> getPlayerSpells(@NotNull ServerPlayer player){
+    public static @NotNull @UnmodifiableView List<String> getPurchasedSpells(@NotNull ServerPlayer player){
         return player.getData(PlayerData.DATA).getPlayerSpells();
     }
     public static @NotNull @UnmodifiableView Map<Integer, String> getPlayerSlots(@NotNull ServerPlayer player){
@@ -241,7 +241,7 @@ public class SpellManager {
         }
         return cooldown;
     }
-    public static @NotNull @UnmodifiableView Map<String, Cooldown> getPlayerCooldowns(@NotNull ServerPlayer player){
+    public static @NotNull @UnmodifiableView Map<String, Cooldown> getActiveCooldowns(@NotNull ServerPlayer player){
         return player.getData(PlayerData.DATA).getPlayerSpellCooldowns();
     }
 
@@ -252,6 +252,5 @@ public class SpellManager {
         return PROPERTY_CONTEXT.updateContext(property, getPropertyLevel(player, property));
     }
 
-    //CORE
-    @ApiStatus.Internal public static @NotNull Collection<Spell> getAllSpells() {return spellCollectionView.values();}
+    public static @NotNull Collection<Spell> getServerSpells() {return spellCollectionView.values();}
 }

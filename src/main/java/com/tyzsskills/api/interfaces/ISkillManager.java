@@ -3,15 +3,22 @@ package com.tyzsskills.api.interfaces;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * Interface used to manage player and server skills.
  * Client sync is handled automatically when not specified.
  */
+
+//TODO: javadoc
 public interface ISkillManager {
+
+    @NotNull @UnmodifiableView Collection<? extends ISkill> getServerSkills();
+
     //======================SKILL ACTIONS======================
     /**
      * @param skill Valid id of the targeted skill (in lower case).
@@ -121,6 +128,9 @@ public interface ISkillManager {
      * @return A copy of player's bookmarks (as a read-only list of skill IDs).
      */
     @NotNull @Unmodifiable List<String> getBookmarkedSkillIDs(@NotNull ServerPlayer player);
+
+    //======================DEACTIVATION======================
+    boolean tryToggleSkillDeactivation(@NotNull ServerPlayer player, @NotNull ISkill skill);
 
     //======================MISC======================
     /**

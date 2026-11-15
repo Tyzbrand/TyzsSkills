@@ -1,9 +1,7 @@
 package com.tyzsskills;
 
 import com.mojang.logging.LogUtils;
-import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.events.TyzsSkillsCommonSetupEvent;
-import com.tyzsskills.impl.server.Level.LevelWrapper;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.active.SoundRegistry;
 import com.tyzsskills.impl.server.attachments.*;
@@ -11,11 +9,8 @@ import com.tyzsskills.impl.server.events.RuntimeEvents;
 import com.tyzsskills.impl.server.events.XpGainsEvents;
 import com.tyzsskills.impl.server.payloads.*;
 import com.tyzsskills.impl.server.skills.SkillPresets;
-import com.tyzsskills.impl.server.skills.SkillWrapper;
-import com.tyzsskills.impl.server.sp.SpWrapper;
 import com.tyzsskills.impl.server.spells.SpellPresets;
 import com.tyzsskills.impl.server.wrappers.TyzsSkillsCommonRegistrationWrapper;
-import com.tyzsskills.impl.server.xp.XpWrapper;
 import com.tyzsskills.integration.kubejs.JsEventsDelegate;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.bus.api.IEventBus;
@@ -33,12 +28,9 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.slf4j.Logger;
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Tyzsskills.MODID)
 public class Tyzsskills {
-    // Define mod id in a common place for everything to reference
     public static final String MODID = "tyzs_skills";
-    // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
     private static net.neoforged.bus.api.IEventBus MOD_BUS;
@@ -47,14 +39,10 @@ public class Tyzsskills {
         return MOD_BUS;
     }
 
-
     public Tyzsskills(IEventBus modEventBus, ModContainer modContainer) {
         MOD_BUS = modContainer.getEventBus();
 
         modEventBus.register(this);
-
-        //API
-        registerWrappers();
 
        //Register attributes
         AttributeRegistry.ATTRIBUTES.register(modEventBus);
@@ -79,13 +67,6 @@ public class Tyzsskills {
         // Register configs
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.COMMON_SPEC);
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
-    }
-
-    private void registerWrappers(){
-        TyzsSkillsAPI.registerSpManager(new SpWrapper());
-        TyzsSkillsAPI.registerLevelManager(new LevelWrapper());
-        TyzsSkillsAPI.registerXpManager(new XpWrapper());
-        TyzsSkillsAPI.registerSkillManager(new SkillWrapper());
     }
 
     //EVENTS

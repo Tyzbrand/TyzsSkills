@@ -8,14 +8,22 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class SkillWrapper implements ISkillManager {
+
+    @Override
+    public @NotNull @UnmodifiableView Collection<? extends ISkill> getServerSkills(){
+        return SkillManager.getServerSkills();
+    }
+
     @Override
     public int getSkillLevel(@NotNull ServerPlayer player, @NotNull ISkill skill) {
-        return SkillManager.getPlayerSkillLevel(player, skill);
+        return SkillManager.getSkillLevel(player, skill);
     }
 
     @Override
@@ -59,7 +67,7 @@ public class SkillWrapper implements ISkillManager {
     }
 
     @Override
-    public @NotNull List<ISkill> getSkillList() {return new ArrayList<>(SkillManager.getAllSkills());}
+    public @NotNull List<ISkill> getSkillList() {return new ArrayList<>(SkillManager.getServerSkills());}
 
     @Override
     public @Nullable ISkill getSkill(@NotNull String skillId) {
@@ -78,11 +86,16 @@ public class SkillWrapper implements ISkillManager {
 
     @Override
     public @NotNull @Unmodifiable List<String> getBookmarkedSkillIDs(@NotNull ServerPlayer player) {
-        return SkillManager.getAllBookmarkIDs(player);
+        return SkillManager.getBookmarkedSkills(player);
     }
 
     @Override
     public void triggerSkillActivationOverlay(@NotNull ServerPlayer player, @NotNull ISkill skill) {
         PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(skill.getId()));
+    }
+
+    @Override
+    public boolean tryToggleSkillDeactivation(@NotNull ServerPlayer player, @NotNull ISkill skill) {
+        return SkillManager.tryToggleSkillDeactivation(player, skill);
     }
 }

@@ -14,6 +14,7 @@ public class Enums {
     public enum SpellAction{PURCHASE, ASSIGNMENT, UNASSIGNMENT, CAST, PROPERTY_PURCHASE}
 
     //UI
-    public enum ScalePivot {TOP_LEFT, CENTER}
+    public enum ScalePivot {TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER}
     public enum TextAlignment {LEFT, CENTER, RIGHT}
+    public enum OverlayAnchor {TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER}
 }

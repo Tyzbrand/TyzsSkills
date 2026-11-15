@@ -56,7 +56,7 @@ public record CActionSkillPayload(String id, Enums.SkillAction actionType) imple
                 if(!success){
                     PacketDistributor.sendToPlayer(player, new UpdatePayloads.SpPayload(SpManager.getSP(player)));
                     PacketDistributor.sendToPlayer(player, new UpdatePayloads.DeactivationsPayload(payload.id(), SkillManager.isSkillDeactivated(player, skill)));
-                    PacketDistributor.sendToPlayer(player, new UpdatePayloads.SkillLevelPayload(payload.id(), SkillManager.getPlayerSkillLevel(player, skill)));
+                    PacketDistributor.sendToPlayer(player, new UpdatePayloads.SkillLevelPayload(payload.id(), SkillManager.getSkillLevel(player, skill)));
                 }
             }
 

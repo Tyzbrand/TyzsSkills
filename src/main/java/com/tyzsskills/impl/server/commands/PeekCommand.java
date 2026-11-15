@@ -67,7 +67,7 @@ public class PeekCommand {
         root.append(spellBand).append("\n");
 
         //TODO: Make API calls instead
-        var spells = SpellManager.getAllSpells();
+        var spells = SpellManager.getServerSpells();
         var spellCount = 0;
         for(var spell : spells){
             if(!SpellManager.isSpellPurchased(player, spell)) continue;

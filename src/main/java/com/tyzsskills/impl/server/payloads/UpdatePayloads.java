@@ -332,17 +332,17 @@ public class UpdatePayloads {
         var data = player.getData(StatsTracker.DATA);
 
         return new UpdatePayloads.InitPayload(
-                new UpdatePayloads.ServerSyncData(SkillManager.getAllSkills().stream().toList(), SpellManager.getAllSpells().stream().toList()),
+                new UpdatePayloads.ServerSyncData(SkillManager.getServerSkills().stream().toList(), SpellManager.getServerSpells().stream().toList()),
 
                 new UpdatePayloads.PlayerSyncData(LevelManager.getLevel(player),
                         SpManager.getSP(player), XpManager.getXP(player),
                         data.getAllTimeXp(), data.getTotalSpEarned(), data.getTotalSpSpent()),
 
-                new PlayerSyncSkillData(SkillManager.getAllBookmarkIDs(player), SkillManager.getAllDeactivatedIds(player),
-                        CategoryLoader.getCategories(), SkillManager.getPlayerSkillLevels(player)),
+                new PlayerSyncSkillData(SkillManager.getBookmarkedSkills(player), SkillManager.getDeactivatedSkills(player),
+                        CategoryLoader.getCategories(), SkillManager.getOwnedSkill(player)),
 
-                new PlayerSyncSpellData(SpellManager.getPlayerSpells(player), SpellManager.getPlayerProperties(player),
-                        SpellManager.getPlayerSlots(player), SpellManager.getPlayerCooldowns(player)),
+                new PlayerSyncSpellData(SpellManager.getPurchasedSpells(player), SpellManager.getPurchasedProperties(player),
+                        SpellManager.getPlayerSlots(player), SpellManager.getActiveCooldowns(player)),
 
                 new UpdatePayloads.ConfigSyncData(
                         Map.of(Config.REFUND_SYSTEM_KEY, Config.REFUND_SYSTEM.get(),

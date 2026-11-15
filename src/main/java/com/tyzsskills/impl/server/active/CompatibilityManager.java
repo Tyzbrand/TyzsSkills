@@ -150,7 +150,7 @@ public class CompatibilityManager {
             if(oldData.contains("SKILL_XP")) XpManager.setXp(player, oldData.getFloat("SKILL_XP"), false);
 
 
-            for (var skill : SkillManager.getAllSkills()){
+            for (var skill : SkillManager.getServerSkills()){
                 var id = skill.getId().toLowerCase();
                 var lvlKey = id + "_lvl";
                 var bkKey = id + "_bookmark";

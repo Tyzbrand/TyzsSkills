@@ -79,17 +79,24 @@ public class UIText extends UIElement {
     protected float getPivotX() {
         var rawX = getRawX();
         var rawW = getRawWidth();
-
-        if (wrapWidth > 0) return scalePivot == Enums.ScalePivot.CENTER ? rawX + (rawW / 2f) : super.getRawX();
+        if (wrapWidth > 0) {
+            return switch (scalePivot) {
+                case CENTER -> rawX + (rawW / 2f);
+                case TOP_RIGHT, BOTTOM_RIGHT -> rawX + rawW;
+                case TOP_LEFT, BOTTOM_LEFT -> super.getRawX();
+            };
+        }
 
         return switch (alignment) {
             case RIGHT -> getTextRawX() + getTextRawWidth();
             case CENTER -> rawX + (rawW / 2f);
-            case LEFT -> scalePivot == Enums.ScalePivot.CENTER ? rawX + (rawW / 2f) : super.getRawX();
+            case LEFT -> switch (scalePivot) {
+                case CENTER -> rawX + (rawW / 2f);
+                case TOP_RIGHT, BOTTOM_RIGHT -> rawX + rawW;
+                case TOP_LEFT, BOTTOM_LEFT -> super.getRawX();
+            };
         };
     }
-    @Override
-    protected float getPivotY() {return scalePivot == Enums.ScalePivot.CENTER ? getRawY() + (getRawHeight() / 2f) : getRawY();}
 
 
     //IMPLEMENTATION

@@ -4,7 +4,6 @@ import com.tyzsskills.api.events.PlayerResetEvent;
 import com.tyzsskills.api.events.metadata.LevelChangeEvent;
 import com.tyzsskills.api.events.metadata.PointsChangeEvent;
 import com.tyzsskills.api.events.metadata.XpChangeEvent;
-import com.tyzsskills.api.events.skills.SkillActionEvent;
 import com.tyzsskills.api.events.skills.SkillLoadEvent;
 import com.tyzsskills.integration.Integrations;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,30 +22,30 @@ public class JsEventsDelegate {
         if(Integrations.isKubeJSLoaded()) KubeJSBridge.postPlayerResetEvent(event);
     }
 
-    @SubscribeEvent
-    public static void onSkillPurchasePre(SkillActionEvent.PurchasePre event){
-        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillPurchasePre(event);
-    }
-
-    @SubscribeEvent
-    public static void onSkillPurchasePost(SkillActionEvent.PurchasePost event){
-        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillPurchasePost(event);
-    }
-
-    @SubscribeEvent
-    public static void onSkillRefundPre(SkillActionEvent.RefundPre event){
-        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillRefundPre(event);
-    }
-
-    @SubscribeEvent
-    public static void onSkillRefundPost(SkillActionEvent.RefundPost event){
-        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillRefundPost(event);
-    }
-
-    @SubscribeEvent
-    public static void onSkillBookmark(SkillActionEvent.Bookmark event){
-        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillBookmark(event);
-    }
+//    @SubscribeEvent
+//    public static void onSkillPurchasePre(SkillActionEvent.PurchasePre event){
+//        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillPurchasePre(event);
+//    }
+//
+//    @SubscribeEvent
+//    public static void onSkillPurchasePost(SkillActionEvent.PurchasePost event){
+//        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillPurchasePost(event);
+//    }
+//
+//    @SubscribeEvent
+//    public static void onSkillRefundPre(SkillActionEvent.RefundPre event){
+//        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillRefundPre(event);
+//    }
+//
+//    @SubscribeEvent
+//    public static void onSkillRefundPost(SkillActionEvent.RefundPost event){
+//        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillRefundPost(event);
+//    }
+//
+//    @SubscribeEvent
+//    public static void onSkillBookmark(SkillActionEvent.Bookmark event){
+//        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillBookmark(event);
+//    }
 
     @SubscribeEvent
     public static void onSkillLevelChange(LevelChangeEvent event){
@@ -63,15 +62,15 @@ public class JsEventsDelegate {
         if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillLoadPost(event);
     }
 
-    @SubscribeEvent
-    public static void onPowerChange(SkillPowerChangeEvent event){
-        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postPowerEvent(event);
-    }
-
-    @SubscribeEvent
-    public static void onSkillReload(SkillReloadEvent event){
-        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillReload(event);
-    }
+//    @SubscribeEvent
+//    public static void onPowerChange(SkillPowerChangeEvent event){
+//        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postPowerEvent(event);
+//    }
+//
+//    @SubscribeEvent
+//    public static void onSkillReload(SkillReloadEvent event){
+//        if(Integrations.isKubeJSLoaded()) KubeJSBridge.postSkillReload(event);
+//    }
 
     @SubscribeEvent
     public static void onXpChange(XpChangeEvent event){

@@ -46,7 +46,7 @@ public class UIScrollView extends UIContainer{
                     || child.getVisualY() >= this.getVisualY() + this.getVisualHeight()) {
                 continue;
             }
-            child.draw(gui, childMouseX, childMouseY, partialTick, true, isCurrentShaded());
+            child.draw(gui, childMouseX, childMouseY, partialTick, true, isCurrentShaded(), getCurrentAlpha());
         }
         gui.disableScissor();
         if (showScrollBar && getMaxScroll() > 0) renderScrollBar(gui);
