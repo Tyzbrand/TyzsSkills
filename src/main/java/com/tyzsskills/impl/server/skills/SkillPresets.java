@@ -145,13 +145,6 @@ public class SkillPresets {
                 .withBehavior(new RageEffect())
                 .build());
 
-        finalList.add(SkillPrefab.immutable("adrenaline", category, List.of(2, 4, 6))
-                .addCustomValue("health_threshold", new ValueSet(List.of(10f, 20f, 30f), "skill.tyzs_skills.unit.percentage"))
-                .addCustomValue("effect_duration", new ValueSet(List.of(3f, 5f, 8f), "skill.tyzs_skills.unit.seconds"))
-                .withBehavior(new AdrenalineEffect())
-                .withConfig(new SkillConfiguration().withTags(List.of(TagRegistry.CONSUMABLE)))
-                .build());
-
         finalList.add(SkillPrefab.immutable("resilience", category, List.of(2, 3, 4, 5, 7, 9, 11, 14, 17))
                 .addCustomValue("effect_time_reduction", new ValueSet(List.of(15f, 25f, 35f, 45f, 55f, 65f, 75f, 85f, 95f), "skill.tyzs_skills.unit.percentage"))
                 .withBehavior(new ResilienceEffect())
@@ -248,6 +241,28 @@ public class SkillPresets {
                 .addCustomValue("growth_speed", new ValueSet(List.of(50f, 100f, 150f, 200f, 250f, 300f, 350f, 400f, 450f, 500f, 550f, 600f, 650f, 700f, 750f), "skill.tyzs_skills.unit.percentage"))
                 .withBehavior(new ShepherdsBlessingEffect())
                 .withConfig(new SkillConfiguration().withParameters(makeTag(tag -> {tag.put("entity_blacklist", new ListTag());})))
+                .build());
+
+        finalList.add(SkillPrefab.immutable("impulse", category, List.of(5, 8, 12, 18))
+                .addCustomValue("repulse_power", new ValueSet(List.of(25f, 50f, 75f, 100f), "skill.tyzs_skills.unit.percentage"))
+                .withBehavior(new ImpulseEffect())
+                .withConfig(new SkillConfiguration().withParameters(makeTag(tag -> {
+                    tag.put("item_blacklist", new ListTag());
+                    tag.putBoolean("works_in_creative", false);
+                    tag.putBoolean("sneak_to_avoid", true);
+                })))
+                .build());
+
+        finalList.add(SkillPrefab.immutable("divine_salvation", category, List.of(10, 15))
+                .addCustomValue("reprieve_duration", new ValueSet(List.of(5f, 5f), "skill.tyzs_skills.unit.seconds"))
+                .addCustomValue("repulse_power", new ValueSet(List.of(5f, 5f), "skill.tyzs_skills.unit.power"))
+                .addCustomValue("repulse_radius", new ValueSet(List.of(7f, 7f), "skill.tyzs_skills.unit.block_radius"))
+                .withBehavior(new DivineSalvationEffect())
+                .withConfig(new SkillConfiguration().withTags(List.of(TagRegistry.CONSUMABLE)))
+                .build());
+
+        finalList.add(SkillPrefab.generic("overload", category, List.of(5, 8))
+                .addModifier(new Modifier("tyzs_skills:extra_spell_slots", AttributeModifier.Operation.ADD_VALUE, List.of(1f, 2f), "skill.tyzs_skills.unit.spell_slot"))
                 .build());
 
         return finalList;

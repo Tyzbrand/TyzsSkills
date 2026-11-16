@@ -20,6 +20,8 @@ public class Config {
 
     public static final ModConfigSpec.BooleanValue PREVENT_PLACED_BLOCK_XP;
 
+    public static final String BASE_SPELL_SLOTS_KEY = "base_spell_slots";
+    public static final ModConfigSpec.IntValue BASE_SPELL_SLOTS;
 
     //Death penalties
     public static final ModConfigSpec.BooleanValue DEATH_PENALTIES;
@@ -113,6 +115,12 @@ public class Config {
                 .comment("Prevent manually placed block from providing xp")
                 .translation("config.common.tyzs_skills.prevent_placed_blocks_xp")
                 .define("prevent_placed_block_xp", true);
+
+        //TODO: translation
+        BASE_SPELL_SLOTS = commonBuilder
+                .comment("Sets the number of spell slots (excluding attribute)")
+                .translation("config.common.tyzs_skills.base_spell_slots")
+                .defineInRange("base_spell_slots", 3, 0, 25);
 
 
         commonBuilder.pop();

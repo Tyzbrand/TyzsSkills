@@ -101,6 +101,11 @@ public class SpellCache {
         }
         return -1;
     }
+    public int getMaxSlots(){
+        var player = Minecraft.getInstance().player;
+        if(player == null) return 0;
+        return Math.max(0, ClientCache.get().getConfigInt(Config.BASE_SPELL_SLOTS_KEY, 3) + (int)player.getAttributeValue(AttributeRegistry.EXTRA_SPELL_SLOTS));
+    }
 
     //==============Cooldowns==============
     private final Map<String, Cooldown> spellCooldowns = new HashMap<>();
@@ -210,9 +215,7 @@ public class SpellCache {
     private boolean predictAssignment(ISpell spell, int slot){
         var player = Minecraft.getInstance().player;
         if(player == null) return false;
-
-        var maxSlots = (int)player.getAttributeValue(AttributeRegistry.MAX_SPELL_SLOTS);
-        if (slot <= 0 || slot > maxSlots) return false;
+        if (slot <= 0 || slot > getMaxSlots()) return false;
 
         if(!isSpellPurchased(spell.getId())) return false;
 

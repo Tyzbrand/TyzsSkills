@@ -68,6 +68,7 @@ public class MagnetEffect extends SkillBehavior {
                         currentMotion.y * .5D + motionY,
                         currentMotion.z * .5D + motionZ
                 );
+                item.hurtMarked = true;
             }
         }
     }

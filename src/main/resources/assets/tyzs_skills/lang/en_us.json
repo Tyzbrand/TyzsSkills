@@ -23,6 +23,9 @@
   "skill.tyzs_skills.unit.seconds" : "sec",
   "skill.tyzs_skills.unit.percentage_damage" : "% (dmg)",
   "skill.tyzs_skills.unit.item" : "item(s)",
+  "skill.tyzs_skills.unit.slot" : "slot(s)",
+  "skill.tyzs_skills.unit.spell_slot" : "spell slot(s)",
+  "skill.tyzs_skills.unit.power" : "block/sec",
 
 
   "overlay.tyzs_skills.level" : "Level",
@@ -136,6 +139,20 @@
   "skill.tyzs_skills.twist_of_fate.displayName" : "Twist Of Fate",
   "skill.tyzs_skills.twist_of_fate.description" : "Increases the quantity of items found in structure loot chests by {loot_multiplier}%",
 
+  "skill.tyzs_skills.haggler.displayName" : "Haggler",
+  "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius.\n\nThey will follow you with a {villager_speed}% speed bonus",
+
+  "skill.tyzs_skills.keepsake.displayName" : "Safekept",
+  "skill.tyzs_skills.keepsake.description" : "Safeguards the first {saved_slots} slot(s) of your inventory upon death",
+
+  "skill.tyzs_skills.impulse.displayName" : "Impulse",
+  "skill.tyzs_skills.impulse.description" : "Shooting a crossbow projects backwards",
+
+  "skill.tyzs_skills.divine_salvation.displayName" : "Divine Salvation",
+  "skill.tyzs_skills.divine_salvation.description" : "Prevents a fatal strike and puts the player on probation for {reprieve_duration} sec",
+
+  "skill.tyzs_skills.overload.displayName" : "Overload",
+  "skill.tyzs_skills.overload.description" : "Increases the number of spell slots by {value}",
 
 
 
@@ -203,16 +220,6 @@
   "config.common.tyzs_skills.lvl_loss" : "Lvl loss",
   "config.common.tyzs_skills.skill_loss" : "Skill loss",
 
-
-
-  "skill.tyzs_skills.haggler.displayName" : "Haggler",
-  "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius.\n\nThey will follow you with a {villager_speed}% speed bonus",
-
-  "skill.tyzs_skills.keepsake.displayName" : "Safekept",
-  "skill.tyzs_skills.keepsake.description" : "Safeguards the first {saved_slots} slot(s) of your inventory upon death",
-
-  "skill.tyzs_skills.unit.slot" : "slot(s)",
-
   "tyzs_skills.configuration.search_bar":"Search Bar",
 
   "config.client.tyzs_skills.keep_search_query" : "Keep search query",
@@ -244,6 +251,5 @@
   "gui.tyzs_skills.sorting_tooltip.prefix_description" : "Search in description",
   "gui.tyzs_skills.sorting_tooltip.prefix_id" : "Search strictly by ID",
 
-  "spell.tyzs_skills.dash.description" : " "
-
+  "effect.tyzs_skills.reprieve": "Reprieve"
 }

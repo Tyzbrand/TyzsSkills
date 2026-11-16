@@ -64,6 +64,7 @@ public class ClientCache {
 
             configMap.putAll(configData.booleanMap());
             configMap.putAll(configData.doubleMap());
+            configMap.putAll(configData.intMap());
 
             registerUpdate("Initial Synchronization", true);
         }
@@ -113,6 +114,13 @@ public class ClientCache {
         var value = configMap.get(id);
         if (value instanceof Double dbl) return dbl;
         else if (value instanceof Number nbr) return nbr.doubleValue();
+        else return fallback;
+    }
+
+    public int getConfigInt(@NotNull String id, int fallback) {
+        var value = configMap.get(id);
+        if (value instanceof Integer integer) return integer;
+        else if (value instanceof Number nbr) return nbr.intValue();
         else return fallback;
     }
 }

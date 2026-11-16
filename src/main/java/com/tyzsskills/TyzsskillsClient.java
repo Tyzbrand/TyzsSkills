@@ -9,7 +9,11 @@ import com.tyzsskills.impl.client.models.InventoryButton;
 import com.tyzsskills.impl.client.screen.MainMenu;
 import com.tyzsskills.impl.client.screen.SpellWheel;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
+import com.tyzsskills.impl.server.mob_effects.ReprieveMobEffect;
 import com.tyzsskills.integration.ui.UIOverlayRenderer;
+import com.tyzsskills.integration.ui.models.UIImage;
+import com.tyzsskills.integration.ui.models.UIOverlay;
+import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
@@ -60,6 +64,12 @@ public class TyzsskillsClient {
     }
 
     @SubscribeEvent
+    public static void onClientLogIn(ClientPlayerNetworkEvent.LoggingIn event){
+        registerStaticOverlays();
+    }
+
+
+    @SubscribeEvent
     public static void onClientLogOut(ClientPlayerNetworkEvent.LoggingOut event){
         ClientCache.deleteCache();
         SortingManager.clearData();
@@ -86,6 +96,15 @@ public class TyzsskillsClient {
                 Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.CAST, null));
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onCrosshairRender(RenderGuiLayerEvent.Pre event){
+        if (!event.getName().equals(VanillaGuiLayers.CROSSHAIR)) return;
+
+        var player = Minecraft.getInstance().player;
+        if(player == null) return;
+        if(ReprieveMobEffect.isAffected(player)) event.setCanceled(true);
     }
 
     @SubscribeEvent
@@ -123,5 +142,20 @@ public class TyzsskillsClient {
         }
     }
 
+    //UTILS
+    private static void registerStaticOverlays(){
+        var overlay = new UIOverlay(0, 0, -1f).withAnchor(Enums.OverlayAnchor.CENTER);
+        overlay.withVisibility(() -> {
+            var player = Minecraft.getInstance().player;
+            return player != null && ReprieveMobEffect.isAffected(Minecraft.getInstance().player);
+        });
+
+        var image = new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/control_icon.png"), 16);
+        overlay.addChild(new UIImage(0, 0, 16, 16, () -> image)
+                .withScale(.85f, Enums.ScalePivot.CENTER)
+                .withAlpha(() -> .5f));
+
+        UIOverlayRenderer.add(overlay);
+    }
 
 }

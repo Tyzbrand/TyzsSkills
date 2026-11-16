@@ -17,7 +17,7 @@ public class DamageDealEffect extends SkillBehavior {
     public void registerEvent(IEventBus eventBus, ISkill skill) {
         registerAction(
                 eventBus,
-                EventPriority.HIGHEST,
+                EventPriority.HIGH,
                 skill,
                 LivingIncomingDamageEvent.class,
                 LivingIncomingDamageEvent::getEntity,

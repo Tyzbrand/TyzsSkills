@@ -164,4 +164,29 @@ public class CompatibilityManager {
     }
 
     //MIGRATION V3 DELETED
+    //MIGRATION V4
+    private static final String MIGRATION_TAG_V4 = "tyzs_migrated_v4";
+    public static void processMigrationV4(ServerPlayer player){
+        var data = player.getData(PlayerData.DATA);
+
+        var currentAdrenalineLvl = data.getSkillLevel("adrenaline");
+        if(currentAdrenalineLvl <= 0) {
+            data.putTag(MIGRATION_TAG_V4);
+            return;
+        }
+
+        var spToRefund = 0;
+        var pricesSave = new int[]{2, 4, 6};
+        for(int i = 0; i < currentAdrenalineLvl; i++){
+            spToRefund += pricesSave[i];
+        }
+
+        if(spToRefund > 0){
+            data.setSkillLevel("adrenaline", 0);
+            SpManager.tryAddSp(player, spToRefund);
+            player.sendSystemMessage(Component.literal("§e[Tyzs Skills] §rAdrenaline skill removed, SP refunded: §6+" + spToRefund + " SP"));
+        }
+        data.putTag(MIGRATION_TAG_V4);
+    }
+
 }

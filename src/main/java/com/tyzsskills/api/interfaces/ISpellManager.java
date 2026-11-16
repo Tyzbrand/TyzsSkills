@@ -31,6 +31,8 @@ public interface ISpellManager {
 
     @NotNull String getSpellInSlot(@NotNull ServerPlayer player, int slot);
 
+    int getMaxSlots(@NotNull ServerPlayer player);
+
     @NotNull @UnmodifiableView Map<String, Integer> getPlayerProperties(@NotNull ServerPlayer player);
 
     @NotNull @UnmodifiableView List<String> getPlayerSpells(@NotNull ServerPlayer player);

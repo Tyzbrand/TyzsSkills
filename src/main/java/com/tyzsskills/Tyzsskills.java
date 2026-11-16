@@ -3,6 +3,7 @@ package com.tyzsskills;
 import com.mojang.logging.LogUtils;
 import com.tyzsskills.api.events.TyzsSkillsCommonSetupEvent;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
+import com.tyzsskills.impl.server.active.EffectRegistry;
 import com.tyzsskills.impl.server.active.SoundRegistry;
 import com.tyzsskills.impl.server.attachments.*;
 import com.tyzsskills.impl.server.events.RuntimeEvents;
@@ -47,6 +48,9 @@ public class Tyzsskills {
        //Register attributes
         AttributeRegistry.ATTRIBUTES.register(modEventBus);
 
+        //Register mob effects
+        EffectRegistry.MOB_EFFECTS.register(modEventBus);
+
         //Register Attachments
         BlockMarker.ATTACHMENT_TYPES.register(modEventBus);
         LegacyData.ATTACHMENT_TYPES.register(modEventBus);
@@ -80,8 +84,8 @@ public class Tyzsskills {
             event.add(EntityType.PLAYER, AttributeRegistry.SP_MULTIPLIER);
         }
 
-        if (!event.has(EntityType.PLAYER, AttributeRegistry.MAX_SPELL_SLOTS)) {
-            event.add(EntityType.PLAYER, AttributeRegistry.MAX_SPELL_SLOTS);
+        if (!event.has(EntityType.PLAYER, AttributeRegistry.EXTRA_SPELL_SLOTS)) {
+            event.add(EntityType.PLAYER, AttributeRegistry.EXTRA_SPELL_SLOTS);
         }
     }
 

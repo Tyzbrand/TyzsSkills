@@ -44,10 +44,11 @@ public class UpdatePayloads {
                 PlayerSyncData::new
         );
     }
-    public record ConfigSyncData(Map<String, Boolean> booleanMap, Map<String, Double> doubleMap){
+    public record ConfigSyncData(Map<String, Boolean> booleanMap, Map<String, Double> doubleMap, Map<String, Integer> intMap){
         public static final StreamCodec<ByteBuf, ConfigSyncData> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.BOOL), ConfigSyncData::booleanMap,
                 ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.DOUBLE), ConfigSyncData::doubleMap,
+                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.INT), ConfigSyncData::intMap,
                 ConfigSyncData::new
         );
     }
@@ -348,7 +349,9 @@ public class UpdatePayloads {
                         Map.of(Config.REFUND_SYSTEM_KEY, Config.REFUND_SYSTEM.get(),
                                 Config.PURCHASE_SYSTEM_KEY, Config.PURCHASE_SYSTEM.get()),
 
-                        Map.of(Config.REFUND_PERCENTAGE_KEY, Config.REFUND_PERCENTAGE.get())),
+                        Map.of(Config.REFUND_PERCENTAGE_KEY, Config.REFUND_PERCENTAGE.get()),
+
+                        Map.of(Config.BASE_SPELL_SLOTS_KEY, Config.BASE_SPELL_SLOTS.get())),
 
                 LevelManager.getCurrentLevelData(player));
     }

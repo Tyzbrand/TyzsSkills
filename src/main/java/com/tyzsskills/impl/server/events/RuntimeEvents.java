@@ -79,6 +79,7 @@ public class RuntimeEvents {
 
         CompatibilityManager.processMigration(player);
         CompatibilityManager.processMigrationV2(player);
+        CompatibilityManager.processMigrationV4(player);
 
         Repair.repair(player);
 

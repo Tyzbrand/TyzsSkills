@@ -120,8 +120,7 @@ public class SpellManager {
         return false;
     }
     public static boolean tryAssignSpell(@NotNull ServerPlayer player, @NotNull ISpell spell, int slot){
-        var maxSlots = (int)player.getAttributeValue(AttributeRegistry.MAX_SPELL_SLOTS);
-        if (slot <= 0 || slot > maxSlots) return false;
+        if (slot <= 0 || slot > getMaxSlots(player)) return false;
 
         var preEvent = new SpellAssignEvent.Pre(player, spell, slot);
         NeoForge.EVENT_BUS.post(preEvent);
@@ -209,12 +208,14 @@ public class SpellManager {
         return player.getData(PlayerData.DATA).isSpellAssigned(spell.getId());
     }
     public static boolean isSlotFree(@NotNull ServerPlayer player, int slot){
-        var maxSlots =(int) player.getAttributeValue(AttributeRegistry.MAX_SPELL_SLOTS);
-        if (slot <= 0 || slot > maxSlots) return false;
+        if (slot <= 0 || slot > getMaxSlots(player)) return false;
         return player.getData(PlayerData.DATA).isSlotFree(slot);
     }
     public static @NotNull String getSpellInSlot(@NotNull ServerPlayer player, int slot){
         return getPlayerSlots(player).getOrDefault(slot, "");
+    }
+    public static int getMaxSlots(@NotNull ServerPlayer player){
+        return Math.max(0, Config.BASE_SPELL_SLOTS.get() + (int)player.getAttributeValue(AttributeRegistry.EXTRA_SPELL_SLOTS));
     }
 
     public static @NotNull @UnmodifiableView Map<String, Integer> getPurchasedProperties(@NotNull ServerPlayer player){

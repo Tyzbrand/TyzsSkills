@@ -46,6 +46,11 @@ public class SpellWrapper implements ISpellManager {
     }
 
     @Override
+    public int getMaxSlots(@NotNull ServerPlayer player){
+        return SpellManager.getMaxSlots(player);
+    }
+
+    @Override
     public @NotNull @UnmodifiableView Map<String, Integer> getPlayerProperties(@NotNull ServerPlayer player){
         return SpellManager.getPurchasedProperties(player);
     }

@@ -5,7 +5,6 @@ import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.key.MainKeybind;
-import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.integration.ui.models.UIButton;
 import com.tyzsskills.integration.ui.models.UIContainer;
 import com.tyzsskills.integration.ui.models.UIImage;
@@ -51,7 +50,7 @@ public class SpellWheel extends Screen {
 
 
     private static final UIStyles.ImageStyle CROSS =
-            new UIStyles.ImageStyle(11, 11, 40, 226, Styles.MAIN_TEXTURE);
+            new UIStyles.ImageStyle(9, 9, 40, 226, Styles.MAIN_TEXTURE);
     //endregion
 
     public SpellWheel(Enums.WheelMode mode, ISpell spell) {
@@ -60,10 +59,9 @@ public class SpellWheel extends Screen {
 
         this.parentScreen = Minecraft.getInstance().screen;
 
-        var player = Minecraft.getInstance().player;
-        slotCount = player == null ? 0 : (int)player.getAttributeValue(AttributeRegistry.MAX_SPELL_SLOTS);
 
         cache = ClientCache.get();
+        slotCount = cache.SPELLS.getMaxSlots();
         currentMode = mode;
         currentSpell = spell;
 
@@ -122,7 +120,8 @@ public class SpellWheel extends Screen {
 
             mainPanel.addChild(new UIImage(crossX, crossY, () -> CROSS)
                     .withVisibility(() -> hoveredSlot <= 0)
-                    .withScale(2f, Enums.ScalePivot.CENTER));
+                    .withAlpha(() -> .65f)
+                    .withScale(2.5f, Enums.ScalePivot.CENTER));
         }
     }
 

@@ -29,7 +29,6 @@ public class ResistanceEffect  extends SkillBehavior {
         var damageSource = event.getSource();
         if(damageSource.is(DamageTypeTags.BYPASSES_RESISTANCE)) return;
 
-
         float value = values.getValue(lvl);
         if(value >= 100f){
             event.setCanceled(true);

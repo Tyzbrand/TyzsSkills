@@ -2,7 +2,6 @@ package com.tyzsskills.impl.server.debug;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.Level.LevelManager;
-import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.skills.SkillManager;
@@ -113,19 +112,17 @@ public class Repair {
         }
 
         //BAD ASSIGNATION
-        var attribute = player.getAttribute(AttributeRegistry.MAX_SPELL_SLOTS);
-        if (attribute != null) {
-            var maxSlots = attribute.getValue();
-            for(var kvp : slotsSnapshot.entrySet()){
-                int slot = kvp.getKey();
-                var spellId = kvp.getValue();
+        var maxSlots = SpellManager.getMaxSlots(player);
+        for(var kvp : slotsSnapshot.entrySet()){
+            int slot = kvp.getKey();
+            var spellId = kvp.getValue();
 
-                var spell = SpellManager.getSpell(spellId);
-                if(slot <= 0 || slot > maxSlots || spell == null || !SpellManager.isSpellPurchased(player, spell)){
-                    SpellManager.tryUnassignSpell(player, slot);
-                }
+            var spell = SpellManager.getSpell(spellId);
+            if(slot <= 0 || slot > maxSlots || spell == null || !SpellManager.isSpellPurchased(player, spell)){
+                SpellManager.tryUnassignSpell(player, slot);
             }
         }
+
 
         //PROPERTIES CONSISTENCY
         for(var spellId : purchasedSpellsSnapshot){
