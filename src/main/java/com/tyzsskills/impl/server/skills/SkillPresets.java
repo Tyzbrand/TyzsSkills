@@ -244,7 +244,7 @@ public class SkillPresets {
                 .build());
 
         finalList.add(SkillPrefab.immutable("impulse", category, List.of(5, 8, 12, 18))
-                .addCustomValue("repulse_power", new ValueSet(List.of(25f, 50f, 75f, 100f), "skill.tyzs_skills.unit.percentage"))
+                .addCustomValue("repulse_speed", new ValueSet(List.of(1.25f, 1.75f, 2.5f, 3.25f), "skill.tyzs_skills.unit.power"))
                 .withBehavior(new ImpulseEffect())
                 .withConfig(new SkillConfiguration().withParameters(makeTag(tag -> {
                     tag.put("item_blacklist", new ListTag());
@@ -263,6 +263,11 @@ public class SkillPresets {
 
         finalList.add(SkillPrefab.generic("overload", category, List.of(5, 8))
                 .addModifier(new Modifier("tyzs_skills:extra_spell_slots", AttributeModifier.Operation.ADD_VALUE, List.of(1f, 2f), "skill.tyzs_skills.unit.spell_slot"))
+                .build());
+
+        finalList.add(SkillPrefab.immutable("deep_rest", category, List.of(4, 6, 8, 12, 16))
+                .addCustomValue("food_recovery", new ValueSet(List.of(12f, 25f, 38f, 50f, 64f), "skill.tyzs_skills.unit.percentage"))
+                .withBehavior(new DeepRestEffect())
                 .build());
 
         return finalList;

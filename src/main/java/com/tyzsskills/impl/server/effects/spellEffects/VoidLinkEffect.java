@@ -8,7 +8,7 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.inventory.ChestMenu;
 import org.jetbrains.annotations.NotNull;
 
-public class WirelessEffect extends SpellBehavior {
+public class VoidLinkEffect extends SpellBehavior {
 
     @Override
     public boolean onSpellCast(@NotNull ServerPlayer player, @NotNull ISpell spell) {

@@ -4,10 +4,9 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.client.TyzsSkillsClientSetupEvent;
 import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.cache.ClientCache;
-import com.tyzsskills.impl.client.key.MainKeybind;
+import com.tyzsskills.impl.client.key.Keybinds;
 import com.tyzsskills.impl.client.models.InventoryButton;
 import com.tyzsskills.impl.client.screen.MainMenu;
-import com.tyzsskills.impl.client.screen.SpellWheel;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
 import com.tyzsskills.impl.server.mob_effects.ReprieveMobEffect;
 import com.tyzsskills.integration.ui.UIOverlayRenderer;
@@ -79,24 +78,9 @@ public class TyzsskillsClient {
 
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event){
-        event.register(MainKeybind.OPEN_SKILL_MENU);
-        event.register(MainKeybind.OPEN_SPELL_WHEEL);
+        Keybinds.registerKeybinds(event);
     }
 
-    @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event){
-        while (MainKeybind.OPEN_SKILL_MENU.consumeClick()){
-            if (Minecraft.getInstance().screen == null) {
-                Minecraft.getInstance().setScreen(new MainMenu());
-            }
-        }
-
-        while (MainKeybind.OPEN_SPELL_WHEEL.consumeClick()){
-            if (Minecraft.getInstance().screen == null) {
-                Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.CAST, null));
-            }
-        }
-    }
 
     @SubscribeEvent
     public static void onCrosshairRender(RenderGuiLayerEvent.Pre event){

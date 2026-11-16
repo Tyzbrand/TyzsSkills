@@ -4,7 +4,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.cache.ClientCache;
-import com.tyzsskills.impl.client.key.MainKeybind;
+import com.tyzsskills.impl.client.key.Keybinds;
 import com.tyzsskills.integration.ui.models.UIButton;
 import com.tyzsskills.integration.ui.models.UIContainer;
 import com.tyzsskills.integration.ui.models.UIImage;
@@ -142,7 +142,7 @@ public class SpellWheel extends Screen {
 
     @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        if (currentMode == Enums.WheelMode.CAST && MainKeybind.OPEN_SPELL_WHEEL.matches(keyCode, scanCode)) {
+        if (currentMode == Enums.WheelMode.CAST && Keybinds.OPEN_SPELL_WHEEL.matches(keyCode, scanCode)) {
             if (hoveredSlot > 0) {
                 var spellInSlot = cache.SPELLS.getSpellInSlot(hoveredSlot);
                 if (spellInSlot != null) cache.SPELLS.triggerSpellAction(spellInSlot, Enums.SpellAction.CAST, hoveredSlot);

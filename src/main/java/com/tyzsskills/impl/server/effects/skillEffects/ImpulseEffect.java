@@ -21,9 +21,9 @@ public class ImpulseEffect extends SkillBehavior {
     }
 
     private void onItemFinish( PlayerInteractEvent.RightClickItem event, ServerPlayer player, ISkill skill, int lvl){
-        var values = skill.getValueSet("repulse_power");
+        var values = skill.getValueSet("repulse_speed");
         if(values == null) return;
-        var value = values.getValue(lvl);
+        var rawSpeed = values.getValue(lvl);
 
         var itemStack = event.getItemStack();
         var parameters = skill.getSpecificParameters();
@@ -33,11 +33,15 @@ public class ImpulseEffect extends SkillBehavior {
         if(parameters.getBoolean("sneak_to_avoid") && player.isCrouching()) return;
         if(TagMatchManager.isItemInList(parameters, "item_blacklist", itemStack)) return;
 
-        var speed = 1 + value/100f;
-        var recoil = player.getLookAngle().scale(-speed);
-        var velocity = player.getDeltaMovement().scale(0.33);
 
-        player.setDeltaMovement(velocity.add(recoil));
+        var currentVelocity = player.getDeltaMovement().scale(0.33);
+        var recoilVelocity = player.getLookAngle().scale(-rawSpeed);
+
+        var finalVelocity = recoilVelocity.add(currentVelocity);
+        if (finalVelocity.length() > 3.85) finalVelocity = finalVelocity.normalize().scale(3.85);
+
+
+        player.setDeltaMovement(finalVelocity);
         player.hurtMarked = true;
         notifyClient(player, skill);
     }

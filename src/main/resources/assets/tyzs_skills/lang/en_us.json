@@ -16,7 +16,7 @@
   "gui.tyzs_skills.requirements" : "Hold [shift] for requirements",
 
   "skill.tyzs_skills.unit.percentage" : "%",
-  "skill.tyzs_skills.unit.blocks" : "blocks",
+  "skill.tyzs_skills.unit.blocks" : "block(s)",
   "skill.tyzs_skills.unit.half_hearts" : "half hearts",
   "skill.tyzs_skills.unit.damage" : "damage",
   "skill.tyzs_skills.unit.block_radius" : "block radius",
@@ -142,17 +142,22 @@
   "skill.tyzs_skills.haggler.displayName" : "Haggler",
   "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius.\n\nThey will follow you with a {villager_speed}% speed bonus",
 
+
   "skill.tyzs_skills.keepsake.displayName" : "Safekept",
   "skill.tyzs_skills.keepsake.description" : "Safeguards the first {saved_slots} slot(s) of your inventory upon death",
 
   "skill.tyzs_skills.impulse.displayName" : "Impulse",
-  "skill.tyzs_skills.impulse.description" : "Shooting a crossbow projects backwards",
+  "skill.tyzs_skills.impulse.description" : "Shooting a crossbow projects backwards at {repulse_speed} block/sec",
 
   "skill.tyzs_skills.divine_salvation.displayName" : "Divine Salvation",
-  "skill.tyzs_skills.divine_salvation.description" : "Prevents a fatal strike and puts the player on probation for {reprieve_duration} sec",
+  "skill.tyzs_skills.divine_salvation.description" : "Prevents a fatal strike and pushes entities within a {repulse_radius} block radius at {repulse_power} block/sec.\n\nApplies reprieve effect for {reprieve_duration} sec",
+
 
   "skill.tyzs_skills.overload.displayName" : "Overload",
   "skill.tyzs_skills.overload.description" : "Increases the number of spell slots by {value}",
+
+  "skill.tyzs_skills.deep_rest.displayName" : "Deep Rest",
+  "skill.tyzs_skills.deep_rest.description" : "Waking up restores {food_recovery}% of your hunger",
 
 
 
@@ -251,5 +256,37 @@
   "gui.tyzs_skills.sorting_tooltip.prefix_description" : "Search in description",
   "gui.tyzs_skills.sorting_tooltip.prefix_id" : "Search strictly by ID",
 
-  "effect.tyzs_skills.reprieve": "Reprieve"
+  "effect.tyzs_skills.reprieve": "Reprieve",
+
+  "spell.tyzs_skills.dash.displayName": "Dash",
+  "spell.tyzs_skills.dash.description": "Propel in the direction of the gaze",
+
+  "spell.tyzs_skills.void_link.displayName": "Void Link",
+  "spell.tyzs_skills.void_link.description": "Allows an access to the Ender Chest",
+
+  "spell.tyzs_skills.retreat.displayName": "Retreat",
+  "spell.tyzs_skills.retreat.description": "Allows a return to the spawn point after a delay. Canceled if a movement is detected.\n\nCant be used to travel between dimensions",
+
+  "spell.tyzs_skills.rewind.displayName": "Rewind",
+  "spell.tyzs_skills.rewind.description": "Teleports to the cast position after a delay",
+
+  "spell.tyzs_skills.foresight.displayName": "Foresight",
+  "spell.tyzs_skills.foresight.description": "Applies a glow effect to all entities within a radius",
+
+  "property.tyzs_skills.cooldown.displayName": "Cooldown",
+  "property.tyzs_skills.cooldown.description": "Waiting time between uses",
+
+  "property.tyzs_skills.teleportation_delay.displayName": "Delay",
+  "property.tyzs_skills.teleportation_delay.description": "Delay before teleportation",
+
+  "property.tyzs_skills.foresight_radius.displayName": "Radius",
+  "property.tyzs_skills.foresight_radius.description": "Activation radius",
+
+  "property.tyzs_skills.foresight_glow_duration.displayName": "Glow Duration",
+  "property.tyzs_skills.foresight_glow_duration.description": "Duration of the applied glow effect",
+
+  "property.tyzs_skills.dash_speed.displayName": "Dash Speed",
+  "property.tyzs_skills.dash_speed.description": "Motion Speed"
+
+
 }
