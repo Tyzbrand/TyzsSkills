@@ -110,7 +110,9 @@ public class SkillCard extends UIContainer {
         this.addChild(new UIButton(4, 4, this::getCadreStyle, this::handleDeactivation)
                 .withTooltip(() -> skillTooltip));
 
-        this.addChild(new UIImage(7, 7, 16, 16, () -> icon).withScale(.92f, Enums.ScalePivot.CENTER));
+        this.addChild(new UIImage(7, 7, 16, 16, () -> icon)
+                .withShadow(2f)
+                .withScale(.92f, Enums.ScalePivot.CENTER));
 
         //BADGE
         var textScale = .57f;

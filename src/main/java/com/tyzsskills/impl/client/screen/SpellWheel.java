@@ -103,6 +103,7 @@ public class SpellWheel extends Screen {
             var iconTexture = new UITexture(spellInSlot.getIcon(), 16);
 
             mainPanel.addChild(new UIImage(slotPos.x + 7, slotPos.y + 7, iconTexture.size(), iconTexture.size(), () -> iconTexture)
+                    .withShadow(2f)
                     .withScale(2f, Enums.ScalePivot.TOP_LEFT)
                     .withShade(() -> currentMode == Enums.WheelMode.CAST && hasActiveCooldown(spellInSlot)));
 

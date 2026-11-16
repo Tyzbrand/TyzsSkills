@@ -80,15 +80,13 @@ public class SkillRefundTooltip extends UITooltip {
 
     private void addStatLine(float currentStat, float targetedStat, String unit){
         var color = targetedStat > currentStat ? ChatFormatting.GREEN : ChatFormatting.RED;
-        var translatedUnit = Component.translatable(unit);
 
         var message = Component.empty()
                 .append(Component.literal("◆ "))
-                .append(Component.literal(FormatTools.defaultFloat(currentStat) + " ").withStyle(ChatFormatting.DARK_GRAY))
-                .append(translatedUnit)
+                .append(Component.literal(FormatTools.defaultFloat(currentStat)).withStyle(ChatFormatting.DARK_GRAY))
                 .append(Component.literal(" -> "))
                 .append(Component.literal(FormatTools.defaultFloat(targetedStat) + " ").withStyle(color))
-                .append(translatedUnit);
+                .append(Component.translatable(unit));
 
         currentDataLines.add(message);
     }
@@ -104,14 +102,14 @@ public class SkillRefundTooltip extends UITooltip {
                 var currentStat = valueSet.getValue(currentLvl);
                 var targetedStat = valueSet.getValue(targetLvl);
 
-                addStatLine(currentStat, targetedStat, valueSet.unit());
+                if(currentStat != targetedStat) addStatLine(currentStat, targetedStat, valueSet.unit());
             }
         } else {
             for (var modifier : skill.getModifiers()) {
                 var currentStat = modifier.getValue(currentLvl);
                 var targetedStat = modifier.getValue(targetLvl);
 
-                addStatLine(currentStat, targetedStat, modifier.unit());
+                if(currentStat != targetedStat) addStatLine(currentStat, targetedStat, modifier.unit());
             }
         }
 

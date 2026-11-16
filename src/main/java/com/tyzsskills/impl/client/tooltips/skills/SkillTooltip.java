@@ -69,6 +69,7 @@ public class SkillTooltip extends UITooltip {
 
         this.addChild(new UIImage(2, 2, () -> SLOT));
         this.addChild(new UIImage(10, 10, 16, 16, () -> isSkillAvailable ? skillIcon : Styles.LOCKED_ICON)
+                .withShadow(2f)
                 .withScale(1.27f, Enums.ScalePivot.CENTER));
 
         this.addChild(new UIText(38, 5, () -> title)

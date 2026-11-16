@@ -86,7 +86,7 @@ public class PropertyPurchaseTooltip extends UITooltip {
 
         currentDataLine = Component.empty()
                 .append(Component.literal("◆ "))
-                .append(Component.literal(FormatTools.defaultFloat(currentStat) + " ").withStyle(ChatFormatting.DARK_GRAY))
+                .append(Component.literal(FormatTools.defaultFloat(currentStat)).withStyle(ChatFormatting.DARK_GRAY))
                 .append(Component.literal(" -> "))
                 .append(Component.literal(FormatTools.defaultFloat(targetedStat) + " ").withStyle(ChatFormatting.GREEN))
                 .append(Component.translatable(property.unit()));
