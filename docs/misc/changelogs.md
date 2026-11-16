@@ -9,10 +9,65 @@ The history below covers all updates starting from version **6.4.0** up to the *
 {% endhint %}
 
 {% updates format="full" %}
+{% update date="2026-11-16" %}
+## v7.0.0 beta 1
+
+#### **\[Major Changes]**
+
+* <mark style="color:blue;">**Added Spells**</mark>: Players can now unlock and upgrade active skills. Press R to open the Spell Wheel.
+* <mark style="color:blue;">**Deactivable Skills**</mark>: Unlocked skills can now be toggled on or off.
+* <mark style="color:blue;">**Added the 5 first Spells**</mark>: Dash, Void Link, Retreat, Rewind, and Foresight.
+* <mark style="color:blue;">**Added 4 New Skills**</mark>: Impulse, Divine Salvation, Overload, and Deep Rest.
+* Removed the `Adrenaline` skill.
+* Removed in-game statistics tracking and stat limits.
+* <mark style="color:blue;">**Major Performance & Network Optimization**</mark>: Significantly reduced overall resource usage and network bandwidth consumption.
+
+#### **\[Changes]**
+
+* Overhauled all UI menus.
+* Added the Spell menu and Wheel UIs.
+* Overhauled load error message: issues are now displayed in a clearer, more structured format.
+* Overhauled tooltips.
+* The prerequisite parameter now requires a target skill level (skill\_id + skill\_lvl).
+* Removed the "nature" category.
+* <mark style="color:blue;">**Unified Categories**</mark>: Utility categories (all and bookmarks) now behave like standard categories.
+* Purchase and refund tooltips now show a side-by-side comparison between the current value and the target level's value instead of displaying the net gain.
+* Purchase tooltips now display the number of levels that can be purchased in Bulk mode.
+* Added a "Show Locked" toggle in the menu.
+* Commands now support multiple targets.
+* Added the /skills peek command to inspect a player's mod data.
+* Added the /skills debug errors command to display errors from the latest reload.
+* `Magnet Effect`: Reduced calculation overhead and staggered tick execution over time for better performance. Forced client updates for smoother item movement.
+* `Haggler Effect`: Staggered tick execution over time and disabled pathfinding calculations once the villager is already nearby.
+
+#### **\[Minor Changes]**
+
+* Updated some icons.
+* Improved several default us\_us localization strings.
+* Dropped backwards compatibility for versions prior to 6.2.
+* Added a generic "permanent" parameter for skills to prevent them from being disabled.
+* Added keybinds for opening the Spell Wheel and 5 quick-cast spell slots.
+* Changed command argument order: targets are now specified as the second-to-last parameter.
+* Unified configuration options for HUD overlays.
+* Renamed /skill point to /skill sp.
+* Removed the maximumLevel field: a skill's maximum level is now determinedby the length of its price list.
+* Added the Reprieve effect.
+
+#### **\[Bug Fixes]**
+
+* <mark style="color:blue;">**Fixed a memory leak**</mark> where skills repeatedly re-subscribed to their events in a loop, eventually crashing the server.
+* <mark style="color:blue;">**Fixed an issue**</mark> where Spare Parts could repair tools or duplicate items.It now ignores unique items (items with custom NBT or durability).
+* <mark style="color:blue;">**Fixed Resilience reduction**</mark> calculations so it now works reliably over extended effect durations.
+* <mark style="color:blue;">**Fixed #22**</mark>: Tooltips can now be scaled via the configuration file.
+
+#### **\[API]**
+
+* <mark style="color:blue;">**Architectural Changes**</mark>: Most functions and events have been renamed or refactored. Addon developers and modpack authors should review and update their custom addons and KubeJS scripts.
+* <mark style="color:blue;">**Known Limitation**</mark>: The Spell API is not yet supported in KubeJS.
+{% endupdate %}
+
 {% update date="2026-06-23" %}
 ## v7.0.0 alpha
-
-
 
 #### \[Changes]
 
