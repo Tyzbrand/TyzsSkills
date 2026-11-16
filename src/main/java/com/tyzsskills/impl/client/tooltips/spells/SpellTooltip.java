@@ -99,7 +99,7 @@ public class SpellTooltip extends UITooltip {
             title = Component.translatable(spell.getDisplayName()).withStyle(ChatFormatting.DARK_PURPLE);
             updateTags();
 
-            description = Component.translatable(spell.getDescription());
+            description = Component.translatable(spell.getDescription()).withStyle(ChatFormatting.GRAY);
         }
 
         lastShiftState = currentShiftState;

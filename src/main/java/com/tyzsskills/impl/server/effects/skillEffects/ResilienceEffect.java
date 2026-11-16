@@ -41,10 +41,14 @@ public class ResilienceEffect extends SkillBehavior {
         if(reductionPercentage <= 0) return;
 
         int newDuration = (int)(originalDuration * (1- reductionPercentage/100f));
-        if(newDuration < 20) return;
+        newDuration = Math.max(20, newDuration);
 
         final int capturedDuration = newDuration;
-        player.getServer().execute(() -> {
+
+        var server = player.getServer();
+        if(server == null) return;
+
+        server.execute(() -> {
             if(player.isRemoved()) return;
             IS_MODIFYING.set(true);
 

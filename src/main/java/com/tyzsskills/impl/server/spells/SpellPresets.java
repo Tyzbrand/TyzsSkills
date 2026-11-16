@@ -14,7 +14,7 @@ public class SpellPresets {
 
 
     private static final SpellPrefab DASH =
-            SpellPrefab.builder("dash", 10)
+            SpellPrefab.builder("dash", 13)
                     .withIcon("minecraft:textures/item/elytra.png")
                     .withBehavior(new DashEffect())
                     .addProperty(new SpellProperty(
@@ -35,7 +35,7 @@ public class SpellPresets {
                     .build();
 
     private static final SpellPrefab VOID_LINK =
-            SpellPrefab.builder("void_link", 10)
+            SpellPrefab.builder("void_link", 18)
                     .withIcon("minecraft:textures/item/ender_pearl.png")
                     .withBehavior(new VoidLinkEffect())
                     .addProperty(new SpellProperty(
@@ -48,7 +48,7 @@ public class SpellPresets {
                     .build();
 
     private static final SpellPrefab RETREAT =
-            SpellPrefab.builder("retreat", 10)
+            SpellPrefab.builder("retreat", 14)
                     .withBehavior(new RetreatEffect())
                     .addProperty(new SpellProperty(
                             "cooldown",
@@ -67,12 +67,12 @@ public class SpellPresets {
                     .build();
 
     private static final SpellPrefab REWIND =
-            SpellPrefab.builder("rewind", 10)
+            SpellPrefab.builder("rewind", 15)
                     .withBehavior(new RewindEffect())
                     .addProperty(new SpellProperty(
                             "cooldown",
                             List.of(1, 2, 3),
-                            60f, List.of(45f, 30f, 1f),
+                            60f, List.of(45f, 30f, 15f),
                             "property.tyzs_skills.cooldown.displayName",
                             "property.tyzs_skills.cooldown.description",
                             "skill.tyzs_skills.unit.seconds"))

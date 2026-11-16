@@ -106,7 +106,7 @@ public class SpellPanel extends UIContainer {
        for(var spell : spells){
            if(rowCount >= SCROLL_ITEM_PER_LINE){
                y += SCROLL_ITEM_SPACING + SpellCard.HEIGHT;
-               x = 0;
+               x = 3;
                rowCount = 0;
            }
 

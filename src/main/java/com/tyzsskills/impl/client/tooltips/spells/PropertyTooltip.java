@@ -45,7 +45,7 @@ public class PropertyTooltip extends UITooltip {
     }
 
     private void updateDescription(){
-        description = Component.translatable(property.description());
+        description = Component.translatable(property.description()).withStyle(ChatFormatting.GRAY);
     }
 
     //UTILS

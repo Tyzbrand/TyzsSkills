@@ -25,7 +25,7 @@
   "skill.tyzs_skills.unit.item" : "item(s)",
   "skill.tyzs_skills.unit.slot" : "slot(s)",
   "skill.tyzs_skills.unit.spell_slot" : "spell slot(s)",
-  "skill.tyzs_skills.unit.power" : "block/sec",
+  "skill.tyzs_skills.unit.power" : "block/t",
 
 
   "overlay.tyzs_skills.level" : "Level",
@@ -50,115 +50,110 @@
 
 
   "skill.tyzs_skills.health_boost.displayName" : "Health Boost",
-  "skill.tyzs_skills.health_boost.description" : "Increases maximum health by {value} half hearts",
+  "skill.tyzs_skills.health_boost.description" : "Increases maximum health by {value} half hearts.",
 
   "skill.tyzs_skills.oxygen_boost.displayName" : "Oxygen Boost",
-  "skill.tyzs_skills.oxygen_boost.description" : "Increases underwater breathing time by {value}%",
+  "skill.tyzs_skills.oxygen_boost.description" : "Increases underwater breathing time by {value}%.",
 
   "skill.tyzs_skills.block_reach.displayName" : "Block Reach",
-  "skill.tyzs_skills.block_reach.description" : "Increases the range at which the player can place and destroy by {value} blocks",
+  "skill.tyzs_skills.block_reach.description" : "Increases the range at which the player can place and destroy by {value} blocks.",
 
   "skill.tyzs_skills.attack_damage.displayName" : "Attack Damage",
-  "skill.tyzs_skills.attack_damage.description" : "Increases melee damage by {value}",
+  "skill.tyzs_skills.attack_damage.description" : "Increases melee damage by {value}.",
 
   "skill.tyzs_skills.sneak_speed.displayName" : "Sneaking Speed",
-  "skill.tyzs_skills.sneak_speed.description" : "Increases movement speed while sneaking by {value}%",
+  "skill.tyzs_skills.sneak_speed.description" : "Increases movement speed while sneaking by {value}%.",
 
   "skill.tyzs_skills.speed_boost.displayName" : "Speed",
-  "skill.tyzs_skills.speed_boost.description" : "Increases movement speed by {value}%",
+  "skill.tyzs_skills.speed_boost.description" : "Increases movement speed by {value}%.",
 
   "skill.tyzs_skills.step_height.displayName" : "Step Height",
-  "skill.tyzs_skills.step_height.description" : "Allows stepping up blocks up to {value} blocks high without jumping",
+  "skill.tyzs_skills.step_height.description" : "Allows stepping up blocks up to {value} blocks high without jumping.",
 
   "skill.tyzs_skills.swim_speed.displayName" : "Swim Speed",
-  "skill.tyzs_skills.swim_speed.description" : "Increases swim speed by {value}%",
+  "skill.tyzs_skills.swim_speed.description" : "Increases swim speed by {value}%.",
 
   "skill.tyzs_skills.venomous_attack.displayName" : "Venomous Strike",
-  "skill.tyzs_skills.venomous_attack.description" : "Adds a {success_probability}% chance to poison targets on hit",
+  "skill.tyzs_skills.venomous_attack.description" : "Adds a {success_probability}% chance to poison targets on hit.",
 
   "skill.tyzs_skills.critical_hit.displayName" : "Critical Strike",
-  "skill.tyzs_skills.critical_hit.description" : "Adds a {success_probability}% chance to deal a critical hit (double damage)",
+  "skill.tyzs_skills.critical_hit.description" : "Adds a {success_probability}% chance to deal a critical hit (double damage).",
 
   "skill.tyzs_skills.damage_deal.displayName" : "Deflection",
-  "skill.tyzs_skills.damage_deal.description" : "Adds a {success_probability}% chance to negate and reflect incoming melee damage",
+  "skill.tyzs_skills.damage_deal.description" : "Adds a {success_probability}% chance to negate and reflect incoming melee damage.",
 
   "skill.tyzs_skills.bloodlust.displayName" : "Bloodlust",
-  "skill.tyzs_skills.bloodlust.description" : "Killing a hostile mob regenerates {health_percentage}% of its max health",
+  "skill.tyzs_skills.bloodlust.description" : "Killing a hostile mob regenerates {health_percentage}% of its max health.",
 
   "skill.tyzs_skills.resistance.displayName" : "Resistance",
-  "skill.tyzs_skills.resistance.description" : "Reduces all incoming damage by {damage_resistance}%",
+  "skill.tyzs_skills.resistance.description" : "Reduces all incoming damage by {damage_resistance}%.",
 
   "skill.tyzs_skills.backstab.displayName" : "Backstab",
-  "skill.tyzs_skills.backstab.description" : "Increases damage dealt from behind by {damage_buff}%",
+  "skill.tyzs_skills.backstab.description" : "Increases damage dealt from behind by {damage_buff}%.",
 
   "skill.tyzs_skills.rage.displayName" : "Rage",
-  "skill.tyzs_skills.rage.description" : "Increases damage by {damage_buff}% when health is below {health_threshold}%",
+  "skill.tyzs_skills.rage.description" : "Increases damage by {damage_buff}% when health is below {health_threshold}%.",
 
   "skill.tyzs_skills.resilience.displayName" : "Resilience",
-  "skill.tyzs_skills.resilience.description" : "Reduces the duration of negative status effects by {effect_time_reduction}%",
+  "skill.tyzs_skills.resilience.description" : "Reduces the duration of negative status effects by {effect_time_reduction}%.",
 
   "skill.tyzs_skills.swift_learn.displayName" : "Swift Learning",
-  "skill.tyzs_skills.swift_learn.description" : "Increases Skill XP gain by {value}%",
+  "skill.tyzs_skills.swift_learn.description" : "Increases Skill XP gain by {value}%.",
 
   "skill.tyzs_skills.green_thumb.displayName" : "Green Thumb",
-  "skill.tyzs_skills.green_thumb.description" : "Adds a {success_probability}% chance to double drops when harvesting crops and plants",
+  "skill.tyzs_skills.green_thumb.description" : "Adds a {success_probability}% chance to double drops when harvesting crops and plants.",
 
   "skill.tyzs_skills.nutrition.displayName" : "Metabolism",
-  "skill.tyzs_skills.nutrition.description" : "Increases food value (nutrition & saturation) by {nutrition_bonus}%",
+  "skill.tyzs_skills.nutrition.description" : "Increases food value (nutrition & saturation) by {nutrition_bonus}%.",
 
   "skill.tyzs_skills.experience_boost.displayName" : "Wisdom",
-  "skill.tyzs_skills.experience_boost.description" : "Increases Vanilla XP gain by {bonus_percentage}%",
+  "skill.tyzs_skills.experience_boost.description" : "Increases Vanilla XP gain by {bonus_percentage}%.",
 
   "skill.tyzs_skills.excavation.displayName" : "Excavation",
-  "skill.tyzs_skills.excavation.description" : "Increases mining speed by {value}%",
+  "skill.tyzs_skills.excavation.description" : "Increases mining speed by {value}%.",
 
   "skill.tyzs_skills.stealth.displayName" : "Stealth",
-  "skill.tyzs_skills.stealth.description" : "Reduces the detection range of hostile mobs by {range_reduction}%",
+  "skill.tyzs_skills.stealth.description" : "Reduces the detection range of hostile mobs by {range_reduction}%.",
 
   "skill.tyzs_skills.magnet.displayName" : "Magnet",
-  "skill.tyzs_skills.magnet.description" : "Attracts items within a {block_radius} block radius [sneak to disable]",
-
-  "skill.tyzs_skills.adrenaline.displayName" : "Adrenaline",
-  "skill.tyzs_skills.adrenaline.description" : "Grants Absorption and Speed III for {effect_duration}s when health falls below {health_threshold}%",
+  "skill.tyzs_skills.magnet.description" : "Attracts items within a {block_radius} block radius [sneak to disable].",
 
   "skill.tyzs_skills.jinxed.displayName" : "Jinxed",
-  "skill.tyzs_skills.jinxed.description" : "Adds a {success_probability}% chance to scramble the target's hotbar on hit",
+  "skill.tyzs_skills.jinxed.description" : "Adds a {success_probability}% chance to scramble the target's hotbar on hit.",
 
   "skill.tyzs_skills.true_strike.displayName" : "True Strike",
-  "skill.tyzs_skills.true_strike.description" : "Adds a {success_probability}% chance to deal true damage on hit",
+  "skill.tyzs_skills.true_strike.description" : "Adds a {success_probability}% chance to deal true damage on hit.",
 
   "skill.tyzs_skills.sunder_armor.displayName" : "Sunder Armor",
-  "skill.tyzs_skills.sunder_armor.description" : "Adds a {success_probability}% chance for attacks to deal {damage_percentage}% extra durability damage to armor",
+  "skill.tyzs_skills.sunder_armor.description" : "Adds a {success_probability}% chance for attacks to deal {damage_percentage}% extra durability damage to armor.",
 
   "skill.tyzs_skills.shepherd_s_blessing.displayName" : "Shepherd’s Blessing",
-  "skill.tyzs_skills.shepherd_s_blessing.description" : "Baby animals grow {growth_speed}% faster",
+  "skill.tyzs_skills.shepherd_s_blessing.description" : "Baby animals grow {growth_speed}% faster.",
 
   "skill.tyzs_skills.spare_parts.displayName" : "Spare Parts",
-  "skill.tyzs_skills.spare_parts.description" : "Grants a {refund_chance}% chance for each ingredient to be recovered when crafting.\nUp to {max_materials} item(s) per craft",
+  "skill.tyzs_skills.spare_parts.description" : "Grants a {refund_chance}% chance for each ingredient to be recovered when crafting.\nUp to {max_materials} item(s) per craft.",
 
   "skill.tyzs_skills.twist_of_fate.displayName" : "Twist Of Fate",
-  "skill.tyzs_skills.twist_of_fate.description" : "Increases the quantity of items found in structure loot chests by {loot_multiplier}%",
+  "skill.tyzs_skills.twist_of_fate.description" : "Increases the quantity of items found in structure loot chests by {loot_multiplier}%.",
 
   "skill.tyzs_skills.haggler.displayName" : "Haggler",
-  "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius.\n\nThey will follow you with a {villager_speed}% speed bonus",
-
+  "skill.tyzs_skills.haggler.description" : "Holding an Emerald attracts villagers within a {block_radius} block radius.\n\nThey will follow you with a {villager_speed}% speed bonus.",
 
   "skill.tyzs_skills.keepsake.displayName" : "Safekept",
-  "skill.tyzs_skills.keepsake.description" : "Safeguards the first {saved_slots} slot(s) of your inventory upon death",
+  "skill.tyzs_skills.keepsake.description" : "Safeguards the first {saved_slots} slot(s) of your inventory upon death.",
 
   "skill.tyzs_skills.impulse.displayName" : "Impulse",
-  "skill.tyzs_skills.impulse.description" : "Shooting a crossbow projects backwards at {repulse_speed} block/sec",
+  "skill.tyzs_skills.impulse.description" : "Firing a crossbow knocks you backwards (recoil strength: {repulse_speed}).\n\nSneak to avoid.",
 
   "skill.tyzs_skills.divine_salvation.displayName" : "Divine Salvation",
-  "skill.tyzs_skills.divine_salvation.description" : "Prevents a fatal strike and pushes entities within a {repulse_radius} block radius at {repulse_power} block/sec.\n\nApplies reprieve effect for {reprieve_duration} sec",
+  "skill.tyzs_skills.divine_salvation.description" : "Prevents a fatal blow and pushes entities within a {repulse_radius} block radius away at {repulse_power} block/t.\n\nGrants Reprieve for {reprieve_duration} sec.",
 
 
   "skill.tyzs_skills.overload.displayName" : "Overload",
-  "skill.tyzs_skills.overload.description" : "Increases the number of spell slots by {value}",
+  "skill.tyzs_skills.overload.description" : "Increases the number of spell slots by {value}.",
 
   "skill.tyzs_skills.deep_rest.displayName" : "Deep Rest",
-  "skill.tyzs_skills.deep_rest.description" : "Waking up restores {food_recovery}% of your hunger",
-
+  "skill.tyzs_skills.deep_rest.description" : "Waking up after a night's sleep restores {food_recovery}% of your hunger bar.",
 
 
   "tyzs_skills.configuration.title": "Tyz's Skills Configuration",
@@ -259,34 +254,34 @@
   "effect.tyzs_skills.reprieve": "Reprieve",
 
   "spell.tyzs_skills.dash.displayName": "Dash",
-  "spell.tyzs_skills.dash.description": "Propel in the direction of the gaze",
+  "spell.tyzs_skills.dash.description": "Launches you forward in the direction you are looking.",
 
   "spell.tyzs_skills.void_link.displayName": "Void Link",
-  "spell.tyzs_skills.void_link.description": "Allows an access to the Ender Chest",
+  "spell.tyzs_skills.void_link.description": "Opens your Ender Chest from anywhere.",
 
   "spell.tyzs_skills.retreat.displayName": "Retreat",
-  "spell.tyzs_skills.retreat.description": "Allows a return to the spawn point after a delay. Canceled if a movement is detected.\n\nCant be used to travel between dimensions",
+  "spell.tyzs_skills.retreat.description": "Teleports you to your spawn point after a delay. Canceled if you move.\n\nCannot be used to travel between dimensions.",
 
   "spell.tyzs_skills.rewind.displayName": "Rewind",
-  "spell.tyzs_skills.rewind.description": "Teleports to the cast position after a delay",
+  "spell.tyzs_skills.rewind.description": "Teleports you back to the cast position after a delay.",
 
   "spell.tyzs_skills.foresight.displayName": "Foresight",
-  "spell.tyzs_skills.foresight.description": "Applies a glow effect to all entities within a radius",
+  "spell.tyzs_skills.foresight.description": "Makes all living entities within a radius glow for a short time.",
 
   "property.tyzs_skills.cooldown.displayName": "Cooldown",
-  "property.tyzs_skills.cooldown.description": "Waiting time between uses",
+  "property.tyzs_skills.cooldown.description": "Time before the spell can be cast again.",
 
   "property.tyzs_skills.teleportation_delay.displayName": "Delay",
-  "property.tyzs_skills.teleportation_delay.description": "Delay before teleportation",
+  "property.tyzs_skills.teleportation_delay.description": "Delay before teleportation.",
 
   "property.tyzs_skills.foresight_radius.displayName": "Radius",
-  "property.tyzs_skills.foresight_radius.description": "Activation radius",
+  "property.tyzs_skills.foresight_radius.description": "Activation radius.",
 
   "property.tyzs_skills.foresight_glow_duration.displayName": "Glow Duration",
-  "property.tyzs_skills.foresight_glow_duration.description": "Duration of the applied glow effect",
+  "property.tyzs_skills.foresight_glow_duration.description": "Duration of the applied glow effect.",
 
   "property.tyzs_skills.dash_speed.displayName": "Dash Speed",
-  "property.tyzs_skills.dash_speed.description": "Motion Speed"
+  "property.tyzs_skills.dash_speed.description": "Launch strength."
 
 
 }

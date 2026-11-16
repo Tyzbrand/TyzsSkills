@@ -50,7 +50,8 @@ public class SparePartsEffect extends SkillBehavior {
         }
 
         if(ingredientCount <= 1) return;
-        if ((ingredientCount == 4 || ingredientCount == 9) && allIdentical) return;
+        if((ingredientCount == 4 || ingredientCount == 9) && allIdentical) return;
+        if(allIdentical && event.getCrafting().is(firstIngredientType)) return;
 
         if(TagMatchManager.isItemInList(skill.getSpecificParameters(), "product_blacklist", event.getCrafting())) return;
 
@@ -61,8 +62,7 @@ public class SparePartsEffect extends SkillBehavior {
         List<Integer> validSlots = new ArrayList<>();
         for (int i = 0; i < container.getContainerSize(); i++) {
             var ingredient = container.getItem(i);
-            if (ingredient.isEmpty() || ingredient.getItem().hasCraftingRemainingItem(ingredient)) continue;
-            if(TagMatchManager.isItemInList(skill.getSpecificParameters(), "ingredient_blacklist", ingredient)) continue;
+            if(!isEligibleForRefund(ingredient, skill)) continue;
             validSlots.add(i);
         }
 
@@ -92,5 +92,12 @@ public class SparePartsEffect extends SkillBehavior {
         }
 
         if(refundedCount > 0) notifyClient(player, skill);
+    }
+
+    //Utils
+    private boolean isEligibleForRefund(ItemStack ingredient, ISkill skill) {
+        if (ingredient.isEmpty() || ingredient.getItem().hasCraftingRemainingItem(ingredient)) return false;
+        if (ingredient.isDamaged() || !ingredient.isComponentsPatchEmpty()) return false;
+        return !TagMatchManager.isItemInList(skill.getSpecificParameters(), "ingredient_blacklist", ingredient);
     }
 }
