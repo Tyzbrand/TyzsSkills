@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.client.models;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.api.records.SpellProperty;
@@ -84,7 +84,7 @@ public class PropertyCard extends UIContainer {
         var playerCtx = cache.getPlayerContext();
         var propertyCtx = cache.SPELLS.getPropertyContext(property, spell.getId());
 
-        canBuyProperty = SpellRules.canBuyProperty(propertyCtx, playerCtx, cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
+        canBuyProperty = SpellRules.canBuyProperty(propertyCtx, playerCtx, cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM));
     }
 
     //region EXTRACTED LOGIC

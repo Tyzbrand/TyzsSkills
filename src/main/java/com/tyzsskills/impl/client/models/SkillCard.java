@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.client.models;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.client.Styles;
@@ -110,9 +110,11 @@ public class SkillCard extends UIContainer {
         this.addChild(new UIButton(4, 4, this::getCadreStyle, this::handleDeactivation)
                 .withTooltip(() -> skillTooltip));
 
-        this.addChild(new UIImage(7, 7, 16, 16, () -> icon)
-                .withShadow(2f)
-                .withScale(.92f, Enums.ScalePivot.CENTER));
+        var iconImage = new UIImage(7, 7, 16, 16, () -> icon);
+        iconImage.withScale(.92f, Enums.ScalePivot.CENTER);
+        if(Settings.Stock.RENDER_SHADOWS.get()) iconImage.withShadow(2f);
+        this.addChild(iconImage);
+
 
         //BADGE
         var textScale = .57f;
@@ -146,10 +148,10 @@ public class SkillCard extends UIContainer {
         this.isMaxed = cache.SKILLS.getSkillLevel(skill.getId()) >= skill.getMaximumLevel();
         this.isBookmarked = cache.SKILLS.isSkillBookMarked(skill.getId());
         this.isDeactivated = cache.SKILLS.isSkillDeactivated(skill.getId());
-        this.canAffordPurchase = SkillRules.canBuy(sCtx, pCtx, cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
-        this.canAffordRefund = SkillRules.canRefund(sCtx, pCtx, cache.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
-        this.canBuy = cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true) && skill.isPurchasable();
-        this.canRefund = cache.getConfigBool(Config.REFUND_SYSTEM_KEY, true) && skill.isRefundable();
+        this.canAffordPurchase = SkillRules.canBuy(sCtx, pCtx, cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM));
+        this.canAffordRefund = SkillRules.canRefund(sCtx, pCtx, cache.SETTINGS.serverGet(Settings.Stock.REFUND_SYSTEM));
+        this.canBuy = cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM) && skill.isPurchasable();
+        this.canRefund = cache.SETTINGS.serverGet(Settings.Stock.REFUND_SYSTEM) && skill.isRefundable();
 
         this.currentLevel = cache.SKILLS.getSkillLevel(skill.getId());
     }

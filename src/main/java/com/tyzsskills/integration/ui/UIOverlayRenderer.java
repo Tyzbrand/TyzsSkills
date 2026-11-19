@@ -1,6 +1,8 @@
 package com.tyzsskills.integration.ui;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
+import com.tyzsskills.impl.client.overlay.MetadataOverlay;
+import com.tyzsskills.impl.client.overlay.SkillOverlay;
 import com.tyzsskills.integration.ui.models.UIOverlay;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -21,7 +23,7 @@ public class UIOverlayRenderer implements LayeredDraw.Layer {
 
         var instance = Minecraft.getInstance();
         if(instance.player == null || instance.options.hideGui) return;
-        if (instance.player.isCreative() && !Config.SHOW_OVERLAYS_IN_CREATIVE.get()) return;
+        if (instance.player.isCreative() && !Settings.Stock.OVERLAY_CREATIVE.get()) return;
 
         ACTIVE_OVERLAYS.values().removeIf(UIOverlay::isExpired);
         if(ACTIVE_OVERLAYS.isEmpty()) return;
@@ -57,6 +59,11 @@ public class UIOverlayRenderer implements LayeredDraw.Layer {
             overlay.updatePosition(targetX - shiftX - ox, targetY - shiftY - oy);
             overlay.draw(gui, -1, -1, partialTick);
         }
+    }
+
+    public static void reloadOverlays(){
+        remove(MetadataOverlay.ID);
+        remove(SkillOverlay.ID);
     }
 
     @SuppressWarnings("unchecked")

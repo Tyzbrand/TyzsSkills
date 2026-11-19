@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.events;
 
+import com.tyzsskills.Settings;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.active.CompatibilityManager;
@@ -48,12 +49,6 @@ public class RuntimeEvents {
 
         try{
             FileManager.init(server);
-
-            FileManager.writeDefaultSkills(server);
-            FileManager.writeDefaultData(server);
-
-            FileManager.readSkills(server);
-            FileManager.readData(server);
         }
         catch (IOException e) {
             Tyzsskills.LOGGER.error("CRITICAL ERROR: Unable to load files during server start", e);
@@ -70,7 +65,8 @@ public class RuntimeEvents {
         LevelManager.clearPool();
         CategoryLoader.clearCategories();
 
-        ErrorManager.clear();
+        Settings.resetServerSettings();
+        ErrorManager.clear(false);
     }
 
     @SubscribeEvent
@@ -85,8 +81,8 @@ public class RuntimeEvents {
 
         PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
 
-        if (player.hasPermissions(2) && ErrorManager.hasErrorsOrWarns()) {
-            ErrorManager.printErrors(player);
+        if (player.hasPermissions(2) && ErrorManager.hasErrorsOrWarns(false)) {
+            ErrorManager.printErrors(player, false);
         }
     }
 

@@ -217,3 +217,8 @@ tasks.withType(Javadoc).configureEach {
         )
     }
 }
+tasks.named('jar', Jar) {
+    from('LICENSE') {
+        rename { 'tyzs_skills_licence' }
+    }
+}

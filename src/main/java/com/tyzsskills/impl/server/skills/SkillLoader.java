@@ -29,12 +29,12 @@ public class SkillLoader {
 
     public static void preLoadSkill(JsonObject source, @NotNull String filename, boolean isDefault){
         if(source == null) {
-            ErrorManager.registerSkillError(filename, "file is empty");
+            ErrorManager.registerSkillError(filename, "file is empty", false);
             return;
         }
 
         var id = JsonLoadTools.getSafeElement(source, "id", JsonPrimitive::getAsString);
-        if(id == null || id.isBlank()) {ErrorManager.registerSkillError(filename, "invalid id"); return;}
+        if(id == null || id.isBlank()) {ErrorManager.registerSkillError(filename, "invalid id", false); return;}
         id = id.toLowerCase();
 
         applyTransitions(source, id);
@@ -50,7 +50,7 @@ public class SkillLoader {
             }
 
             if(skillQueue.containsKey(id)) skillQueue.put(id, source);
-            else  ErrorManager.registerSkillError(filename, "unable to find the skill to overwrite");
+            else  ErrorManager.registerSkillError(filename, "unable to find the skill to overwrite", false);
         }
     }
 
@@ -69,25 +69,25 @@ public class SkillLoader {
         if(!state) return; //Les skills désactivés ne sont pas chargés
 
         List<Integer> prices = JsonLoadTools.getSafeList(source, "prices", JsonElement::getAsInt);
-        if(prices == null || prices.isEmpty()) {ErrorManager.registerSkillError(id, "invalid price list"); return;}
+        if(prices == null || prices.isEmpty()) {ErrorManager.registerSkillError(id, "invalid price list", false); return;}
         if(prices.size() > Constants.SKILL_MAX_LEVEL) {
-            ErrorManager.registerSkillError(id, String.format("prices list is too long, current : %d, limit : %d", prices.size(), Constants.SKILL_MAX_LEVEL)); return;
+            ErrorManager.registerSkillError(id, String.format("prices list is too long, current : %d, limit : %d", prices.size(), Constants.SKILL_MAX_LEVEL), false); return;
         }
 
         Enums.SkillType type = JsonLoadTools.getSafeEnum(source, "type", Enums.SkillType.class);
-        if(type == null) {ErrorManager.registerSkillError(id, "invalid skill type"); return;}
+        if(type == null) {ErrorManager.registerSkillError(id, "invalid skill type", false); return;}
 
         String category = JsonLoadTools.getSafeElement(source, "category", JsonPrimitive::getAsString);
-        if(category == null) {ErrorManager.registerSkillWarn(id, "invalid category"); category = "misc";}
+        if(category == null) {ErrorManager.registerSkillWarn(id, "invalid category", false); category = "misc";}
 
         String icon = JsonLoadTools.getSafeElement(source, "icon", JsonPrimitive::getAsString);
-        if(icon == null) {ErrorManager.registerSkillWarn(id, "invalid icon"); icon = "tyzs_skills:textures/gui/skills/default.png";}
+        if(icon == null) {ErrorManager.registerSkillWarn(id, "invalid icon", false); icon = "tyzs_skills:textures/gui/skills/default.png";}
 
         String displayName = JsonLoadTools.getSafeElement(source, "displayName", JsonPrimitive::getAsString);
-        if(displayName == null) {ErrorManager.registerSkillWarn(id, "invalid display name"); displayName = "Unknown skill";}
+        if(displayName == null) {ErrorManager.registerSkillWarn(id, "invalid display name", false); displayName = "Unknown skill";}
 
         String description = JsonLoadTools.getSafeElement(source, "description", JsonPrimitive::getAsString);
-        if(description == null) {ErrorManager.registerSkillWarn(id, "invalid description"); description = "Missing description";}
+        if(description == null) {ErrorManager.registerSkillWarn(id, "invalid description", false); description = "Missing description";}
 
         SkillConfiguration config = JsonLoadTools.getSafeObject(source, "config", obj -> parseConfig(obj, id));
         if(config == null) config = new SkillConfiguration();
@@ -95,29 +95,29 @@ public class SkillLoader {
 
         if(type == Enums.SkillType.CUSTOM || type == Enums.SkillType.GENERIC){
             if(!source.has("modifiers")) {
-                ErrorManager.registerSkillError(id, "one modifier is required");
+                ErrorManager.registerSkillError(id, "one modifier is required", false);
                 return;
             }
 
-            if(!source.get("modifiers").isJsonArray()) {ErrorManager.registerSkillError(id, "invalid modifier structure");return;}
+            if(!source.get("modifiers").isJsonArray()) {ErrorManager.registerSkillError(id, "invalid modifier structure", false);return;}
 
             var modifiers = new ArrayList<Modifier>();
             var attributeArray = source.getAsJsonArray("modifiers");
             for(var element : attributeArray){
-                if(!element.isJsonObject()) {ErrorManager.registerSkillError(id, "invalid modifier structure");return;}
+                if(!element.isJsonObject()) {ErrorManager.registerSkillError(id, "invalid modifier structure", false);return;}
 
                 var obj = element.getAsJsonObject();
 
                 var attribute = JsonLoadTools.getSafeElement(obj, "attribute", JsonPrimitive::getAsString);
-                if(attribute == null){ErrorManager.registerSkillError(id, "invalid attribute"); return;}
+                if(attribute == null){ErrorManager.registerSkillError(id, "invalid attribute", false); return;}
 
                 var operation = JsonLoadTools.getSafeEnum(obj, "operation", AttributeModifier.Operation.class);
                 if(operation == null) operation = AttributeModifier.Operation.ADD_VALUE;
 
                 var values = JsonLoadTools.getSafeList(obj, "values", JsonElement::getAsFloat);
-                if(values == null) {ErrorManager.registerSkillError(id, "invalid values"); return;}
+                if(values == null) {ErrorManager.registerSkillError(id, "invalid values", false); return;}
                 if(values.size() < prices.size()) {
-                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), prices.size()));
+                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), prices.size()), false);
                     return;
                 }
 
@@ -127,7 +127,7 @@ public class SkillLoader {
                 modifiers.add(new Modifier(attribute, operation, values, unit));
             }
 
-            if(modifiers.isEmpty()) {ErrorManager.registerSkillError(id, "one modifier is required"); return;}
+            if(modifiers.isEmpty()) {ErrorManager.registerSkillError(id, "one modifier is required", false); return;}
 
             //Not to erase JSON tags
             var finalTags = new ArrayList<>(config.tags());
@@ -141,21 +141,21 @@ public class SkillLoader {
         }
 
         if(type == Enums.SkillType.IMMUTABLE){
-            if(!source.has("customValues")) {ErrorManager.registerSkillError(id, "one value set is required");return;}
-            if(!source.get("customValues").isJsonObject()) {ErrorManager.registerSkillError(id, "invalid value set structure");return;}
+            if(!source.has("customValues")) {ErrorManager.registerSkillError(id, "one value set is required", false);return;}
+            if(!source.get("customValues").isJsonObject()) {ErrorManager.registerSkillError(id, "invalid value set structure", false);return;}
 
             var valueSet = new HashMap<String, ValueSet>();
             var obj = source.getAsJsonObject("customValues");
             for(var entry : obj.entrySet()){
                 String key = entry.getKey();
 
-                if(!entry.getValue().isJsonObject()){ErrorManager.registerSkillError(id, "invalid value set structure");return;}
+                if(!entry.getValue().isJsonObject()){ErrorManager.registerSkillError(id, "invalid value set structure", false);return;}
                 var iterationObj = entry.getValue().getAsJsonObject();
 
                 var values = JsonLoadTools.getSafeList(iterationObj, "values", JsonElement::getAsFloat);
-                if(values == null) {ErrorManager.registerSkillError(id, "invalid values"); return;}
+                if(values == null) {ErrorManager.registerSkillError(id, "invalid values", false); return;}
                 if(values.size() < prices.size()) {
-                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), prices.size()));
+                    ErrorManager.registerSkillError(id, String.format("value set is too small, current : %d, expected : %d", values.size(), prices.size()), false);
                     return;
                 }
 
@@ -165,7 +165,7 @@ public class SkillLoader {
                 valueSet.put(key, new ValueSet(values, unit));
             }
 
-            if(valueSet.isEmpty()){ErrorManager.registerSkillError(id, "one value set is required");return;}
+            if(valueSet.isEmpty()){ErrorManager.registerSkillError(id, "one value set is required", false);return;}
 
             SkillManager.registerSkill(new Skill(true, id, prices, type, category,
                     icon, displayName, description, null, valueSet, config));
@@ -207,7 +207,7 @@ public class SkillLoader {
             for(var id : rawTags){
                 var tag = TagRegistry.getTag(id);
                 if(tag != null) tags.add(tag);
-                else ErrorManager.registerSkillWarn(skillId, String.format("unknown tag '%s'", id));
+                else ErrorManager.registerSkillWarn(skillId, String.format("unknown tag '%s'", id), false);
             }
         }
         if(tags != null && !tags.isEmpty()) skillConfig.withTags(tags);
@@ -245,14 +245,14 @@ public class SkillLoader {
                 configObject.remove("skillPrerequisites");
                 configObject.add("skillPrerequisites", newPrerequisites);
 
-                ErrorManager.registerSkillWarn(skillId, "the field 'skillPrerequisite' has a new format: {skillID, requiredLevel}");
+                ErrorManager.registerSkillWarn(skillId, "the field 'skillPrerequisite' has a new format: {skillID, requiredLevel}", false);
             }
         }
 
         //MIGRATION FOR MAXIMUM LEVEL: Removal
         if(source.has("maximumLevel")){
             source.remove("maximumLevel");
-            ErrorManager.registerSkillWarn(skillId, "the field 'maximumLevel' is obsolete");
+            ErrorManager.registerSkillWarn(skillId, "the field 'maximumLevel' is obsolete", false);
         }
     }
 

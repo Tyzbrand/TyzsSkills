@@ -1,8 +1,9 @@
 package com.tyzsskills.impl.client.models;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.api.tools.SettingsParser;
 import com.tyzsskills.impl.client.SoundPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -77,9 +78,9 @@ public class InventoryButton extends AbstractWidget {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (this.isDragging) {
             this.isDragging = false;
-            Config.INVENTORY_BUTTON_X.set(this.getX());
-            Config.INVENTORY_BUTTON_Y.set(this.getY());
-            Config.CLIENT_SPEC.save();
+            Settings.Stock.INVENTORY_X.set(this.getX());
+            Settings.Stock.INVENTORY_Y.set(this.getY());
+            SettingsParser.writeSettings(true);
             return true;
         }
         return false;

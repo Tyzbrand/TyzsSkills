@@ -1,10 +1,8 @@
 package com.tyzsskills.impl.client.overlay;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
-import com.tyzsskills.impl.client.Styles;
-import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.integration.ui.models.UIBackground;
 import com.tyzsskills.integration.ui.models.UIImage;
 import com.tyzsskills.integration.ui.models.UIOverlay;
@@ -26,7 +24,7 @@ public class SkillOverlay extends UIStackOverlay {
     }
 
     public void addSkill(ISkill skill){
-        if(skill == null || !Config.SHOW_SKILL_OVERLAY.get()) return;
+        if(skill == null || !Settings.Stock.SKILL_OVERLAY.get()) return;
 
         var existing = getOverlay(skill.getId(), UIOverlay.class);
         if(existing != null) {
@@ -34,16 +32,16 @@ public class SkillOverlay extends UIStackOverlay {
             return;
         }
 
-        var bgColor = ClientCache.parseColor(Config.SKILL_BG_COLOR.get(), Styles.COLOR_BG);
-        var bdColor = ClientCache.parseColor(Config.SKILL_BD_COLOR.get(), Styles.COLOR_BORDER);
+        var bgColor = Settings.Stock.SKILL_BG.getHex();
+        var bdColor = Settings.Stock.SKILL_BD.getHex();
         var backgroundStyle = new UIStyles.BackgroundStyle(bgColor, bdColor, 0, 0);
 
-        var overlay = new UIOverlay(0, 0, Config.SKILL_DURATION.get().floatValue())
+        var overlay = new UIOverlay(0, 0, Settings.Stock.SKILL_DURATION.get())
                 .withId(skill.getId())
                 .withAnchor(Enums.OverlayAnchor.TOP_LEFT)
                 .withFade(200L, 500L);
 
-        overlay.withScale(Config.SKILL_SCALE.get().floatValue(), Enums.ScalePivot.TOP_LEFT);
+        overlay.withScale(Settings.Stock.SKILL_SCALE.get(), Enums.ScalePivot.TOP_LEFT);
 
         var icon = new UITexture(skill.getIcon(), 16);
         overlay.addChild(new UIBackground(0, 0, 24, 24, () -> backgroundStyle));

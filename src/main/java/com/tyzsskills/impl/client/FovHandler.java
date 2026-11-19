@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.client;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import net.neoforged.api.distmarker.Dist;
@@ -16,7 +16,7 @@ public class FovHandler {
 
     @SubscribeEvent
     public static void onComputeFov(ComputeFovModifierEvent event){
-        double reduction = Config.FOV_REDUCTION.get();
+        double reduction = Settings.Stock.FOV_REDUCTION.get();
         if (reduction <= .0001D) return;
 
         var cache = ClientCache.get();

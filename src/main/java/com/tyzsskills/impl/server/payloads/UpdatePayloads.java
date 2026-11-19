@@ -1,7 +1,8 @@
 package com.tyzsskills.impl.server.payloads;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.api.model.settings.Setting;
 import com.tyzsskills.api.records.Category;
 import com.tyzsskills.api.records.Cooldown;
 import com.tyzsskills.api.records.LevelData;
@@ -25,10 +26,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class UpdatePayloads {
@@ -44,19 +42,12 @@ public class UpdatePayloads {
                 PlayerSyncData::new
         );
     }
-    public record ConfigSyncData(Map<String, Boolean> booleanMap, Map<String, Double> doubleMap, Map<String, Integer> intMap){
-        public static final StreamCodec<ByteBuf, ConfigSyncData> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.BOOL), ConfigSyncData::booleanMap,
-                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.DOUBLE), ConfigSyncData::doubleMap,
-                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.INT), ConfigSyncData::intMap,
-                ConfigSyncData::new
-        );
-    }
 
-    public record ServerSyncData(List<Skill> skills, List<Spell> spells){
+    public record ServerSyncData(List<Skill> skills, List<Spell> spells, Collection<Setting<?>> settings){
         public static final StreamCodec<RegistryFriendlyByteBuf, ServerSyncData> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.collection(ArrayList::new, Skill.STREAM_CODEC), ServerSyncData::skills,
                 ByteBufCodecs.collection(ArrayList::new, Spell.STREAM_CODEC), ServerSyncData::spells,
+                ByteBufCodecs.collection(ArrayList::new, Setting.STREAM_CODEC), ServerSyncData::settings,
                 ServerSyncData::new
         );
     }
@@ -84,7 +75,7 @@ public class UpdatePayloads {
 
 
     //INIT
-    public record InitPayload(ServerSyncData serverData, PlayerSyncData playerData, PlayerSyncSkillData playerSkillData, PlayerSyncSpellData playerSpellData, ConfigSyncData configData, LevelData levelData) implements CustomPacketPayload{
+    public record InitPayload(ServerSyncData serverData, PlayerSyncData playerData, PlayerSyncSkillData playerSkillData, PlayerSyncSpellData playerSpellData, LevelData levelData) implements CustomPacketPayload{
 
         public static final Type<InitPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "init_update_payload"));
 
@@ -93,7 +84,6 @@ public class UpdatePayloads {
                 PlayerSyncData.STREAM_CODEC, InitPayload::playerData,
                 PlayerSyncSkillData.STREAM_CODEC, InitPayload::playerSkillData,
                 PlayerSyncSpellData.STREAM_CODEC, InitPayload::playerSpellData,
-                ConfigSyncData.STREAM_CODEC, InitPayload::configData,
                 LevelData.STREAM_CODEC, InitPayload::levelData,
                 InitPayload::new
         );
@@ -333,7 +323,7 @@ public class UpdatePayloads {
         var data = player.getData(StatsTracker.DATA);
 
         return new UpdatePayloads.InitPayload(
-                new UpdatePayloads.ServerSyncData(SkillManager.getServerSkills().stream().toList(), SpellManager.getServerSpells().stream().toList()),
+                new UpdatePayloads.ServerSyncData(SkillManager.getServerSkills().stream().toList(), SpellManager.getServerSpells().stream().toList(), List.copyOf(Settings.getServerSettings())),
 
                 new UpdatePayloads.PlayerSyncData(LevelManager.getLevel(player),
                         SpManager.getSP(player), XpManager.getXP(player),
@@ -344,14 +334,6 @@ public class UpdatePayloads {
 
                 new PlayerSyncSpellData(SpellManager.getPurchasedSpells(player), SpellManager.getPurchasedProperties(player),
                         SpellManager.getPlayerSlots(player), SpellManager.getActiveCooldowns(player)),
-
-                new UpdatePayloads.ConfigSyncData(
-                        Map.of(Config.REFUND_SYSTEM_KEY, Config.REFUND_SYSTEM.get(),
-                                Config.PURCHASE_SYSTEM_KEY, Config.PURCHASE_SYSTEM.get()),
-
-                        Map.of(Config.REFUND_PERCENTAGE_KEY, Config.REFUND_PERCENTAGE.get()),
-
-                        Map.of(Config.BASE_SPELL_SLOTS_KEY, Config.BASE_SPELL_SLOTS.get())),
 
                 LevelManager.getCurrentLevelData(player));
     }

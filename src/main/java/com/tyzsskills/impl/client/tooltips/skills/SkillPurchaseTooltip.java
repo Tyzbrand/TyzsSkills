@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.client.tooltips.skills;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.tools.FormatTools;
@@ -36,7 +36,7 @@ public class SkillPurchaseTooltip extends UITooltip {
         statContainer = new UIContainer(0, 11);
         this.addChild(statContainer);
 
-        this.withVisibility(() -> skill.isPurchasable() && cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
+        this.withVisibility(() -> skill.isPurchasable() && cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM));
 
         updateData();
     }

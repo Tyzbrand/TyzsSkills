@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.debug;
 
+import com.tyzsskills.Settings;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.events.ModReloadEvent;
 import com.tyzsskills.impl.server.Level.LevelManager;
@@ -19,16 +20,17 @@ import java.io.IOException;
 @ApiStatus.Internal
 public class Reload {
     public static void reload(MinecraftServer server) throws IOException {
-        ErrorManager.clear();
+        ErrorManager.clear(false);
         SkillManager.clearSkills();
         SpellManager.clearSpells();
         XpGainRegistry.clearAll();
         LevelManager.clearPool();
+        Settings.resetServerSettings();
 
         try {
-            FileManager.readSkills(server);
-            FileManager.readData(server);
-        } catch (IOException e) {
+            FileManager.reload(server);
+        }
+        catch (IOException e) {
             Tyzsskills.LOGGER.error("CRITICAL ERROR: Unable to load files during mod reload", e);
             throw new RuntimeException(e);
         }
@@ -37,7 +39,7 @@ public class Reload {
             Repair.repair(player);
             PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
 
-            if (player.hasPermissions(2) && ErrorManager.hasErrorsOrWarns()) ErrorManager.printErrors(player);
+            if (player.hasPermissions(2) && ErrorManager.hasErrorsOrWarns(false)) ErrorManager.printErrors(player, false);
         }
 
         NeoForge.EVENT_BUS.post(new ModReloadEvent());

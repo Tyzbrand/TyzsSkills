@@ -13,6 +13,31 @@ public class Enums {
     public enum SkillAction {PURCHASE, REFUND, BULK_PURCHASE, BULK_REFUND, BOOKMARK, DEACTIVATION}
     public enum SpellAction{PURCHASE, ASSIGNMENT, UNASSIGNMENT, CAST, PROPERTY_PURCHASE}
 
+    //SETTINGS
+    public enum SettingCategory {
+        SERVER_GENERAL(0, false),
+        DEATH_PENALTIES(1, false),
+        XP(2, false),
+
+        CLIENT_GENERAL(0, true),
+        OVERLAYS(1, true),
+        ACCESSIBILITY(2, true),
+        PERFORMANCES(3, true);
+
+        private final int priority;
+        private final boolean isClient;
+
+        SettingCategory(int priority, boolean isClient) {this.priority = priority; this.isClient = isClient;}
+
+        public int priority() {return priority;}
+        public boolean isClient() {return isClient;}
+        public String label(){
+            return isClient ? name().replace("CLIENT_", "")
+                    : name().replace("SERVER_", "");
+        }
+    }
+    public enum SettingType { BOOL, INT, FLOAT, COLOR}
+
     //UI
     public enum ScalePivot {TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER}
     public enum TextAlignment {LEFT, CENTER, RIGHT}

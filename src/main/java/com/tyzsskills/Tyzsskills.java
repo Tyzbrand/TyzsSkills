@@ -18,15 +18,11 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.slf4j.Logger;
 
 @Mod(Tyzsskills.MODID)
@@ -61,16 +57,9 @@ public class Tyzsskills {
         //Register Sounds
         SoundRegistry.register(modEventBus);
 
-        // Register ourselves for server and other game events we are interested in.
-        // Note that this is necessary if and only if we want *this* class (Tyzsskills) to respond directly to events.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(RuntimeEvents.class);
         NeoForge.EVENT_BUS.register(XpGainsEvents.class);
         NeoForge.EVENT_BUS.register(JsEventsDelegate.class);
-
-        // Register configs
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.COMMON_SPEC);
-        modContainer.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
     }
 
     //EVENTS
@@ -86,20 +75,6 @@ public class Tyzsskills {
 
         if (!event.has(EntityType.PLAYER, AttributeRegistry.EXTRA_SPELL_SLOTS)) {
             event.add(EntityType.PLAYER, AttributeRegistry.EXTRA_SPELL_SLOTS);
-        }
-    }
-
-    @SubscribeEvent
-    public void reloadConfig(ModConfigEvent.Reloading event){
-        if(!event.getConfig().getModId().equals(MODID)) return;
-
-        if(event.getConfig().getType() != ModConfig.Type.COMMON) return;
-
-        var server = ServerLifecycleHooks.getCurrentServer();
-        if(server == null) return;
-
-        for(var player : server.getPlayerList().getPlayers()) {
-            PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
         }
     }
 
@@ -208,8 +183,13 @@ public class Tyzsskills {
                 UpdatePayloads.SpellCooldownChange.STREAM_CODEC,
                 UpdatePayloads.SpellCooldownChange::Handle
         );
-    }
 
+        registrar.playToClient(
+                ClientReloadPayload.TYPE,
+                ClientReloadPayload.STREAM_CODEC,
+                ClientReloadPayload::Handle
+        );
+    }
 
     @SubscribeEvent
     public void onServerSetup(FMLCommonSetupEvent event){

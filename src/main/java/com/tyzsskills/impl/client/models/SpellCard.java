@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.client.models;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.impl.client.Styles;
@@ -86,9 +86,12 @@ public class SpellCard extends UIContainer {
         var spellTooltip = new SpellTooltip(spell);
         this.addChild(new UIButton(4, 4, this::getCadreStyle, this::handleAssignation)
                 .withTooltip(() -> spellTooltip));
-        this.addChild(new UIImage(7, 7, 16, 16, () -> icon)
-                .withShadow(2f)
-                .withScale(.95f, Enums.ScalePivot.CENTER));
+
+        var iconImage = new UIImage(7, 7, 16, 16, () -> icon);
+        iconImage.withScale(.95f, Enums.ScalePivot.CENTER);
+        if(Settings.Stock.RENDER_SHADOWS.get()) iconImage.withShadow(2f);
+        this.addChild(iconImage);
+
 
         //PROGRESS BAR
         this.addChild(new UIText(30, 8, () -> text)
@@ -122,7 +125,7 @@ public class SpellCard extends UIContainer {
         var pCtx = cache.getPlayerContext();
         var sCtx = cache.SPELLS.getSpellContext(spell.getId());
 
-        canBuySpell = SpellRules.canBuySpell(sCtx, pCtx, cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
+        canBuySpell = SpellRules.canBuySpell(sCtx, pCtx, cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM));
 
         text = getText();
     }

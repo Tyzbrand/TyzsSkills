@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.client.cache;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.Context;
@@ -19,10 +19,9 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.*;
 
-public class SkillCache {
-
+public class SkillsCache {
     private final ClientCache CACHE;
-    SkillCache(ClientCache cache){CACHE = cache;}
+    SkillsCache(ClientCache cache){CACHE = cache;}
 
     public final Update UPDATE = new Update();
     public final SkillGraph GRAPH = new SkillGraph();
@@ -141,7 +140,7 @@ public class SkillCache {
         String id = skill.getId().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if (!SkillRules.canBuy(getSkillContext(id), CACHE.getPlayerContext(), CACHE.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true))) return false;
+        if (!SkillRules.canBuy(getSkillContext(id), CACHE.getPlayerContext(), CACHE.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM))) return false;
         int price = skill.getPrices().get(currentLvl);
 
 
@@ -154,7 +153,7 @@ public class SkillCache {
         String id = skill.getId().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        var bulkResult = SkillRules.checkBulkBuy(getSkillContext(id), CACHE.getPlayerContext(), CACHE.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
+        var bulkResult = SkillRules.checkBulkBuy(getSkillContext(id), CACHE.getPlayerContext(), CACHE.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM));
 
         if (bulkResult.levelToAdd() > 0) {
             CACHE.METADATA.sp -= bulkResult.spToWithdraw();
@@ -168,10 +167,10 @@ public class SkillCache {
         String id = skill.getId().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if (!SkillRules.canRefund(getSkillContext(id), CACHE.getPlayerContext(), CACHE.getConfigBool(Config.REFUND_SYSTEM_KEY, false))) return false;
+        if (!SkillRules.canRefund(getSkillContext(id), CACHE.getPlayerContext(), CACHE.SETTINGS.serverGet(Settings.Stock.REFUND_SYSTEM))) return false;
 
         skillLevels.put(id, currentLvl - 1);
-        float percentage = (float) CACHE.getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 0);
+        float percentage = CACHE.SETTINGS.serverGet(Settings.Stock.REFUND_PERCENTAGE);
 
         List<Integer> prices = skill.getPrices();
         if (currentLvl - 1 < prices.size()) {
@@ -194,7 +193,7 @@ public class SkillCache {
         if (getSkillLevel(id) <= 0) return false;
 
         var spToRefund = SkillRules.checkBulkRefund(getSkillContext(id), CACHE.getPlayerContext(),
-                (float) CACHE.getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30D), CACHE.getConfigBool(Config.REFUND_SYSTEM_KEY, false));
+                CACHE.SETTINGS.serverGet(Settings.Stock.REFUND_PERCENTAGE), CACHE.SETTINGS.serverGet(Settings.Stock.REFUND_SYSTEM));
 
         if (spToRefund > 0) {
             CACHE.METADATA.sp += spToRefund;
@@ -234,7 +233,7 @@ public class SkillCache {
         if(skill == null) return;
 
         var overlay = UIOverlayRenderer.get(SkillOverlay.ID, SkillOverlay.class);
-        if(overlay == null) UIOverlayRenderer.add(new SkillOverlay(4 + Config.SKILL_OFFSET_X.get(), 57 + Config.SKILL_OFFSET_Y.get(), skill));
+        if(overlay == null) UIOverlayRenderer.add(new SkillOverlay(4 + Settings.Stock.SKILL_OFFSET_X.get(), 57 + Settings.Stock.SKILL_OFFSET_Y.get(), skill));
         else overlay.addSkill(skill);
     }
 }

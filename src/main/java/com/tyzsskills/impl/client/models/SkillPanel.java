@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.client.models;
 
-import com.tyzsskills.Config;
 import com.tyzsskills.Constants;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.Category;
 import com.tyzsskills.impl.client.Styles;
@@ -87,7 +87,7 @@ public class SkillPanel extends UIContainer {
         this.addChild(tabsPanel);
         this.addChild(scrollView);
 
-        if (!Config.KEEP_SEARCH_QUERY.get()) SortingManager.setSearchQuery("");
+        if (!Settings.Stock.QUERY_PERSISTENCE.get()) SortingManager.setSearchQuery("");
 
         initOffset();
 

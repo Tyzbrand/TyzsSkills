@@ -32,7 +32,7 @@ public class CategoryLoader {
 
                 CATEGORIES.add(new Category(id.toLowerCase(), displayName, icon, order));
             } catch (Exception ex) {
-                ErrorManager.registerLoadError("parsing category entry", ex.getMessage());
+                ErrorManager.registerLoadError("parsing category entry", ex.getMessage(), false);
             }
         }
     }

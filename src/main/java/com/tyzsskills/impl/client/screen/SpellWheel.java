@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client.screen;
 
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.impl.client.Styles;
@@ -59,7 +60,6 @@ public class SpellWheel extends Screen {
 
         this.parentScreen = Minecraft.getInstance().screen;
 
-
         cache = ClientCache.get();
         slotCount = cache.SPELLS.getMaxSlots();
         currentMode = mode;
@@ -102,10 +102,13 @@ public class SpellWheel extends Screen {
 
             var iconTexture = new UITexture(spellInSlot.getIcon(), 16);
 
-            mainPanel.addChild(new UIImage(slotPos.x + 7, slotPos.y + 7, iconTexture.size(), iconTexture.size(), () -> iconTexture)
-                    .withShadow(2f)
-                    .withScale(2f, Enums.ScalePivot.TOP_LEFT)
-                    .withShade(() -> currentMode == Enums.WheelMode.CAST && hasActiveCooldown(spellInSlot)));
+            var iconImage = new UIImage(slotPos.x + 7, slotPos.y + 7, iconTexture.size(), iconTexture.size(), () -> iconTexture);
+            iconImage.withScale(2f, Enums.ScalePivot.TOP_LEFT);
+            iconImage.withShade(() -> currentMode == Enums.WheelMode.CAST && hasActiveCooldown(spellInSlot));
+            if(Settings.Stock.RENDER_SHADOWS.get()) iconImage.withShadow(2f);
+            mainPanel.addChild(iconImage);
+
+
 
             if(currentMode == Enums.WheelMode.CAST) {
                 mainPanel.addChild(new UIText(slotPos.x + SLOT_SIZE/2, slotPos.y + SLOT_SIZE - 11, () -> getCooldownTimer(spellInSlot), false)

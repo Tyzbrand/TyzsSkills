@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.server.events;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
@@ -30,8 +30,8 @@ public class XpGainsEvents {
     public static void onBlockBreak(BlockEvent.BreakEvent event){
         if(event.isCanceled()) return;
         if(!(event.getPlayer() instanceof ServerPlayer player)) return;
-        if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
-        if(!Config.EARN_XP_BY_MINING.getAsBoolean()) return;
+        if(player.isCreative() && !Settings.Stock.EARN_XP_IN_CREATIVE.get()) return;
+        if(!Settings.Stock.EARN_FROM_MINING.get()) return;
 
         Level level = (net.minecraft.world.level.Level) event.getLevel();
         var pos = event.getPos();
@@ -39,7 +39,7 @@ public class XpGainsEvents {
 
         if(playerPlaced) BlockMarker.RemoveBlock(level, pos);
 
-        if(Config.PREVENT_PLACED_BLOCK_XP.get() && playerPlaced) return;
+        if(Settings.Stock.PREVENT_XP_FROM_PLACED_BLOCKS.get() && playerPlaced) return;
 
         var value = XpGainRegistry.getBlockValue(event.getState(), player);
         if(value > 0) TyzsSkillsAPI.xp().tryAddXp(player, value);
@@ -49,8 +49,8 @@ public class XpGainsEvents {
     public static void onEntityDeath(LivingDeathEvent event){
         if(event.isCanceled()) return;
         if (!(event.getSource().getEntity() instanceof ServerPlayer player)) return;
-        if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
-        if(!Config.EARN_XP_BY_KILLING.getAsBoolean()) return;
+        if(player.isCreative() && !Settings.Stock.EARN_XP_IN_CREATIVE.get()) return;
+        if(!Settings.Stock.EARN_FROM_KILLING.get()) return;
 
         var value = XpGainRegistry.getEntityValue(event.getEntity(), player);
         if(value > 0) TyzsSkillsAPI.xp().tryAddXp(player, value);
@@ -60,12 +60,12 @@ public class XpGainsEvents {
     public static void onEntityWakeup(PlayerWakeUpEvent event){
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if(!(player.level() instanceof ServerLevel level)) return;
-        if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
+        if(player.isCreative() && !Settings.Stock.EARN_XP_IN_CREATIVE.get()) return;
 
         long timeOfDay = level.getDayTime() % 24000L;
         if (timeOfDay > 1000L) return;
 
-        double sleepValue = Config.SLEEPING_XP_VALUE.get();
+        double sleepValue = Settings.Stock.GAINS_FROM_SLEEPING.get();
         if(sleepValue <= 0) return;
 
         long currentDay = player.level().getDayTime() / 24000L;
@@ -83,9 +83,9 @@ public class XpGainsEvents {
     public static void onEntityFish(ItemFishedEvent event){
         if(event.isCanceled()) return;
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
+        if(player.isCreative() && !Settings.Stock.EARN_XP_IN_CREATIVE.get()) return;
 
-        float value = (float)Config.FISHING_XP_VALUE.getAsDouble();
+        float value = Settings.Stock.GAINS_FROM_FISHING.get();
         if(value <= 0) return;
 
         value *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
@@ -95,8 +95,8 @@ public class XpGainsEvents {
     @SubscribeEvent
     public static void onEntityEat(LivingEntityUseItemEvent.Finish event){
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
-        if(!Config.EARN_XP_BY_EATING.get()) return;
+        if(player.isCreative() && !Settings.Stock.EARN_XP_IN_CREATIVE.get()) return;
+        if(!Settings.Stock.EARN_FROM_EATING.get()) return;
         if(event.getItem().getFoodProperties(player) == null) return;
 
         var value = XpGainRegistry.getFoodValue(event.getItem(), player);
@@ -106,9 +106,9 @@ public class XpGainsEvents {
     @SubscribeEvent
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event){
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
+        if(player.isCreative() && !Settings.Stock.EARN_XP_IN_CREATIVE.get()) return;
 
-        float value = (float)Config.CRAFTING_XP_VALUE.getAsDouble();
+        float value = Settings.Stock.GAINS_FROM_CRAFTING.get();
         if(value <= 0) return;
 
         value *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
@@ -118,9 +118,9 @@ public class XpGainsEvents {
     @SubscribeEvent
     public static void onBabySpawn(BabyEntitySpawnEvent event){
         if (!(event.getCausedByPlayer() instanceof ServerPlayer player)) return;
-        if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
+        if(player.isCreative() && !Settings.Stock.EARN_XP_IN_CREATIVE.get()) return;
 
-        float value = (float)Config.BREEDING_XP_VALUE.getAsDouble();
+        float value = Settings.Stock.GAINS_FROM_BREEDING.get();
         if(value <= 0) return;
 
         value *= (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
@@ -130,12 +130,12 @@ public class XpGainsEvents {
     @SubscribeEvent
     public static void onAdvancement(AdvancementEvent.AdvancementEarnEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
+        if(player.isCreative() && !Settings.Stock.EARN_XP_IN_CREATIVE.get()) return;
         if (event.getAdvancement().id().toString().startsWith("minecraft:recipes/")) return;
 
-        float taskValue = (float)Config.ADVANCEMENT_TASK_XP_VALUE.getAsDouble();
-        float goalValue = (float)Config.ADVANCEMENT_GOAL_XP_VALUE.getAsDouble();
-        float challengeValue = (float)Config.ADVANCEMENT_CHALLENGE_XP_VALUE.getAsDouble();
+        float taskValue = Settings.Stock.GAINS_FROM_TASKS.get();
+        float goalValue = Settings.Stock.GAINS_FROM_GOALS.get();
+        float challengeValue = Settings.Stock.GAINS_FROM_CHALLENGES.get();
 
         event.getAdvancement().value().display().ifPresent(info -> {
             float finalValue = switch (info.getType()) {
@@ -156,12 +156,12 @@ public class XpGainsEvents {
     public static void onPlayerTick(PlayerTickEvent.Post event){
         if (event.getEntity().tickCount % 100 != 0) return;
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if(player.isCreative() && !Config.EARN_XP_IN_CREATIVE.get()) return;
+        if(player.isCreative() && !Settings.Stock.EARN_XP_IN_CREATIVE.get()) return;
 
         var data = player.getData(ExplorationProgression.DATA);
 
-        double biomeValue = Config.NEW_BIOME_XP_VALUE.get();
-        double dimensionValue = Config.NEW_DIMENSION_XP_VALUE.get();
+        double biomeValue = Settings.Stock.GAINS_FROM_BIOMES.get();
+        double dimensionValue = Settings.Stock.GAINS_FROM_DIMENSIONS.get();
 
 
         if(biomeValue > 0.0){

@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.client.tooltips.skills;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.tools.FormatTools;
@@ -38,7 +38,7 @@ public class SkillRefundTooltip extends UITooltip {
         statContainer = new UIContainer(0, 11);
         this.addChild(statContainer);
 
-        this.withVisibility(() -> skill.isRefundable() && cache.getConfigBool(Config.REFUND_SYSTEM_KEY, true) && cache.SKILLS.getSkillLevel(skill.getId()) > 0);
+        this.withVisibility(() -> skill.isRefundable() && cache.SETTINGS.serverGet(Settings.Stock.REFUND_SYSTEM) && cache.SKILLS.getSkillLevel(skill.getId()) > 0);
 
         updateData();
     }
@@ -57,7 +57,7 @@ public class SkillRefundTooltip extends UITooltip {
         if (latestCacheVersion == currentCacheVersion && latestShiftState == currentShiftState) return;
         latestCacheVersion = currentCacheVersion; latestShiftState = currentShiftState;
 
-        refundPercentage = cache.getConfigDouble(Config.REFUND_PERCENTAGE_KEY, 30d);
+        refundPercentage = cache.SETTINGS.serverGet(Settings.Stock.REFUND_PERCENTAGE);
 
         var currentLvl = cache.SKILLS.getSkillLevel(skill.getId());
         var targetLvl = getTargetedLevel(currentLvl);

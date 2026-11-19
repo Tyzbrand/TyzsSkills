@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.client.screen;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.tools.FormatTools;
 import com.tyzsskills.impl.client.Styles;
@@ -160,7 +160,7 @@ public class MainMenu extends Screen {
     }
     @Override
     public void removed() {
-        if(!Config.KEEP_SEARCH_QUERY.get()) SortingManager.setSearchQuery("");
+        if(!Settings.Stock.QUERY_PERSISTENCE.get()) SortingManager.setSearchQuery("");
         super.removed();
     }
     @Override

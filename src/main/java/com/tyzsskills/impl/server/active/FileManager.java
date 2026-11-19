@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.api.records.SpellPrefab;
+import com.tyzsskills.api.tools.SettingsParser;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.Level.LevelPoolPreset;
 import com.tyzsskills.impl.server.categories.CategoryLoader;
@@ -97,12 +98,25 @@ public class FileManager {
         Files.createDirectories(getCustomSpellPath(server));
         Files.createDirectories(getCustomDataPath(server));
 
-        Migration.runMigration(server);
+        SettingsParser.parseSettings(false);
+
+        FileManager.writeDefaultSkills(server);
+        FileManager.writeDefaultData(server);
+
+        FileManager.readSkills(server);
+        FileManager.readData(server);
+    }
+
+    public static void reload(@NotNull MinecraftServer server) throws IOException{
+        SettingsParser.parseSettings(false);
+
+        FileManager.readSkills(server);
+        FileManager.readData(server);
     }
 
 
     //WRITING
-    public static void writeDefaultSkills(@NotNull MinecraftServer server) throws IOException {
+    private static void writeDefaultSkills(@NotNull MinecraftServer server) throws IOException {
         for(var prefab : skillPrefabQueue){
             var skill = new Skill(prefab.active(), prefab.id(),
                     prefab.prices(), prefab.type(), prefab.category(),
@@ -119,8 +133,7 @@ public class FileManager {
             writeFile(spell , getDefaultSpellPath(server), spell.getId());
         }
     }
-
-    public static void writeDefaultData(@NotNull MinecraftServer server) throws IOException {
+    private static void writeDefaultData(@NotNull MinecraftServer server) throws IOException {
         Path targetPath = getDefaultDataPath(server);
 
         writeFile(XpValuePresets.getBlockValuesPreset(), targetPath, BLOCK_VALUES_KEY);
@@ -133,7 +146,7 @@ public class FileManager {
     }
 
     //READING
-    public static void readSkills(@NotNull MinecraftServer server) throws IOException {
+    private static void readSkills(@NotNull MinecraftServer server) throws IOException {
         walkThroughSkills(getDefaultSkillPath(server), true);
         walkThroughSkills(getCustomSkillPath(server), false);
 
@@ -144,8 +157,7 @@ public class FileManager {
 
         SpellLoader.finalizePreloading();
     }
-
-    public static void readData(@NotNull MinecraftServer server) throws IOException{
+    private static void readData(@NotNull MinecraftServer server) throws IOException{
         var defaultPath = getDefaultDataPath(server);
         var customPath = getCustomDataPath(server);
 
@@ -165,32 +177,27 @@ public class FileManager {
         readExclusiveArray(customPath.resolve(categoryFile), defaultPath.resolve(categoryFile), CategoryLoader::loadCategories);
     }
 
-
-
     //UTILS
     private static <T> void writeFile(@NotNull T obj, @NotNull Path path, @NotNull String fileName) throws IOException {
         if(!Files.exists(path) || obj instanceof String) return;
         Files.writeString(path.resolve(fileName + ".json"), gson.toJson(obj));
     }
-
     private static @Nullable JsonElement readFile(@NotNull Path path) throws IOException {
         if (!Files.exists(path)) return null;
         return JsonParser.parseString(Files.readString(path));
     }
-
     private static void processFile(@NotNull Path file, @NotNull Consumer<JsonObject> action){
         try {
             var obj = readFile(file);
             if(obj != null && obj.isJsonObject()) action.accept(obj.getAsJsonObject());
         }
         catch (JsonSyntaxException ex) {
-            ErrorManager.registerLoadError("parsing " + file.getFileName(), "JSON Syntax error");
+            ErrorManager.registerLoadError("parsing " + file.getFileName(), "JSON Syntax error", false);
         }
         catch (Exception ex){
-            ErrorManager.registerLoadError("loading " + file.getFileName(), ex.getMessage());
+            ErrorManager.registerLoadError("loading " + file.getFileName(), ex.getMessage(), false);
         }
     }
-
     private static void walkThroughSkills(@NotNull Path path, boolean isDefault) throws IOException {
         if(!Files.exists(path)) return;
 
@@ -200,7 +207,6 @@ public class FileManager {
                             SkillLoader.preLoadSkill(obj, String.valueOf(file.getFileName()), isDefault)));
             }
     }
-
     private static void walkThroughSpells(@NotNull Path path, boolean isDefault) throws IOException {
         if(!Files.exists(path)) return;
 
@@ -210,22 +216,18 @@ public class FileManager {
                             SpellLoader.preloadSpell(obj, String.valueOf(file.getFileName()), isDefault)));
         }
     }
-
-
     private static void readExclusiveData(@NotNull Path customFile, @NotNull Path defaultFile, @NotNull Consumer<JsonObject> action) throws IOException {
         var source = Files.exists(customFile) ? readFile(customFile) : readFile(defaultFile);
         if (source != null && source.isJsonObject()) {
             action.accept(source.getAsJsonObject());
         }
     }
-
     private static void readExclusiveArray(@NotNull Path customFile, @NotNull Path defaultFile, @NotNull Consumer<JsonArray> action) throws IOException {
         var source = Files.exists(customFile) ? readFile(customFile) : readFile(defaultFile);
         if (source != null && source.isJsonArray()) {
             action.accept(source.getAsJsonArray());
         }
     }
-
     private static void clearDefaultPath(@NotNull MinecraftServer server) throws IOException {
         Path[] defaultPaths = new Path[]{getDefaultDataPath(server), getDefaultSpellPath(server), getDefaultSkillPath(server)};
 
@@ -236,78 +238,6 @@ public class FileManager {
                 walk.sorted(Comparator.reverseOrder())
                         .map(Path::toFile)
                         .forEach(File::delete);
-            }
-        }
-    }
-
-    private static class Migration{
-        public static void runMigration(@NotNull MinecraftServer server){
-            var basePath = getBasePath(server);
-            var oldSkillsRoot = basePath.resolve("skills");
-            var oldCustomSkills = oldSkillsRoot.resolve("custom");
-
-            var newCustomSkills = getCustomSkillPath(server);
-            var newCustomData = getCustomDataPath(server);
-
-            if (Files.exists(oldCustomSkills)) {
-                try (Stream<Path> stream = Files.walk(oldCustomSkills)) {
-                    stream.filter(Files::isRegularFile).filter(p -> p.toString().endsWith(".json")).forEach(source -> {
-                        try {
-                            Files.move(source, newCustomSkills.resolve(source.getFileName()), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                        } catch (IOException ignored) {}
-                    });
-                } catch (IOException ignored) {}
-            }
-
-            if (Files.exists(oldSkillsRoot)) {
-                try (Stream<Path> walk = Files.walk(oldSkillsRoot)) {
-                    walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-                } catch (IOException ignored) {}
-            }
-
-            migrateData(basePath.resolve(BLOCK_VALUES_KEY + ".json"),
-                    newCustomData.resolve(BLOCK_VALUES_KEY + ".json"),
-                    gson.toJsonTree(XpValuePresets.getBlockValuesPreset()));
-
-            migrateData(basePath.resolve(ENTITY_VALUES_KEY + ".json"),
-                    newCustomData.resolve(ENTITY_VALUES_KEY + ".json"),
-                    gson.toJsonTree(XpValuePresets.getEntityValuesPreset()));
-
-            migrateData(basePath.resolve(FOOD_VALUES_KEY + ".json"),
-                    newCustomData.resolve(FOOD_VALUES_KEY + ".json"),
-                    gson.toJsonTree(XpValuePresets.getFoodValuesPreset()));
-
-            migrateData(basePath.resolve(LEVEL_POOL_KEY + ".json"),
-                    newCustomData.resolve(LEVEL_POOL_KEY + ".json"),
-                    gson.toJsonTree(LevelPoolPreset.getLevelDataPreset()));
-        }
-
-        private static void migrateData(@NotNull Path oldFile, @NotNull Path newFile, @NotNull JsonElement defaultTree){
-            if (!Files.exists(oldFile)) return;
-
-            try {
-                var oldJson = gson.fromJson(Files.readString(oldFile), JsonObject.class);
-
-                if (oldJson != null) {
-                    for (String catKey : oldJson.keySet()) {
-                        if (oldJson.get(catKey).isJsonObject()) {
-                            JsonObject category = oldJson.getAsJsonObject(catKey);
-
-                            if (category.has("blocks")) category.add("id", category.remove("blocks"));
-                            if (category.has("entities")) category.add("id", category.remove("entities"));
-                            if (category.has("food")) category.add("id", category.remove("food"));
-                        }
-                    }
-
-                    if (oldJson.equals(defaultTree)) {
-                        Files.delete(oldFile);
-                    } else {
-                        Files.writeString(newFile, gson.toJson(oldJson));
-                        Files.delete(oldFile);
-                    }
-                }
-            } catch (Exception e) {
-                try { Files.move(oldFile, newFile, java.nio.file.StandardCopyOption.REPLACE_EXISTING); } catch (IOException ignored) {}
             }
         }
     }

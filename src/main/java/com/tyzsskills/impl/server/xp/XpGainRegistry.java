@@ -133,12 +133,12 @@ public class XpGainRegistry {
             JsonObject category = obj.getAsJsonObject(categoryKey);
 
             if (!category.has("xp")) {
-                ErrorManager.registerLoadError("loading '" + categoryKey + "[" + filename + "]", "Missing XP value");
+                ErrorManager.registerLoadError("loading '" + categoryKey + "[" + filename + "]", "Missing XP value", false);
                 continue;
             }
 
             if (!category.has("id")) {
-                ErrorManager.registerLoadError("loading '" + categoryKey + "[" + filename + "]", "Missing ID list");
+                ErrorManager.registerLoadError("loading '" + categoryKey + "[" + filename + "]", "Missing ID list", false);
                 continue;
             }
 
@@ -153,7 +153,7 @@ public class XpGainRegistry {
                         var tagKey = TagKey.create(registryKey, location);
                         tagMap.put(tagKey, xpValue);
                     } catch (Exception ex) {
-                        ErrorManager.registerLoadError("parsing on [" + filename + "]: " + entry + "' in xp values", "Invalid ResourceLocation format");
+                        ErrorManager.registerLoadError("parsing on [" + filename + "]: " + entry + "' in xp values", "Invalid ResourceLocation format", false);
                     }
                 } else {
                     valueMap.put(entry, xpValue);

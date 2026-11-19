@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.client.active;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.records.Category;
@@ -73,7 +73,7 @@ public class SortingManager {
         //TOGGLES
         if(!showMaxed) toSort.removeIf(s -> cache.SKILLS.getSkillLevel(s.getId()) >= s.getMaximumLevel());
         if(!showUnaffordable) toSort.removeIf(s -> !SkillRules.canBuy(cache.SKILLS.getSkillContext(s.getId()), playerContext,
-                cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true)));
+                cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM)));
         if(!showLocked) toSort.removeIf(s -> !SkillRules.isAvailable(cache.SKILLS.getSkillContext(s.getId()), playerContext));
 
         if(!currentSearchQuery.isBlank()){
@@ -155,7 +155,7 @@ public class SortingManager {
         if(query.isEmpty()) return true;
         if(text.contains(query)) return true;
 
-        if(!Config.QUERY_TOLERANCE.get()) return false;
+        if(!Settings.Stock.QUERY_TYPOS.get()) return false;
 
         var errorTolerance =  getAllowedErrors(query);
         if(errorTolerance <= 0) return false;

@@ -2,18 +2,21 @@ package com.tyzsskills;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.client.TyzsSkillsClientSetupEvent;
+import com.tyzsskills.api.tools.SettingsParser;
 import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.key.Keybinds;
 import com.tyzsskills.impl.client.models.InventoryButton;
 import com.tyzsskills.impl.client.screen.MainMenu;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
+import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.impl.server.mob_effects.ReprieveMobEffect;
 import com.tyzsskills.integration.ui.UIOverlayRenderer;
 import com.tyzsskills.integration.ui.models.UIImage;
 import com.tyzsskills.integration.ui.models.UIOverlay;
 import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -26,8 +29,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
@@ -44,13 +45,11 @@ public class TyzsskillsClient {
 
     public TyzsskillsClient(ModContainer container) {
         MOD_BUS = container.getEventBus();
-
-        //Config screen
-        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
 
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
+        SettingsParser.parseSettings(true);
         getModBus().post(new TyzsSkillsClientSetupEvent(new TyzsSkillsClientRegistrationWrapper()));
     }
 
@@ -65,6 +64,7 @@ public class TyzsskillsClient {
     @SubscribeEvent
     public static void onClientLogIn(ClientPlayerNetworkEvent.LoggingIn event){
         registerStaticOverlays();
+        ErrorManager.printErrors(event.getPlayer(), true);
     }
 
 
@@ -95,27 +95,26 @@ public class TyzsskillsClient {
     public static void onScreenInit(ScreenEvent.Init.Post event) {
         if (event.getScreen() instanceof InventoryScreen || event.getScreen() instanceof CreativeModeInventoryScreen) {
 
-            if(!Config.SHOW_SKILL_BUTTON.get()) return;
+            if(!Settings.Stock.INVENTORY_BUTTON.get()) return;
 
             AbstractContainerScreen<?> screen = (AbstractContainerScreen<?>) event.getScreen();
 
-            int savedX = Config.INVENTORY_BUTTON_X.get();
-            int savedY = Config.INVENTORY_BUTTON_Y.get();
+            int savedX = Settings.Stock.INVENTORY_X.get();
+            int savedY = Settings.Stock.INVENTORY_Y.get();
 
             InventoryButton myButton = new InventoryButton(
                     savedX,
                     savedY,
-                    () -> {
-                        Minecraft.getInstance().setScreen(new MainMenu());
-                    }
+                    () -> Minecraft.getInstance().setScreen(new MainMenu())
+
             );
 
             if (savedX == 10 && savedY == 10) {
                 boolean overlap = event.getListenersList().stream()
-                        .filter(l -> l instanceof net.minecraft.client.gui.components.AbstractWidget)
-                        .map(l -> (net.minecraft.client.gui.components.AbstractWidget) l)
-                        .anyMatch(w -> w.getX() < savedX + 20 && w.getX() + w.getWidth() > savedX &&
-                                w.getY() < savedY + 20 && w.getY() + w.getHeight() > savedY);
+                        .filter(l -> l instanceof AbstractWidget)
+                        .map(l -> (AbstractWidget) l)
+                        .anyMatch(w -> w.getX() < savedX + 20 && w.getX() + w.getWidth() > savedX
+                                && w.getY() < savedY + 20 && w.getY() + w.getHeight() > savedY);
 
                 if (overlap) {
                     myButton.setX(screen.getGuiLeft() + screen.getXSize() + 5);

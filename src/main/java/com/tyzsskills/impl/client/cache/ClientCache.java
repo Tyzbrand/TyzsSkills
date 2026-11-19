@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.client.cache;
 
-import com.tyzsskills.Config;
 import com.tyzsskills.Constants;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.events.client.ClientInitSynchronizationEvent;
 import com.tyzsskills.api.events.client.ClientUpdateEvent;
 import com.tyzsskills.api.model.Context;
@@ -11,8 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 
@@ -32,9 +30,10 @@ public class ClientCache {
 
     public final Update UPDATE = new Update();
 
-    public final SkillCache SKILLS = new SkillCache(this);
-    public final SpellCache SPELLS = new SpellCache(this);
+    public final SkillsCache SKILLS = new SkillsCache(this);
+    public final SpellsCache SPELLS = new SpellsCache(this);
     public final DataCache METADATA = new DataCache(this);
+    public final SettingsCache SETTINGS = new SettingsCache(this);
 
     private int cacheVersion = 0;
     public void incrVersion(){cacheVersion++;}
@@ -46,25 +45,16 @@ public class ClientCache {
     public void registerNewClick(){lastClickTime = System.currentTimeMillis();}
     public boolean isSpamming(){return System.currentTimeMillis() - lastClickTime < Constants.PAYLOAD_COOLDOWN_MS;}
 
-    //SERVER
-    private final Map<String, Object> configMap = new HashMap<>();
-
 
     public class Update {
         public void updateInit(@NotNull UpdatePayloads.InitPayload payload){
-            var serverData = payload.serverData(); var configData = payload.configData();
+            var serverData = payload.serverData(); var playerData = payload.playerData();
             var playerSkillData = payload.playerSkillData(); var playerSpellData = payload.playerSpellData();
-            var playerData = payload.playerData();
 
             SKILLS.UPDATE.init(playerSkillData, serverData);
             SPELLS.UPDATE.init(playerSpellData, serverData);
             METADATA.UPDATE.init(playerData, payload.levelData());
-
-           configMap.clear();
-
-            configMap.putAll(configData.booleanMap());
-            configMap.putAll(configData.doubleMap());
-            configMap.putAll(configData.intMap());
+            SETTINGS.UPDATE.init(serverData);
 
             registerUpdate("Initial Synchronization", true);
         }
@@ -77,7 +67,7 @@ public class ClientCache {
             else NeoForge.EVENT_BUS.post(new ClientInitSynchronizationEvent());
 
             var player = Minecraft.getInstance().player;
-            if (player == null || !Config.SHOW_DEBUG_MESSAGES.get()) return;
+            if (player == null || !Settings.Stock.SHOW_DEBUG.get()) return;
             player.displayClientMessage(Component.literal(message), false);
         }
     }
@@ -100,27 +90,5 @@ public class ClientCache {
         } catch (NumberFormatException e) {
             return fallback;
         }
-    }
-
-
-    //CONFIG
-    public boolean getConfigBool(@NotNull String id, boolean fallback) {
-        var value = configMap.get(id);
-        if (value instanceof Boolean bool) return bool;
-        else return fallback;
-    }
-
-    public double getConfigDouble(@NotNull String id, double fallback) {
-        var value = configMap.get(id);
-        if (value instanceof Double dbl) return dbl;
-        else if (value instanceof Number nbr) return nbr.doubleValue();
-        else return fallback;
-    }
-
-    public int getConfigInt(@NotNull String id, int fallback) {
-        var value = configMap.get(id);
-        if (value instanceof Integer integer) return integer;
-        else if (value instanceof Number nbr) return nbr.intValue();
-        else return fallback;
     }
 }

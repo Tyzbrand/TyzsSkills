@@ -37,7 +37,7 @@ public class DebugCommands {
                         ctx.getSource().sendFailure(Component.literal("Unable to find player."));
                         return 0;
                     }
-                    ErrorManager.printErrors(player);
+                    ErrorManager.printErrors(player, false);
                     return 1;
                 });
     }

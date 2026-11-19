@@ -1,6 +1,6 @@
 package com.tyzsskills.impl.client.tooltips.spells;
 
-import com.tyzsskills.Config;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.api.records.SpellProperty;
 import com.tyzsskills.api.tools.FormatTools;
@@ -31,7 +31,7 @@ public class PropertyPurchaseTooltip extends UITooltip {
         this.addChild(new UIText(0, 0, () -> currentPriceLine));
         this.addChild(new UIText(0, 11, () -> currentDataLine));
 
-        this.withVisibility(() -> cache.getConfigBool(Config.PURCHASE_SYSTEM_KEY, true));
+        this.withVisibility(() -> cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM));
 
         updateData();
     }
