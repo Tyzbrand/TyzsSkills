@@ -2,7 +2,6 @@ package com.tyzsskills.impl.server.payloads;
 
 import com.tyzsskills.Settings;
 import com.tyzsskills.Tyzsskills;
-import com.tyzsskills.api.model.settings.Setting;
 import com.tyzsskills.api.records.Category;
 import com.tyzsskills.api.records.Cooldown;
 import com.tyzsskills.api.records.LevelData;
@@ -26,7 +25,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class UpdatePayloads {
@@ -43,11 +45,11 @@ public class UpdatePayloads {
         );
     }
 
-    public record ServerSyncData(List<Skill> skills, List<Spell> spells, Collection<Setting<?>> settings){
+    public record ServerSyncData(List<Skill> skills, List<Spell> spells, Map<String, String> settings){
         public static final StreamCodec<RegistryFriendlyByteBuf, ServerSyncData> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.collection(ArrayList::new, Skill.STREAM_CODEC), ServerSyncData::skills,
                 ByteBufCodecs.collection(ArrayList::new, Spell.STREAM_CODEC), ServerSyncData::spells,
-                ByteBufCodecs.collection(ArrayList::new, Setting.STREAM_CODEC), ServerSyncData::settings,
+                ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.STRING_UTF8), ServerSyncData::settings,
                 ServerSyncData::new
         );
     }
@@ -323,7 +325,9 @@ public class UpdatePayloads {
         var data = player.getData(StatsTracker.DATA);
 
         return new UpdatePayloads.InitPayload(
-                new UpdatePayloads.ServerSyncData(SkillManager.getServerSkills().stream().toList(), SpellManager.getServerSpells().stream().toList(), List.copyOf(Settings.getServerSettings())),
+                new UpdatePayloads.ServerSyncData(SkillManager.getServerSkills().stream().toList(),
+                        SpellManager.getServerSpells().stream().toList(),
+                        Settings.Server.serializeSettings()),
 
                 new UpdatePayloads.PlayerSyncData(LevelManager.getLevel(player),
                         SpManager.getSP(player), XpManager.getXP(player),

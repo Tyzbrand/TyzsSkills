@@ -2,13 +2,13 @@ package com.tyzsskills.api.model.settings;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.SettingMeta;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 public final class ColorSetting extends Setting<String>{
     public static final String REGEX = "^#?([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$";
 
     private int hex;
+    public int getHex() {return hex;}
 
     public ColorSetting(@NotNull SettingMeta meta, @NotNull String defaultValue) {
         super(meta, Enums.SettingType.COLOR, defaultValue);
@@ -26,31 +26,18 @@ public final class ColorSetting extends Setting<String>{
         return raw.matches(REGEX) ? raw : getDefault();
     }
 
-    public int getHex() {return hex;}
 
     @Override
     public @NotNull String range() {
         var def = super.range();
-        return def + ", Format: #AARRGGBB";
+        return def + ", format: #AARRGGBB";
     }
 
-    //region NETWORK
     @Override
-    protected void writeData(@NotNull FriendlyByteBuf buf) {
-        buf.writeUtf(get());
-        buf.writeUtf(getDefault());
+    public void parse(@NotNull String raw) {
+        if(!raw.matches(REGEX)) throw new IllegalArgumentException("Invalid color: " + raw);
+        set(raw);
     }
-
-    static @NotNull ColorSetting readData(@NotNull FriendlyByteBuf buf, @NotNull SettingMeta meta){
-        var value = buf.readUtf();
-        var def = buf.readUtf();
-
-        var setting = new ColorSetting(meta, def);
-        setting.set(value);
-
-        return setting;
-    }
-    //endregion
 
     //UTILS
     private int calculateHex(){

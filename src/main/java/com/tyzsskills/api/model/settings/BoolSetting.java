@@ -2,7 +2,6 @@ package com.tyzsskills.api.model.settings;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.SettingMeta;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 public final class BoolSetting extends Setting<Boolean> {
@@ -15,25 +14,11 @@ public final class BoolSetting extends Setting<Boolean> {
         return raw;
     }
 
-    //region NETWORK
     @Override
-    protected void writeData(@NotNull FriendlyByteBuf buf) {
-        buf.writeBoolean(get());
-        buf.writeBoolean(getDefault());
+    public void parse(@NotNull String raw) {
+        if (!"true".equalsIgnoreCase(raw) && !"false".equalsIgnoreCase(raw))
+            throw new IllegalArgumentException("Invalid boolean: " + raw);
+
+        set(Boolean.parseBoolean(raw));
     }
-
-    static @NotNull BoolSetting readData(@NotNull FriendlyByteBuf buf, @NotNull SettingMeta meta){
-        var value = buf.readBoolean();
-        var def = buf.readBoolean();
-
-        var setting = new BoolSetting(meta, def);
-        setting.set(value);
-
-        return setting;
-    }
-    //endregion
-
-    //region IO
-
-    //endregion
 }

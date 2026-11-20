@@ -55,11 +55,12 @@ public class ClientCache {
             SPELLS.UPDATE.init(playerSpellData, serverData);
             METADATA.UPDATE.init(playerData, payload.levelData());
 
-            for(var setting : payload.serverData().settings()) {
-                Setting<?> settingInstance = Settings.getByKey(setting.key(), false);
-                if(settingInstance == null) throw new IllegalStateException("Missing setting on client side:"  + setting.key());
+            for(var kvp : payload.serverData().settings().entrySet()) {
+                var key = kvp.getKey(); var value = kvp.getValue();
 
-                settingInstance.applyValueFrom(setting);
+                Setting<?> settingInstance = Settings.Server.getByKey(key);
+                if(settingInstance == null) throw new IllegalStateException("Missing setting on client side:"  + key);
+                settingInstance.safeParse(value);
             }
 
             registerUpdate("Initial Synchronization", true);

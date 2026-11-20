@@ -37,7 +37,7 @@ public class Enums {
                     : name().replace("SERVER_", "");
         }
     }
-    public enum SettingType { BOOL, INT, FLOAT, COLOR}
+    public enum SettingType { BOOL, INT, FLOAT, COLOR, ENUM}
 
     //UI
     public enum ScalePivot {TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER}
@@ -46,4 +46,8 @@ public class Enums {
 
     public enum BorderType {NONE, INNER, OUTER}
     public enum BackgroundType {NONE, CUT, FULL}
+
+
+    //STATIC SETTINGS
+    public enum Multiplier {x1, x2, x3, x4, x5, x10, x25, x50, x100, x1000}
 }

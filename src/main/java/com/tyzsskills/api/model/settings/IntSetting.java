@@ -2,12 +2,13 @@ package com.tyzsskills.api.model.settings;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.SettingMeta;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 public final class IntSetting extends Setting<Integer> {
     private final int min;
+    public int min(){return min;}
     private final int max;
+    public int max(){return max;}
 
 
     public IntSetting(@NotNull SettingMeta meta, @NotNull Integer defaultValue, int min, int max) {
@@ -28,30 +29,8 @@ public final class IntSetting extends Setting<Integer> {
         return String.format("default: %s, min: %s, max: %s", getDefault(), min, finalMax);
     }
 
-    public int min(){return min;}
-    public int max(){return max;}
-
-
-
-    //region NETWORK
     @Override
-    protected void writeData(@NotNull FriendlyByteBuf buf) {
-        buf.writeInt(get());
-        buf.writeInt(getDefault());
-        buf.writeInt(min);
-        buf.writeInt(max);
+    public void parse(@NotNull String raw) {
+        set(Integer.valueOf(raw));
     }
-
-    static @NotNull IntSetting  readData(@NotNull FriendlyByteBuf buf, @NotNull SettingMeta meta){
-        var value = buf.readInt();
-        var def = buf.readInt();
-        var min = buf.readInt();
-        var max = buf.readInt();
-
-        var setting = new IntSetting(meta, def, min, max);
-        setting.set(value);
-
-        return setting;
-    }
-    //endregion
 }

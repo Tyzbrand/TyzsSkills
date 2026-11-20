@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public final class Settings {
@@ -27,14 +28,6 @@ public final class Settings {
     private static final Collection<Setting<?>> CLIENT_REGISTRY_VIEW = Collections.unmodifiableCollection(CLIENT_REGISTRY.values());
 
     //IMPLEMENTATION
-    private static @NotNull Map<String, Setting<?>> registry(Setting<?> setting){
-        return registry(setting.meta().isClient());
-    }
-
-    private static @NotNull Map<String, Setting<?>> registry(boolean isClient){
-        return isClient ? CLIENT_REGISTRY : SERVER_REGISTRY;
-    }
-
     public static @NotNull <T extends Setting<?>> T register(T setting){
         var registry = registry(setting);
         var key = setting.key();
@@ -44,7 +37,6 @@ public final class Settings {
 
         return setting;
     }
-
 
     //LIFE CYCLE
     private static void resetSettings(boolean isClient){registry(isClient).values().forEach(Setting::reset);}
@@ -56,15 +48,14 @@ public final class Settings {
 
 
     //GETTERS
-    public static @Nullable Setting<?> getByKey(@NotNull String key, boolean isClient){
+    private static @Nullable Setting<?> getByKey(@NotNull String key, boolean isClient){
         return isClient ? CLIENT_REGISTRY.get(key) : SERVER_REGISTRY.get(key);
     }
-
-    public static @NotNull @UnmodifiableView Collection<Setting<?>> getServerSettings(){
-        return SERVER_REGISTRY_VIEW;
+    private static @NotNull Map<String, Setting<?>> registry(Setting<?> setting){
+        return registry(setting.meta().isClient());
     }
-    public static @NotNull @UnmodifiableView Collection<Setting<?>> getClientSettings(){
-        return CLIENT_REGISTRY_VIEW;
+    private static @NotNull Map<String, Setting<?>> registry(boolean isClient){
+        return isClient ? CLIENT_REGISTRY : SERVER_REGISTRY;
     }
 
     //BUILDERS
@@ -84,13 +75,29 @@ public final class Settings {
         var setting = new ColorSetting(new SettingMeta(key, cat), def);
         return Settings.register(setting);
     }
+    public static <E extends Enum<E>> @NotNull EnumSetting<E> enumerator(String key, Enums.SettingCategory cat, E def){
+        var setting = new EnumSetting<>(new SettingMeta(key, cat), def);
+        return Settings.register(setting);
+    }
 
+    //DATA
     public static final class Server {
         public static void init(){}
 
         public static void resetSettings(){Settings.resetSettings(false);}
         public static void saveSettings(){Settings.saveSettings(false);}
         public static void readSettings(){Settings.readSettings(false);}
+        public static @NotNull @UnmodifiableView Collection<Setting<?>> getSettings(){
+            return SERVER_REGISTRY_VIEW;
+        }
+
+        public static @Nullable Setting<?> getByKey(@NotNull String key){
+            return SERVER_REGISTRY.get(key);
+        }
+
+        public static @NotNull Map<String, String> serializeSettings() {
+            return SERVER_REGISTRY.values().stream().collect(Collectors.toMap(Setting::key, Setting::serialize));
+        }
 
         //GENERAL
         public static final BoolSetting USE_SPELLS =
@@ -103,6 +110,7 @@ public final class Settings {
                 fl("refund_percentage", Enums.SettingCategory.SERVER_GENERAL, 30f, 0f, 100f);
         public static final IntSetting BASE_SPELL_SLOTS =
                 integer("base_spell_slots", Enums.SettingCategory.SERVER_GENERAL, 3, 0, 25);
+
         //DEATH PENALTIES
         public static final FloatSetting DEATH_XP_LOSS =
                 fl("death_xp_loss", Enums.SettingCategory.DEATH_PENALTIES, 0f, 0f, 100f);
@@ -112,6 +120,7 @@ public final class Settings {
                 integer("death_lvl_loss", Enums.SettingCategory.DEATH_PENALTIES, 0, 0, Integer.MAX_VALUE);
         public static final FloatSetting DEATH_SKILL_LOSS =
                 fl("death_skill_loss", Enums.SettingCategory.DEATH_PENALTIES, 0f, 0f, 100f);
+
         //XP VALUES
         public static final BoolSetting EARN_XP_IN_CREATIVE =
                 bool("earn_in_creative", Enums.SettingCategory.XP, false);
@@ -151,6 +160,14 @@ public final class Settings {
         public static void resetSettings(){Settings.resetSettings(true);}
         public static void saveSettings(){Settings.saveSettings(true);}
         public static void readSettings(){Settings.readSettings(true);}
+        public static @NotNull @UnmodifiableView Collection<Setting<?>> getSettings(){
+            return CLIENT_REGISTRY_VIEW;
+        }
+
+        public static @Nullable Setting<?> getByKey(@NotNull String key){
+            return CLIENT_REGISTRY.get(key);
+        }
+
 
         //GENERAL
         public static final BoolSetting SHOW_DEBUG =
@@ -242,7 +259,7 @@ public final class Settings {
                 throw new IllegalStateException("Unable to init Tyz's Skills config folders (" + sideMark + ")");
             }
 
-            var settings = isClient ? new ArrayList<>(Settings.getClientSettings()) : new ArrayList<>(Settings.getServerSettings());
+            var settings = isClient ? new ArrayList<>(Client.getSettings()) : new ArrayList<>(Server.getSettings());
             settings.sort(Comparator.comparingInt(setting -> setting.meta().category().priority()));
 
             var prevCat = settings.getFirst().meta().category();
@@ -313,28 +330,14 @@ public final class Settings {
                 }
                 else if (!foundKeys.add(key)) hasInconsistencies = true;
 
-                try{
-                    switch (setting) {
-                        case IntSetting param -> param.set(Integer.parseInt(value));
-                        case FloatSetting param -> param.set(Float.parseFloat(value));
-                        case BoolSetting param -> {
-                            if(!"true".equalsIgnoreCase(value) && !"false".equalsIgnoreCase(value)){
-                                throw new NumberFormatException();
-                            }
-                            param.set(Boolean.parseBoolean(value));
-                        }
-                        case ColorSetting param -> {
-                            if(!value.matches(ColorSetting.REGEX)) throw new NumberFormatException();
-                            param.set(value);
-                        }
-                    }
-                }
-                catch (NumberFormatException ex){
+
+                try{setting.safeParse(value);}
+                catch (IllegalStateException ex){
                     ErrorManager.registerSettingWarn(key, "invalid value format", isClient);
                 }
             }
 
-            var sizes = isClient ? Settings.getClientSettings().size() : Settings.getServerSettings().size();
+            var sizes = isClient ? CLIENT_REGISTRY.size() : SERVER_REGISTRY.size();
             var missingKeys = foundKeys.size() != sizes;
             var changedVersion = !Settings.CONFIG_VERSION.equalsIgnoreCase(fileVersion);
 
