@@ -5,6 +5,7 @@ import com.tyzsskills.Settings;
 import com.tyzsskills.api.events.client.ClientInitSynchronizationEvent;
 import com.tyzsskills.api.events.client.ClientUpdateEvent;
 import com.tyzsskills.api.model.Context;
+import com.tyzsskills.api.model.settings.Setting;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -33,7 +34,6 @@ public class ClientCache {
     public final SkillsCache SKILLS = new SkillsCache(this);
     public final SpellsCache SPELLS = new SpellsCache(this);
     public final DataCache METADATA = new DataCache(this);
-    public final SettingsCache SETTINGS = new SettingsCache(this);
 
     private int cacheVersion = 0;
     public void incrVersion(){cacheVersion++;}
@@ -54,7 +54,13 @@ public class ClientCache {
             SKILLS.UPDATE.init(playerSkillData, serverData);
             SPELLS.UPDATE.init(playerSpellData, serverData);
             METADATA.UPDATE.init(playerData, payload.levelData());
-            SETTINGS.UPDATE.init(serverData);
+
+            for(var setting : payload.serverData().settings()) {
+                Setting<?> settingInstance = Settings.getByKey(setting.key(), false);
+                if(settingInstance == null) throw new IllegalStateException("Missing setting on client side:"  + setting.key());
+
+                settingInstance.applyValueFrom(setting);
+            }
 
             registerUpdate("Initial Synchronization", true);
         }
@@ -67,7 +73,7 @@ public class ClientCache {
             else NeoForge.EVENT_BUS.post(new ClientInitSynchronizationEvent());
 
             var player = Minecraft.getInstance().player;
-            if (player == null || !Settings.Stock.SHOW_DEBUG.get()) return;
+            if (player == null || !Settings.Client.SHOW_DEBUG.get()) return;
             player.displayClientMessage(Component.literal(message), false);
         }
     }

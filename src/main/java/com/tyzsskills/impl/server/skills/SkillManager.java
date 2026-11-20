@@ -70,7 +70,7 @@ public class SkillManager {
     public static boolean tryBuySkill(@NotNull ServerPlayer player, @NotNull ISkill skill) {
         int currentLvl = getSkillLevel(player, skill);
 
-        if(SkillRules.canBuy(getSkillContext(player, skill), getPlayerContext(player), Settings.Stock.PURCHASE_SYSTEM.get())){
+        if(SkillRules.canBuy(getSkillContext(player, skill), getPlayerContext(player), Settings.Server.PURCHASE_SYSTEM.get())){
             var price = skill.getPrices().get(currentLvl);
 
             var event = new SkillPurchaseEvent.Pre(player, skill, currentLvl, currentLvl + 1);
@@ -91,7 +91,7 @@ public class SkillManager {
 
         if (currentLvl >= maxLvl) return false;
 
-        var bulkResult = SkillRules.checkBulkBuy(getSkillContext(player, skill), getPlayerContext(player), Settings.Stock.PURCHASE_SYSTEM.get());
+        var bulkResult = SkillRules.checkBulkBuy(getSkillContext(player, skill), getPlayerContext(player), Settings.Server.PURCHASE_SYSTEM.get());
 
         if (bulkResult.levelToAdd() > 0) {
             var event = new SkillPurchaseEvent.Pre(player, skill, currentLvl, currentLvl + bulkResult.levelToAdd());
@@ -108,12 +108,12 @@ public class SkillManager {
         return false;
     }
     public static boolean tryRefundSkill(@NotNull ServerPlayer player, @NotNull ISkill skill) {
-        if(!SkillRules.canRefund(getSkillContext(player, skill), getPlayerContext(player), Settings.Stock.REFUND_SYSTEM.get())) return false;
+        if(!SkillRules.canRefund(getSkillContext(player, skill), getPlayerContext(player), Settings.Server.REFUND_SYSTEM.get())) return false;
 
         var currentLvl = player.getData(PlayerData.DATA).getSkillLevel(skill.getId());
 
         var initialPrice = skill.getPrices().get(currentLvl - 1);
-        var refundRate = Settings.Stock.REFUND_PERCENTAGE.get() / 100f;
+        var refundRate = Settings.Server.REFUND_PERCENTAGE.get() / 100f;
         int finalPrice;
 
         if(initialPrice == 0) finalPrice = 0;
@@ -136,7 +136,7 @@ public class SkillManager {
         if (currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
         var spToRefund = SkillRules.checkBulkRefund(getSkillContext(player, skill), getPlayerContext(player),
-                Settings.Stock.REFUND_PERCENTAGE.get(), Settings.Stock.REFUND_SYSTEM.get());
+                Settings.Server.REFUND_PERCENTAGE.get(), Settings.Server.REFUND_SYSTEM.get());
 
         var event = new SkillRefundEvent.Pre(player, skill, currentLvl, 0);
         NeoForge.EVENT_BUS.post(event);

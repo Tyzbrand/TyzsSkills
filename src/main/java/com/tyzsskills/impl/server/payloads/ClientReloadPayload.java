@@ -2,7 +2,6 @@ package com.tyzsskills.impl.server.payloads;
 
 import com.tyzsskills.Settings;
 import com.tyzsskills.Tyzsskills;
-import com.tyzsskills.api.tools.SettingsParser;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.integration.ui.UIOverlayRenderer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -27,8 +26,7 @@ public record ClientReloadPayload() implements CustomPacketPayload {
         ctx.enqueueWork(() -> {
             ErrorManager.clear(true);
 
-            Settings.resetClientSettings();
-            SettingsParser.parseSettings(true);
+            Settings.Client.readSettings();
 
             UIOverlayRenderer.reloadOverlays();
 

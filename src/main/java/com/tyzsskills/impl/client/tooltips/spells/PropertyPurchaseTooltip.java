@@ -31,7 +31,7 @@ public class PropertyPurchaseTooltip extends UITooltip {
         this.addChild(new UIText(0, 0, () -> currentPriceLine));
         this.addChild(new UIText(0, 11, () -> currentDataLine));
 
-        this.withVisibility(() -> cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM));
+        this.withVisibility(Settings.Server.PURCHASE_SYSTEM::get);
 
         updateData();
     }

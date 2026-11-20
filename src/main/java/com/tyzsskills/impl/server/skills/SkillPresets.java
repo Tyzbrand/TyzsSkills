@@ -199,7 +199,11 @@ public class SkillPresets {
         finalList.add(SkillPrefab.immutable("magnet", category, List.of(4, 6, 8, 12))
                 .addCustomValue("block_radius", new ValueSet(List.of(3f, 5f, 7f, 10f), "skill.tyzs_skills.unit.block_radius"))
                 .withBehavior(new MagnetEffect())
-                .withConfig(new SkillConfiguration().withParameters(makeTag(tag -> {tag.put("item_blacklist", new ListTag());})))
+                .withConfig(new SkillConfiguration().withParameters(makeTag(tag -> {
+                    tag.put("item_blacklist", new ListTag());
+                    tag.putBoolean("works_in_creative", false);
+                    tag.putBoolean("sneak_to_avoid", true);
+                })))
                 .build());
 
         finalList.add(SkillPrefab.immutable("spare_parts", category, List.of(5, 8, 12, 18, 24))

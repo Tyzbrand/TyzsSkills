@@ -23,7 +23,7 @@ public class UIOverlayRenderer implements LayeredDraw.Layer {
 
         var instance = Minecraft.getInstance();
         if(instance.player == null || instance.options.hideGui) return;
-        if (instance.player.isCreative() && !Settings.Stock.OVERLAY_CREATIVE.get()) return;
+        if (instance.player.isCreative() && !Settings.Client.OVERLAY_CREATIVE.get()) return;
 
         ACTIVE_OVERLAYS.values().removeIf(UIOverlay::isExpired);
         if(ACTIVE_OVERLAYS.isEmpty()) return;

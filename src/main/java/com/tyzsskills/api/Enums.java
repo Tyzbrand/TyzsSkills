@@ -18,6 +18,7 @@ public class Enums {
         SERVER_GENERAL(0, false),
         DEATH_PENALTIES(1, false),
         XP(2, false),
+        SERVER_PERFORMANCES(3, false),
 
         CLIENT_GENERAL(0, true),
         OVERLAYS(1, true),

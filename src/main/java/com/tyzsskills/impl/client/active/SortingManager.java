@@ -73,7 +73,7 @@ public class SortingManager {
         //TOGGLES
         if(!showMaxed) toSort.removeIf(s -> cache.SKILLS.getSkillLevel(s.getId()) >= s.getMaximumLevel());
         if(!showUnaffordable) toSort.removeIf(s -> !SkillRules.canBuy(cache.SKILLS.getSkillContext(s.getId()), playerContext,
-                cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM)));
+                Settings.Server.PURCHASE_SYSTEM.get()));
         if(!showLocked) toSort.removeIf(s -> !SkillRules.isAvailable(cache.SKILLS.getSkillContext(s.getId()), playerContext));
 
         if(!currentSearchQuery.isBlank()){
@@ -155,7 +155,7 @@ public class SortingManager {
         if(query.isEmpty()) return true;
         if(text.contains(query)) return true;
 
-        if(!Settings.Stock.QUERY_TYPOS.get()) return false;
+        if(!Settings.Client.QUERY_TYPOS.get()) return false;
 
         var errorTolerance =  getAllowedErrors(query);
         if(errorTolerance <= 0) return false;

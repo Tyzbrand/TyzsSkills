@@ -1,6 +1,5 @@
 package com.tyzsskills.impl.server.debug;
 
-import com.tyzsskills.Settings;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.events.ModReloadEvent;
 import com.tyzsskills.impl.server.Level.LevelManager;
@@ -25,7 +24,6 @@ public class Reload {
         SpellManager.clearSpells();
         XpGainRegistry.clearAll();
         LevelManager.clearPool();
-        Settings.resetServerSettings();
 
         try {
             FileManager.reload(server);

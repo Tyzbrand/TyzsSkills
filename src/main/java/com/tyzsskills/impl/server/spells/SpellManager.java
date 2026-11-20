@@ -64,7 +64,7 @@ public class SpellManager {
 
         int currentLvl = getPropertyLevel(player, property);
 
-        if(SpellRules.canBuyProperty(getPropertyContext(player, property), SkillManager.getPlayerContext(player), Settings.Stock.PURCHASE_SYSTEM.get())){
+        if(SpellRules.canBuyProperty(getPropertyContext(player, property), SkillManager.getPlayerContext(player), Settings.Server.PURCHASE_SYSTEM.get())){
             var price = property.getPrice(currentLvl + 1);
 
             var preEvent = new SpellPropertyPurchaseEvent.Pre(player, spell, property, currentLvl, currentLvl+1);
@@ -84,7 +84,7 @@ public class SpellManager {
     public static boolean tryBuySpell(@NotNull ServerPlayer player, @NotNull ISpell spell){
         if(isSpellPurchased(player, spell)) return false;
 
-        if(SpellRules.canBuySpell(getSpellContext(player, spell), SkillManager.getPlayerContext(player), Settings.Stock.PURCHASE_SYSTEM.get())){
+        if(SpellRules.canBuySpell(getSpellContext(player, spell), SkillManager.getPlayerContext(player), Settings.Server.PURCHASE_SYSTEM.get())){
             var price = spell.getPrice();
 
             var preEvent = new SpellPurchaseEvent.Pre(player, spell);
@@ -215,7 +215,7 @@ public class SpellManager {
         return getPlayerSlots(player).getOrDefault(slot, "");
     }
     public static int getMaxSlots(@NotNull ServerPlayer player){
-        return Math.max(0, Settings.Stock.BASE_SPELL_SLOTS.get() + (int)player.getAttributeValue(AttributeRegistry.EXTRA_SPELL_SLOTS));
+        return Math.max(0, Settings.Server.BASE_SPELL_SLOTS.get() + (int)player.getAttributeValue(AttributeRegistry.EXTRA_SPELL_SLOTS));
     }
 
     public static @NotNull @UnmodifiableView Map<String, Integer> getPurchasedProperties(@NotNull ServerPlayer player){

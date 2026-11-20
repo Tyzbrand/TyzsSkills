@@ -36,7 +36,7 @@ public class SkillPurchaseTooltip extends UITooltip {
         statContainer = new UIContainer(0, 11);
         this.addChild(statContainer);
 
-        this.withVisibility(() -> skill.isPurchasable() && cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM));
+        this.withVisibility(() -> skill.isPurchasable() && Settings.Server.PURCHASE_SYSTEM.get());
 
         updateData();
     }

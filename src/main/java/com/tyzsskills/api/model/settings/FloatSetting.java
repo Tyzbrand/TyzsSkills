@@ -18,6 +18,7 @@ public final class FloatSetting extends Setting<Float> {
 
     @Override
     protected @NotNull Float validate(@NotNull Float raw) {
+        if(raw.isNaN()) return getDefault();
         return Math.clamp(raw, min, max);
     }
 

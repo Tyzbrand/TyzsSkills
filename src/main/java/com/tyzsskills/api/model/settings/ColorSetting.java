@@ -23,10 +23,16 @@ public final class ColorSetting extends Setting<String>{
 
     @Override
     protected @NotNull String validate(@NotNull String raw) {
-        return raw instanceof String s && s.matches(REGEX) ? raw : getDefault();
+        return raw.matches(REGEX) ? raw : getDefault();
     }
 
     public int getHex() {return hex;}
+
+    @Override
+    public @NotNull String range() {
+        var def = super.range();
+        return def + ", Format: #AARRGGBB";
+    }
 
     //region NETWORK
     @Override

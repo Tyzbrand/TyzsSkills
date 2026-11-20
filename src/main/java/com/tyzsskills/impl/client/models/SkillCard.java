@@ -114,7 +114,7 @@ public class SkillCard extends UIContainer {
 
         var iconImage = new UIImage(7, 7, 16, 16, () -> icon);
         iconImage.withScale(.92f, Enums.ScalePivot.CENTER);
-        if(Settings.Stock.RENDER_SHADOWS.get()) iconImage.withShadow(2f);
+        if(Settings.Client.RENDER_SHADOWS.get()) iconImage.withShadow(2f);
         this.addChild(iconImage);
 
 
@@ -150,10 +150,10 @@ public class SkillCard extends UIContainer {
         this.isMaxed = cache.SKILLS.getSkillLevel(skill.getId()) >= skill.getMaximumLevel();
         this.isBookmarked = cache.SKILLS.isSkillBookMarked(skill.getId());
         this.isDeactivated = cache.SKILLS.isSkillDeactivated(skill.getId());
-        this.canAffordPurchase = SkillRules.canBuy(sCtx, pCtx, cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM));
-        this.canAffordRefund = SkillRules.canRefund(sCtx, pCtx, cache.SETTINGS.serverGet(Settings.Stock.REFUND_SYSTEM));
-        this.canBuy = cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM) && skill.isPurchasable();
-        this.canRefund = cache.SETTINGS.serverGet(Settings.Stock.REFUND_SYSTEM) && skill.isRefundable();
+        this.canAffordPurchase = SkillRules.canBuy(sCtx, pCtx, Settings.Server.PURCHASE_SYSTEM.get());
+        this.canAffordRefund = SkillRules.canRefund(sCtx, pCtx, Settings.Server.REFUND_SYSTEM.get());
+        this.canBuy = Settings.Server.PURCHASE_SYSTEM.get() && skill.isPurchasable();
+        this.canRefund = Settings.Server.REFUND_SYSTEM.get() && skill.isRefundable();
 
         this.currentLevel = cache.SKILLS.getSkillLevel(skill.getId());
     }

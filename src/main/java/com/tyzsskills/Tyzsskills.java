@@ -41,6 +41,8 @@ public class Tyzsskills {
 
         modEventBus.register(this);
 
+        Settings.Server.init();
+
        //Register attributes
         AttributeRegistry.ATTRIBUTES.register(modEventBus);
 

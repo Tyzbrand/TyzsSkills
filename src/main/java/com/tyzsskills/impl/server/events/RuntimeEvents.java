@@ -65,7 +65,7 @@ public class RuntimeEvents {
         LevelManager.clearPool();
         CategoryLoader.clearCategories();
 
-        Settings.resetServerSettings();
+        Settings.Server.resetSettings();
         ErrorManager.clear(false);
     }
 

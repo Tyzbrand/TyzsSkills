@@ -84,7 +84,7 @@ public class PropertyCard extends UIContainer {
         var playerCtx = cache.getPlayerContext();
         var propertyCtx = cache.SPELLS.getPropertyContext(property, spell.getId());
 
-        canBuyProperty = SpellRules.canBuyProperty(propertyCtx, playerCtx, cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM));
+        canBuyProperty = SpellRules.canBuyProperty(propertyCtx, playerCtx, Settings.Server.PURCHASE_SYSTEM.get());
     }
 
     //region EXTRACTED LOGIC

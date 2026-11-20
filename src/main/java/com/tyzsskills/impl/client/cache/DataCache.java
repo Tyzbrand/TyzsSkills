@@ -68,7 +68,7 @@ public class DataCache {
         var overlay = UIOverlayRenderer.get(MetadataOverlay.ID, MetadataOverlay.class);
         if(overlay != null) return overlay;
 
-        overlay = new MetadataOverlay(4 + Settings.Stock.META_OFFSET_X.get(), 8 +Settings.Stock.META_OFFSET_Y.get());
+        overlay = new MetadataOverlay(4 + Settings.Client.META_OFFSET_X.get(), 8 + Settings.Client.META_OFFSET_Y.get());
         UIOverlayRenderer.add(overlay);
         return overlay;
 

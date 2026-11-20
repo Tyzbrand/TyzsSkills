@@ -140,7 +140,7 @@ public class SkillsCache {
         String id = skill.getId().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if (!SkillRules.canBuy(getSkillContext(id), CACHE.getPlayerContext(), CACHE.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM))) return false;
+        if (!SkillRules.canBuy(getSkillContext(id), CACHE.getPlayerContext(), Settings.Server.PURCHASE_SYSTEM.get())) return false;
         int price = skill.getPrices().get(currentLvl);
 
 
@@ -153,7 +153,7 @@ public class SkillsCache {
         String id = skill.getId().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        var bulkResult = SkillRules.checkBulkBuy(getSkillContext(id), CACHE.getPlayerContext(), CACHE.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM));
+        var bulkResult = SkillRules.checkBulkBuy(getSkillContext(id), CACHE.getPlayerContext(), Settings.Server.PURCHASE_SYSTEM.get());
 
         if (bulkResult.levelToAdd() > 0) {
             CACHE.METADATA.sp -= bulkResult.spToWithdraw();
@@ -167,10 +167,10 @@ public class SkillsCache {
         String id = skill.getId().toLowerCase();
         int currentLvl = getSkillLevel(id);
 
-        if (!SkillRules.canRefund(getSkillContext(id), CACHE.getPlayerContext(), CACHE.SETTINGS.serverGet(Settings.Stock.REFUND_SYSTEM))) return false;
+        if (!SkillRules.canRefund(getSkillContext(id), CACHE.getPlayerContext(), Settings.Server.REFUND_SYSTEM.get())) return false;
 
         skillLevels.put(id, currentLvl - 1);
-        float percentage = CACHE.SETTINGS.serverGet(Settings.Stock.REFUND_PERCENTAGE);
+        float percentage = Settings.Server.REFUND_PERCENTAGE.get();
 
         List<Integer> prices = skill.getPrices();
         if (currentLvl - 1 < prices.size()) {
@@ -193,7 +193,7 @@ public class SkillsCache {
         if (getSkillLevel(id) <= 0) return false;
 
         var spToRefund = SkillRules.checkBulkRefund(getSkillContext(id), CACHE.getPlayerContext(),
-                CACHE.SETTINGS.serverGet(Settings.Stock.REFUND_PERCENTAGE), CACHE.SETTINGS.serverGet(Settings.Stock.REFUND_SYSTEM));
+                Settings.Server.REFUND_PERCENTAGE.get(), Settings.Server.REFUND_SYSTEM.get());
 
         if (spToRefund > 0) {
             CACHE.METADATA.sp += spToRefund;
@@ -233,7 +233,7 @@ public class SkillsCache {
         if(skill == null) return;
 
         var overlay = UIOverlayRenderer.get(SkillOverlay.ID, SkillOverlay.class);
-        if(overlay == null) UIOverlayRenderer.add(new SkillOverlay(4 + Settings.Stock.SKILL_OFFSET_X.get(), 57 + Settings.Stock.SKILL_OFFSET_Y.get(), skill));
+        if(overlay == null) UIOverlayRenderer.add(new SkillOverlay(4 + Settings.Client.SKILL_OFFSET_X.get(), 57 + Settings.Client.SKILL_OFFSET_Y.get(), skill));
         else overlay.addSkill(skill);
     }
 }

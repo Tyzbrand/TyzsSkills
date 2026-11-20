@@ -1,10 +1,10 @@
 package com.tyzsskills.impl.server.active;
 
 import com.google.gson.*;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.api.records.SpellPrefab;
-import com.tyzsskills.api.tools.SettingsParser;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.Level.LevelPoolPreset;
 import com.tyzsskills.impl.server.categories.CategoryLoader;
@@ -98,7 +98,7 @@ public class FileManager {
         Files.createDirectories(getCustomSpellPath(server));
         Files.createDirectories(getCustomDataPath(server));
 
-        SettingsParser.parseSettings(false);
+        Settings.Server.readSettings();
 
         FileManager.writeDefaultSkills(server);
         FileManager.writeDefaultData(server);
@@ -108,7 +108,7 @@ public class FileManager {
     }
 
     public static void reload(@NotNull MinecraftServer server) throws IOException{
-        SettingsParser.parseSettings(false);
+        Settings.Server.readSettings();
 
         FileManager.readSkills(server);
         FileManager.readData(server);

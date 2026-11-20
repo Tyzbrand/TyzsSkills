@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.effects.skillEffects;
 
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.impl.client.active.TagMatchManager;
@@ -27,8 +28,11 @@ public class MagnetEffect extends SkillBehavior {
     private static final double ITEM_SPEED = .35D;
     private void onPlayerTick(PlayerTickEvent.Post event, ServerPlayer player, ISkill skill, int lvl) {
         if ((player.tickCount + player.getId()) % 2 != 0) return;
+        if(player.isDeadOrDying() || player.isSpectator()) return;
 
-        if(player.isDeadOrDying() || player.isSpectator() || player.isCrouching() || player.isCreative()) return;
+        var parameters = skill.getSpecificParameters();
+        if(!parameters.getBoolean("works_in_creative") && player.isCreative()) return;
+        if(parameters.getBoolean("sneak_to_avoid") && player.isCrouching()) return;
 
         var values = skill.getValueSet("block_radius");
         if(values == null) return;
@@ -68,7 +72,7 @@ public class MagnetEffect extends SkillBehavior {
                         currentMotion.y * .5D + motionY,
                         currentMotion.z * .5D + motionZ
                 );
-                item.hurtMarked = true;
+                if(Settings.Server.SMOOTH_ITEM_MOVEMENT.get()) item.hurtMarked = true;
             }
         }
     }

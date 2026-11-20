@@ -17,7 +17,7 @@ public class MetadataOverlay extends UIStackOverlay {
     public MetadataOverlay(int offsetX, int offsetY) {
         super(offsetX, offsetY, -1f, 2);
         this.withId(ID).withAnchor(Enums.OverlayAnchor.BOTTOM_LEFT);
-        this.withScale(Settings.Stock.META_SCALE.get(), Enums.ScalePivot.BOTTOM_LEFT);
+        this.withScale(Settings.Client.META_SCALE.get(), Enums.ScalePivot.BOTTOM_LEFT);
     }
 
     //region XP OVERLAY
@@ -26,7 +26,7 @@ public class MetadataOverlay extends UIStackOverlay {
     private static final String XP_ID = "xp_overlay";
 
     public void addXp(float gain){
-        if(gain <= 0f || !Settings.Stock.XP_OVERLAY.get()) return;
+        if(gain <= 0f || !Settings.Client.XP_OVERLAY.get()) return;
 
         var existing = getOverlay(XP_ID, UIOverlay.class);
         if(existing != null) {
@@ -39,12 +39,12 @@ public class MetadataOverlay extends UIStackOverlay {
         currentXpGains = gain;
         updateXpText();
 
-        var bgColor = Settings.Stock.XP_BG.getHex();
-        var bdColor = Settings.Stock.XP_BD.getHex();
+        var bgColor = Settings.Client.XP_BG.getHex();
+        var bdColor = Settings.Client.XP_BD.getHex();
         var backgroundStyle = new UIStyles.BackgroundStyle(bgColor, Enums.BackgroundType.CUT)
                 .withBorder(new UIStyles.BorderStyle(bdColor, Enums.BorderType.OUTER));
 
-        var overlay = new UIOverlay(0, 0, Settings.Stock.XP_DURATION.get())
+        var overlay = new UIOverlay(0, 0, Settings.Client.XP_DURATION.get())
                 .withId(XP_ID)
                 .withAnchor(Enums.OverlayAnchor.BOTTOM_LEFT)
                 .withFade(200L, 500L);
@@ -68,7 +68,7 @@ public class MetadataOverlay extends UIStackOverlay {
     private static final String LEVEL_ID = "level_overlay";
 
     public void addLevel(int currentLvl, int spGain){
-        if(!Settings.Stock.LVL_OVERLAY.get()) return;
+        if(!Settings.Client.LVL_OVERLAY.get()) return;
 
         var existing = getOverlay(LEVEL_ID, UIOverlay.class);
         if(existing != null) {
@@ -81,12 +81,12 @@ public class MetadataOverlay extends UIStackOverlay {
         currentSpGains += spGain;
         updateLevelText(currentLvl);
 
-        var bgColor = Settings.Stock.LVL_BG.getHex();
-        var bdColor = Settings.Stock.LVL_BD.getHex();
+        var bgColor = Settings.Client.LVL_BG.getHex();
+        var bdColor = Settings.Client.LVL_BD.getHex();
         var backgroundStyle = new UIStyles.BackgroundStyle(bgColor, Enums.BackgroundType.CUT)
                 .withBorder(new UIStyles.BorderStyle(bdColor, Enums.BorderType.OUTER));
 
-        var overlay = new UIOverlay(0, 0, Settings.Stock.LVL_DURATION.get())
+        var overlay = new UIOverlay(0, 0, Settings.Client.LVL_DURATION.get())
                 .withId(LEVEL_ID)
                 .withAnchor(Enums.OverlayAnchor.BOTTOM_LEFT)
                 .withFade(200L, 500L);

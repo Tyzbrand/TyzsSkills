@@ -160,7 +160,7 @@ public class MainMenu extends Screen {
     }
     @Override
     public void removed() {
-        if(!Settings.Stock.QUERY_PERSISTENCE.get()) SortingManager.setSearchQuery("");
+        if(!Settings.Client.QUERY_PERSISTENCE.get()) SortingManager.setSearchQuery("");
         super.removed();
     }
     @Override

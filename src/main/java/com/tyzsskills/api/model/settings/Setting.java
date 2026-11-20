@@ -12,7 +12,7 @@ public abstract sealed class Setting<T> permits IntSetting, BoolSetting, FloatSe
     private final SettingMeta meta;
     private final Enums.SettingType type;
     private final T defaultValue;
-    private T value;
+    private volatile T value;
 
     protected String comment = "";
     public final Setting<T> withComment(String comment){this.comment = comment; return this;}
@@ -38,6 +38,12 @@ public abstract sealed class Setting<T> permits IntSetting, BoolSetting, FloatSe
 
     public void set(@NotNull T value){this.value = validate(value);}
     public final void reset(){set(defaultValue);}
+
+    @SuppressWarnings("unchecked")
+    public final void applyValueFrom(@NotNull Setting<?> model){
+        if(type != model.type) throw new IllegalArgumentException("Setting type mismatch for key: " + key());
+        this.set((T) model.get());
+    }
 
     protected abstract @NotNull T validate(@NotNull T raw);
     protected abstract void writeData(@NotNull FriendlyByteBuf buf);

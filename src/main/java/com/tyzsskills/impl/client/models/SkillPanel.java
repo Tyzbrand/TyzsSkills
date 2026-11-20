@@ -87,7 +87,7 @@ public class SkillPanel extends UIContainer {
         this.addChild(tabsPanel);
         this.addChild(scrollView);
 
-        if (!Settings.Stock.QUERY_PERSISTENCE.get()) SortingManager.setSearchQuery("");
+        if (!Settings.Client.QUERY_PERSISTENCE.get()) SortingManager.setSearchQuery("");
 
         initOffset();
 

@@ -16,7 +16,7 @@ public class FovHandler {
 
     @SubscribeEvent
     public static void onComputeFov(ComputeFovModifierEvent event){
-        double reduction = Settings.Stock.FOV_REDUCTION.get();
+        double reduction = Settings.Client.FOV_REDUCTION.get();
         if (reduction <= .0001D) return;
 
         var cache = ClientCache.get();

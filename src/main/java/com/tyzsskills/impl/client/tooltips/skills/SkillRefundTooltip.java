@@ -38,7 +38,7 @@ public class SkillRefundTooltip extends UITooltip {
         statContainer = new UIContainer(0, 11);
         this.addChild(statContainer);
 
-        this.withVisibility(() -> skill.isRefundable() && cache.SETTINGS.serverGet(Settings.Stock.REFUND_SYSTEM) && cache.SKILLS.getSkillLevel(skill.getId()) > 0);
+        this.withVisibility(() -> skill.isRefundable() && Settings.Server.REFUND_SYSTEM.get() && cache.SKILLS.getSkillLevel(skill.getId()) > 0);
 
         updateData();
     }
@@ -57,7 +57,7 @@ public class SkillRefundTooltip extends UITooltip {
         if (latestCacheVersion == currentCacheVersion && latestShiftState == currentShiftState) return;
         latestCacheVersion = currentCacheVersion; latestShiftState = currentShiftState;
 
-        refundPercentage = cache.SETTINGS.serverGet(Settings.Stock.REFUND_PERCENTAGE);
+        refundPercentage = Settings.Server.REFUND_PERCENTAGE.get();
 
         var currentLvl = cache.SKILLS.getSkillLevel(skill.getId());
         var targetLvl = getTargetedLevel(currentLvl);

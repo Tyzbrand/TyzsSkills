@@ -24,7 +24,7 @@ public class SkillOverlay extends UIStackOverlay {
     }
 
     public void addSkill(ISkill skill){
-        if(skill == null || !Settings.Stock.SKILL_OVERLAY.get()) return;
+        if(skill == null || !Settings.Client.SKILL_OVERLAY.get()) return;
 
         var existing = getOverlay(skill.getId(), UIOverlay.class);
         if(existing != null) {
@@ -32,17 +32,17 @@ public class SkillOverlay extends UIStackOverlay {
             return;
         }
 
-        var bgColor = Settings.Stock.SKILL_BG.getHex();
-        var bdColor = Settings.Stock.SKILL_BD.getHex();
+        var bgColor = Settings.Client.SKILL_BG.getHex();
+        var bdColor = Settings.Client.SKILL_BD.getHex();
         var backgroundStyle = new UIStyles.BackgroundStyle(bgColor, Enums.BackgroundType.CUT, 0, 0)
                 .withBorder(new UIStyles.BorderStyle(bdColor, Enums.BorderType.OUTER));
 
-        var overlay = new UIOverlay(0, 0, Settings.Stock.SKILL_DURATION.get())
+        var overlay = new UIOverlay(0, 0, Settings.Client.SKILL_DURATION.get())
                 .withId(skill.getId())
                 .withAnchor(Enums.OverlayAnchor.TOP_LEFT)
                 .withFade(200L, 500L);
 
-        overlay.withScale(Settings.Stock.SKILL_SCALE.get(), Enums.ScalePivot.TOP_LEFT);
+        overlay.withScale(Settings.Client.SKILL_SCALE.get(), Enums.ScalePivot.TOP_LEFT);
 
         var icon = new UITexture(skill.getIcon(), 16);
         overlay.addChild(new UIBackground(0, 0, 24, 24, () -> backgroundStyle));

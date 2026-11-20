@@ -2,7 +2,6 @@ package com.tyzsskills;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.events.client.TyzsSkillsClientSetupEvent;
-import com.tyzsskills.api.tools.SettingsParser;
 import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.key.Keybinds;
@@ -45,12 +44,18 @@ public class TyzsskillsClient {
 
     public TyzsskillsClient(ModContainer container) {
         MOD_BUS = container.getEventBus();
+
+        Settings.Client.init();
     }
 
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
-        SettingsParser.parseSettings(true);
         getModBus().post(new TyzsSkillsClientSetupEvent(new TyzsSkillsClientRegistrationWrapper()));
+    }
+
+    @SubscribeEvent
+    static void onModSetup(TyzsSkillsClientSetupEvent event){
+        Settings.Client.readSettings();
     }
 
 
@@ -73,6 +78,7 @@ public class TyzsskillsClient {
         ClientCache.deleteCache();
         SortingManager.clearData();
         UIOverlayRenderer.clear();
+        Settings.Server.resetSettings();
         Tyzsskills.LOGGER.info("CACHE CLEARED");
     }
 
@@ -95,12 +101,12 @@ public class TyzsskillsClient {
     public static void onScreenInit(ScreenEvent.Init.Post event) {
         if (event.getScreen() instanceof InventoryScreen || event.getScreen() instanceof CreativeModeInventoryScreen) {
 
-            if(!Settings.Stock.INVENTORY_BUTTON.get()) return;
+            if(!Settings.Client.INVENTORY_BUTTON.get()) return;
 
             AbstractContainerScreen<?> screen = (AbstractContainerScreen<?>) event.getScreen();
 
-            int savedX = Settings.Stock.INVENTORY_X.get();
-            int savedY = Settings.Stock.INVENTORY_Y.get();
+            int savedX = Settings.Client.INVENTORY_X.get();
+            int savedY = Settings.Client.INVENTORY_Y.get();
 
             InventoryButton myButton = new InventoryButton(
                     savedX,

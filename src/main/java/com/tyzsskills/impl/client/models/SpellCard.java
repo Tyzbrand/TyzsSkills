@@ -89,7 +89,7 @@ public class SpellCard extends UIContainer {
 
         var iconImage = new UIImage(7, 7, 16, 16, () -> icon);
         iconImage.withScale(.95f, Enums.ScalePivot.CENTER);
-        if(Settings.Stock.RENDER_SHADOWS.get()) iconImage.withShadow(2f);
+        if(Settings.Client.RENDER_SHADOWS.get()) iconImage.withShadow(2f);
         this.addChild(iconImage);
 
 
@@ -125,7 +125,7 @@ public class SpellCard extends UIContainer {
         var pCtx = cache.getPlayerContext();
         var sCtx = cache.SPELLS.getSpellContext(spell.getId());
 
-        canBuySpell = SpellRules.canBuySpell(sCtx, pCtx, cache.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM));
+        canBuySpell = SpellRules.canBuySpell(sCtx, pCtx, Settings.Server.PURCHASE_SYSTEM.get());
 
         text = getText();
     }

@@ -104,7 +104,7 @@ public class SpellsCache {
     public int getMaxSlots(){
         var player = Minecraft.getInstance().player;
         if(player == null) return 0;
-        return Math.max(0, ClientCache.get().SETTINGS.serverGet(Settings.Stock.BASE_SPELL_SLOTS) + (int)player.getAttributeValue(AttributeRegistry.EXTRA_SPELL_SLOTS));
+        return Math.max(0, Settings.Server.BASE_SPELL_SLOTS.get() + (int)player.getAttributeValue(AttributeRegistry.EXTRA_SPELL_SLOTS));
     }
 
     //==============Cooldowns==============
@@ -183,7 +183,7 @@ public class SpellsCache {
         var spellId = spell.getId();
         if(isSpellPurchased(spellId)) return false;
 
-        if(SpellRules.canBuySpell(getSpellContext(spellId), CACHE.getPlayerContext(), CACHE.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM))){
+        if(SpellRules.canBuySpell(getSpellContext(spellId), CACHE.getPlayerContext(), Settings.Server.PURCHASE_SYSTEM.get())){
             var price = spell.getPrice();
 
             CACHE.METADATA.sp -= price;
@@ -201,7 +201,7 @@ public class SpellsCache {
 
         var propertyCtx = getPropertyContext(property, spellId);
 
-        if(SpellRules.canBuyProperty(propertyCtx, CACHE.getPlayerContext(), CACHE.SETTINGS.serverGet(Settings.Stock.PURCHASE_SYSTEM))){
+        if(SpellRules.canBuyProperty(propertyCtx, CACHE.getPlayerContext(), Settings.Server.PURCHASE_SYSTEM.get())){
             var price = property.getPrice(getPropertyLevel(spellId, propertyId) + 1);
 
             CACHE.METADATA.sp -= price;

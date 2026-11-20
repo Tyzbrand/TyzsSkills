@@ -3,31 +3,36 @@ package com.tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.model.settings.*;
 import com.tyzsskills.api.records.SettingMeta;
+import com.tyzsskills.impl.server.active.ErrorManager;
+import net.neoforged.fml.loading.FMLPaths;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 @ApiStatus.Internal
 public final class Settings {
-    public static final String CONFIG_VERSION = "7.2";
+    public static final String CONFIG_VERSION = "7.3";
 
-    private static final Map<String, Setting<?>> SERVER_REGISTRY = new LinkedHashMap<>();
+    private static final Map<String, Setting<?>> SERVER_REGISTRY = new HashMap<>();
     private static final Collection<Setting<?>> SERVER_REGISTRY_VIEW = Collections.unmodifiableCollection(SERVER_REGISTRY.values());
 
-    private static final Map<String, Setting<?>> CLIENT_REGISTRY = new LinkedHashMap<>();
+    private static final Map<String, Setting<?>> CLIENT_REGISTRY = new HashMap<>();
     private static final Collection<Setting<?>> CLIENT_REGISTRY_VIEW = Collections.unmodifiableCollection(CLIENT_REGISTRY.values());
-
-    static {Stock.init();}
 
     //IMPLEMENTATION
     private static @NotNull Map<String, Setting<?>> registry(Setting<?> setting){
-        return setting.meta().isClient() ? CLIENT_REGISTRY : SERVER_REGISTRY;
+        return registry(setting.meta().isClient());
+    }
+
+    private static @NotNull Map<String, Setting<?>> registry(boolean isClient){
+        return isClient ? CLIENT_REGISTRY : SERVER_REGISTRY;
     }
 
     public static @NotNull <T extends Setting<?>> T register(T setting){
@@ -40,18 +45,21 @@ public final class Settings {
         return setting;
     }
 
-    public static void resetServerSettings(){
-        SERVER_REGISTRY.values().forEach(Setting::reset);
+
+    //LIFE CYCLE
+    private static void resetSettings(boolean isClient){registry(isClient).values().forEach(Setting::reset);}
+    private static void saveSettings(boolean isClient){Parser.writeSettings(isClient);}
+    private static void readSettings(boolean isClient){
+        resetSettings(isClient);
+        Parser.parseSettings(isClient);
     }
 
-    public static void resetClientSettings(){
-        CLIENT_REGISTRY.values().forEach(Setting::reset);
-    }
 
     //GETTERS
     public static @Nullable Setting<?> getByKey(@NotNull String key, boolean isClient){
         return isClient ? CLIENT_REGISTRY.get(key) : SERVER_REGISTRY.get(key);
     }
+
     public static @NotNull @UnmodifiableView Collection<Setting<?>> getServerSettings(){
         return SERVER_REGISTRY_VIEW;
     }
@@ -77,12 +85,13 @@ public final class Settings {
         return Settings.register(setting);
     }
 
+    public static final class Server {
+        public static void init(){}
 
-    public static class Stock {
+        public static void resetSettings(){Settings.resetSettings(false);}
+        public static void saveSettings(){Settings.saveSettings(false);}
+        public static void readSettings(){Settings.readSettings(false);}
 
-        protected static void init(){}
-
-        //region SERVER
         //GENERAL
         public static final BoolSetting USE_SPELLS =
                 bool("use_spells", Enums.SettingCategory.SERVER_GENERAL, true);
@@ -94,7 +103,6 @@ public final class Settings {
                 fl("refund_percentage", Enums.SettingCategory.SERVER_GENERAL, 30f, 0f, 100f);
         public static final IntSetting BASE_SPELL_SLOTS =
                 integer("base_spell_slots", Enums.SettingCategory.SERVER_GENERAL, 3, 0, 25);
-
         //DEATH PENALTIES
         public static final FloatSetting DEATH_XP_LOSS =
                 fl("death_xp_loss", Enums.SettingCategory.DEATH_PENALTIES, 0f, 0f, 100f);
@@ -104,7 +112,6 @@ public final class Settings {
                 integer("death_lvl_loss", Enums.SettingCategory.DEATH_PENALTIES, 0, 0, Integer.MAX_VALUE);
         public static final FloatSetting DEATH_SKILL_LOSS =
                 fl("death_skill_loss", Enums.SettingCategory.DEATH_PENALTIES, 0f, 0f, 100f);
-
         //XP VALUES
         public static final BoolSetting EARN_XP_IN_CREATIVE =
                 bool("earn_in_creative", Enums.SettingCategory.XP, false);
@@ -134,13 +141,20 @@ public final class Settings {
                 fl("new_biome_gains", Enums.SettingCategory.XP, 45f, 0f, Float.MAX_VALUE);
         public static final FloatSetting GAINS_FROM_DIMENSIONS =
                 fl("new_dimension_gains", Enums.SettingCategory.XP, 500f, 0f, Float.MAX_VALUE);
-        //endregion
+        //PERFORMANCES
+        public static final BoolSetting SMOOTH_ITEM_MOVEMENT =
+                bool("smooth_item_movements", Enums.SettingCategory.SERVER_PERFORMANCES, true);
+    }
+    public static final class Client {
+        public static void init(){}
 
-        //region CLIENT
+        public static void resetSettings(){Settings.resetSettings(true);}
+        public static void saveSettings(){Settings.saveSettings(true);}
+        public static void readSettings(){Settings.readSettings(true);}
+
         //GENERAL
         public static final BoolSetting SHOW_DEBUG =
                 bool("show_debug", Enums.SettingCategory.CLIENT_GENERAL, false);
-
         public static final BoolSetting INVENTORY_BUTTON =
                 bool("show_inventory_button", Enums.SettingCategory.CLIENT_GENERAL, true);
         public static final IntSetting INVENTORY_X =
@@ -158,7 +172,7 @@ public final class Settings {
                 integer("metadata_overlay_offset_y", Enums.SettingCategory.OVERLAYS, 0, -1000, 1000);
         public static final FloatSetting META_SCALE =
                 fl("metadata_overlay_scale", Enums.SettingCategory.OVERLAYS, .8f, .1f, 30f);
-
+        
         public static final BoolSetting XP_OVERLAY =
                 bool("show_xp_overlay", Enums.SettingCategory.OVERLAYS, true);
         public static final FloatSetting XP_DURATION =
@@ -167,7 +181,7 @@ public final class Settings {
                 color("xp_overlay_bg_color", Enums.SettingCategory.OVERLAYS, "#FF000000");
         public static final ColorSetting XP_BD =
                 color("xp_overlay_bd_color", Enums.SettingCategory.OVERLAYS, "#FFFFFFFF");
-
+        
         public static final BoolSetting LVL_OVERLAY =
                 bool("show_lvl_overlay", Enums.SettingCategory.OVERLAYS, true);
         public static final FloatSetting LVL_DURATION =
@@ -205,6 +219,133 @@ public final class Settings {
         public static final BoolSetting RENDER_SHADOWS =
                 bool("render_icon_shadows", Enums.SettingCategory.PERFORMANCES, true);
 
-        //endregion
+    }
+
+    private static class Parser {
+        private static String header(boolean isClient){
+            var prefix = isClient ? "Client Settings, " : "Server Settings, ";
+            return prefix + Settings.CONFIG_VERSION;
+        }
+
+        private static @NotNull Path mainPath(boolean isClient){
+            var fileName = isClient ? "client_settings.cfg" : "server_settings.cfg";
+            return FMLPaths.CONFIGDIR.get().resolve("tyzs_skills").resolve(fileName);
+        }
+
+        public static void writeSettings(boolean isClient){
+            var path = mainPath(isClient);
+            var sideMark = isClient ? "client" : "server";
+
+            try{
+                Files.createDirectories(path.getParent());}
+            catch (IOException ex){
+                throw new IllegalStateException("Unable to init Tyz's Skills config folders (" + sideMark + ")");
+            }
+
+            var settings = isClient ? new ArrayList<>(Settings.getClientSettings()) : new ArrayList<>(Settings.getServerSettings());
+            settings.sort(Comparator.comparingInt(setting -> setting.meta().category().priority()));
+
+            var prevCat = settings.getFirst().meta().category();
+
+            var sb = new StringBuilder();
+            comment(sb, header(isClient));
+            brk(sb);
+            brk(sb);
+            cat(sb, prevCat.label());
+
+            for(var setting : settings){
+                var currentCat = setting.meta().category();
+                if(currentCat != prevCat){
+                    brk(sb);
+                    prevCat = currentCat;
+                    cat(sb, currentCat.label());
+                }
+
+                var comment = setting.comment();
+                if(!comment.isEmpty()) comment(sb, comment);
+                range(sb, setting);
+                value(sb, setting);
+
+                brk(sb);
+            }
+
+            var finalString = sb.toString();
+            try {Files.writeString(path, finalString, StandardCharsets.UTF_8);}
+            catch (IOException ex){throw new IllegalStateException("Unable to write Tyz's Skills default settings (" + sideMark + ")", ex);}
+        }
+        public static void parseSettings(boolean isClient){
+            var path = mainPath(isClient);
+            if(!Files.exists(path)) {
+                writeSettings(isClient);
+                return;
+            }
+
+            var sideMark = isClient ? "client" : "server";
+
+            List<String> lines;
+            try{lines = Files.readAllLines(path, StandardCharsets.UTF_8);}
+            catch(IOException ex){throw new IllegalStateException("Unable to read Tyz's Skills settings ("+ sideMark + ")", ex);}
+
+            var fileVersion = "";
+            var foundKeys = new HashSet<>();
+            var hasInconsistencies = false;
+
+            for(var rawLine : lines){
+                var line = rawLine.trim();
+
+                if(line.startsWith("#" + header(isClient))){
+                    fileVersion = line.split(",", 2)[1].trim();
+                    continue;
+                }
+
+                if(line.startsWith("#") || line.startsWith("~") || line.startsWith("[") || line.isEmpty()) continue;
+
+                var parts = line.split("=", 2);
+                if(parts.length < 2) continue;
+
+                var key = parts[0].trim();
+                var value = parts[1].trim();
+
+                var setting = Settings.getByKey(key, isClient);
+                if(setting == null) {
+                    hasInconsistencies = true;
+                    continue;
+                }
+                else if (!foundKeys.add(key)) hasInconsistencies = true;
+
+                try{
+                    switch (setting) {
+                        case IntSetting param -> param.set(Integer.parseInt(value));
+                        case FloatSetting param -> param.set(Float.parseFloat(value));
+                        case BoolSetting param -> {
+                            if(!"true".equalsIgnoreCase(value) && !"false".equalsIgnoreCase(value)){
+                                throw new NumberFormatException();
+                            }
+                            param.set(Boolean.parseBoolean(value));
+                        }
+                        case ColorSetting param -> {
+                            if(!value.matches(ColorSetting.REGEX)) throw new NumberFormatException();
+                            param.set(value);
+                        }
+                    }
+                }
+                catch (NumberFormatException ex){
+                    ErrorManager.registerSettingWarn(key, "invalid value format", isClient);
+                }
+            }
+
+            var sizes = isClient ? Settings.getClientSettings().size() : Settings.getServerSettings().size();
+            var missingKeys = foundKeys.size() != sizes;
+            var changedVersion = !Settings.CONFIG_VERSION.equalsIgnoreCase(fileVersion);
+
+            if(hasInconsistencies || missingKeys ||changedVersion) writeSettings(isClient);
+        }
+
+        //UTILS
+        private static void brk(StringBuilder sb){sb.append("\n");}
+        private static void cat(StringBuilder sb, String cat){sb.append(String.format("[%s]", cat)); brk(sb);}
+        private static void comment(StringBuilder sb, String comment){sb.append(String.format("#%s", comment)); brk(sb);}
+        private static void range(StringBuilder sb, Setting<?> set){sb.append(String.format("# ~ %s", set.range())); brk(sb);}
+        private static void value(StringBuilder sb, Setting<?> set){sb.append(String.format("%s = %s", set.meta().key(), set.get())); brk(sb);}
     }
 }
