@@ -53,7 +53,7 @@ public class SpellCard extends UIContainer {
             new UIStyles.ButtonStyle(15, 9, 77, 217, 92, 217, Styles.MAIN_TEXTURE);
 
     private static final UIStyles.BackgroundStyle CUSTOM_BACK =
-            new UIStyles.BackgroundStyle(Styles.COLOR_BG, Styles.COLOR_BORDER, 3, 3);
+            new UIStyles.BackgroundStyle(Styles.COLOR_BG, Enums.BackgroundType.CUT, 3, 3);
     //endregion
 
     //DIRECT
@@ -95,7 +95,7 @@ public class SpellCard extends UIContainer {
 
         //PROGRESS BAR
         this.addChild(new UIText(30, 8, () -> text)
-                .withBackground(() -> CUSTOM_BACK, () -> false)
+                .withBackground(() -> CUSTOM_BACK)
                 .withScale(.75f, Enums.ScalePivot.TOP_LEFT));
 
 

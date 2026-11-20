@@ -37,7 +37,7 @@ public class PropertyCard extends UIContainer {
             new UIStyles.ImageStyle(92, 5, 136, 330, Styles.MAIN_TEXTURE);
 
     private static final UIStyles.BackgroundStyle PROP_LABEL =
-            new UIStyles.BackgroundStyle(Styles.COLOR_BG, Styles.COLOR_BORDER, 3, 3);
+            new UIStyles.BackgroundStyle(Styles.COLOR_BG, Enums.BackgroundType.CUT, 3, 3);
 
     private static final UIStyles.ButtonStyle PURCHASE_BTN =
             new UIStyles.ButtonStyle(9, 9, 69, 227, 78, 227, 87, 227, Styles.MAIN_TEXTURE);
@@ -54,7 +54,7 @@ public class PropertyCard extends UIContainer {
 
         var title = Component.translatable(property.displayName());
         addChild(new UIText(9, 9, () -> title)
-                .withBackground(() -> PROP_LABEL, () -> false)
+                .withBackground(() -> PROP_LABEL)
                 .withScale(.75f, Enums.ScalePivot.TOP_LEFT));
 
         var purchaseTooltip = new PropertyPurchaseTooltip(spell, property);

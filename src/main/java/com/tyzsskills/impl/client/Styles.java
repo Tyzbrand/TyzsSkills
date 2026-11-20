@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.client;
 
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.api.Enums;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.client.Minecraft;
@@ -34,11 +35,12 @@ public class Styles {
             new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/lock_icon.png"), 16);
 
 
-    public static final UIStyles.BackgroundStyle DEFAULT_BACKGROUND =
-            new UIStyles.BackgroundStyle(COLOR_BG, COLOR_BORDER, 4, 4);
+    //Backgrounds
+    private static final UIStyles.BorderStyle DEFAULT_BORDER = new UIStyles.BorderStyle(COLOR_BORDER, Enums.BorderType.OUTER);
+    private static final UIStyles.BorderStyle TOOLTIP_BORDER = new UIStyles.BorderStyle(TOOLTIP_BORDER_START, TOOLTIP_BORDER_END, Enums.BorderType.INNER);
 
+    public static final UIStyles.BackgroundStyle DEFAULT_BACKGROUND = new UIStyles.BackgroundStyle(COLOR_BG, Enums.BackgroundType.CUT, 4, 4);
     public static final UIStyles.BackgroundStyle TOOLTIP =
-            new UIStyles.BackgroundStyle(TOOLTIP_BACKGROUND_START, TOOLTIP_BACKGROUND_END, TOOLTIP_BORDER_START, TOOLTIP_BORDER_END, 4, 4);
-
-
+            new UIStyles.BackgroundStyle(TOOLTIP_BACKGROUND_START, TOOLTIP_BACKGROUND_END, Enums.BackgroundType.CUT, 4, 4)
+                    .withBorder(TOOLTIP_BORDER);
 }

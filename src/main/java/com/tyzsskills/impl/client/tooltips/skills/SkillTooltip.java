@@ -41,21 +41,24 @@ public class SkillTooltip extends UITooltip {
     private static final MutableComponent inactive = Component.literal("inactive");
 
     //region STYLES
-    private static final UIStyles.BackgroundStyle activeStyle =
-            new UIStyles.BackgroundStyle(0xFF367536, ColorTools.darken(0xFF367536), 4, 4);
+    private static final UIStyles.BackgroundStyle ACTIVE_BG =
+            new UIStyles.BackgroundStyle(0xFF367536, Enums.BackgroundType.CUT)
+                    .withBorder(new UIStyles.BorderStyle(ColorTools.darken(0xFF367536), Enums.BorderType.OUTER));
 
-    private static final UIStyles.BackgroundStyle inactiveStyle =
-            new UIStyles.BackgroundStyle(0xFF753636, ColorTools.darken(0xFF753636), 4, 4);
+    private static final UIStyles.BackgroundStyle INACTIVE_BG =
+            new UIStyles.BackgroundStyle(0xFF753636, Enums.BackgroundType.CUT)
+                    .withBorder(new UIStyles.BorderStyle(ColorTools.darken(0xFF753636), Enums.BorderType.OUTER));
 
-    private static final UIStyles.BackgroundStyle TOOLTIP_STYLE =
-            new UIStyles.BackgroundStyle(Styles.TOOLTIP_BACKGROUND_START, Styles.TOOLTIP_BACKGROUND_END, 0xFFA27C4F, 0xFF724C20, 4, 4);
+    private static final UIStyles.BackgroundStyle TOOLTIP =
+            new UIStyles.BackgroundStyle(Styles.TOOLTIP_BACKGROUND_START, Styles.TOOLTIP_BACKGROUND_END, Enums.BackgroundType.CUT, 4, 4)
+                    .withBorder(new UIStyles.BorderStyle(0xFFA27C4F, 0xFF724C20, Enums.BorderType.INNER));
 
     private static final UIStyles.ImageStyle SLOT =
             new UIStyles.ImageStyle(32, 32, 96, 346, Styles.MAIN_TEXTURE);
     //endregion
 
     public SkillTooltip(ISkill skill){
-        super(() -> TOOLTIP_STYLE);
+        super(() -> Styles.TOOLTIP);
         this.skill = skill;
 
         skillIcon = new UITexture(skill.getIcon(), 16);
@@ -149,8 +152,9 @@ public class SkillTooltip extends UITooltip {
         var tags = skill.getTags();
         var scale = .57f;
 
+
         var stateText = new UIText(0, 0, () -> cache.SKILLS.isSkillDeactivated(skill.getId()) ? inactive : active)
-                .withBackground(() -> cache.SKILLS.isSkillDeactivated(skill.getId()) ? inactiveStyle : activeStyle, () -> true)
+                .withBackground(() -> cache.SKILLS.isSkillDeactivated(skill.getId()) ? INACTIVE_BG : ACTIVE_BG)
                 .withScale(scale, Enums.ScalePivot.TOP_LEFT);
 
         tagContainer.addChild(stateText);
@@ -158,11 +162,11 @@ public class SkillTooltip extends UITooltip {
         var startX = Math.round(stateText.getVisualWidth() + 3);
         for (var tag : tags){
             var tagDisplay = Component.translatable(tag.displayName());
-            var style = new UIStyles.BackgroundStyle(tag.color(), ColorTools.darken(tag.color()), 4, 4);
-
+            var bgStyle = new UIStyles.BackgroundStyle(tag.color(), Enums.BackgroundType.CUT)
+                    .withBorder(new UIStyles.BorderStyle(ColorTools.darken(tag.color()), Enums.BorderType.OUTER));
 
             var tagText = new UIText(startX, 0, () -> tagDisplay)
-                    .withBackground(() -> style, () -> true)
+                    .withBackground(() -> bgStyle)
                     .withScale(scale, Enums.ScalePivot.TOP_LEFT);
 
             tagContainer.addChild(tagText);

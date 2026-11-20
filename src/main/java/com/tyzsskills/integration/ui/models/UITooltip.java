@@ -8,24 +8,25 @@ import java.util.function.Supplier;
 
 public class UITooltip extends UIContainer{
 
-    public final Supplier<UIStyles.BackgroundStyle> tooltipStyle;
+    public final Supplier<UIStyles.BackgroundStyle> style;
 
     public UITooltip(){
         this(() -> Styles.TOOLTIP);
     }
 
-    public UITooltip(Supplier<UIStyles.BackgroundStyle> style){
+    public UITooltip(Supplier<UIStyles.BackgroundStyle> bgStyle){
         super(0, 0);
-        tooltipStyle = style;
+
+        style = bgStyle;
     }
 
     public UITooltip(MutableComponent text){
-        this();
+        this(() -> Styles.TOOLTIP);
         this.addChild(new UIText(0, 0, () -> text));
     }
 
     public UITooltip(MutableComponent text, Supplier<UIStyles.BackgroundStyle> style){
-        this(() -> Styles.TOOLTIP);
+        this(style);
         this.addChild(new UIText(0, 0, () -> text));
     }
 

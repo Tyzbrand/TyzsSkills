@@ -41,22 +41,28 @@ public class SpellTooltip extends UITooltip {
     private static final MutableComponent LOCKED = Component.literal("locked");
 
     //region STYLES
-    private static final UIStyles.BackgroundStyle ASSIGNED_STYLE =
-            new UIStyles.BackgroundStyle(0xFF367536, ColorTools.darken(0xFF367536), 4, 4);
-    private static final UIStyles.BackgroundStyle UNASSIGNED_STYLE =
-            new UIStyles.BackgroundStyle(0xFF753636, ColorTools.darken(0xFF753636), 4, 4);
-    private static final UIStyles.BackgroundStyle LOCKED_STYLE =
-            new UIStyles.BackgroundStyle(0xFF757575, ColorTools.darken(0xFF757575), 4, 4);
+    private static final UIStyles.BackgroundStyle ASSIGNED_BG =
+            new UIStyles.BackgroundStyle(0xFF367536, Enums.BackgroundType.CUT)
+                    .withBorder(new UIStyles.BorderStyle(ColorTools.darken(0xFF367536), Enums.BorderType.OUTER));
 
-    private static final UIStyles.BackgroundStyle TOOLTIP_STYLE =
-            new UIStyles.BackgroundStyle(Styles.TOOLTIP_BACKGROUND_START, Styles.TOOLTIP_BACKGROUND_END, 0xFFA27C4F, 0xFF724C20, 4, 4);
+    private static final UIStyles.BackgroundStyle UNASSIGNED_BG =
+            new UIStyles.BackgroundStyle(0xFF753636, Enums.BackgroundType.CUT)
+                    .withBorder(new UIStyles.BorderStyle(ColorTools.darken(0xFF753636), Enums.BorderType.OUTER));
+
+    private static final UIStyles.BackgroundStyle LOCKED_BG =
+            new UIStyles.BackgroundStyle(0xFF757575, Enums.BackgroundType.CUT)
+                    .withBorder(new UIStyles.BorderStyle(ColorTools.darken(0xFF757575), Enums.BorderType.OUTER));
+
+    private static final UIStyles.BackgroundStyle TOOLTIP =
+            new UIStyles.BackgroundStyle(Styles.TOOLTIP_BACKGROUND_START, Styles.TOOLTIP_BACKGROUND_END, Enums.BackgroundType.CUT, 4, 4)
+                    .withBorder(new UIStyles.BorderStyle(0xFFA27C4F, 0xFF724C20, Enums.BorderType.INNER));
 
     private static final UIStyles.ImageStyle SLOT =
             new UIStyles.ImageStyle(32, 32, 96, 346, Styles.MAIN_TEXTURE);
     //endregion
 
     public SpellTooltip(ISpell spell){
-        super(() -> TOOLTIP_STYLE);
+        super(() -> Styles.TOOLTIP);
         this.spell = spell;
 
         spellIcon = new UITexture(spell.getIcon(), 16);
@@ -145,10 +151,10 @@ public class SpellTooltip extends UITooltip {
         var isAssigned = cache.SPELLS.isSpellAssigned(spell.getId());
 
         var text = isPurchased ? isAssigned ? ASSIGNED : UNASSIGNED : LOCKED;
-        var style = isPurchased ? isAssigned ? ASSIGNED_STYLE : UNASSIGNED_STYLE : LOCKED_STYLE;
+        var bgStyle = isPurchased ? isAssigned ? ASSIGNED_BG : UNASSIGNED_BG : LOCKED_BG;
 
         var stateText = new UIText(0, 0, () -> text)
-                .withBackground(() -> style, () -> true)
+                .withBackground(() -> bgStyle)
                 .withScale(scale, Enums.ScalePivot.TOP_LEFT);
 
         tagContainer.addChild(stateText);

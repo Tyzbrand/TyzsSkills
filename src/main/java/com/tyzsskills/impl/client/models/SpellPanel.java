@@ -28,7 +28,7 @@ public class SpellPanel extends UIContainer {
             new UIStyles.ImageStyle(120, 85, 226, 0, Styles.MAIN_TEXTURE_BACKGROUNDS);
 
     private static final UIStyles.BackgroundStyle FOCUS_BLUR =
-            new UIStyles.BackgroundStyle(0xA6000000, 0xA6000000, 0, 0);
+            new UIStyles.BackgroundStyle(0xA6000000, Enums.BackgroundType.CUT, 0, 0);
 
     private static final UIStyles.ButtonStyle QUIT_BTN =
             new UIStyles.ButtonStyle(13, 13, 202, 248, 215, 248, Styles.MAIN_TEXTURE);
@@ -59,8 +59,7 @@ public class SpellPanel extends UIContainer {
        focusPanel.clear();
        var origin = new Vector2i((SCROLL_BACKGROUND.width() - FOCUS_POPUP.width()) / 2, (SCROLL_BACKGROUND.height() - FOCUS_POPUP.height()) / 2);
 
-        focusPanel.addChild(new UIBackground(0, 0, 226, 139, () -> FOCUS_BLUR)
-               .withBorder(() -> false, () -> false));
+        focusPanel.addChild(new UIBackground(0, 0, 226, 139, () -> FOCUS_BLUR));
         focusPanel.addChild(new UIImage(origin.x, origin.y, () -> FOCUS_POPUP));
 
         var originPanel = new UIContainer(origin.x, origin.y);
@@ -71,7 +70,7 @@ public class SpellPanel extends UIContainer {
         //TODO: translation
         var message = Component.literal("Properties");
         originPanel.addChild(new UIText(10, 9, () -> message)
-                .withBackground(() -> Styles.DEFAULT_BACKGROUND, () -> false));
+                .withBackground(() -> Styles.DEFAULT_BACKGROUND));
 
         var scroll = new UIScrollView(5, 23, 110, 57, false);
         originPanel.addChild(scroll);
@@ -94,7 +93,7 @@ public class SpellPanel extends UIContainer {
            //TODO: translation
            var message = Component.literal("-No Spells There-");
            scrollView.addChild(new UIText(scrollView.getRawWidth() / 2, scrollView.getRawHeight() / 2, () -> message)
-                   .withBackground(() -> Styles.DEFAULT_BACKGROUND, () -> false)
+                   .withBackground(() -> Styles.DEFAULT_BACKGROUND)
                    .withAlignment(Enums.TextAlignment.CENTER));
            return;
        }

@@ -81,7 +81,7 @@ public class SkillPanel extends UIContainer {
         categoryDisplayName = getCategoryDisplayName(SortingManager.getCurrentCategory());
         this.addChild(new UIText(215, 10, () -> categoryDisplayName)
                 .withAlignment(Enums.TextAlignment.RIGHT)
-                .withBackground(() -> Styles.DEFAULT_BACKGROUND, () -> false)
+                .withBackground(() -> Styles.DEFAULT_BACKGROUND)
                 .withScale(.85f, Enums.ScalePivot.CENTER));
 
         this.addChild(tabsPanel);
@@ -187,7 +187,7 @@ public class SkillPanel extends UIContainer {
             //TODO: translation
             var message = Component.literal("-No Skills There-");
             scrollView.addChild(new UIText(scrollView.getRawWidth() / 2, scrollView.getRawHeight() / 2, () -> message)
-                    .withBackground(() -> Styles.DEFAULT_BACKGROUND, () -> false)
+                    .withBackground(() -> Styles.DEFAULT_BACKGROUND)
                     .withAlignment(Enums.TextAlignment.CENTER));
             return;
         }

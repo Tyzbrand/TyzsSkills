@@ -41,7 +41,8 @@ public class MetadataOverlay extends UIStackOverlay {
 
         var bgColor = Settings.Stock.XP_BG.getHex();
         var bdColor = Settings.Stock.XP_BD.getHex();
-        var backgroundStyle = new UIStyles.BackgroundStyle(bgColor, bdColor, 4, 4);
+        var backgroundStyle = new UIStyles.BackgroundStyle(bgColor, Enums.BackgroundType.CUT)
+                .withBorder(new UIStyles.BorderStyle(bdColor, Enums.BorderType.OUTER));
 
         var overlay = new UIOverlay(0, 0, Settings.Stock.XP_DURATION.get())
                 .withId(XP_ID)
@@ -49,7 +50,7 @@ public class MetadataOverlay extends UIStackOverlay {
                 .withFade(200L, 500L);
 
         overlay.addChild(new UIText(0, 0, () -> xpText)
-                .withBackground(() -> backgroundStyle, () -> true));
+                .withBackground(() -> backgroundStyle));
 
         this.addOverlay(overlay);
     }
@@ -82,7 +83,8 @@ public class MetadataOverlay extends UIStackOverlay {
 
         var bgColor = Settings.Stock.LVL_BG.getHex();
         var bdColor = Settings.Stock.LVL_BD.getHex();
-        var backgroundStyle = new UIStyles.BackgroundStyle(bgColor, bdColor, 4, 4);
+        var backgroundStyle = new UIStyles.BackgroundStyle(bgColor, Enums.BackgroundType.CUT)
+                .withBorder(new UIStyles.BorderStyle(bdColor, Enums.BorderType.OUTER));
 
         var overlay = new UIOverlay(0, 0, Settings.Stock.LVL_DURATION.get())
                 .withId(LEVEL_ID)
@@ -90,7 +92,7 @@ public class MetadataOverlay extends UIStackOverlay {
                 .withFade(200L, 500L);
 
         overlay.addChild(new UIText(0, 0, () -> levelText)
-                .withBackground(() -> backgroundStyle, () -> true));
+                .withBackground(() -> backgroundStyle));
 
         this.addOverlay(overlay);
     }

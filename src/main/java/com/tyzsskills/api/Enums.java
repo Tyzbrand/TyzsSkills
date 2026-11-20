@@ -42,4 +42,7 @@ public class Enums {
     public enum ScalePivot {TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER}
     public enum TextAlignment {LEFT, CENTER, RIGHT}
     public enum OverlayAnchor {TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER}
+
+    public enum BorderType {NONE, INNER, OUTER}
+    public enum BackgroundType {NONE, CUT, FULL}
 }

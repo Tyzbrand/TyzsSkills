@@ -76,7 +76,9 @@ public class SkillCard extends UIContainer {
             new UIStyles.ButtonStyle(9, 9, 186, 227, 195, 227, Styles.MAIN_TEXTURE);
 
     private static final UIStyles.BackgroundStyle LEVEL_BACKGROUND =
-            new UIStyles.BackgroundStyle(Styles.COLOR_BG, Styles.COLOR_BORDER_MAXED, 3, 3);
+            new UIStyles.BackgroundStyle(Styles.COLOR_BG, Enums.BackgroundType.CUT, 3, 3);
+    private static final UIStyles.BackgroundStyle LEVEL_BACKGROUND_MAXED =
+            LEVEL_BACKGROUND.withBorder(new UIStyles.BorderStyle(Styles.COLOR_BORDER_MAXED, Enums.BorderType.OUTER));
     //endregion
 
     //DIRECT
@@ -119,7 +121,7 @@ public class SkillCard extends UIContainer {
         //BADGE
         var textScale = .57f;
         this.addChild(new UIText(29, 10, this::getSkillLevelText)
-                .withWrapWidth((int)(30 / textScale)).withAlignment(Enums.TextAlignment.LEFT).withBackground(() -> LEVEL_BACKGROUND, () -> isMaxed)
+                .withWrapWidth((int)(30/textScale)).withAlignment(Enums.TextAlignment.LEFT).withBackground(() -> isMaxed ? LEVEL_BACKGROUND_MAXED : LEVEL_BACKGROUND)
                 .withScale(textScale, Enums.ScalePivot.TOP_LEFT));
 
         //BUTTONS

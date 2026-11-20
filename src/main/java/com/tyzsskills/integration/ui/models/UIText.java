@@ -1,6 +1,7 @@
 package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.integration.ui.UIBackgroundRenderer;
 import com.tyzsskills.integration.ui.UIElement;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import net.minecraft.client.Minecraft;
@@ -15,8 +16,7 @@ public class UIText extends UIElement {
     private final Font FONT = Minecraft.getInstance().font;
     private final Supplier<MutableComponent> textExtractor;
 
-    private Supplier<UIStyles.BackgroundStyle> backgroundStyle;
-    private Supplier<Boolean> showBackgroundBorder = () -> false;
+    private Supplier<UIStyles.BackgroundStyle> backgroundStyle = () -> UIStyles.BackgroundStyle.NONE;
 
     private boolean shadow;
 
@@ -26,8 +26,10 @@ public class UIText extends UIElement {
     //fluent
     public UIText withWrapWidth(int wrapWidth){this.wrapWidth = wrapWidth; return this;}
     public UIText withAlignment(Enums.TextAlignment alignment){this.alignment = alignment; return this;}
-    public UIText withBackground(Supplier<UIStyles.BackgroundStyle> backgroundStyle, Supplier<Boolean> showBackgroundBorder) {
-        this.backgroundStyle = backgroundStyle; this.showBackgroundBorder = showBackgroundBorder; return this;}
+    public UIText withBackground(Supplier<UIStyles.BackgroundStyle> backgroundStyle) {
+        this.backgroundStyle = backgroundStyle != null ? backgroundStyle : () -> UIStyles.BackgroundStyle.NONE;
+        return this;
+    }
 
     public UIText(int offsetX, int offsetY, Supplier<MutableComponent> textExtractor) {
         this(offsetX, offsetY, textExtractor, true);
@@ -101,16 +103,15 @@ public class UIText extends UIElement {
 
     //IMPLEMENTATION
     private void renderBackground(GuiGraphics gui, int textX, int textY, int textW, int textH){
-        if (backgroundStyle == null) return;
         var currentStyle = backgroundStyle.get();
-        if (currentStyle == null) return;
+        if(currentStyle == null || currentStyle.isNone()) return;
 
         var bgX = textX - currentStyle.paddingX();
         var bgY = textY - currentStyle.paddingY();
-        var bgW = textW + (currentStyle.paddingX() * 2);
-        var bgH = textH + (currentStyle.paddingY() * 2);
+        var bgW = textW + currentStyle.paddingX() * 2;
+        var bgH = textH + currentStyle.paddingY() * 2;
 
-        UIBackground.renderBackground(gui, bgX, bgY, bgW, bgH, currentStyle, showBackgroundBorder.get());
+        UIBackgroundRenderer.render(gui, bgX, bgY, bgW, bgH, currentStyle);
     }
 
     //UTILS
@@ -152,7 +153,7 @@ public class UIText extends UIElement {
             case LEFT -> baseX;
         };
     }
-    private int getPaddingX() {return backgroundStyle != null && backgroundStyle.get() != null ? backgroundStyle.get().paddingX() : 0;}
-    private int getPaddingY() {return backgroundStyle != null && backgroundStyle.get() != null ? backgroundStyle.get().paddingY() : 0;}
+    private int getPaddingX() {return backgroundStyle.get().paddingX();}
+    private int getPaddingY() {return backgroundStyle.get().paddingY();}
 
 }

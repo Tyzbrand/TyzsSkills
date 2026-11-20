@@ -34,7 +34,8 @@ public class SkillOverlay extends UIStackOverlay {
 
         var bgColor = Settings.Stock.SKILL_BG.getHex();
         var bdColor = Settings.Stock.SKILL_BD.getHex();
-        var backgroundStyle = new UIStyles.BackgroundStyle(bgColor, bdColor, 0, 0);
+        var backgroundStyle = new UIStyles.BackgroundStyle(bgColor, Enums.BackgroundType.CUT, 0, 0)
+                .withBorder(new UIStyles.BorderStyle(bdColor, Enums.BorderType.OUTER));
 
         var overlay = new UIOverlay(0, 0, Settings.Stock.SKILL_DURATION.get())
                 .withId(skill.getId())
