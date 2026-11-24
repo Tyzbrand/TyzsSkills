@@ -1,6 +1,6 @@
 package com.tyzsskills.integration.ui.models;
 
-import com.tyzsskills.integration.ui.UIElement;
+import com.tyzsskills.integration.ui.abstracts.UIElement;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.ArrayList;

@@ -7,7 +7,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.api.records.Modifier;
-import com.tyzsskills.api.records.STag;
+import com.tyzsskills.api.records.SkillTag;
 import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -124,7 +124,7 @@ public class Skill implements ISkill {
     @Override
     public @NotNull @UnmodifiableView Map<String, Integer> getRawPrerequisites() {return config.skillPrerequisites();}
     @Override
-    public @NotNull @UnmodifiableView List<STag> getTags() {return config.tags();}
+    public @NotNull @UnmodifiableView List<SkillTag> getTags() {return config.tags();}
     @Override
     public @NotNull CompoundTag getSpecificParameters() {
         return config.parameters();

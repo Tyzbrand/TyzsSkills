@@ -58,7 +58,7 @@ public class PropertyCard extends UIContainer {
                 .withScale(.75f, Enums.ScalePivot.TOP_LEFT));
 
         var purchaseTooltip = new PropertyPurchaseTooltip(spell, property);
-        addChild(new UIButton(90, 7,() -> PURCHASE_BTN, this::handlePurchase)
+        addChild(new UIImageButton(90, 7,() -> PURCHASE_BTN, this::handlePurchase)
                 .withDisabled(() -> !canBuyProperty)
                 .withTooltip(() -> purchaseTooltip));
 

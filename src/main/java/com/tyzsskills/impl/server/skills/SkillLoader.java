@@ -9,7 +9,7 @@ import com.tyzsskills.Constants;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.model.SkillConfiguration;
 import com.tyzsskills.api.records.Modifier;
-import com.tyzsskills.api.records.STag;
+import com.tyzsskills.api.records.SkillTag;
 import com.tyzsskills.api.records.ValueSet;
 import com.tyzsskills.api.tools.JsonLoadTools;
 import com.tyzsskills.impl.server.active.ErrorManager;
@@ -201,7 +201,7 @@ public class SkillLoader {
         if(skillPrerequisites != null) skillConfig.withPrerequisites(skillPrerequisites);
 
         var rawTags = JsonLoadTools.getSafeList(obj, "tags", JsonElement::getAsString);
-        ArrayList<STag> tags = null;
+        ArrayList<SkillTag> tags = null;
         if(rawTags != null && !rawTags.isEmpty()){
             tags = new ArrayList<>();
             for(var id : rawTags){

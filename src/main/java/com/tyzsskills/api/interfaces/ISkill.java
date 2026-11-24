@@ -2,7 +2,7 @@ package com.tyzsskills.api.interfaces;
 
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.Modifier;
-import com.tyzsskills.api.records.STag;
+import com.tyzsskills.api.records.SkillTag;
 import com.tyzsskills.api.records.ValueSet;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -89,7 +89,7 @@ public interface ISkill {
 
     @NotNull @UnmodifiableView Map<String, Integer> getRawPrerequisites();
 
-    @NotNull @UnmodifiableView List<STag> getTags();
+    @NotNull @UnmodifiableView List<SkillTag> getTags();
 
     boolean isPurchasable();
 
@@ -100,7 +100,7 @@ public interface ISkill {
     boolean isPermanent();
 
     default boolean hasTag(@NotNull String tagId){return getTags().stream().anyMatch(tag -> tag.is(tagId));}
-    default boolean hasTag(@NotNull STag tag){return hasTag(tag.id());}
+    default boolean hasTag(@NotNull SkillTag tag){return hasTag(tag.id());}
 
     /**
      * Gets the global player level required to purchase this skill.

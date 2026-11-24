@@ -1,26 +1,19 @@
 package com.tyzsskills.integration.ui.models;
 
-import com.tyzsskills.impl.client.SoundPlayer;
-import com.tyzsskills.integration.ui.UIElement;
+import com.tyzsskills.integration.ui.abstracts.UIButton;
 import com.tyzsskills.integration.ui.records.UIStyles.ButtonStyle;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.function.Supplier;
 
-public class UIButton extends UIElement {
+public class UIImageButton extends UIButton {
 
     private final Supplier<ButtonStyle> style;
-    private final Supplier<Boolean> onClick;
-    private Supplier<Boolean> disabledWhen = () -> false;
 
-    //Fluents
-    public UIButton withDisabled(Supplier<Boolean> supplier){this.disabledWhen = supplier; return this;}
-
-    public UIButton(int offsetX, int offsetY, Supplier<ButtonStyle> style, Supplier<Boolean> onClick) {
-        super(offsetX, offsetY, style.get().width(), style.get().height());
+    public UIImageButton(int offsetX, int offsetY, Supplier<ButtonStyle> style, Supplier<Boolean> onClick) {
+        super(offsetX, offsetY, style.get().width(), style.get().height(), onClick);
 
         this.style = style;
-        this.onClick = onClick;
     }
 
     @Override
@@ -34,15 +27,5 @@ public class UIButton extends UIElement {
         else {finalU = currentStyle.u(); finalV = currentStyle.v();}
 
         gui.blit(currentStyle.image().texture(), getRawX(), getRawY(), finalU, finalV, getRawWidth(), getRawHeight(), currentStyle.image().size(), currentStyle.image().size());
-    }
-
-    @Override
-    protected boolean onClick(int mouseX, int mouseY) {
-        if(disabledWhen.get()) return false;
-        if(isHovering(mouseX, mouseY) && onClick != null){
-            if(onClick.get()) SoundPlayer.PlayUIClick();
-            return true;
-        }
-        return false;
     }
 }

@@ -1,5 +1,6 @@
 package com.tyzsskills.api.model;
 
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.interfaces.ISkillBehavior;
 import com.tyzsskills.impl.server.payloads.SkillTriggerPayload;
@@ -45,6 +46,7 @@ public abstract class SkillBehavior implements ISkillBehavior {
 
     //Tools
     protected void notifyClient(@NotNull ServerPlayer player, @NotNull ISkill skill){
+        if(!Settings.Server.TRIGGER_SKILL_OVERLAY.get()) return;
         PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(skill.getId()));
     }
 

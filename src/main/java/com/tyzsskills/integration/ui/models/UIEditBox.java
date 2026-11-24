@@ -1,7 +1,7 @@
 package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.impl.client.Styles;
-import com.tyzsskills.integration.ui.UIElement;
+import com.tyzsskills.integration.ui.abstracts.UIElement;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

@@ -103,7 +103,7 @@ public class SkillPanel extends UIContainer {
         var categories = cache.SKILLS.getAllCategories();
         var total = categories.size();
 
-        tabsPanel.addChild(new UIButton(5, 12, () -> PREV_TAB, this::handleTabBack)
+        tabsPanel.addChild(new UIImageButton(5, 12, () -> PREV_TAB, this::handleTabBack)
                 .withDisabled(this::isTabBackDisabled).withShade(this::isTabBackDisabled));
 
         var x = 13;
@@ -123,7 +123,7 @@ public class SkillPanel extends UIContainer {
             x += 28;
         }
 
-        tabsPanel.addChild(new UIButton(x + 1, 12, () -> NEXT_TAB, this::handleTabNext)
+        tabsPanel.addChild(new UIImageButton(x + 1, 12, () -> NEXT_TAB, this::handleTabNext)
                 .withDisabled(this::isTabNextDisabled).withShade(this::isTabNextDisabled));
     }
     private void buildFilterTools(){
@@ -150,11 +150,11 @@ public class SkillPanel extends UIContainer {
                 .withScale(.85f, Enums.ScalePivot.TOP_LEFT));
 
         var sortingDirTooltip = new SortingDirectionTooltip(SortingManager::getSortingDirection);
-        this.addChild(new UIButton(201, -10, this::getSortingDirectionStyle, this::handleSortingDirectionChange)
+        this.addChild(new UIImageButton(201, -10, this::getSortingDirectionStyle, this::handleSortingDirectionChange)
                 .withTooltip(() -> sortingDirTooltip));
 
         var sortingTypeTooltip = new SortingTypeTooltip(SortingManager::getSortingType);
-        this.addChild(new UIButton(184, -10, this::getSortingTypeStyle, this::handleSortingTypeChange)
+        this.addChild(new UIImageButton(184, -10, this::getSortingTypeStyle, this::handleSortingTypeChange)
                 .withTooltip(() -> sortingTypeTooltip));
 
         var searchBarTooltip = new SearchBarTooltip();

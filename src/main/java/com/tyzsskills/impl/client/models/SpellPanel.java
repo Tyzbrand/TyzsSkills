@@ -65,7 +65,7 @@ public class SpellPanel extends UIContainer {
         var originPanel = new UIContainer(origin.x, origin.y);
         focusPanel.addChild(originPanel);
 
-        originPanel.addChild(new UIButton(100, 5, () -> QUIT_BTN, this::unfocusSpell));
+        originPanel.addChild(new UIImageButton(100, 5, () -> QUIT_BTN, this::unfocusSpell));
 
         //TODO: translation
         var message = Component.literal("Properties");

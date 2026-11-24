@@ -32,7 +32,8 @@ public class DataCache {
         }
 
         public void updateXp(@NotNull UpdatePayloads.XpPayload payload) {
-            if (payload.gained() > 0 && payload.triggersOverlay()) triggerXpOverlay(payload.gained());
+            if (payload.gained() > 0 && payload.triggersOverlay() && payload.gained() >= Settings.Client.XP_OVERLAY_THRESHOLD.get())
+                triggerXpOverlay(payload.gained());
 
             xp = payload.xp();
             CACHE.UPDATE.registerUpdate("Xp Synced: New Cached Xp Value [" + xp + "]");

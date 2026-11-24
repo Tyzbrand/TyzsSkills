@@ -1,4 +1,4 @@
-package com.tyzsskills.integration.ui;
+package com.tyzsskills.integration.ui.abstracts;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.tyzsskills.api.Enums;

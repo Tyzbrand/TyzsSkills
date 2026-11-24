@@ -58,7 +58,7 @@ public class ClientCache {
             for(var kvp : payload.serverData().settings().entrySet()) {
                 var key = kvp.getKey(); var value = kvp.getValue();
 
-                Setting<?> settingInstance = Settings.Server.getByKey(key);
+                Setting<?, ?> settingInstance = Settings.Server.getByKey(key);
                 if(settingInstance == null) throw new IllegalStateException("Missing setting on client side:"  + key);
                 settingInstance.safeParse(value);
             }

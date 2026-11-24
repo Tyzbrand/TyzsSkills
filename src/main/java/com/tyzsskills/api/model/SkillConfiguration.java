@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializer;
 import com.mojang.serialization.JsonOps;
-import com.tyzsskills.api.records.STag;
+import com.tyzsskills.api.records.SkillTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
@@ -29,7 +29,7 @@ public class SkillConfiguration {
     public SkillConfiguration withPrerequisites(@NotNull Map<String, Integer> prerequisites){
         this.skillPrerequisites = Collections.unmodifiableMap(prerequisites);return this;}
 
-    public SkillConfiguration withTags(@NotNull List<STag> tags){
+    public SkillConfiguration withTags(@NotNull List<SkillTag> tags){
         this.tags = Collections.unmodifiableList(tags);return this;}
 
 
@@ -63,8 +63,8 @@ public class SkillConfiguration {
     public @NotNull CompoundTag parameters(){return parameters;}
 
     //Tags
-    private @UnmodifiableView List<STag> tags = null;
-    public @NotNull @UnmodifiableView List<STag> tags(){return tags == null ? List.of() : tags;}
+    private @UnmodifiableView List<SkillTag> tags = null;
+    public @NotNull @UnmodifiableView List<SkillTag> tags(){return tags == null ? List.of() : tags;}
 
     //region Load/Write/Read
     public static final JsonSerializer<SkillConfiguration> CONFIG_SERIALIZER = ((src, typeOfSrc, ctx) -> {
@@ -114,7 +114,7 @@ public class SkillConfiguration {
         buffer.writeCollection(incompatibleSkills(), FriendlyByteBuf::writeUtf);
         buffer.writeMap(skillPrerequisites(), FriendlyByteBuf::writeUtf, FriendlyByteBuf::writeInt);
 
-        buffer.writeCollection(tags(), STag.STREAM_CODEC);
+        buffer.writeCollection(tags(), SkillTag.STREAM_CODEC);
 
         buffer.writeNbt(parameters());
     }
@@ -143,7 +143,7 @@ public class SkillConfiguration {
         Map<String, Integer> skillPrerequisites = buffer.readMap(HashMap::new, FriendlyByteBuf::readUtf, FriendlyByteBuf::readInt);
         if(!skillPrerequisites.isEmpty()) skillConfig.withPrerequisites(skillPrerequisites);
 
-        List<STag> tags = buffer.readCollection(ArrayList::new, STag.STREAM_CODEC);
+        List<SkillTag> tags = buffer.readCollection(ArrayList::new, SkillTag.STREAM_CODEC);
         if(!tags.isEmpty()) skillConfig.withTags(tags);
 
         var parametersToRead = buffer.readNbt();

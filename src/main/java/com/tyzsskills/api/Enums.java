@@ -9,9 +9,18 @@ public class Enums {
     public enum SortingType {DEFAULT, NAME, PRICE, LEVEL}
     public enum MenuFocus {SKILL, SPELL}
     public enum WheelMode {CAST, ASSIGN}
+    public enum SettingsMode {MAIN, CLIENT, SERVER}
 
     public enum SkillAction {PURCHASE, REFUND, BULK_PURCHASE, BULK_REFUND, BOOKMARK, DEACTIVATION}
     public enum SpellAction{PURCHASE, ASSIGNMENT, UNASSIGNMENT, CAST, PROPERTY_PURCHASE}
+
+    public enum PermissionLevel{
+        NONE(0), MODERATOR(1), OPERATOR(2), ADMIN(3), OWNER(4);
+
+        PermissionLevel(int level) {this.level = level;}
+        private final int level;
+        public int level(){return level;}
+    }
 
     //SETTINGS
     public enum SettingCategory {
@@ -19,6 +28,7 @@ public class Enums {
         DEATH_PENALTIES(1, false),
         XP(2, false),
         SERVER_PERFORMANCES(3, false),
+        PERMISSIONS(4, false),
 
         CLIENT_GENERAL(0, true),
         OVERLAYS(1, true),
@@ -38,6 +48,7 @@ public class Enums {
         }
     }
     public enum SettingType { BOOL, INT, FLOAT, COLOR, ENUM}
+    public enum SettingTag {NEED_RESTART, EXPERIMENTAL}
 
     //UI
     public enum ScalePivot {TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, CENTER}
@@ -48,6 +59,4 @@ public class Enums {
     public enum BackgroundType {NONE, CUT, FULL}
 
 
-    //STATIC SETTINGS
-    public enum Multiplier {x1, x2, x3, x4, x5, x10, x25, x50, x100, x1000}
 }

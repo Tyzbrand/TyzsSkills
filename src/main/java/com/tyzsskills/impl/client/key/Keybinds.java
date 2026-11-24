@@ -14,6 +14,7 @@ import org.lwjgl.glfw.GLFW;
 public class Keybinds {
     public static KeyMapping OPEN_SKILL_MENU;
     public static KeyMapping OPEN_SPELL_WHEEL;
+    public static KeyMapping OPEN_SETTINGS;
 
     public static KeyMapping QUICK_CAST_1;
     public static KeyMapping QUICK_CAST_2;
@@ -34,6 +35,12 @@ public class Keybinds {
         OPEN_SPELL_WHEEL = KeyActions.registerInput(event,
                 new KeyMapping("Open Spell Wheel", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, CATEGORY_KEY),
                 () -> Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.CAST, null)));
+
+        //TODO: translation
+        OPEN_SETTINGS = KeyActions.registerInput(event,
+                new KeyMapping("Open Settings", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_U, CATEGORY_KEY),
+                () -> {return;});
+
 
         //TODO: translation
         QUICK_CAST_1 = KeyActions.registerInput(event,

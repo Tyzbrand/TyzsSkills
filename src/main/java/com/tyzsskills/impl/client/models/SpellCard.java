@@ -84,7 +84,7 @@ public class SpellCard extends UIContainer {
 
         //CADRE && ICON
         var spellTooltip = new SpellTooltip(spell);
-        this.addChild(new UIButton(4, 4, this::getCadreStyle, this::handleAssignation)
+        this.addChild(new UIImageButton(4, 4, this::getCadreStyle, this::handleAssignation)
                 .withTooltip(() -> spellTooltip));
 
         var iconImage = new UIImage(7, 7, 16, 16, () -> icon);
@@ -101,19 +101,19 @@ public class SpellCard extends UIContainer {
 
         //BUTTONS
         var purchaseTooltip = new SpellPurchaseTooltip(spell);
-        this.addChild(new UIButton(28, 17, () -> PURCHASE_BTN, this::handlePurchase)
+        this.addChild(new UIImageButton(28, 17, () -> PURCHASE_BTN, this::handlePurchase)
                 .withDisabled(() -> !canBuySpell)
                 .withVisibility(() -> !isPurchased())
                 .withTooltip(() -> purchaseTooltip));
 
         var assignTooltip = new SpellAssignTooltip(spell);
-        this.addChild(new UIButton(28, 17, () -> ASSIGN_BTN, this::handleAssignation)
+        this.addChild(new UIImageButton(28, 17, () -> ASSIGN_BTN, this::handleAssignation)
                 .withVisibility(this::isPurchased)
                 .withTooltip(() -> assignTooltip));
 
         //TODO: translation
         var upgradeTooltip = new UITooltip(Component.literal("Upgrade"));
-        this.addChild(new UIButton(44, 17, () -> UPGRADE_BTN, this::handleInfo)
+        this.addChild(new UIImageButton(44, 17, () -> UPGRADE_BTN, this::handleInfo)
                 .withVisibility(this::isPurchased)
                 .withTooltip(() -> upgradeTooltip));
     }

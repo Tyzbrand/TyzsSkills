@@ -4,7 +4,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.SettingMeta;
 import org.jetbrains.annotations.NotNull;
 
-public final class BoolSetting extends Setting<Boolean> {
+public final class BoolSetting extends Setting<Boolean, BoolSetting> {
     public BoolSetting(@NotNull SettingMeta meta, @NotNull Boolean defaultValue) {
         super(meta, Enums.SettingType.BOOL, defaultValue);
     }

@@ -155,7 +155,7 @@ public class SortingManager {
         if(query.isEmpty()) return true;
         if(text.contains(query)) return true;
 
-        if(!Settings.Client.QUERY_TYPOS.get()) return false;
+        if(!Settings.Client.QUERY_TOLERANCE.get()) return false;
 
         var errorTolerance =  getAllowedErrors(query);
         if(errorTolerance <= 0) return false;

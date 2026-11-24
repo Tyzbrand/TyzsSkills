@@ -4,7 +4,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.SettingMeta;
 import org.jetbrains.annotations.NotNull;
 
-public final class EnumSetting<E extends Enum<E>> extends Setting<E>{
+public final class EnumSetting<E extends Enum<E>> extends Setting<E, EnumSetting<E>>{
     private final Class<E> enumClass;
     public @NotNull Class<E> enumClass(){return enumClass;}
 

@@ -19,16 +19,16 @@ import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public final class Settings {
-    public static final String CONFIG_VERSION = "7.3";
+    public static final String CONFIG_VERSION = "7.5";
 
-    private static final Map<String, Setting<?>> SERVER_REGISTRY = new HashMap<>();
-    private static final Collection<Setting<?>> SERVER_REGISTRY_VIEW = Collections.unmodifiableCollection(SERVER_REGISTRY.values());
+    private static final Map<String, Setting<?, ?>> SERVER_REGISTRY = new HashMap<>();
+    private static final Collection<Setting<?, ?>> SERVER_REGISTRY_VIEW = Collections.unmodifiableCollection(SERVER_REGISTRY.values());
 
-    private static final Map<String, Setting<?>> CLIENT_REGISTRY = new HashMap<>();
-    private static final Collection<Setting<?>> CLIENT_REGISTRY_VIEW = Collections.unmodifiableCollection(CLIENT_REGISTRY.values());
+    private static final Map<String, Setting<?, ?>> CLIENT_REGISTRY = new HashMap<>();
+    private static final Collection<Setting<?, ?>> CLIENT_REGISTRY_VIEW = Collections.unmodifiableCollection(CLIENT_REGISTRY.values());
 
     //IMPLEMENTATION
-    public static @NotNull <T extends Setting<?>> T register(T setting){
+    public static @NotNull <T extends Setting<?, ?>> T register(T setting){
         var registry = registry(setting);
         var key = setting.key();
 
@@ -48,13 +48,13 @@ public final class Settings {
 
 
     //GETTERS
-    private static @Nullable Setting<?> getByKey(@NotNull String key, boolean isClient){
+    private static @Nullable Setting<?, ?> getByKey(@NotNull String key, boolean isClient){
         return isClient ? CLIENT_REGISTRY.get(key) : SERVER_REGISTRY.get(key);
     }
-    private static @NotNull Map<String, Setting<?>> registry(Setting<?> setting){
-        return registry(setting.meta().isClient());
+    private static @NotNull Map<String, Setting<?, ?>> registry(Setting<?, ?> setting){
+        return registry(setting.isClient());
     }
-    private static @NotNull Map<String, Setting<?>> registry(boolean isClient){
+    private static @NotNull Map<String, Setting<?, ?>> registry(boolean isClient){
         return isClient ? CLIENT_REGISTRY : SERVER_REGISTRY;
     }
 
@@ -87,11 +87,11 @@ public final class Settings {
         public static void resetSettings(){Settings.resetSettings(false);}
         public static void saveSettings(){Settings.saveSettings(false);}
         public static void readSettings(){Settings.readSettings(false);}
-        public static @NotNull @UnmodifiableView Collection<Setting<?>> getSettings(){
+        public static @NotNull @UnmodifiableView Collection<Setting<?, ?>> getSettings(){
             return SERVER_REGISTRY_VIEW;
         }
 
-        public static @Nullable Setting<?> getByKey(@NotNull String key){
+        public static @Nullable Setting<?, ?> getByKey(@NotNull String key){
             return SERVER_REGISTRY.get(key);
         }
 
@@ -150,9 +150,28 @@ public final class Settings {
                 fl("new_biome_gains", Enums.SettingCategory.XP, 45f, 0f, Float.MAX_VALUE);
         public static final FloatSetting GAINS_FROM_DIMENSIONS =
                 fl("new_dimension_gains", Enums.SettingCategory.XP, 500f, 0f, Float.MAX_VALUE);
+
         //PERFORMANCES
         public static final BoolSetting SMOOTH_ITEM_MOVEMENT =
                 bool("smooth_item_movements", Enums.SettingCategory.SERVER_PERFORMANCES, true);
+        public static final BoolSetting TRIGGER_SKILL_OVERLAY =
+                bool("trigger_skill_overlay", Enums.SettingCategory.SERVER_PERFORMANCES, true);
+
+        //PERMISSIONS
+        public static final EnumSetting<Enums.PermissionLevel> DATA_CHANGES_PERM =
+                enumerator("data_changes_perm", Enums.SettingCategory.PERMISSIONS, Enums.PermissionLevel.OPERATOR);
+
+        public static final EnumSetting<Enums.PermissionLevel> RELOAD_PERM =
+                enumerator("mod_reload_perm", Enums.SettingCategory.PERMISSIONS, Enums.PermissionLevel.ADMIN);
+
+        public static final EnumSetting<Enums.PermissionLevel> RESET_PERM =
+                enumerator("data_reset_perm", Enums.SettingCategory.PERMISSIONS, Enums.PermissionLevel.ADMIN);
+
+        public static final EnumSetting<Enums.PermissionLevel> SERVER_SETTINGS_PERM =
+                enumerator("server_settings_perm", Enums.SettingCategory.PERMISSIONS, Enums.PermissionLevel.ADMIN);
+
+        public static final EnumSetting<Enums.PermissionLevel> PEEK_PERM =
+                enumerator("peek_perm", Enums.SettingCategory.PERMISSIONS, Enums.PermissionLevel.MODERATOR);
     }
     public static final class Client {
         public static void init(){}
@@ -160,11 +179,11 @@ public final class Settings {
         public static void resetSettings(){Settings.resetSettings(true);}
         public static void saveSettings(){Settings.saveSettings(true);}
         public static void readSettings(){Settings.readSettings(true);}
-        public static @NotNull @UnmodifiableView Collection<Setting<?>> getSettings(){
+        public static @NotNull @UnmodifiableView Collection<Setting<?, ?>> getSettings(){
             return CLIENT_REGISTRY_VIEW;
         }
 
-        public static @Nullable Setting<?> getByKey(@NotNull String key){
+        public static @Nullable Setting<?, ?> getByKey(@NotNull String key){
             return CLIENT_REGISTRY.get(key);
         }
 
@@ -172,6 +191,8 @@ public final class Settings {
         //GENERAL
         public static final BoolSetting SHOW_DEBUG =
                 bool("show_debug", Enums.SettingCategory.CLIENT_GENERAL, false);
+        public static final FloatSetting UI_VOLUME =
+                fl("ui_volume", Enums.SettingCategory.CLIENT_GENERAL, 70f, 0f, 100f);
         public static final BoolSetting INVENTORY_BUTTON =
                 bool("show_inventory_button", Enums.SettingCategory.CLIENT_GENERAL, true);
         public static final IntSetting INVENTORY_X =
@@ -192,6 +213,8 @@ public final class Settings {
         
         public static final BoolSetting XP_OVERLAY =
                 bool("show_xp_overlay", Enums.SettingCategory.OVERLAYS, true);
+        public static final FloatSetting XP_OVERLAY_THRESHOLD =
+                fl("xp_overlay_threshold", Enums.SettingCategory.OVERLAYS, 0f, 0f, Float.MAX_VALUE);
         public static final FloatSetting XP_DURATION =
                 fl("xp_overlay_duration", Enums.SettingCategory.OVERLAYS, 3f, .5f, 60f);
         public static final ColorSetting XP_BG =
@@ -229,12 +252,18 @@ public final class Settings {
 
         public static final BoolSetting QUERY_PERSISTENCE =
                 bool("keep_search_query", Enums.SettingCategory.ACCESSIBILITY, true);
-        public static final BoolSetting QUERY_TYPOS =
-                bool("allow_query_typos", Enums.SettingCategory.ACCESSIBILITY, false);
+        public static final BoolSetting QUERY_TOLERANCE =
+                bool("allow_query_typos", Enums.SettingCategory.ACCESSIBILITY, false).withTags(Enums.SettingTag.EXPERIMENTAL);
+
+        public static final FloatSetting MENU_SCROLL_SPEED =
+                fl("menu_scroll_speed", Enums.SettingCategory.ACCESSIBILITY, 20f, 1f, 100f);
 
         //PERFORMANCES
         public static final BoolSetting RENDER_SHADOWS =
                 bool("render_icon_shadows", Enums.SettingCategory.PERFORMANCES, true);
+
+        public static final BoolSetting RENDER_PLAYER =
+                bool("render_player", Enums.SettingCategory.PERFORMANCES, true);
 
     }
 
@@ -348,7 +377,7 @@ public final class Settings {
         private static void brk(StringBuilder sb){sb.append("\n");}
         private static void cat(StringBuilder sb, String cat){sb.append(String.format("[%s]", cat)); brk(sb);}
         private static void comment(StringBuilder sb, String comment){sb.append(String.format("#%s", comment)); brk(sb);}
-        private static void range(StringBuilder sb, Setting<?> set){sb.append(String.format("# ~ %s", set.range())); brk(sb);}
-        private static void value(StringBuilder sb, Setting<?> set){sb.append(String.format("%s = %s", set.meta().key(), set.get())); brk(sb);}
+        private static void range(StringBuilder sb, Setting<?, ?> set){sb.append(String.format("#~%s", set.range())); brk(sb);}
+        private static void value(StringBuilder sb, Setting<?, ?> set){sb.append(String.format("%s = %s", set.meta().key(), set.get())); brk(sb);}
     }
 }

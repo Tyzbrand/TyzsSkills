@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.client;
 
+import com.tyzsskills.Settings;
 import com.tyzsskills.impl.server.active.SoundRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -15,13 +16,13 @@ public class SoundPlayer {
         float pitch = (.9f + (float)Math.random() * .2f);
 
         Minecraft.getInstance().getSoundManager().play(
-                SimpleSoundInstance.forUI(soundToPlay, pitch, .7f)
+                SimpleSoundInstance.forUI(soundToPlay, pitch, Settings.Client.UI_VOLUME.get()/100f)
         );
     }
 
     public static void PlayLevelUpSound(){
         Minecraft.getInstance().getSoundManager().play(
-                SimpleSoundInstance.forUI(SoundRegistry.LEVEL_UP_SOUND.get(), 1f, .7f)
+                SimpleSoundInstance.forUI(SoundRegistry.LEVEL_UP_SOUND.get(), 1f, Settings.Client.UI_VOLUME.get()/100f)
         );
     }
 }

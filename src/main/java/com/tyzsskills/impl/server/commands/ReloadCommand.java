@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.server.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.tyzsskills.Settings;
 import com.tyzsskills.impl.server.debug.Reload;
 import com.tyzsskills.impl.server.payloads.ClientReloadPayload;
 import net.minecraft.commands.CommandSourceStack;
@@ -13,7 +14,7 @@ public class ReloadCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> reload(){
         return Commands.literal("reload")
                 .then(Commands.literal("server")
-                        .requires(src -> src.hasPermission(3))
+                        .requires(src -> src.hasPermission(Settings.Server.RELOAD_PERM.get().level()))
                         .executes(ctx -> {
                             try {Reload.reload(ctx.getSource().getServer());}
                             catch (IOException e) {throw new RuntimeException(e);}

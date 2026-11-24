@@ -9,9 +9,9 @@ import com.tyzsskills.impl.client.tooltips.skills.SkillPurchaseTooltip;
 import com.tyzsskills.impl.client.tooltips.skills.SkillRefundTooltip;
 import com.tyzsskills.impl.client.tooltips.skills.SkillTooltip;
 import com.tyzsskills.impl.server.skills.SkillRules;
-import com.tyzsskills.integration.ui.models.UIButton;
 import com.tyzsskills.integration.ui.models.UIContainer;
 import com.tyzsskills.integration.ui.models.UIImage;
+import com.tyzsskills.integration.ui.models.UIImageButton;
 import com.tyzsskills.integration.ui.models.UIText;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.records.UITexture;
@@ -109,7 +109,7 @@ public class SkillCard extends UIContainer {
         this.addChild(new UIImage(0, 0, () -> isMaxed ? SKILL_CARD_MAXED : SKILL_CARD));
 
         var skillTooltip = new SkillTooltip(skill);
-        this.addChild(new UIButton(4, 4, this::getCadreStyle, this::handleDeactivation)
+        this.addChild(new UIImageButton(4, 4, this::getCadreStyle, this::handleDeactivation)
                 .withTooltip(() -> skillTooltip));
 
         var iconImage = new UIImage(7, 7, 16, 16, () -> icon);
@@ -126,16 +126,16 @@ public class SkillCard extends UIContainer {
 
         //BUTTONS
         var purchaseTooltip = new SkillPurchaseTooltip(skill);
-        this.addChild(new UIButton(38, 17, () -> isShiftPressed() && this.isHovered() ? BULK_PURCHASE_BTN : PURCHASE_BTN, this::handlePurchase)
+        this.addChild(new UIImageButton(38, 17, () -> isShiftPressed() && this.isHovered() ? BULK_PURCHASE_BTN : PURCHASE_BTN, this::handlePurchase)
                 .withDisabled(this::isPurchaseDisabled)
                 .withTooltip(() -> purchaseTooltip));
 
         var refundTooltip = new SkillRefundTooltip(skill);
-        this.addChild(new UIButton(27, 17, () -> isShiftPressed() && this.isHovered() ? BULK_REFUND_BTN : REFUND_BTN, this::handleRefund)
+        this.addChild(new UIImageButton(27, 17, () -> isShiftPressed() && this.isHovered() ? BULK_REFUND_BTN : REFUND_BTN, this::handleRefund)
                 .withDisabled(this::isRefundDisabled)
                 .withTooltip(() -> refundTooltip));
 
-        this.addChild(new UIButton(49, 17, () -> isBookmarked ? BOOKMARK_ON : BOOKMARK_OFF, this::handleBookmark));
+        this.addChild(new UIImageButton(49, 17, () -> isBookmarked ? BOOKMARK_ON : BOOKMARK_OFF, this::handleBookmark));
     }
 
     private void updateData(){

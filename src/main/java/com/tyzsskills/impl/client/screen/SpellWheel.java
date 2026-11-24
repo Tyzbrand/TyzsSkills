@@ -6,9 +6,9 @@ import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.impl.client.Styles;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.key.Keybinds;
-import com.tyzsskills.integration.ui.models.UIButton;
 import com.tyzsskills.integration.ui.models.UIContainer;
 import com.tyzsskills.integration.ui.models.UIImage;
+import com.tyzsskills.integration.ui.models.UIImageButton;
 import com.tyzsskills.integration.ui.models.UIText;
 import com.tyzsskills.integration.ui.records.UIStyles;
 import com.tyzsskills.integration.ui.records.UITexture;
@@ -91,11 +91,11 @@ public class SpellWheel extends Screen {
             var spellInSlot = cache.SPELLS.getSpellInSlot(i);
 
             if(currentMode == Enums.WheelMode.CAST){
-                mainPanel.addChild(new UIButton(slotPos.x, slotPos.y, () ->  CADRE_CAST_DEFAULT, () -> handleCast(spellInSlot, currentSlot))
+                mainPanel.addChild(new UIImageButton(slotPos.x, slotPos.y, () ->  CADRE_CAST_DEFAULT, () -> handleCast(spellInSlot, currentSlot))
                         .withCustomHover((mx, my) -> hoveredSlot == currentSlot)
                         .withShade(() -> hasActiveCooldown(spellInSlot)));
             }
-            else mainPanel.addChild(new UIButton(slotPos.x, slotPos.y, () ->  CADRE_ASSIGN_DEFAULT, () -> handleAssignation(currentSlot)));
+            else mainPanel.addChild(new UIImageButton(slotPos.x, slotPos.y, () ->  CADRE_ASSIGN_DEFAULT, () -> handleAssignation(currentSlot)));
 
 
             if(spellInSlot == null) continue;

@@ -1,7 +1,7 @@
 package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.integration.ui.UIElement;
+import com.tyzsskills.integration.ui.abstracts.UIElement;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.world.entity.LivingEntity;

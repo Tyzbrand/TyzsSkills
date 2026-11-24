@@ -20,21 +20,30 @@ public class UIStyles{
             this(width, height, uFalse, vFalse, uTrue, vTrue, uFalse, vFalse, uTrue, vTrue, image);
         }
     }
-    public record BorderStyle(int borderStartColor, int borderEndColor, Enums.BorderType type) {
-        public static final BorderStyle NONE = new BorderStyle(0, 0, Enums.BorderType.NONE);
+    public record BorderStyle(int borderStartColor, int borderEndColor, Enums.BorderType type, float thickness) {
+        public static final BorderStyle NONE = new BorderStyle(0, 0, Enums.BorderType.NONE, 0f);
 
         public BorderStyle {
-            if(type == null) type = Enums.BorderType.NONE;
+            if(type == null || thickness <= 0f) type = Enums.BorderType.NONE;
         }
 
         public BorderStyle(int borderColor, Enums.BorderType type) {
-            this(borderColor, borderColor, type);
+            this(borderColor, borderColor, type, 1f);
+        }
+
+        public BorderStyle(int borderColor, Enums.BorderType type, float thickness) {
+            this(borderColor, borderColor, type, thickness);
+        }
+
+        public BorderStyle(int borderStartColor, int borderEndColor, Enums.BorderType type) {
+            this(borderStartColor, borderEndColor, type, 1f);
         }
 
         public boolean isNone() {
             return type == Enums.BorderType.NONE;
         }
     }
+
     public record BackgroundStyle(int backgroundStartColor, int backgroundEndColor, Enums.BackgroundType type, int paddingX, int paddingY, BorderStyle border) {
         public static final BackgroundStyle NONE =
                 new BackgroundStyle(0, 0, Enums.BackgroundType.NONE, 0, 0, BorderStyle.NONE);

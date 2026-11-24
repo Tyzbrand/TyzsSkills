@@ -1,7 +1,7 @@
 package com.tyzsskills.integration.ui.models;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.tyzsskills.integration.ui.UIElement;
+import com.tyzsskills.integration.ui.abstracts.UIElement;
 import com.tyzsskills.integration.ui.records.UIStyles.ImageStyle;
 import com.tyzsskills.integration.ui.records.UITexture;
 import net.minecraft.client.gui.GuiGraphics;

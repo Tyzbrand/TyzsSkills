@@ -4,16 +4,18 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.SettingMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Objects;
 
-public abstract sealed class Setting<T> permits IntSetting, BoolSetting, FloatSetting, ColorSetting, EnumSetting {
+public abstract sealed class Setting<T, S extends Setting<T, S>> permits IntSetting, BoolSetting, FloatSetting, ColorSetting, EnumSetting {
     private final SettingMeta meta;
     private final Enums.SettingType type;
     private final T defaultValue;
     private volatile T value;
 
     protected String comment = "";
-    public final Setting<T> withComment(String comment){this.comment = comment; return this;}
+    @SuppressWarnings("unchecked")
+    public final S withComment(String comment){this.comment = comment; return (S)this;}
 
     public Setting(@NotNull SettingMeta meta, Enums.SettingType type, @NotNull T defaultValue) {
         this.meta = meta;
@@ -32,7 +34,16 @@ public abstract sealed class Setting<T> permits IntSetting, BoolSetting, FloatSe
     public final boolean isDefault(){return Objects.equals(value, defaultValue);}
     public final Enums.SettingType type(){return type;}
     public final @NotNull String comment(){return comment;}
+
+
+    public boolean is(Enums.SettingTag tag){return meta.tags().contains(tag);}
+    public boolean isClient(){return meta.category().isClient();}
     public final @NotNull String key(){return meta.key();}
+
+    @SuppressWarnings("unchecked")
+    public S withTags(Enums.SettingTag... tags){
+        meta.tags().addAll(Arrays.stream(tags).toList()); return (S)this;
+    }
 
     public void set(@NotNull T value){this.value = validate(value);}
     public @NotNull T get() {return value;}

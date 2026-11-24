@@ -1,5 +1,6 @@
 package com.tyzsskills.impl.server.debug;
 
+import com.tyzsskills.Settings;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.events.ModReloadEvent;
 import com.tyzsskills.impl.server.Level.LevelManager;
@@ -37,7 +38,9 @@ public class Reload {
             Repair.repair(player);
             PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
 
-            if (player.hasPermissions(2) && ErrorManager.hasErrorsOrWarns(false)) ErrorManager.printErrors(player, false);
+            server.getCommands().sendCommands(player);
+
+            if (player.hasPermissions(Settings.Server.RELOAD_PERM.get().level()) && ErrorManager.hasErrorsOrWarns(false)) ErrorManager.printErrors(player, false);
         }
 
         NeoForge.EVENT_BUS.post(new ModReloadEvent());

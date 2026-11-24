@@ -1,6 +1,7 @@
 package com.tyzsskills.integration.ui.models;
 
-import com.tyzsskills.integration.ui.UIElement;
+import com.tyzsskills.Settings;
+import com.tyzsskills.integration.ui.abstracts.UIElement;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class UIScrollView extends UIContainer{
@@ -115,7 +116,7 @@ public class UIScrollView extends UIContainer{
         if (!isHovering((int) mouseX, (int) mouseY)) return false;
         if (super.onScroll(mouseX, mouseY, deltaY)) return true;
 
-        setScrollAmount(scrollAmount - (deltaY * 20d));
+        setScrollAmount(scrollAmount - (deltaY * Settings.Client.MENU_SCROLL_SPEED.get()));
         return true;
     }
 

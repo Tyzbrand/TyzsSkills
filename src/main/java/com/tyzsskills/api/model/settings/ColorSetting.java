@@ -4,7 +4,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.SettingMeta;
 import org.jetbrains.annotations.NotNull;
 
-public final class ColorSetting extends Setting<String>{
+public final class ColorSetting extends Setting<String, ColorSetting>{
     public static final String REGEX = "^#?([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$";
 
     private int hex;

@@ -1,22 +1,22 @@
 package com.tyzsskills.impl.server.active;
 
-import com.tyzsskills.api.records.STag;
+import com.tyzsskills.api.records.SkillTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 public class TagRegistry {
-    public static final STag CONSUMABLE =
-            new STag("consumable", "consumable", 0xFF193986);
+    public static final SkillTag CONSUMABLE =
+            new SkillTag("consumable", "consumable", 0xFF193986);
 
-    public static final STag ATTRIBUTE =
-            new STag("attribute", "attribute", 0xFF7F2F74);
+    public static final SkillTag ATTRIBUTE =
+            new SkillTag("attribute", "attribute", 0xFF7F2F74);
 
 
-    private static final Map<String, STag> tags =
+    private static final Map<String, SkillTag> tags =
             Map.of(CONSUMABLE.id(), CONSUMABLE,
                     ATTRIBUTE.id(), ATTRIBUTE);
 
-    public static @Nullable STag getTag(@NotNull String tagId){return tags.get(tagId);}
+    public static @Nullable SkillTag getTag(@NotNull String tagId){return tags.get(tagId);}
 }

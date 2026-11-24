@@ -4,7 +4,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.SettingMeta;
 import org.jetbrains.annotations.NotNull;
 
-public final class FloatSetting extends Setting<Float> {
+public final class FloatSetting extends Setting<Float, FloatSetting> {
     private final float min;
     public float min(){return min;}
     private final float max;

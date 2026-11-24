@@ -4,7 +4,7 @@ import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.records.SettingMeta;
 import org.jetbrains.annotations.NotNull;
 
-public final class IntSetting extends Setting<Integer> {
+public final class IntSetting extends Setting<Integer, IntSetting> {
     private final int min;
     public int min(){return min;}
     private final int max;
