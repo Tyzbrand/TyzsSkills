@@ -83,11 +83,13 @@ public class MainMenu extends Screen {
                 .withTooltip(() -> skillTooltip));
 
         //TODO: translation
-        var spellTooltip = new UITooltip(Component.literal("Spells"));
-        mainPanel.addChild(new UIImageButton(63, 27,
-                () -> SortingManager.getCurrentMenuType() == Enums.MenuFocus.SPELL ? TYPE_SELECTED : TYPE_UNSELECTED,
-                () -> handleTypeChange(Enums.MenuFocus.SPELL))
-                .withTooltip(() -> spellTooltip));
+        if(Settings.Server.USE_SPELLS.get()){
+            var spellTooltip = new UITooltip(Component.literal("Spells"));
+            mainPanel.addChild(new UIImageButton(63, 27,
+                    () -> SortingManager.getCurrentMenuType() == Enums.MenuFocus.SPELL ? TYPE_SELECTED : TYPE_UNSELECTED,
+                    () -> handleTypeChange(Enums.MenuFocus.SPELL))
+                    .withTooltip(() -> spellTooltip));
+        }
 
         //Entity
         mainPanel.addChild(new UIEntity(8, 14, 40, 70, () -> this.minecraft.player, 39)
@@ -174,6 +176,7 @@ public class MainMenu extends Screen {
     //region EXTRACTED LOGIC
     // ==================== BUTTON CLICKS ====================
     private boolean handleTypeChange(Enums.MenuFocus type){
+        if(!Settings.Server.USE_SPELLS.get()) type = Enums.MenuFocus.SKILL;
         SortingManager.setMenuType(type);
         return true;
     }

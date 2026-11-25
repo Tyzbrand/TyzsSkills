@@ -19,6 +19,7 @@ public class FovHandler {
         double reduction = Settings.Client.FOV_REDUCTION.get();
         if (reduction <= .0001D) return;
 
+        if(!ClientCache.isReady()) return;
         var cache = ClientCache.get();
 
         if (cache.getVersion() != latestCacheVersion) {

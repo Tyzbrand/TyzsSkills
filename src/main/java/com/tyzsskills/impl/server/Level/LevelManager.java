@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.events.metadata.LevelChangeEvent;
 import com.tyzsskills.api.records.LevelData;
-import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.payloads.LevelToastPayload;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
@@ -68,24 +67,24 @@ public class LevelManager {
 
         int spBuffer = 0;
         int levelBuffer = 0;
-        var multiplicator = player.getAttributeValue(AttributeRegistry.SP_MULTIPLIER);
 
         while (true){
             var data = getLevelData(currentLevel);
 
             if(currentXp >= data.goal()){
                 currentXp -= data.goal();
-                spBuffer += (int)(data.reward() * multiplicator);
+                spBuffer += data.reward();
                 currentLevel++;
                 levelBuffer++;
             }
             else break;
         }
 
-        if(spBuffer > 0) SpManager.tryAddSp(player, spBuffer);
+        var finalSpGain = SpManager.getCombinedSp(player, spBuffer);
+        if(finalSpGain > 0) SpManager.tryAddSp(player, finalSpGain);
         if(levelBuffer > 0) {
             tryAddLevel(player, levelBuffer);
-            PacketDistributor.sendToPlayer(player, new LevelToastPayload(currentLevel, spBuffer));
+            PacketDistributor.sendToPlayer(player, new LevelToastPayload(currentLevel, finalSpGain));
         }
 
         return currentXp;

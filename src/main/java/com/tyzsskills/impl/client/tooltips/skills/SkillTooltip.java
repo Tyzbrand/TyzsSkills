@@ -58,7 +58,7 @@ public class SkillTooltip extends UITooltip {
     //endregion
 
     public SkillTooltip(ISkill skill){
-        super(() -> Styles.TOOLTIP);
+        super(() -> TOOLTIP);
         this.skill = skill;
 
         skillIcon = new UITexture(skill.getIcon(), 16);

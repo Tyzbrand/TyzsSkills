@@ -27,13 +27,13 @@ public class Enums {
         SERVER_GENERAL(0, false),
         DEATH_PENALTIES(1, false),
         XP(2, false),
-        SERVER_PERFORMANCES(3, false),
+        SERVER_PERFORMANCE(3, false),
         PERMISSIONS(4, false),
 
         CLIENT_GENERAL(0, true),
         OVERLAYS(1, true),
         ACCESSIBILITY(2, true),
-        PERFORMANCES(3, true);
+        CLIENT_PERFORMANCE(3, true);
 
         private final int priority;
         private final boolean isClient;

@@ -113,7 +113,7 @@ public class SortingManager {
     //Getters
     public static @NotNull @UnmodifiableView List<ISkill> getCurrentSkillOrder() {return currentSkillOrderView;}
     public static @Nullable Category getCurrentCategory(){return currentCategory;}
-    public static Enums.MenuFocus getCurrentMenuType(){return menuType;}
+    public static Enums.MenuFocus getCurrentMenuType(){return Settings.Server.USE_SPELLS.get() ? menuType : Enums.MenuFocus.SKILL;}
     public static @NotNull String getSearchQuery(){return currentSearchQuery;}
     public static boolean showMaxed(){return showMaxed;}
     public static boolean showUnaffordable(){return showUnaffordable;}

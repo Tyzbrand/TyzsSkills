@@ -1,7 +1,6 @@
 package com.tyzsskills.impl.server.xp;
 
 import com.google.gson.JsonObject;
-import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.active.ErrorManager;
 import com.tyzsskills.impl.server.active.FileManager;
 import net.minecraft.core.Registry;
@@ -64,7 +63,7 @@ public class XpGainRegistry {
         if(state.getBlock() instanceof CropBlock crop && !crop.isMaxAge(state)) return 0f;
         else if (state.getBlock() instanceof NetherWartBlock && state.getValue(NetherWartBlock.AGE) < 3) return 0f;
 
-        if(blockCacheValues.containsKey(block)) return blockCacheValues.get(block) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+        if(blockCacheValues.containsKey(block)) return blockCacheValues.get(block);
 
         var blockID = BuiltInRegistries.BLOCK.getKey(block).toString();
         var cacheValue = 0f;
@@ -77,12 +76,12 @@ public class XpGainRegistry {
         }
 
         blockCacheValues.put(block, cacheValue);
-        return cacheValue * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+        return cacheValue;
     }
 
     public static float getEntityValue(@NotNull Entity entity, @NotNull ServerPlayer player){
         var type = entity.getType();
-        if(entityCacheValues.containsKey(type)) return entityCacheValues.get(type) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+        if(entityCacheValues.containsKey(type)) return entityCacheValues.get(type);
 
         var entityID = BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
         var cacheValue = 0f;
@@ -95,13 +94,13 @@ public class XpGainRegistry {
         }
 
         entityCacheValues.put(type, cacheValue);
-        return cacheValue * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+        return cacheValue;
     }
 
     public static float getFoodValue(@NotNull ItemStack itemStack, @NotNull ServerPlayer player){
         var item = itemStack.getItem();
 
-        if(foodCacheValues.containsKey(item)) return foodCacheValues.get(item) * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+        if(foodCacheValues.containsKey(item)) return foodCacheValues.get(item);
 
         var itemId = BuiltInRegistries.ITEM.getKey(item).toString();
         var cacheValue = 0f;
@@ -118,7 +117,7 @@ public class XpGainRegistry {
         }
 
         foodCacheValues.put(item, cacheValue);
-        return cacheValue * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+        return cacheValue;
     }
 
     //UTILS

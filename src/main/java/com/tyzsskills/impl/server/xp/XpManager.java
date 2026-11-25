@@ -1,7 +1,9 @@
 package com.tyzsskills.impl.server.xp;
 
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.events.metadata.XpChangeEvent;
 import com.tyzsskills.impl.server.Level.LevelManager;
+import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
@@ -34,9 +36,9 @@ public class XpManager {
         if(updateStats && diff > 0){player.getData(StatsTracker.DATA).addXp(diff);}
 
         float leftoverXp = LevelManager.checkForLevelUp(player, finalAmount);
-        if(syncClient) updateClient(player, gainsForClient, triggersOverlay);
 
         player.getData(PlayerData.DATA).setXP(leftoverXp);
+        if(syncClient) updateClient(player, gainsForClient, triggersOverlay);
 
         return true;
     }
@@ -70,6 +72,10 @@ public class XpManager {
 
     //Getters
     public static float getXP(@NotNull ServerPlayer player){return player.getData(PlayerData.DATA).getXP();}
+
+    public static float getCombinedXp(@NotNull ServerPlayer player, float rawXp){
+        return rawXp * Settings.Server.XP_BASE_MULTIPLIER.get() * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
+    }
 
 
 }

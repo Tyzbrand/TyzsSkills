@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.client.key;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.screen.MainMenu;
@@ -34,7 +35,10 @@ public class Keybinds {
         //TODO: translation
         OPEN_SPELL_WHEEL = KeyActions.registerInput(event,
                 new KeyMapping("Open Spell Wheel", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, CATEGORY_KEY),
-                () -> Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.CAST, null)));
+                () -> {
+                    if (Settings.Server.USE_SPELLS.get())
+                        Minecraft.getInstance().setScreen(new SpellWheel(Enums.WheelMode.CAST, null));
+                });
 
         //TODO: translation
         OPEN_SETTINGS = KeyActions.registerInput(event,

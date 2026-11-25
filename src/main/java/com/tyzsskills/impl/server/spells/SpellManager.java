@@ -32,6 +32,8 @@ public class SpellManager {
 
     //CORE
     private static boolean setPropertyLevelInternal(@NotNull ServerPlayer player, @NotNull SpellProperty property, int newLevel, boolean syncClient){
+        if(!Settings.Server.USE_SPELLS.get()) return false;
+
         var spell = getSpell(property.spellId());
         if(spell == null || !isSpellPurchased(player, spell)) return false;
 
@@ -59,6 +61,8 @@ public class SpellManager {
         setPropertyLevelInternal(player, property, newLevel, true);
     }
     public static boolean tryBuyProperty(@NotNull ServerPlayer player, @NotNull SpellProperty property) {
+        if(!Settings.Server.USE_SPELLS.get()) return false;
+
         var spell = getSpell(property.spellId());
         if(spell == null || !isSpellPurchased(player, spell)) return false;
 
@@ -82,6 +86,7 @@ public class SpellManager {
 
     //SPELLS
     public static boolean tryBuySpell(@NotNull ServerPlayer player, @NotNull ISpell spell){
+        if(!Settings.Server.USE_SPELLS.get()) return false;
         if(isSpellPurchased(player, spell)) return false;
 
         if(SpellRules.canBuySpell(getSpellContext(player, spell), SkillManager.getPlayerContext(player), Settings.Server.PURCHASE_SYSTEM.get())){
@@ -102,6 +107,7 @@ public class SpellManager {
         return false;
     }
     public static boolean tryCastSpell(@NotNull ServerPlayer player, @NotNull ISpell spell){
+        if(!Settings.Server.USE_SPELLS.get()) return false;
         var behavior = BehaviorRegistry.getSpellBehavior(spell);
 
         if(behavior == null) return false;
@@ -120,6 +126,7 @@ public class SpellManager {
         return false;
     }
     public static boolean tryAssignSpell(@NotNull ServerPlayer player, @NotNull ISpell spell, int slot){
+        if(!Settings.Server.USE_SPELLS.get()) return false;
         if (slot <= 0 || slot > getMaxSlots(player)) return false;
 
         var preEvent = new SpellAssignEvent.Pre(player, spell, slot);
@@ -135,6 +142,7 @@ public class SpellManager {
         return false;
     }
     public static boolean tryUnassignSpell(@NotNull ServerPlayer player, int slot){
+        if(!Settings.Server.USE_SPELLS.get()) return false;
         var spell = getSpell(getSpellInSlot(player, slot));
         if(spell != null) {
             var preEvent = new SpellUnassignEvent.Pre(player, spell, slot);

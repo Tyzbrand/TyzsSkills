@@ -152,6 +152,7 @@ public class SpellsCache {
     //ACTIONS
     private boolean triggerAction(@NotNull ISpell spell, @NotNull String propertyKey, Enums.SpellAction actionType, int affectedSlot){
         if(CACHE.isSpamming()) return false;
+        if(!Settings.Server.USE_SPELLS.get()) return false;
         var success = false;
 
         switch(actionType){

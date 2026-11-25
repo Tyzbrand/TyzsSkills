@@ -1,6 +1,8 @@
 package com.tyzsskills.impl.server.sp;
 
+import com.tyzsskills.Settings;
 import com.tyzsskills.api.events.metadata.PointsChangeEvent;
+import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
@@ -64,7 +66,11 @@ public class SpManager {
     //Getters
     public static int getSP(ServerPlayer player){
             return player.getData(PlayerData.DATA).getSP();
-        }
+    }
+
+    public static int getCombinedSp(ServerPlayer player, int rawSp){
+        return Math.round(rawSp * Settings.Server.SP_BASE_MULTIPLIER.get() * (float)player.getAttributeValue(AttributeRegistry.SP_MULTIPLIER));
+    }
 }
 
 

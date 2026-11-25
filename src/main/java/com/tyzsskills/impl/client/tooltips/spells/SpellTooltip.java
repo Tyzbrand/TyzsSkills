@@ -62,7 +62,7 @@ public class SpellTooltip extends UITooltip {
     //endregion
 
     public SpellTooltip(ISpell spell){
-        super(() -> Styles.TOOLTIP);
+        super(() -> TOOLTIP);
         this.spell = spell;
 
         spellIcon = new UITexture(spell.getIcon(), 16);

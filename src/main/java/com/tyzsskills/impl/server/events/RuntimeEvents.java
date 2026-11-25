@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.events;
 
 import com.tyzsskills.Settings;
 import com.tyzsskills.Tyzsskills;
+import com.tyzsskills.api.events.skills.SkillLoadEvent;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.active.CompatibilityManager;
 import com.tyzsskills.impl.server.active.DeathPenalties;
@@ -41,6 +42,12 @@ public class RuntimeEvents {
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent event){
         event.getDispatcher().register(MainCommand.register());
+    }
+
+    @SubscribeEvent
+    public static void onSkillLoad(SkillLoadEvent.Pre event){
+        if(Settings.Server.USE_SPELLS.get()) return;
+        if(event.getSkill().getId().equalsIgnoreCase("overload")) event.setCanceled(true);
     }
 
     @SubscribeEvent
