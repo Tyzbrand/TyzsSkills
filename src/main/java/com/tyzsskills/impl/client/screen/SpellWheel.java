@@ -1,6 +1,5 @@
 package com.tyzsskills.impl.client.screen;
 
-import com.tyzsskills.Settings;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.interfaces.ISpell;
 import com.tyzsskills.impl.client.Styles;
@@ -92,22 +91,20 @@ public class SpellWheel extends Screen {
 
             if(currentMode == Enums.WheelMode.CAST){
                 mainPanel.addChild(new UIImageButton(slotPos.x, slotPos.y, () ->  CADRE_CAST_DEFAULT, () -> handleCast(spellInSlot, currentSlot))
+                        .withShadow(2f)
                         .withCustomHover((mx, my) -> hoveredSlot == currentSlot)
                         .withShade(() -> hasActiveCooldown(spellInSlot)));
             }
             else mainPanel.addChild(new UIImageButton(slotPos.x, slotPos.y, () ->  CADRE_ASSIGN_DEFAULT, () -> handleAssignation(currentSlot)));
 
-
             if(spellInSlot == null) continue;
 
             var iconTexture = new UITexture(spellInSlot.getIcon(), 16);
 
-            var iconImage = new UIImage(slotPos.x + 7, slotPos.y + 7, iconTexture.size(), iconTexture.size(), () -> iconTexture);
-            iconImage.withScale(2f, Enums.ScalePivot.TOP_LEFT);
-            iconImage.withShade(() -> currentMode == Enums.WheelMode.CAST && hasActiveCooldown(spellInSlot));
-            if(Settings.Client.RENDER_SHADOWS.get()) iconImage.withShadow(2f);
-            mainPanel.addChild(iconImage);
-
+            mainPanel.addChild(new UIImage(slotPos.x + 7, slotPos.y + 7, iconTexture.size(), iconTexture.size(), () -> iconTexture)
+                    .withShadow(2f)
+                    .withShade(() -> currentMode == Enums.WheelMode.CAST && hasActiveCooldown(spellInSlot))
+                    .withScale(2f, Enums.ScalePivot.TOP_LEFT));
 
 
             if(currentMode == Enums.WheelMode.CAST) {

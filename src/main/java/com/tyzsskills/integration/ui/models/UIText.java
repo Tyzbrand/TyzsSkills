@@ -1,14 +1,19 @@
 package com.tyzsskills.integration.ui.models;
 
 import com.tyzsskills.api.Enums;
-import com.tyzsskills.integration.ui.UIBackgroundRenderer;
 import com.tyzsskills.integration.ui.abstracts.UIElement;
 import com.tyzsskills.integration.ui.records.UIStyles;
+import com.tyzsskills.integration.ui.renderers.UIBackgroundRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.FormattedCharSequence;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class UIText extends UIElement {
@@ -22,6 +27,12 @@ public class UIText extends UIElement {
 
     private Enums.TextAlignment alignment = Enums.TextAlignment.LEFT;
     private int wrapWidth = -1;
+
+    private Component cachedComponent;
+    private Language cachedLanguage;
+    private int cachedEffectiveWrap = -1;
+    private List<FormattedCharSequence> cachedLines = List.of();
+    private int cachedMaxLineWidth = 0;
 
     //fluent
     public UIText withWrapWidth(int wrapWidth){this.wrapWidth = wrapWidth; return this;}
@@ -52,9 +63,27 @@ public class UIText extends UIElement {
         var textWidth = getTextRawWidth();
         var textHeight = getTextRawHeight();
 
+        if (textWidth <= 0 || textHeight <= 0) return;
+
         renderBackground(gui, drawX, drawY, textWidth, textHeight);
 
-        if (wrapWidth > 0) gui.drawWordWrap(FONT, finalText, drawX, drawY, wrapWidth, 0xFFFFFFFF);
+        if (wrapWidth > 0) {
+            var lines = getWrappedLines(finalText);
+            var emptyRightPixels = shadow ? 0 : 1;
+            var currentY = drawY;
+
+            for (var line : lines) {
+                var lineW = Math.max(0, FONT.width(line) - emptyRightPixels);
+                var lineX = switch (alignment) {
+                    case LEFT -> drawX;
+                    case CENTER -> drawX + (textWidth - lineW) / 2;
+                    case RIGHT -> drawX + (textWidth - lineW);
+                };
+
+                gui.drawString(FONT, line, lineX, currentY, 0xFFFFFFFF, shadow);
+                currentY += FONT.lineHeight;
+            }
+        }
         else gui.drawString(FONT, finalText, drawX, drawY, 0xFFFFFFFF, shadow);
     }
 
@@ -81,13 +110,6 @@ public class UIText extends UIElement {
     protected float getPivotX() {
         var rawX = getRawX();
         var rawW = getRawWidth();
-        if (wrapWidth > 0) {
-            return switch (scalePivot) {
-                case CENTER -> rawX + (rawW / 2f);
-                case TOP_RIGHT, BOTTOM_RIGHT -> rawX + rawW;
-                case TOP_LEFT, BOTTOM_LEFT -> super.getRawX();
-            };
-        }
 
         return switch (alignment) {
             case RIGHT -> getTextRawX() + getTextRawWidth();
@@ -114,39 +136,54 @@ public class UIText extends UIElement {
         UIBackgroundRenderer.render(gui, bgX, bgY, bgW, bgH, currentStyle);
     }
 
+    private List<FormattedCharSequence> getWrappedLines(Component text) {
+        var effectiveWrap = Math.max(1, shadow ? wrapWidth : wrapWidth + 1);
+        var currentLang = Language.getInstance();
+
+        if(currentLang != cachedLanguage || effectiveWrap != cachedEffectiveWrap || !Objects.equals(text, cachedComponent)) {
+            cachedComponent = text;
+            cachedLanguage = currentLang;
+            cachedEffectiveWrap = effectiveWrap;
+            cachedLines = FONT.split(text, effectiveWrap);
+
+            var maxW = 0;
+            for (var line : cachedLines) maxW = Math.max(maxW, FONT.width(line));
+
+            cachedMaxLineWidth = maxW;
+        }
+        return cachedLines;
+    }
+
     //UTILS
     private int getTextRawWidth() {
         var finalText = textExtractor.get();
-        if (finalText == null) return 0;
+        if(finalText == null) return 0;
 
-        var emptyLeftPixels = shadow ? 0 : 1;
-
-        if (wrapWidth > 0) {
-            var lines = FONT.split(finalText, wrapWidth);
-            var maxLineW = 0;
-            for (var line : lines) maxLineW = Math.max(maxLineW, FONT.width(line));
-            return maxLineW - emptyLeftPixels;
+        var emptyRightPixels = shadow ? 0 : 1;
+        if(wrapWidth > 0) {
+            getWrappedLines(finalText);
+            return cachedMaxLineWidth > 0 ? cachedMaxLineWidth - emptyRightPixels : 0;
         }
-        return FONT.width(finalText) - emptyLeftPixels;
+
+        var w = FONT.width(finalText);
+        return w > 0 ? w - emptyRightPixels : 0;
     }
     private int getTextRawHeight() {
         var finalText = textExtractor.get();
-        if (finalText == null) return 0;
+        if(finalText == null || getTextRawWidth() <= 0) return 0;
 
         var emptyBottomPixels = shadow ? 1 : 2;
-
-        if (wrapWidth > 0) {
-            var lines = FONT.split(finalText, wrapWidth);
+        if(wrapWidth > 0) {
+            var lines = getWrappedLines(finalText);
             return Math.max(FONT.lineHeight, lines.size() * FONT.lineHeight) - emptyBottomPixels;
         }
         return FONT.lineHeight - emptyBottomPixels;
     }
     private int getTextRawX() {
         var baseX = super.getRawX();
-        if (wrapWidth > 0) return baseX;
-
         var boxWidth = super.getRawWidth();
         var textW = getTextRawWidth();
+
         return switch (alignment) {
             case RIGHT -> baseX + boxWidth - textW;
             case CENTER -> baseX + (boxWidth - textW) / 2;

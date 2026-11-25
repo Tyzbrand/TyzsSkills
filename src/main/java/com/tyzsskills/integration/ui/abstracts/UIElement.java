@@ -2,7 +2,9 @@ package com.tyzsskills.integration.ui.abstracts;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.tyzsskills.api.Enums;
+import com.tyzsskills.integration.ui.interfaces.IShadowRenderable;
 import com.tyzsskills.integration.ui.models.UITooltip;
+import com.tyzsskills.integration.ui.renderers.UIShadowRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.function.BiPredicate;
@@ -33,6 +35,7 @@ public abstract class UIElement {
 
     protected Supplier<UITooltip> tooltip = () -> null;
     protected Supplier<Boolean> visibleWhen = () -> true;
+    protected Supplier<Float> shadowSize = () -> 0f;
 
     public UIElement(int offsetX, int offsetY, int width, int height){
         this.offsetX = offsetX;
@@ -54,6 +57,10 @@ public abstract class UIElement {
 
     //Draws
     protected abstract void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick);
+
+    protected void renderShadow(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+        render(gui, mouseX, mouseY, partialTick);
+    }
 
     public final void draw(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean inheritedVisible, boolean inheritedShaded, float inheritedAlpha){
         var visible = inheritedVisible && visibleWhen.get();
@@ -190,9 +197,16 @@ public abstract class UIElement {
 
     //Utils
     private void drawShadedOrNot(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean shaded, float alpha) {
-        if (!shaded && alpha >= 1f) { render(gui, mouseX, mouseY, partialTick); return; }
+        if (this instanceof IShadowRenderable<?>) {
+            var size = shadowSize.get();
+            if (size != null && size > 0f)
+                UIShadowRenderer.render(gui, size, alpha, () -> renderShadow(gui, mouseX, mouseY, partialTick));
 
+        }
+
+        if (!shaded && alpha >= 1f) { render(gui, mouseX, mouseY, partialTick); return; }
         var color = shaded ? .3f : 1f;
+
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 

@@ -1,4 +1,4 @@
-package com.tyzsskills.integration.ui;
+package com.tyzsskills.integration.ui.renderers;
 
 import com.tyzsskills.integration.ui.models.UITooltip;
 import net.minecraft.client.gui.GuiGraphics;

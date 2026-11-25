@@ -1,4 +1,4 @@
-package com.tyzsskills.integration.ui;
+package com.tyzsskills.integration.ui.renderers;
 
 import com.tyzsskills.integration.ui.records.UIStyles;
 import net.minecraft.client.gui.GuiGraphics;

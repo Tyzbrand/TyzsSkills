@@ -112,10 +112,9 @@ public class SkillCard extends UIContainer {
         this.addChild(new UIImageButton(4, 4, this::getCadreStyle, this::handleDeactivation)
                 .withTooltip(() -> skillTooltip));
 
-        var iconImage = new UIImage(7, 7, 16, 16, () -> icon);
-        iconImage.withScale(.92f, Enums.ScalePivot.CENTER);
-        if(Settings.Client.RENDER_SHADOWS.get()) iconImage.withShadow(2f);
-        this.addChild(iconImage);
+        this.addChild(new UIImage(7, 7, 16, 16, () -> icon)
+                .withShadow(2f)
+                .withScale(.92f, Enums.ScalePivot.CENTER));
 
 
         //BADGE

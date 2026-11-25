@@ -4,7 +4,7 @@ import com.tyzsskills.Settings;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.impl.client.overlay.MetadataOverlay;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
-import com.tyzsskills.integration.ui.UIOverlayRenderer;
+import com.tyzsskills.integration.ui.renderers.UIOverlayRenderer;
 import org.jetbrains.annotations.NotNull;
 
 public class DataCache {
@@ -19,6 +19,10 @@ public class DataCache {
             sp = playerData.sp();
             xp = playerData.xp();
             DataCache.this.levelData = levelData;
+
+            allTimeXp = playerData.totalXp();
+            earnedSp = playerData.spEarned();
+            spentSp = playerData.spSpent();
         }
 
         public void updateLevel(@NotNull UpdatePayloads.LevelPayload payload) {
@@ -27,7 +31,7 @@ public class DataCache {
         }
 
         public void updateSp(@NotNull UpdatePayloads.SpPayload payload) {
-            sp = payload.sp();
+            setSp(payload.sp());
             CACHE.UPDATE.registerUpdate("Sp Synced: New Cached Sp Value [" + sp + "]");
         }
 
@@ -35,6 +39,8 @@ public class DataCache {
             if (payload.gained() > 0 && payload.triggersOverlay() && payload.gained() >= Settings.Client.XP_OVERLAY_THRESHOLD.get())
                 triggerXpOverlay(payload.gained());
 
+            sessionXp += payload.gained();
+            allTimeXp += payload.gained();
             xp = payload.xp();
             CACHE.UPDATE.registerUpdate("Xp Synced: New Cached Xp Value [" + xp + "]");
         }
@@ -49,8 +55,16 @@ public class DataCache {
     private int level;
     public int getLevel() {return level;}
 
-    int sp;
+    private int sp;
     public int getSp() {return sp;}
+    public void setSp(int amount){
+        var diff = amount - sp;
+        if (diff < 0) spentSp -= diff;
+        else if (diff > 0) earnedSp += diff;
+        sp = amount;
+    }
+    public void addSp(int amount){setSp(sp + amount);}
+    public void removeSp(int amount){setSp(sp - amount);}
 
     private float xp;
     public float getXp() {
@@ -65,6 +79,24 @@ public class DataCache {
         return levelData != null ? levelData.reward() : 0;
     }
 
+    //STATS
+    private float sessionXp;
+    public float getSessionXp() {return sessionXp;}
+
+    private float allTimeXp;
+    public float getAllTimeXp() {return allTimeXp;}
+
+    private int earnedSp;
+    public int getEarnedSp() {return earnedSp;}
+
+    private int spentSp;
+    public int getSpentSp() {return spentSp;}
+
+    int ownedSkills;
+    public int getOwnedSkills() {return ownedSkills;}
+
+    public int getOwnedSpells() {return CACHE.SPELLS.getAllPurchasedSpells().size();}
+
     private MetadataOverlay getOrCreateStack(){
         var overlay = UIOverlayRenderer.get(MetadataOverlay.ID, MetadataOverlay.class);
         if(overlay != null) return overlay;
@@ -74,11 +106,9 @@ public class DataCache {
         return overlay;
 
     }
-
     public void triggerXpOverlay(float gain){
         getOrCreateStack().addXp(gain);
     }
-
     public void triggerLevelOverlay(int currentLvl, int spGain){
         getOrCreateStack().addLevel(currentLvl, spGain);
     }

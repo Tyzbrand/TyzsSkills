@@ -2,6 +2,7 @@ package com.tyzsskills.impl.server.skills;
 
 import com.tyzsskills.api.model.Context;
 import com.tyzsskills.api.records.BulkPurchaseResult;
+import com.tyzsskills.api.records.BulkRefundResult;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -78,10 +79,8 @@ public class SkillRules {
         return price <= pCtx.playerSp();
     }
     public static @NotNull BulkPurchaseResult checkBulkBuy(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx, boolean purchaseEnabled){
-        var bulkResultFallback = new BulkPurchaseResult(0, 0);
-
-        if(!purchaseEnabled || !sCtx.skill().isPurchasable() || sCtx.skillLevel() >= sCtx.skill().getMaximumLevel()) return bulkResultFallback;
-        if(!isAvailable(sCtx, pCtx)) return bulkResultFallback;
+        if(!purchaseEnabled || !sCtx.skill().isPurchasable() || sCtx.skillLevel() >= sCtx.skill().getMaximumLevel()) return BulkPurchaseResult.EMPTY;
+        if(!isAvailable(sCtx, pCtx)) return BulkPurchaseResult.EMPTY;
 
         var spToSpend = 0;
         var levelsToAdd = 0;
@@ -101,22 +100,23 @@ public class SkillRules {
 
         return new BulkPurchaseResult(levelsToAdd, spToSpend);
     }
-    public static int checkBulkRefund(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx, float refundPercentage, boolean refundEnabled){
-        if(!refundEnabled || !sCtx.skill().isRefundable() || sCtx.skillLevel() <= 0) return 0;
+    public static @NotNull BulkRefundResult checkBulkRefund(@NotNull Context.Skill sCtx, @NotNull Context.Player pCtx, float refundPercentage, boolean refundEnabled){
+        if(!refundEnabled || !sCtx.skill().isRefundable() || sCtx.skillLevel() <= 0) return BulkRefundResult.EMPTY;
 
         var finalRefund = 0;
+        var lvlToRefund = 0;
         var refundRate = refundPercentage / 100f;
 
         var prices = sCtx.skill().getPrices();
         for (int i = sCtx.skillLevel() - 1; i >= 0; i--) {
             if(!getActiveDependents(sCtx, pCtx, i).isEmpty()) break;
 
+            lvlToRefund++;
             if (i < prices.size()) {
                 int levelPrice = prices.get(i);
-
                 if (levelPrice > 0) finalRefund += Math.round(levelPrice * refundRate);
             }
         }
-        return finalRefund;
+        return new BulkRefundResult(lvlToRefund, finalRefund);
     }
 }

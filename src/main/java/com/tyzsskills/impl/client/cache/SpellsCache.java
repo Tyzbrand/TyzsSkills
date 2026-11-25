@@ -187,7 +187,7 @@ public class SpellsCache {
         if(SpellRules.canBuySpell(getSpellContext(spellId), CACHE.getPlayerContext(), Settings.Server.PURCHASE_SYSTEM.get())){
             var price = spell.getPrice();
 
-            CACHE.METADATA.sp -= price;
+            CACHE.METADATA.removeSp(price);
             purchasedSpells.add(spellId);
             CACHE.incrVersion();
             return true;
@@ -205,7 +205,7 @@ public class SpellsCache {
         if(SpellRules.canBuyProperty(propertyCtx, CACHE.getPlayerContext(), Settings.Server.PURCHASE_SYSTEM.get())){
             var price = property.getPrice(getPropertyLevel(spellId, propertyId) + 1);
 
-            CACHE.METADATA.sp -= price;
+            CACHE.METADATA.removeSp(price);
             propertyLevels.put(getPropertyId(spellId, propertyId), propertyCtx.propertyLevel() + 1);
             CACHE.incrVersion();
             return true;

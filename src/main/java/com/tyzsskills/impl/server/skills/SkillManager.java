@@ -92,7 +92,6 @@ public class SkillManager {
         if (currentLvl >= maxLvl) return false;
 
         var bulkResult = SkillRules.checkBulkBuy(getSkillContext(player, skill), getPlayerContext(player), Settings.Server.PURCHASE_SYSTEM.get());
-
         if (bulkResult.levelToAdd() > 0) {
             var event = new SkillPurchaseEvent.Pre(player, skill, currentLvl, currentLvl + bulkResult.levelToAdd());
             NeoForge.EVENT_BUS.post(event);
@@ -135,19 +134,21 @@ public class SkillManager {
         int currentLvl = player.getData(PlayerData.DATA).getSkillLevel(skill.getId());
         if (currentLvl <= 0 || currentLvl > skill.getMaximumLevel()) return false;
 
-        var spToRefund = SkillRules.checkBulkRefund(getSkillContext(player, skill), getPlayerContext(player),
+        var bulkResult = SkillRules.checkBulkRefund(getSkillContext(player, skill), getPlayerContext(player),
                 Settings.Server.REFUND_PERCENTAGE.get(), Settings.Server.REFUND_SYSTEM.get());
 
-        var event = new SkillRefundEvent.Pre(player, skill, currentLvl, 0);
-        NeoForge.EVENT_BUS.post(event);
-        if (event.isCanceled()) return false;
+        if(bulkResult.levelToRemove() > 0){
+            var newLvl = currentLvl - bulkResult.levelToRemove();
+            var event = new SkillRefundEvent.Pre(player, skill, currentLvl, newLvl);
+            NeoForge.EVENT_BUS.post(event);
+            if (event.isCanceled()) return false;
 
-        if(setSkillLevelInternal(player, skill, 0, true)) {
-            if (spToRefund > 0) SpManager.tryAddSp(player, spToRefund);
-            NeoForge.EVENT_BUS.post(new SkillRefundEvent.Post(player, skill, currentLvl, 0));
-            return true;
+            if(setSkillLevelInternal(player, skill, newLvl, true)) {
+                if (bulkResult.spToRefund() > 0) SpManager.tryAddSp(player, bulkResult.spToRefund());
+                NeoForge.EVENT_BUS.post(new SkillRefundEvent.Post(player, skill, currentLvl, newLvl));
+                return true;
+            }
         }
-
         return false;
     }
     public static void bookmarkSkill(@NotNull ServerPlayer player, @NotNull ISkill skill){

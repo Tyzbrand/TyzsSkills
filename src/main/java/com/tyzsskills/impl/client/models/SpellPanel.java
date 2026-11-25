@@ -77,7 +77,7 @@ public class SpellPanel extends UIContainer {
         //TO SEE SCROLL AREA => scroll.addChild(new UIBackground(0, 0, 110,200, () -> Styles.DEFAULT_BACKGROUND)
         //        .withBorder(() -> false, () -> false));
 
-        var x = 0; var startY = 2;
+        var startY = 2;
         for(var property : spell.getProperties()){
             scroll.addChild(new PropertyCard(2, startY, property, spell));
             startY += PropertyCard.HEIGHT + 2;

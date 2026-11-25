@@ -40,6 +40,9 @@ public class ClientCache {
     public int getVersion(){return cacheVersion;}
 
 
+
+    //LIMITS
+
     //SECURITY
     private long lastClickTime = 0L;
     public void registerNewClick(){lastClickTime = System.currentTimeMillis();}
@@ -85,17 +88,5 @@ public class ClientCache {
         var player = Minecraft.getInstance().player;
         Objects.requireNonNull(player, "Attempt to access PlayerContext with null client.");
         return playerContext.updateContext(player, METADATA.getLevel(), METADATA.getSp(), SKILLS.getOwnedSkills());
-    }
-
-
-    public static int parseColor(String hexString, int fallback) {
-        if (hexString == null || hexString.isEmpty()) return fallback;
-        try {
-            String clean = hexString.replace("#", "");
-            if (clean.length() == 6) clean = "FF" + clean;
-            return (int) Long.parseLong(clean, 16);
-        } catch (NumberFormatException e) {
-            return fallback;
-        }
     }
 }

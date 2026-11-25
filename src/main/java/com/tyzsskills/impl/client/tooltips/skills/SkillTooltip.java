@@ -77,7 +77,7 @@ public class SkillTooltip extends UITooltip {
 
         this.addChild(new UIText(38, 5, () -> title)
                 .withScale(1.2f, Enums.ScalePivot.TOP_LEFT));
-        this.addChild(new UIText(2, 40, () -> fullBodyText).withWrapWidth(150));
+        this.addChild(new UIText(2, 40, () -> fullBodyText, true).withWrapWidth(150));
     }
 
     @Override

@@ -87,10 +87,9 @@ public class SpellCard extends UIContainer {
         this.addChild(new UIImageButton(4, 4, this::getCadreStyle, this::handleAssignation)
                 .withTooltip(() -> spellTooltip));
 
-        var iconImage = new UIImage(7, 7, 16, 16, () -> icon);
-        iconImage.withScale(.95f, Enums.ScalePivot.CENTER);
-        if(Settings.Client.RENDER_SHADOWS.get()) iconImage.withShadow(2f);
-        this.addChild(iconImage);
+        this.addChild(new UIImage(7, 7, 16, 16, () -> icon)
+                .withShadow(2f)
+                .withScale(.95f, Enums.ScalePivot.CENTER));
 
 
         //PROGRESS BAR

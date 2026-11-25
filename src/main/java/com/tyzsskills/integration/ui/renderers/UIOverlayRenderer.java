@@ -1,4 +1,4 @@
-package com.tyzsskills.integration.ui;
+package com.tyzsskills.integration.ui.renderers;
 
 import com.tyzsskills.Settings;
 import com.tyzsskills.impl.client.overlay.MetadataOverlay;

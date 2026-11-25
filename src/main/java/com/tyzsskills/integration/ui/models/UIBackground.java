@@ -1,8 +1,8 @@
 package com.tyzsskills.integration.ui.models;
 
-import com.tyzsskills.integration.ui.UIBackgroundRenderer;
 import com.tyzsskills.integration.ui.abstracts.UIElement;
 import com.tyzsskills.integration.ui.records.UIStyles;
+import com.tyzsskills.integration.ui.renderers.UIBackgroundRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.function.Supplier;

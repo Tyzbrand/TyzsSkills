@@ -11,7 +11,7 @@ import com.tyzsskills.impl.server.payloads.CActionSkillPayload;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.skills.SkillGraph;
 import com.tyzsskills.impl.server.skills.SkillRules;
-import com.tyzsskills.integration.ui.UIOverlayRenderer;
+import com.tyzsskills.integration.ui.renderers.UIOverlayRenderer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,12 +38,16 @@ public class SkillsCache {
             deactivations.addAll(playerSkillData.deactivations());
             skillLevels.putAll(playerSkillData.playerSkillLevels());
 
+            CACHE.METADATA.ownedSkills = skillLevels.values().stream().mapToInt(Integer::intValue).sum();
+
             sortCategories(playerSkillData.categories());
         }
 
         public void updateSkillLevel(@NotNull UpdatePayloads.SkillLevelPayload payload) {
             if (payload.level() <= 0) skillLevels.remove(payload.id().toLowerCase());
             else skillLevels.put(payload.id().toLowerCase(), payload.level());
+
+            CACHE.METADATA.ownedSkills = skillLevels.values().stream().mapToInt(Integer::intValue).sum();
             CACHE.UPDATE.registerUpdate("Skill Level Synced: New Cached Skill Level [" + payload.id() + ", " + payload.level() + "]");
         }
 
@@ -144,7 +148,7 @@ public class SkillsCache {
         int price = skill.getPrices().get(currentLvl);
 
 
-        CACHE.METADATA.sp -= price;
+        CACHE.METADATA.removeSp(price);
         skillLevels.put(id, currentLvl + 1);
         CACHE.incrVersion();
         return true;
@@ -156,7 +160,7 @@ public class SkillsCache {
         var bulkResult = SkillRules.checkBulkBuy(getSkillContext(id), CACHE.getPlayerContext(), Settings.Server.PURCHASE_SYSTEM.get());
 
         if (bulkResult.levelToAdd() > 0) {
-            CACHE.METADATA.sp -= bulkResult.spToWithdraw();
+            CACHE.METADATA.removeSp(bulkResult.spToWithdraw());
             skillLevels.put(id, currentLvl + bulkResult.levelToAdd());
             CACHE.incrVersion();
             return true;
@@ -178,7 +182,8 @@ public class SkillsCache {
             float refundPercentage = percentage / 100f;
             int refundAmount = (initialPrice <= 0) ? 0 : Math.round(initialPrice * refundPercentage);
 
-            if (refundAmount > 0) CACHE.METADATA.sp += refundAmount;
+            if (refundAmount > 0) CACHE.METADATA.addSp(refundAmount);
+
             if(currentLvl - 1 <= 0 && isSkillDeactivated(id)) {
                 triggerAction(skill, Enums.SkillAction.DEACTIVATION);
                 deactivations.remove(id);
@@ -189,22 +194,25 @@ public class SkillsCache {
     }
     private boolean predictBulkRefund(ISkill skill) {
         String id = skill.getId().toLowerCase();
+        var currentLvl = getSkillLevel(id);
+        if (currentLvl <= 0) return false;
 
-        if (getSkillLevel(id) <= 0) return false;
-
-        var spToRefund = SkillRules.checkBulkRefund(getSkillContext(id), CACHE.getPlayerContext(),
+        var bulkResult = SkillRules.checkBulkRefund(getSkillContext(id), CACHE.getPlayerContext(),
                 Settings.Server.REFUND_PERCENTAGE.get(), Settings.Server.REFUND_SYSTEM.get());
 
-        if (spToRefund > 0) {
-            CACHE.METADATA.sp += spToRefund;
-        }
+        if(bulkResult.levelToRemove() <= 0) return false;
+        var targetLvl = currentLvl - bulkResult.levelToRemove();
 
-        if(isSkillDeactivated(id)) {
+        if(bulkResult.spToRefund() > 0) CACHE.METADATA.addSp(bulkResult.spToRefund());
+
+        if(targetLvl == 0 && isSkillDeactivated(id)) {
             triggerAction(skill, Enums.SkillAction.DEACTIVATION);
             deactivations.remove(id);
         }
 
-        skillLevels.put(id, 0);
+        if(targetLvl > 0) skillLevels.put(id, targetLvl);
+        else skillLevels.remove(id);
+
         CACHE.incrVersion();
         return true;
     }
