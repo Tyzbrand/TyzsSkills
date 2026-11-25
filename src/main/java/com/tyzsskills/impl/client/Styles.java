@@ -26,13 +26,14 @@ public class Styles {
 
     //Styles
     public static final UITexture MAIN_TEXTURE =
-            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/main_texture.png"), 400);
+            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/main_texture.png"), 400, 400);
 
     public static final UITexture MAIN_TEXTURE_BACKGROUNDS =
-            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/main_texture_backgrounds.png"), 500);
+            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/main_texture_backgrounds.png"), 500, 500);
 
     public static final UITexture LOCKED_ICON =
-            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/lock_icon.png"), 16);
+            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/lock_icon.png"), 16, 16);
+
 
 
     //Backgrounds

@@ -33,7 +33,7 @@ public class UITabButton extends UIElement {
         if(isHovering(mouseX, mouseY)) {finalU = currentStyle.uHover(); finalV = currentStyle.vHover();}
         else {finalU = currentStyle.u(); finalV = currentStyle.v();}
 
-        gui.blit(currentStyle.image().texture(), getRawX(), getRawY(), finalU, finalV, getRawWidth(), getRawHeight(), currentStyle.image().size(), currentStyle.image().size());
+        gui.blit(currentStyle.image().texture(), getRawX(), getRawY(), finalU, finalV, getRawWidth(), getRawHeight(), currentStyle.image().width(), currentStyle.image().height());
         gui.blit(icon, getRawX() + 6, getRawY() + 3, 0, 0, 16, 16, 16, 16);
     }
 

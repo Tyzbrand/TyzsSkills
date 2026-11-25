@@ -53,12 +53,12 @@ public class UIImage extends UIElement implements IShadowRenderable<UIImage> {
     private void blitImage(GuiGraphics gui, UITexture currentTexture, ImageStyle currentStyle) {
         if (isUniqueTexture) {
             gui.blit(currentTexture.texture(), getRawX(), getRawY(), 0, 0,
-                    getRawWidth(), getRawHeight(), currentTexture.size(), currentTexture.size());
+                    getRawWidth(), getRawHeight(), currentTexture.width(), currentTexture.height());
         } else {
             gui.blit(currentStyle.image().texture(), getRawX(), getRawY(),
                     currentStyle.u(), currentStyle.v(),
                     currentStyle.width(), currentStyle.height(),
-                    currentStyle.image().size(), currentStyle.image().size());
+                    currentStyle.image().width(), currentStyle.image().height());
         }
     }
 }

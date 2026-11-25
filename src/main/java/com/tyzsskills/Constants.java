@@ -13,6 +13,6 @@ public class Constants {
     public static final int BASE_SLOTS = 3;
 
     public static final UITexture DEFAULT_ICON =
-            new UITexture(ResourceLocation.parse("minecraft:textures/item/barrier.png"), 16);
+            new UITexture(ResourceLocation.parse("minecraft:textures/item/barrier.png"), 16, 16);
 
 }

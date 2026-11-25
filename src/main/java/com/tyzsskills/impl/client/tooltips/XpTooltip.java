@@ -19,7 +19,8 @@ public class XpTooltip extends UITooltip {
     public XpTooltip() {
         cache = ClientCache.get();
 
-        addChild(new UIText(0, 0, () -> currentXpLine).withScale(.75f, Enums.ScalePivot.CENTER));
+        addChild(new UIText(0, 0, () -> currentXpLine)
+                .withScale(.75f, Enums.ScalePivot.CENTER));
     }
 
     @Override

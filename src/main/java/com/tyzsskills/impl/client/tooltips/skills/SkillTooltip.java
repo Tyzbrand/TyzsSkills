@@ -59,9 +59,10 @@ public class SkillTooltip extends UITooltip {
 
     public SkillTooltip(ISkill skill){
         super(() -> TOOLTIP);
+
         this.skill = skill;
 
-        skillIcon = new UITexture(skill.getIcon(), 16);
+        skillIcon = new UITexture(skill.getIcon(), 16, 16);
 
         tagContainer = new UIContainer(40 ,22);
         this.addChild(tagContainer);

@@ -65,7 +65,7 @@ public class SpellTooltip extends UITooltip {
         super(() -> TOOLTIP);
         this.spell = spell;
 
-        spellIcon = new UITexture(spell.getIcon(), 16);
+        spellIcon = new UITexture(spell.getIcon(), 16, 16);
 
         tagContainer = new UIContainer(40 ,22);
         this.addChild(tagContainer);

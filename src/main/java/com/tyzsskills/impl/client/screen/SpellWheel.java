@@ -99,9 +99,9 @@ public class SpellWheel extends Screen {
 
             if(spellInSlot == null) continue;
 
-            var iconTexture = new UITexture(spellInSlot.getIcon(), 16);
+            var iconTexture = new UITexture(spellInSlot.getIcon(), 16, 16);
 
-            mainPanel.addChild(new UIImage(slotPos.x + 7, slotPos.y + 7, iconTexture.size(), iconTexture.size(), () -> iconTexture)
+            mainPanel.addChild(new UIImage(slotPos.x + 7, slotPos.y + 7, iconTexture.width(), iconTexture.height(), () -> iconTexture)
                     .withShadow(2f)
                     .withShade(() -> currentMode == Enums.WheelMode.CAST && hasActiveCooldown(spellInSlot))
                     .withScale(2f, Enums.ScalePivot.TOP_LEFT));

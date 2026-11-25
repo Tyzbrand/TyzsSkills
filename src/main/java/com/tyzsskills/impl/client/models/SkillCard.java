@@ -89,7 +89,7 @@ public class SkillCard extends UIContainer {
         this.refreshScroll = refreshScroll;
         cache = ClientCache.get();
 
-        icon = new UITexture(skill.getIcon(), 16);
+        icon = new UITexture(skill.getIcon(), 16, 16);
 
         updateData();
 

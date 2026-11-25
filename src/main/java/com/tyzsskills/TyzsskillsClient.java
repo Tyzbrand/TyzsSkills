@@ -139,7 +139,7 @@ public class TyzsskillsClient {
             return player != null && ReprieveMobEffect.isAffected(Minecraft.getInstance().player);
         });
 
-        var image = new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/control_icon.png"), 16);
+        var image = new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/control_icon.png"), 16, 16);
         overlay.addChild(new UIImage(0, 0, 16, 16, () -> image)
                 .withScale(.85f, Enums.ScalePivot.CENTER)
                 .withAlpha(() -> .5f));

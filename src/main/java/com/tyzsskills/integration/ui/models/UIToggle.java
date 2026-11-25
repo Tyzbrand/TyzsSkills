@@ -39,7 +39,7 @@ public class UIToggle extends UIElement {
             finalV = isHovering ? currentStyle.vFalseHover() : currentStyle.vFalse();
         }
 
-        gui.blit(currentStyle.image().texture(), getRawX(), getRawY(), finalU, finalV, getRawWidth(), getRawHeight(), currentStyle.image().size(), currentStyle.image().size());
+        gui.blit(currentStyle.image().texture(), getRawX(), getRawY(), finalU, finalV, getRawWidth(), getRawHeight(), currentStyle.image().width(), currentStyle.image().height());
     }
 
     @Override

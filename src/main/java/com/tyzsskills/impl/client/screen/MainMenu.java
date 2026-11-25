@@ -1,6 +1,7 @@
 package com.tyzsskills.impl.client.screen;
 
 import com.tyzsskills.Settings;
+import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.tools.FormatTools;
 import com.tyzsskills.impl.client.Styles;
@@ -8,13 +9,16 @@ import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.models.SkillPanel;
 import com.tyzsskills.impl.client.models.SpellPanel;
+import com.tyzsskills.impl.client.tooltips.StatsTooltip;
 import com.tyzsskills.impl.client.tooltips.XpTooltip;
 import com.tyzsskills.integration.ui.models.*;
 import com.tyzsskills.integration.ui.records.UIStyles;
+import com.tyzsskills.integration.ui.records.UITexture;
 import com.tyzsskills.integration.ui.renderers.UITooltipRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public class MainMenu extends Screen {
     public static final int WIDTH = 352, HEIGHT = 139;
@@ -39,6 +43,9 @@ public class MainMenu extends Screen {
             new UIStyles.ButtonStyle(22, 20, 40, 240, Styles.MAIN_TEXTURE);
     private static final UIStyles.ButtonStyle TYPE_UNSELECTED =
             new UIStyles.ButtonStyle(22, 20, 40, 260, Styles.MAIN_TEXTURE);
+
+    private static final UIStyles.ImageStyle STATS =
+            new UIStyles.ImageStyle(14, 14, 52, 224, Styles.MAIN_TEXTURE);
     //endregion
 
     //PARENT
@@ -74,6 +81,15 @@ public class MainMenu extends Screen {
         //Background Icon
         mainPanel.addChild(new UIImage(0, 0, () -> BACKGROUND));
 
+        var decoration = new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/cadre_decoration.png"), 52, 80);
+        mainPanel.addChild(new UIImage(7, 7, decoration.width(), decoration.height(), () -> decoration));
+
+        //Helpers
+        var statsTooltip = new StatsTooltip();
+        mainPanel.addChild(new UIImage(45, 73, () -> STATS)
+                .withScale(.75f, Enums.ScalePivot.BOTTOM_RIGHT)
+                .withTooltip(() -> statsTooltip));
+
         //Type Selector
         //TODO: translation
         var skillTooltip = new UITooltip(Component.literal("Skills"));
@@ -94,6 +110,7 @@ public class MainMenu extends Screen {
         //Entity
         mainPanel.addChild(new UIEntity(8, 14, 40, 70, () -> this.minecraft.player, 39)
                 .withVisibility(Settings.Client.RENDER_PLAYER::get));
+
 
         //Progress Bar
         var xpTooltip = new XpTooltip();

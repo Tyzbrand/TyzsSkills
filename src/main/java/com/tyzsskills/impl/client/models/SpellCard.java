@@ -64,7 +64,7 @@ public class SpellCard extends UIContainer {
         this.focusSpell = focusSpell;
 
         cache = ClientCache.get();
-        icon = new UITexture(spell.getIcon(), 16);
+        icon = new UITexture(spell.getIcon(), 16, 16);
 
         updateData();
 

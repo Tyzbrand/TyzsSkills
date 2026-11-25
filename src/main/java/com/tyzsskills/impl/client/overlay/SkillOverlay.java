@@ -44,7 +44,7 @@ public class SkillOverlay extends UIStackOverlay {
 
         overlay.withScale(Settings.Client.SKILL_SCALE.get(), Enums.ScalePivot.TOP_LEFT);
 
-        var icon = new UITexture(skill.getIcon(), 16);
+        var icon = new UITexture(skill.getIcon(), 16, 16);
         overlay.addChild(new UIBackground(0, 0, 24, 24, () -> backgroundStyle));
         overlay.addChild(new UIImage(4, 4, 16, 16, () -> icon));
 

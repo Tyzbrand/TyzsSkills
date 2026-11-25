@@ -236,6 +236,9 @@ public final class Settings {
         public static final FloatSetting UI_VOLUME =
                 fl("ui_volume", Enums.SettingCategory.CLIENT_GENERAL, 70f, 0f, 100f)
                         .withComment("Volume of menu clicks.");
+        public static final FloatSetting TOOLTIP_SCALES =
+                fl("tooltip_scales", Enums.SettingCategory.CLIENT_GENERAL, .87f, .5f, 30f)
+                        .withComment("Scale of all menu tooltips.");
         public static final BoolSetting INVENTORY_BUTTON =
                 bool("show_inventory_button", Enums.SettingCategory.CLIENT_GENERAL, true)
                         .withComment("Show the menu button in the inventory.");
