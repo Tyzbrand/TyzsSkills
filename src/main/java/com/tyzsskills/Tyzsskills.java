@@ -12,7 +12,6 @@ import com.tyzsskills.impl.server.registries.SoundRegistry;
 import com.tyzsskills.impl.server.skills.SkillPresets;
 import com.tyzsskills.impl.server.spells.SpellPresets;
 import com.tyzsskills.impl.server.wrappers.TyzsSkillsCommonRegistrationWrapper;
-import com.tyzsskills.integration.kubejs.JsEventsDelegate;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -61,7 +60,6 @@ public class Tyzsskills {
 
         NeoForge.EVENT_BUS.register(RuntimeEvents.class);
         NeoForge.EVENT_BUS.register(XpGainsEvents.class);
-        NeoForge.EVENT_BUS.register(JsEventsDelegate.class);
     }
 
     //EVENTS

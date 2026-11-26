@@ -131,8 +131,8 @@ configurations {
 }
 
 dependencies {
-    compileOnly "dev.latvian.mods:kubejs-neoforge:2101.7.2-build.353"
-    localRuntime "dev.latvian.mods:kubejs-neoforge:2101.7.2-build.353"
+    compileOnly "dev.latvian.mods:kubejs-neoforge:2101.7.2-build.382"
+    localRuntime "dev.latvian.mods:kubejs-neoforge:2101.7.2-build.382"
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
