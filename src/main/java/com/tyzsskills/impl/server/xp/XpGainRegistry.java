@@ -1,8 +1,8 @@
 package com.tyzsskills.impl.server.xp;
 
 import com.google.gson.JsonObject;
-import com.tyzsskills.impl.server.active.ErrorManager;
-import com.tyzsskills.impl.server.active.FileManager;
+import com.tyzsskills.impl.server.core.ErrorManager;
+import com.tyzsskills.impl.server.core.FileManager;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;

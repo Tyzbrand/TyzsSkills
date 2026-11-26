@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.active;
+package com.tyzsskills.impl.server.registries;
 
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.impl.server.mob_effects.ReprieveMobEffect;

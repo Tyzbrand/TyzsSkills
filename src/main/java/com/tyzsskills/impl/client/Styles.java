@@ -34,6 +34,12 @@ public class Styles {
     public static final UITexture LOCKED_ICON =
             new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/lock_icon.png"), 16, 16);
 
+    public static final UITexture STATS_ICON=
+            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/tracker_icon.png"), 14, 14);
+
+    public static final UITexture QUOTA_ICON=
+            new UITexture(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "textures/gui/icons/quota_icon.png"), 10, 14);
+
 
 
     //Backgrounds

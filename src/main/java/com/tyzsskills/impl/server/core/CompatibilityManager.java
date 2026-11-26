@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.active;
+package com.tyzsskills.impl.server.core;
 
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.LegacyData;

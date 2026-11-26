@@ -42,6 +42,14 @@ public class ResetCommand {
                                         Reset.reset(player, Enums.ResetType.METADATA);
                                     return players.size();
                                 })))
+                .then(Commands.literal("limits")
+                        .then(Commands.argument("targets", EntityArgument.players())
+                                .executes(ctx -> {
+                                    var players = EntityArgument.getPlayers(ctx, "targets");
+                                    for(var player : players)
+                                        Reset.reset(player, Enums.ResetType.QUOTAS);
+                                    return players.size();
+                                })))
                 .then(Commands.literal("stats")
                         .then(Commands.argument("targets", EntityArgument.players())
                                 .executes(ctx -> {

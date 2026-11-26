@@ -9,6 +9,7 @@ import com.tyzsskills.impl.client.active.SortingManager;
 import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.client.models.SkillPanel;
 import com.tyzsskills.impl.client.models.SpellPanel;
+import com.tyzsskills.impl.client.tooltips.QuotasTooltip;
 import com.tyzsskills.impl.client.tooltips.StatsTooltip;
 import com.tyzsskills.impl.client.tooltips.XpTooltip;
 import com.tyzsskills.integration.ui.models.*;
@@ -86,9 +87,15 @@ public class MainMenu extends Screen {
 
         //Helpers
         var statsTooltip = new StatsTooltip();
-        mainPanel.addChild(new UIImage(45, 73, () -> STATS)
+        mainPanel.addChild(new UIImage(45, 73, 14, 14, () -> Styles.STATS_ICON)
                 .withScale(.75f, Enums.ScalePivot.BOTTOM_RIGHT)
                 .withTooltip(() -> statsTooltip));
+
+        var quotaTooltip = new QuotasTooltip();
+        mainPanel.addChild(new UIImage(48, 59, 10, 14, () -> Styles.QUOTA_ICON)
+                .withVisibility(this::hasQuotas)
+                .withScale(.75f, Enums.ScalePivot.BOTTOM_RIGHT)
+                .withTooltip(() -> quotaTooltip));
 
         //Type Selector
         //TODO: translation
@@ -196,6 +203,10 @@ public class MainMenu extends Screen {
         if(!Settings.Server.USE_SPELLS.get()) type = Enums.MenuFocus.SKILL;
         SortingManager.setMenuType(type);
         return true;
+    }
+
+    private boolean hasQuotas(){
+        return Settings.Server.SP_LIMIT.get() > 0 || Settings.Server.XP_LIMIT.get() > 0;
     }
     //endregion
 }

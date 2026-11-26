@@ -9,6 +9,7 @@ import com.tyzsskills.impl.client.cache.ClientCache;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
 import com.tyzsskills.impl.server.categories.CategoryLoader;
+import com.tyzsskills.impl.server.core.LimitManager;
 import com.tyzsskills.impl.server.skills.Skill;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
@@ -33,15 +34,30 @@ import java.util.Map;
 
 public class UpdatePayloads {
 
-    public record PlayerSyncData(int level, int sp, float xp, float totalXp, int spEarned, int spSpent){
-        public static final StreamCodec<ByteBuf, PlayerSyncData> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.INT, PlayerSyncData::level,
-                ByteBufCodecs.INT, PlayerSyncData::sp,
-                ByteBufCodecs.FLOAT, PlayerSyncData::xp,
-                ByteBufCodecs.FLOAT, PlayerSyncData::totalXp,
-                ByteBufCodecs.INT, PlayerSyncData::spEarned,
-                ByteBufCodecs.INT, PlayerSyncData::spSpent,
-                PlayerSyncData::new
+    public record PlayerSyncData(int level, int sp, float xp, float totalXp, int spEarned, int spSpent, float xpQuota, int spQuota, long lastResetBucket){
+        public static final StreamCodec<ByteBuf, PlayerSyncData> STREAM_CODEC =  StreamCodec.of(
+                (buf, data) -> {
+                    ByteBufCodecs.INT.encode(buf, data.level);
+                    ByteBufCodecs.INT.encode(buf, data.sp);
+                    ByteBufCodecs.FLOAT.encode(buf, data.xp);
+                    ByteBufCodecs.FLOAT.encode(buf, data.totalXp);
+                    ByteBufCodecs.INT.encode(buf, data.spEarned);
+                    ByteBufCodecs.INT.encode(buf, data.spSpent);
+                    ByteBufCodecs.FLOAT.encode(buf, data.xpQuota);
+                    ByteBufCodecs.INT.encode(buf, data.spQuota);
+                    ByteBufCodecs.VAR_LONG.encode(buf, data.lastResetBucket);
+                },
+                buf -> new PlayerSyncData(
+                        ByteBufCodecs.INT.decode(buf),
+                        ByteBufCodecs.INT.decode(buf),
+                        ByteBufCodecs.FLOAT.decode(buf),
+                        ByteBufCodecs.FLOAT.decode(buf),
+                        ByteBufCodecs.INT.decode(buf),
+                        ByteBufCodecs.INT.decode(buf),
+                        ByteBufCodecs.FLOAT.decode(buf),
+                        ByteBufCodecs.INT.decode(buf),
+                        ByteBufCodecs.VAR_LONG.decode(buf)
+                )
         );
     }
 
@@ -180,6 +196,26 @@ public class UpdatePayloads {
 
         public static void Handle(final LevelDataPayload payload, final IPayloadContext ctx){
             ctx.enqueueWork(() -> {ClientCache.get().METADATA.UPDATE.updateLevelData(payload);});
+        }
+    }
+    public record LimitsPayload(float xpQuota, int spQuota, long lastResetBucket) implements CustomPacketPayload {
+        public static final Type<LimitsPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Tyzsskills.MODID, "limits_update_payload"));
+
+        public static final StreamCodec<ByteBuf, LimitsPayload> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.FLOAT, LimitsPayload::xpQuota,
+                ByteBufCodecs.INT, LimitsPayload::spQuota,
+                ByteBufCodecs.VAR_LONG, LimitsPayload::lastResetBucket,
+                LimitsPayload::new
+
+        );
+
+        @Override
+        public @NotNull Type<? extends CustomPacketPayload> type(){
+            return TYPE;
+        }
+
+        public static void Handle(final LimitsPayload payload, final IPayloadContext ctx){
+            ctx.enqueueWork(() -> {ClientCache.get().METADATA.UPDATE.updateLimits(payload);});
         }
     }
     //-----skills-----
@@ -331,7 +367,8 @@ public class UpdatePayloads {
 
                 new UpdatePayloads.PlayerSyncData(LevelManager.getLevel(player),
                         SpManager.getSP(player), XpManager.getXP(player),
-                        data.getAllTimeXp(), data.getTotalSpEarned(), data.getTotalSpSpent()),
+                        data.getAllTimeXp(), data.getTotalSpEarned(), data.getTotalSpSpent(),
+                        LimitManager.getXpQuota(player), LimitManager.getSpQuota(player), LimitManager.getLastResetBucket(player)),
 
                 new PlayerSyncSkillData(SkillManager.getBookmarkedSkills(player), SkillManager.getDeactivatedSkills(player),
                         CategoryLoader.getCategories(), SkillManager.getOwnedSkill(player)),

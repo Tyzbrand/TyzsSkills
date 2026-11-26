@@ -1,7 +1,6 @@
 package com.tyzsskills.impl.server.events;
 
 import com.tyzsskills.Settings;
-import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.impl.server.attachments.ExplorationProgression;
 import com.tyzsskills.impl.server.xp.XpGainRegistry;
@@ -42,7 +41,7 @@ public class XpGainsEvents {
         if(Settings.Server.PREVENT_XP_FROM_PLACED_BLOCKS.get() && playerPlaced) return;
 
         var value = XpGainRegistry.getBlockValue(event.getState(), player);
-        if(value > 0) TyzsSkillsAPI.xp().tryAddXp(player, XpManager.getCombinedXp(player, value));
+        if(value > 0) XpManager.earnXp(player, value);
     }
 
     @SubscribeEvent
@@ -53,7 +52,7 @@ public class XpGainsEvents {
         if(!Settings.Server.EARN_FROM_KILLING.get()) return;
 
         var value = XpGainRegistry.getEntityValue(event.getEntity(), player);
-        if(value > 0) TyzsSkillsAPI.xp().tryAddXp(player, XpManager.getCombinedXp(player, value));
+        if(value > 0) XpManager.earnXp(player, value);
     }
 
     @SubscribeEvent
@@ -65,7 +64,7 @@ public class XpGainsEvents {
         long timeOfDay = level.getDayTime() % 24000L;
         if (timeOfDay > 1000L) return;
 
-        var sleepValue = Settings.Server.GAINS_FROM_SLEEPING.get();
+        float sleepValue = Settings.Server.GAINS_FROM_SLEEPING.get();
         if(sleepValue <= 0) return;
 
         long currentDay = player.level().getDayTime() / 24000L;
@@ -74,7 +73,7 @@ public class XpGainsEvents {
 
         if(!data.hasAlreadySlept(currentDay)){
             data.setSleepDay(currentDay);
-            TyzsSkillsAPI.xp().tryAddXp(player, XpManager.getCombinedXp(player, sleepValue));
+            XpManager.earnXp(player, sleepValue);
         }
     }
 
@@ -84,10 +83,10 @@ public class XpGainsEvents {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if(player.isCreative() && !Settings.Server.EARN_XP_IN_CREATIVE.get()) return;
 
-        var value = Settings.Server.GAINS_FROM_FISHING.get();
+        float value = Settings.Server.GAINS_FROM_FISHING.get();
         if(value <= 0) return;
 
-        TyzsSkillsAPI.xp().tryAddXp(player, XpManager.getCombinedXp(player, value));
+        XpManager.earnXp(player, value);
     }
 
     @SubscribeEvent
@@ -98,7 +97,7 @@ public class XpGainsEvents {
         if(event.getItem().getFoodProperties(player) == null) return;
 
         var value = XpGainRegistry.getFoodValue(event.getItem(), player);
-        if(value > 0) TyzsSkillsAPI.xp().tryAddXp(player, XpManager.getCombinedXp(player, value));
+        if(value > 0) XpManager.earnXp(player, value);
     }
 
     @SubscribeEvent
@@ -109,7 +108,7 @@ public class XpGainsEvents {
         float value = Settings.Server.GAINS_FROM_CRAFTING.get();
         if(value <= 0) return;
 
-        TyzsSkillsAPI.xp().tryAddXp(player, XpManager.getCombinedXp(player, value));
+        XpManager.earnXp(player, value);
     }
 
     @SubscribeEvent
@@ -120,7 +119,7 @@ public class XpGainsEvents {
         float value = Settings.Server.GAINS_FROM_BREEDING.get();
         if(value <= 0) return;
 
-        TyzsSkillsAPI.xp().tryAddXp(player, XpManager.getCombinedXp(player, value));
+        XpManager.earnXp(player, value);
     }
 
     @SubscribeEvent
@@ -142,7 +141,7 @@ public class XpGainsEvents {
 
             if(finalValue <= 0) return;
 
-            TyzsSkillsAPI.xp().tryAddXp(player, XpManager.getCombinedXp(player, finalValue));
+            XpManager.earnXp(player, finalValue);
         });
     }
 
@@ -166,7 +165,7 @@ public class XpGainsEvents {
 
                 if(!data.hasDiscoveredBiome(biomeID)){
                     data.addBiome(biomeID);
-                    TyzsSkillsAPI.xp().tryAddXp(player, XpManager.getCombinedXp(player, biomeValue));
+                    XpManager.earnXp(player, biomeValue);
                 }
             }
         }
@@ -181,7 +180,7 @@ public class XpGainsEvents {
 
             if(!data.hasDiscoveredDimension(dimensionID)){
                 data.addDimension(dimensionID);
-                TyzsSkillsAPI.xp().tryAddXp(player, XpManager.getCombinedXp(player, dimensionValue));
+                XpManager.earnXp(player, dimensionValue);
             }
         }
     }

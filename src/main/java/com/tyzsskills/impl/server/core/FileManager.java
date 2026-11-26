@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.active;
+package com.tyzsskills.impl.server.core;
 
 import com.google.gson.*;
 import com.tyzsskills.Settings;

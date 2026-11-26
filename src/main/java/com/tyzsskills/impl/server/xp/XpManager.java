@@ -3,10 +3,11 @@ package com.tyzsskills.impl.server.xp;
 import com.tyzsskills.Settings;
 import com.tyzsskills.api.events.metadata.XpChangeEvent;
 import com.tyzsskills.impl.server.Level.LevelManager;
-import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
+import com.tyzsskills.impl.server.core.LimitManager;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
+import com.tyzsskills.impl.server.registries.AttributeRegistry;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -45,6 +46,17 @@ public class XpManager {
 
 
     //PUBLIC
+    public static boolean earnXp(@NotNull ServerPlayer player, float rawAmount){
+        var allowed = LimitManager.clampXpGain(player, getCombinedXp(player, rawAmount));
+        if(allowed <= 0f) return false;
+
+        if(tryAddXp(player, allowed)) {
+            LimitManager.recordXpGain(player, allowed);
+            return true;
+        }
+        return false;
+    }
+
     public static boolean tryAddXp(@NotNull ServerPlayer player, float amount){
         if(amount <= 0) return false;
         return setXpInternal(player, getXP(player) + amount, true, true, true);
@@ -73,7 +85,7 @@ public class XpManager {
     //Getters
     public static float getXP(@NotNull ServerPlayer player){return player.getData(PlayerData.DATA).getXP();}
 
-    public static float getCombinedXp(@NotNull ServerPlayer player, float rawXp){
+    private static float getCombinedXp(@NotNull ServerPlayer player, float rawXp){
         return rawXp * Settings.Server.XP_BASE_MULTIPLIER.get() * (float)player.getAttributeValue(AttributeRegistry.SKILL_XP_MULTIPLIER);
     }
 

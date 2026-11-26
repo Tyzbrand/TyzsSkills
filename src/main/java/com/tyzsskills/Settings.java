@@ -3,7 +3,7 @@ package com.tyzsskills;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.api.model.settings.*;
 import com.tyzsskills.api.records.SettingMeta;
-import com.tyzsskills.impl.server.active.ErrorManager;
+import com.tyzsskills.impl.server.core.ErrorManager;
 import net.neoforged.fml.loading.FMLPaths;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public final class Settings {
-    public static final String CONFIG_VERSION = "7.11";
+    public static final String CONFIG_VERSION = "7.12";
 
     private static final Map<String, Setting<?, ?>> SERVER_REGISTRY = new LinkedHashMap<>();
     private static final Collection<Setting<?, ?>> SERVER_REGISTRY_VIEW = Collections.unmodifiableCollection(SERVER_REGISTRY.values());
@@ -136,6 +136,26 @@ public final class Settings {
         public static final FloatSetting DEATH_SKILL_LOSS =
                 fl("death_skill_loss", Enums.SettingCategory.DEATH_PENALTIES, 0f, 0f, 100f)
                         .withComment("Percentage chance for each skill to lose one level.");
+
+        //LIMITS
+        public static final EnumSetting<Enums.LimitType> LIMIT_TYPE =
+                enumerator("limit_type", Enums.SettingCategory.LIMITS, Enums.LimitType.GAME_TIME)
+                        .withComment("Time reference for limit resets (GAME_TIME = world time, REAL_TIME = server clock).");
+        public static final IntSetting LIMIT_RESET_INTERVAL =
+                integer("limit_reset_interval", Enums.SettingCategory.LIMITS, 0, 0, Integer.MAX_VALUE)
+                        .withComment("Reset interval (min) for XP and SP gain limits (0 = disabled).");
+        public static final IntSetting LEVEL_CAP =
+                integer("level_cap", Enums.SettingCategory.LIMITS, 0, 0, Integer.MAX_VALUE)
+                        .withComment("Maximum level a player can reach (0 = no maximum).");
+        public static final IntSetting SP_CAP =
+                integer("sp_cap", Enums.SettingCategory.LIMITS, 0, 0, Integer.MAX_VALUE)
+                        .withComment("Maximum SP a player can hold at once (0 = no maximum).");
+        public static final FloatSetting XP_LIMIT =
+                fl("xp_gains_limit", Enums.SettingCategory.LIMITS, 0f, 0f, Float.MAX_VALUE)
+                        .withComment("Maximum XP a player can earn per reset interval (0 = no quota).");
+        public static final IntSetting SP_LIMIT =
+                integer("sp_gains_limit", Enums.SettingCategory.LIMITS, 0, 0, Integer.MAX_VALUE)
+                        .withComment("Maximum SP a player can earn per reset interval (0 = no quota).");
 
         //XP VALUES
         public static final BoolSetting EARN_XP_IN_CREATIVE =

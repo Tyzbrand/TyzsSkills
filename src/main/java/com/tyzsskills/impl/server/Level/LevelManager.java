@@ -5,6 +5,7 @@ import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.events.metadata.LevelChangeEvent;
 import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.impl.server.attachments.PlayerData;
+import com.tyzsskills.impl.server.core.LimitManager;
 import com.tyzsskills.impl.server.payloads.LevelToastPayload;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.sp.SpManager;
@@ -69,6 +70,11 @@ public class LevelManager {
         int levelBuffer = 0;
 
         while (true){
+            if (LimitManager.isLevelCapped(currentLevel)) {
+                currentXp = 0f;
+                break;
+            }
+
             var data = getLevelData(currentLevel);
 
             if(currentXp >= data.goal()){
@@ -80,11 +86,10 @@ public class LevelManager {
             else break;
         }
 
-        var finalSpGain = SpManager.getCombinedSp(player, spBuffer);
-        if(finalSpGain > 0) SpManager.tryAddSp(player, finalSpGain);
+        var spClamped = SpManager.earnSp(player, spBuffer);
         if(levelBuffer > 0) {
             tryAddLevel(player, levelBuffer);
-            PacketDistributor.sendToPlayer(player, new LevelToastPayload(currentLevel, finalSpGain));
+            PacketDistributor.sendToPlayer(player, new LevelToastPayload(currentLevel, spClamped));
         }
 
         return currentXp;

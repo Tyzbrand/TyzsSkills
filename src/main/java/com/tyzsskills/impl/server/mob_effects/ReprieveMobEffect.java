@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.server.mob_effects;
 
 import com.tyzsskills.api.events.spells.SpellCastEvent;
-import com.tyzsskills.impl.server.active.EffectRegistry;
+import com.tyzsskills.impl.server.registries.EffectRegistry;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;

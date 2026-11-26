@@ -3,7 +3,7 @@ package com.tyzsskills.api;
 public class Enums {
 
     public enum SkillType {GENERIC, CUSTOM, IMMUTABLE}
-    public enum ResetType {ALL, METADATA, SKILLS, SPELLS, STATS}
+    public enum ResetType {ALL, METADATA, SKILLS, SPELLS, STATS, QUOTAS}
 
     public enum SortingDirection {ASCENDING, DESCENDING}
     public enum SortingType {DEFAULT, NAME, PRICE, LEVEL}
@@ -13,6 +13,8 @@ public class Enums {
 
     public enum SkillAction {PURCHASE, REFUND, BULK_PURCHASE, BULK_REFUND, BOOKMARK, DEACTIVATION}
     public enum SpellAction{PURCHASE, ASSIGNMENT, UNASSIGNMENT, CAST, PROPERTY_PURCHASE}
+
+    public enum LimitType {REAL_TIME, GAME_TIME}
 
     public enum PermissionLevel{
         NONE(0), MODERATOR(1), OPERATOR(2), ADMIN(3), OWNER(4);
@@ -26,9 +28,10 @@ public class Enums {
     public enum SettingCategory {
         SERVER_GENERAL(0, false),
         DEATH_PENALTIES(1, false),
-        XP(2, false),
-        SERVER_PERFORMANCE(3, false),
-        PERMISSIONS(4, false),
+        LIMITS(2, false),
+        XP(3, false),
+        SERVER_PERFORMANCE(4, false),
+        PERMISSIONS(5, false),
 
         CLIENT_GENERAL(0, true),
         OVERLAYS(1, true),

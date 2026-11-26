@@ -2,10 +2,11 @@ package com.tyzsskills.impl.server.sp;
 
 import com.tyzsskills.Settings;
 import com.tyzsskills.api.events.metadata.PointsChangeEvent;
-import com.tyzsskills.impl.server.active.AttributeRegistry;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
+import com.tyzsskills.impl.server.core.LimitManager;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
+import com.tyzsskills.impl.server.registries.AttributeRegistry;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -46,6 +47,17 @@ public class SpManager {
 
 
     //PUBLIC
+    public static int earnSp(@NotNull ServerPlayer player, int rawAmount) {
+        var allowed = LimitManager.clampSpGain(player, getCombinedSp(player, rawAmount));
+        if(allowed <= 0) return 0;
+
+        if (tryAddSp(player, allowed)) {
+            LimitManager.recordSpGain(player, allowed);
+            return allowed;
+        }
+        return 0;
+    }
+
     public static boolean tryAddSp(@NotNull ServerPlayer player, int amount) {
         if(amount <= 0) return false;
         return setSpInternal(player, getSP(player) + amount, true, true);
@@ -68,7 +80,7 @@ public class SpManager {
             return player.getData(PlayerData.DATA).getSP();
     }
 
-    public static int getCombinedSp(ServerPlayer player, int rawSp){
+    private static int getCombinedSp(ServerPlayer player, int rawSp){
         return Math.round(rawSp * Settings.Server.SP_BASE_MULTIPLIER.get() * (float)player.getAttributeValue(AttributeRegistry.SP_MULTIPLIER));
     }
 }

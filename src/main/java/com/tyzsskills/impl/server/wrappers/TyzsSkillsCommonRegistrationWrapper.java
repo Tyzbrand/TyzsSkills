@@ -5,8 +5,8 @@ import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.api.model.SpellBehavior;
 import com.tyzsskills.api.records.SkillPrefab;
 import com.tyzsskills.api.records.SpellPrefab;
-import com.tyzsskills.impl.server.active.BehaviorRegistry;
-import com.tyzsskills.impl.server.active.FileManager;
+import com.tyzsskills.impl.server.core.FileManager;
+import com.tyzsskills.impl.server.registries.BehaviorRegistry;
 import org.jetbrains.annotations.NotNull;
 
 

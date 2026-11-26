@@ -3,7 +3,7 @@ package com.tyzsskills.impl.server.effects.skillEffects;
 import com.tyzsskills.api.TyzsSkillsAPI;
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
-import com.tyzsskills.impl.server.active.EffectRegistry;
+import com.tyzsskills.impl.server.registries.EffectRegistry;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;

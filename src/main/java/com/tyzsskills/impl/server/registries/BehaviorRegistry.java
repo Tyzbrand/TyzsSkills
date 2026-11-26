@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.active;
+package com.tyzsskills.impl.server.registries;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.interfaces.ISpell;

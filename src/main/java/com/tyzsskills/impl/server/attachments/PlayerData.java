@@ -43,6 +43,11 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     private int playerSP = 0;
     private float playerXP = 0f;
 
+    //LIMITS
+    private long lastResetBucket = -1L;
+    private float xpQuota = 0f;
+    private int spQuota = 0;
+
     //COMPAT
     private final Set<String> compatibility_tags = new HashSet<>();
 
@@ -176,9 +181,25 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
     public boolean hasMigrated(String tag){return tag != null && compatibility_tags.contains(tag);}
     //endregion
 
+    //region LIMITS
+    public void earnXp(float amount){if(amount > 0f) xpQuota += amount;}
+    public float getXpQuota(){return xpQuota;}
+
+    public void earnSp(int amount){if(amount > 0) spQuota += amount;}
+    public int getSpQuota(){return spQuota;}
+
+    public long getLastResetBucket() {return lastResetBucket;}
+
+    public void resetLimits(long newBucket){
+        xpQuota = 0f;
+        spQuota = 0;
+        lastResetBucket = newBucket;
+    }
+    //endregion
+
     //region SERIALIZATION
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         var tag = new CompoundTag();
 
         CompoundTag skillLevels = new CompoundTag();
@@ -216,6 +237,10 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
         ListTag compatTags = new ListTag();
         compatibility_tags.forEach(b -> compatTags.add(StringTag.valueOf(b)));
         tag.put("compatibility_tags", compatTags);
+
+        tag.putLong("last_reset_bucket", lastResetBucket);
+        tag.putFloat("xp_quota", xpQuota);
+        tag.putInt("sp_quota", spQuota);
 
         return tag;
     }
@@ -281,6 +306,10 @@ public class PlayerData implements INBTSerializable<CompoundTag> {
                 compatibility_tags.add(id.getAsString());
             }
         }
+
+        if(compoundTag.contains("last_reset_bucket")) lastResetBucket = compoundTag.getLong("last_reset_bucket");
+        if(compoundTag.contains("xp_quota")) xpQuota = compoundTag.getFloat("xp_quota");
+        if(compoundTag.contains("sp_quota")) spQuota = compoundTag.getInt("sp_quota");
     }
     //endregion
 

@@ -1,7 +1,7 @@
 package com.tyzsskills.impl.client;
 
 import com.tyzsskills.Settings;
-import com.tyzsskills.impl.server.active.SoundRegistry;
+import com.tyzsskills.impl.server.registries.SoundRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvent;

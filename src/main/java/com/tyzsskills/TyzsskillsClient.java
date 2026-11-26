@@ -8,7 +8,7 @@ import com.tyzsskills.impl.client.key.Keybinds;
 import com.tyzsskills.impl.client.models.InventoryButton;
 import com.tyzsskills.impl.client.screen.MainMenu;
 import com.tyzsskills.impl.client.wrappers.TyzsSkillsClientRegistrationWrapper;
-import com.tyzsskills.impl.server.active.ErrorManager;
+import com.tyzsskills.impl.server.core.ErrorManager;
 import com.tyzsskills.impl.server.mob_effects.ReprieveMobEffect;
 import com.tyzsskills.integration.ui.models.UIImage;
 import com.tyzsskills.integration.ui.models.UIOverlay;

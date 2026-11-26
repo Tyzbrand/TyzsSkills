@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.active;
+package com.tyzsskills.impl.server.core;
 
 import com.tyzsskills.Settings;
 import com.tyzsskills.impl.server.Level.LevelManager;
@@ -7,7 +7,7 @@ import com.tyzsskills.impl.server.sp.SpManager;
 import com.tyzsskills.impl.server.xp.XpManager;
 import net.minecraft.server.level.ServerPlayer;
 
-public class DeathPenalties {
+public class DeathPenaltiesManager {
 
     public static void applyLvlPenalty(ServerPlayer player){
         int lvlToDeduce = Settings.Server.DEATH_LEVEL_LOSS.get();

@@ -17,6 +17,17 @@ public class FormatTools {
         return FORMATER.get().format(value);
     }
 
+    public static String timer(long totalSeconds) {
+        if(totalSeconds < 0) return "--:--";
+
+        var hours = totalSeconds / 3600;
+        var minutes = (totalSeconds % 3600) / 60;
+        var seconds = totalSeconds % 60;
+
+        if(hours <= 0) return String.format("%02d:%02d", minutes, seconds);
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
     private static final ThreadLocal<DecimalFormat> FORMATER = ThreadLocal.withInitial(() -> {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setDecimalSeparator('.');

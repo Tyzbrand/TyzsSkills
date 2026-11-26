@@ -4,10 +4,10 @@ import com.tyzsskills.Settings;
 import com.tyzsskills.Tyzsskills;
 import com.tyzsskills.api.events.skills.SkillLoadEvent;
 import com.tyzsskills.impl.server.Level.LevelManager;
-import com.tyzsskills.impl.server.active.CompatibilityManager;
-import com.tyzsskills.impl.server.active.DeathPenalties;
-import com.tyzsskills.impl.server.active.ErrorManager;
-import com.tyzsskills.impl.server.active.FileManager;
+import com.tyzsskills.impl.server.core.CompatibilityManager;
+import com.tyzsskills.impl.server.core.DeathPenaltiesManager;
+import com.tyzsskills.impl.server.core.ErrorManager;
+import com.tyzsskills.impl.server.core.FileManager;
 import com.tyzsskills.impl.server.attachments.BlockMarker;
 import com.tyzsskills.impl.server.attachments.PlayerData;
 import com.tyzsskills.impl.server.categories.CategoryLoader;
@@ -110,10 +110,10 @@ public class RuntimeEvents {
         newPlayer.getData(PlayerData.DATA).deserializeNBT(newPlayer.registryAccess(), oldData);
 
         if(event.isWasDeath()) {
-            DeathPenalties.applySpPenalty(newPlayer);
-            DeathPenalties.applyLvlPenalty(newPlayer);
-            DeathPenalties.applyXpPenalty(newPlayer);
-            DeathPenalties.applySkillPenalty(newPlayer);
+            DeathPenaltiesManager.applySpPenalty(newPlayer);
+            DeathPenaltiesManager.applyLvlPenalty(newPlayer);
+            DeathPenaltiesManager.applyXpPenalty(newPlayer);
+            DeathPenaltiesManager.applySkillPenalty(newPlayer);
         }
 
         GenericEffects.restoreEffects(newPlayer);

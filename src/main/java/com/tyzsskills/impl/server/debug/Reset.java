@@ -5,6 +5,7 @@ import com.tyzsskills.api.events.PlayerResetEvent;
 import com.tyzsskills.impl.server.Level.LevelManager;
 import com.tyzsskills.impl.server.attachments.ExplorationProgression;
 import com.tyzsskills.impl.server.attachments.StatsTracker;
+import com.tyzsskills.impl.server.core.LimitManager;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.sp.SpManager;
@@ -24,11 +25,13 @@ public class Reset {
                     resetSpells(player);
                     resetMetaData(player);
                     resetStats(player);
+                    resetQuotas(player);
                 }
                 case METADATA -> resetMetaData(player);
                 case STATS -> resetStats(player);
                 case SKILLS -> resetSkills(player);
                 case SPELLS -> resetSpells(player);
+                case QUOTAS -> resetQuotas(player);
             }
             NeoForge.EVENT_BUS.post(new PlayerResetEvent(player));
             PacketDistributor.sendToPlayer(player, UpdatePayloads.getInitPayload(player));
@@ -44,5 +47,8 @@ public class Reset {
     private static void resetStats(ServerPlayer player){player.getData(StatsTracker.DATA).resetStats();}
     private static void resetSkills(ServerPlayer player){SkillManager.resetSkillLevels(player);}
     private static void resetSpells(ServerPlayer player){SpellManager.resetSpells(player);}
+    private static void resetQuotas(ServerPlayer player){
+        LimitManager.resetLimits(player, -1L);
+    }
 
 }

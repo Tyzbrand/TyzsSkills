@@ -20,7 +20,7 @@ public class UIProgressBar extends UIElement {
 
     @Override
     protected void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        var ratio = Math.min(1f, value.get());
+        var ratio = Math.clamp(value.get(), 0f, 1f);
         if(ratio <= 0f) return;
 
         var currentStyle = style.get();

@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.payloads;
 
 import com.tyzsskills.Settings;
 import com.tyzsskills.Tyzsskills;
-import com.tyzsskills.impl.server.active.ErrorManager;
+import com.tyzsskills.impl.server.core.ErrorManager;
 import com.tyzsskills.integration.ui.renderers.UIOverlayRenderer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

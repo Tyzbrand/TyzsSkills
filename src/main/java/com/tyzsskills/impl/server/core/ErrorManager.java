@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.active;
+package com.tyzsskills.impl.server.core;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

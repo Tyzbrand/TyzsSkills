@@ -2,13 +2,13 @@ package com.tyzsskills;
 
 import com.mojang.logging.LogUtils;
 import com.tyzsskills.api.events.TyzsSkillsCommonSetupEvent;
-import com.tyzsskills.impl.server.active.AttributeRegistry;
-import com.tyzsskills.impl.server.active.EffectRegistry;
-import com.tyzsskills.impl.server.active.SoundRegistry;
 import com.tyzsskills.impl.server.attachments.*;
 import com.tyzsskills.impl.server.events.RuntimeEvents;
 import com.tyzsskills.impl.server.events.XpGainsEvents;
 import com.tyzsskills.impl.server.payloads.*;
+import com.tyzsskills.impl.server.registries.AttributeRegistry;
+import com.tyzsskills.impl.server.registries.EffectRegistry;
+import com.tyzsskills.impl.server.registries.SoundRegistry;
 import com.tyzsskills.impl.server.skills.SkillPresets;
 import com.tyzsskills.impl.server.spells.SpellPresets;
 import com.tyzsskills.impl.server.wrappers.TyzsSkillsCommonRegistrationWrapper;
@@ -190,6 +190,12 @@ public class Tyzsskills {
                 ClientReloadPayload.TYPE,
                 ClientReloadPayload.STREAM_CODEC,
                 ClientReloadPayload::Handle
+        );
+
+        registrar.playToClient(
+                UpdatePayloads.LimitsPayload.TYPE,
+                UpdatePayloads.LimitsPayload.STREAM_CODEC,
+                UpdatePayloads.LimitsPayload::Handle
         );
     }
 

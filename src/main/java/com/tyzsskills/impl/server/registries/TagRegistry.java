@@ -1,4 +1,4 @@
-package com.tyzsskills.impl.server.active;
+package com.tyzsskills.impl.server.registries;
 
 import com.tyzsskills.api.records.SkillTag;
 import org.jetbrains.annotations.NotNull;

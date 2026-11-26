@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.tyzsskills.Settings;
-import com.tyzsskills.impl.server.active.ErrorManager;
+import com.tyzsskills.impl.server.core.ErrorManager;
 import com.tyzsskills.impl.server.payloads.ExportPayload;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

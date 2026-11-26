@@ -2,7 +2,7 @@ package com.tyzsskills.impl.server.debug;
 
 import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.impl.server.Level.LevelManager;
-import com.tyzsskills.impl.server.active.ErrorManager;
+import com.tyzsskills.impl.server.core.ErrorManager;
 import com.tyzsskills.impl.server.effects.GenericEffects;
 import com.tyzsskills.impl.server.skills.SkillManager;
 import com.tyzsskills.impl.server.skills.SkillRules;

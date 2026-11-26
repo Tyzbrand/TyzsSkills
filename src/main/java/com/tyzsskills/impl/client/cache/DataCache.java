@@ -5,7 +5,10 @@ import com.tyzsskills.api.records.LevelData;
 import com.tyzsskills.impl.client.overlay.MetadataOverlay;
 import com.tyzsskills.impl.server.payloads.UpdatePayloads;
 import com.tyzsskills.integration.ui.renderers.UIOverlayRenderer;
+import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.TimeZone;
 
 public class DataCache {
     private final ClientCache CACHE;
@@ -23,6 +26,10 @@ public class DataCache {
             allTimeXp = playerData.totalXp();
             earnedSp = playerData.spEarned();
             spentSp = playerData.spSpent();
+
+            xpQuota = playerData.xpQuota();
+            spQuota = playerData.spQuota();
+            lastResetBucket = playerData.lastResetBucket();
         }
 
         public void updateLevel(@NotNull UpdatePayloads.LevelPayload payload) {
@@ -45,10 +52,16 @@ public class DataCache {
             CACHE.UPDATE.registerUpdate("Xp Synced: New Cached Xp Value [" + xp + "]");
         }
 
-
         public void updateLevelData(@NotNull UpdatePayloads.LevelDataPayload payload) {
             levelData = payload.data();
             CACHE.UPDATE.registerUpdate("Level Data Synced: New Cached Level Data [" + payload.data().goal() + " xp, " + payload.data().reward() + "sp]");
+        }
+
+        public void updateLimits(@NotNull UpdatePayloads.LimitsPayload payload){
+            spQuota = payload.spQuota();
+            xpQuota = payload.xpQuota();
+            lastResetBucket = payload.lastResetBucket();
+            CACHE.UPDATE.registerUpdate("Limit Quotas Synced");
         }
     }
 
@@ -78,6 +91,16 @@ public class DataCache {
     public int getSpReward() {
         return levelData != null ? levelData.reward() : 0;
     }
+
+    //LIMITS
+    private float xpQuota ;
+    public float getXpQuota() {return xpQuota;}
+
+    private int spQuota;
+    public int getSpQuota(){return spQuota;}
+
+    private long lastResetBucket;
+    public long getLastResetBucket() {return lastResetBucket;}
 
     //STATS
     private float sessionXp;
@@ -114,5 +137,43 @@ public class DataCache {
     }
     public void triggerLevelOverlay(int currentLvl, int spGain){
         getOrCreateStack().addLevel(currentLvl, spGain);
+    }
+
+    //Quotas
+    private long getCurrentTimeSeconds() {
+        return switch (Settings.Server.LIMIT_TYPE.get()) {
+            case REAL_TIME -> {
+                var now = System.currentTimeMillis();
+                yield (now + TimeZone.getDefault().getOffset(now)) / 1000L;
+            }
+            case GAME_TIME -> {
+                var level = Minecraft.getInstance().level;
+                yield level == null ? -1L : level.getGameTime() / 20L;
+            }
+        };
+    }
+
+    public void syncClientQuotas() {
+        var intervalSec = Settings.Server.LIMIT_RESET_INTERVAL.get() * 60L;
+        var nowSec = getCurrentTimeSeconds();
+        if(nowSec < 0) return;
+
+        var current = intervalSec <= 0 ? 0L : nowSec / intervalSec;
+        if(current != lastResetBucket) {
+            xpQuota = 0f;
+            spQuota = 0;
+            lastResetBucket = current;
+            CACHE.incrVersion();
+        }
+    }
+
+    public long getRemainingSeconds() {
+        long intervalSec = Settings.Server.LIMIT_RESET_INTERVAL.get() * 60L;
+        if(intervalSec <= 0) return -1L;
+
+        var nowSec = getCurrentTimeSeconds();
+        if(nowSec < 0) return 0L;
+
+        return intervalSec - Math.floorMod(nowSec, intervalSec);
     }
 }
