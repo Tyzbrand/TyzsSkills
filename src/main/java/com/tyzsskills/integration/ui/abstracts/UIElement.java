@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.tyzsskills.api.Enums;
 import com.tyzsskills.integration.ui.interfaces.IShadowRenderable;
 import com.tyzsskills.integration.ui.models.UITooltip;
-import com.tyzsskills.integration.ui.renderers.UIShadowRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.function.BiPredicate;
@@ -57,10 +56,6 @@ public abstract class UIElement {
 
     //Draws
     protected abstract void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick);
-
-    protected void renderShadow(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        render(gui, mouseX, mouseY, partialTick);
-    }
 
     public final void draw(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean inheritedVisible, boolean inheritedShaded, float inheritedAlpha){
         var visible = inheritedVisible && visibleWhen.get();
@@ -197,11 +192,9 @@ public abstract class UIElement {
 
     //Utils
     private void drawShadedOrNot(GuiGraphics gui, int mouseX, int mouseY, float partialTick, boolean shaded, float alpha) {
-        if (this instanceof IShadowRenderable<?>) {
+        if (this instanceof IShadowRenderable<?> shadowable) {
             var size = shadowSize.get();
-            if (size != null && size > 0f)
-                UIShadowRenderer.render(gui, size, alpha, () -> renderShadow(gui, mouseX, mouseY, partialTick));
-
+            if (size != null && size > 0f) shadowable.renderShadow(gui, getRawX(), getRawY(), size, alpha);
         }
 
         if (!shaded && alpha >= 1f) { render(gui, mouseX, mouseY, partialTick); return; }

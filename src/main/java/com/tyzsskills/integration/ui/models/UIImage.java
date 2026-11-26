@@ -40,25 +40,20 @@ public class UIImage extends UIElement implements IShadowRenderable<UIImage> {
 
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        var currentTexture = isUniqueTexture ? texture.get() : null;
-        var currentStyle = !isUniqueTexture && style != null ? style.get() : null;
-
-        if(isUniqueTexture ? currentTexture == null : currentStyle == null) return;
-
-        blitImage(gui, currentTexture, currentStyle);
+        var src = getShadowSource();
+        if (src == null) return;
+        gui.blit(src.texture(), getRawX(), getRawY(), src.u(), src.v(), src.w(), src.h(), src.texW(), src.texH());
     }
 
 
-    //UTILS
-    private void blitImage(GuiGraphics gui, UITexture currentTexture, ImageStyle currentStyle) {
-        if (isUniqueTexture) {
-            gui.blit(currentTexture.texture(), getRawX(), getRawY(), 0, 0,
-                    getRawWidth(), getRawHeight(), currentTexture.width(), currentTexture.height());
-        } else {
-            gui.blit(currentStyle.image().texture(), getRawX(), getRawY(),
-                    currentStyle.u(), currentStyle.v(),
-                    currentStyle.width(), currentStyle.height(),
-                    currentStyle.image().width(), currentStyle.image().height());
+    @Override
+    public ShadowSource getShadowSource() {
+        if(isUniqueTexture) {
+            var tex = texture.get();
+            return tex != null ? new ShadowSource(tex.texture(), 0, 0, getRawWidth(), getRawHeight(), tex.width(), tex.height()) : null;
         }
+
+        var s = style != null ? style.get() : null;
+        return s != null ? new ShadowSource(s.image().texture(), s.u(), s.v(), s.width(), s.height(), s.image().width(), s.image().height()) : null;
     }
 }

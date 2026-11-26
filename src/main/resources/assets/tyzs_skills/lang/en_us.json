@@ -40,9 +40,11 @@
   "gui.tyzs_skills.Tab.bookmarks" : "Bookmarks",
 
   "gui.tyzs_skills.stats.session_xp" : "Session xp",
+  "gui.tyzs_skills.stats.all_time_xp" : "All time xp",
   "gui.tyzs_skills.stats.sp_earned" : "SP earned",
   "gui.tyzs_skills.stats.sp_spent" : "SP spent",
   "gui.tyzs_skills.stats.skill_unlocked" : "Skill unlocked",
+  "gui.tyzs_skills.stats.spell_unlocked" : "Spell unlocked",
 
 
   "key.tyzs_skills.open_menu" : "Open skills Menu",
@@ -228,7 +230,6 @@
   "button.tyzs_skills.config_btn" : "Configuration",
 
   "gui.tyzs_skills.stats.xp_per_hour" : "/h",
-  "gui.tyzs_skills.stats.all_time_xp" : "All time xp",
 
   "gui.tyzs_skills.level_lock" : "Requires Level",
   "gui.tyzs_skills.conlict" : "Conflicts with",

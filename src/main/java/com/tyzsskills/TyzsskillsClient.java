@@ -14,12 +14,14 @@ import com.tyzsskills.integration.ui.models.UIImage;
 import com.tyzsskills.integration.ui.models.UIOverlay;
 import com.tyzsskills.integration.ui.records.UITexture;
 import com.tyzsskills.integration.ui.renderers.UIOverlayRenderer;
+import com.tyzsskills.integration.ui.renderers.UIShadowRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -58,6 +60,10 @@ public class TyzsskillsClient {
         Settings.Client.readSettings();
     }
 
+    @SubscribeEvent
+    public static void registerReloadListeners(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener((ResourceManagerReloadListener) rm -> UIShadowRenderer.clearCache());
+    }
 
     @SubscribeEvent
     public static void registerGuiLayers(RegisterGuiLayersEvent event){

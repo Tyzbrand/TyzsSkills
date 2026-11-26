@@ -95,6 +95,9 @@ public class DataCache {
     int ownedSkills;
     public int getOwnedSkills() {return ownedSkills;}
 
+    int maxSkills;
+    public int getMaxSkills(){return maxSkills;}
+
     public int getOwnedSpells() {return CACHE.SPELLS.getAllPurchasedSpells().size();}
 
     private MetadataOverlay getOrCreateStack(){

@@ -39,6 +39,7 @@ public class SkillsCache {
             skillLevels.putAll(playerSkillData.playerSkillLevels());
 
             CACHE.METADATA.ownedSkills = skillLevels.values().stream().mapToInt(Integer::intValue).sum();
+            CACHE.METADATA.maxSkills = getAllSkills().values().stream().mapToInt(ISkill::getMaximumLevel).sum();
 
             sortCategories(playerSkillData.categories());
         }

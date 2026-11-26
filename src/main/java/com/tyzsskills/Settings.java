@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public final class Settings {
-    public static final String CONFIG_VERSION = "7.10";
+    public static final String CONFIG_VERSION = "7.11";
 
     private static final Map<String, Setting<?, ?>> SERVER_REGISTRY = new LinkedHashMap<>();
     private static final Collection<Setting<?, ?>> SERVER_REGISTRY_VIEW = Collections.unmodifiableCollection(SERVER_REGISTRY.values());
@@ -236,6 +236,9 @@ public final class Settings {
         public static final FloatSetting UI_VOLUME =
                 fl("ui_volume", Enums.SettingCategory.CLIENT_GENERAL, 70f, 0f, 100f)
                         .withComment("Volume of menu clicks.");
+        public static final BoolSetting RENDER_SHADOWS =
+                bool("render_icon_shadows", Enums.SettingCategory.CLIENT_GENERAL, true)
+                        .withComment("Render shadows behind some menu elements.");
         public static final FloatSetting TOOLTIP_SCALES =
                 fl("tooltip_scales", Enums.SettingCategory.CLIENT_GENERAL, .87f, .5f, 30f)
                         .withComment("Scale of all menu tooltips.");
@@ -333,10 +336,6 @@ public final class Settings {
                         .withComment("Scroll bar speed in the menu.");
 
         //PERFORMANCES
-        public static final BoolSetting RENDER_SHADOWS =
-                bool("render_icon_shadows", Enums.SettingCategory.CLIENT_PERFORMANCE, true)
-                        .withComment("Render shadows behind some menu elements (can lower FPS in the menu).");
-
         public static final BoolSetting RENDER_PLAYER =
                 bool("render_player", Enums.SettingCategory.CLIENT_PERFORMANCE, true)
                         .withComment("Render a 3D view of the player in the menu (can lower FPS in the menu with some mods/shaders).");

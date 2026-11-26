@@ -91,11 +91,11 @@ public class SpellWheel extends Screen {
 
             if(currentMode == Enums.WheelMode.CAST){
                 mainPanel.addChild(new UIImageButton(slotPos.x, slotPos.y, () ->  CADRE_CAST_DEFAULT, () -> handleCast(spellInSlot, currentSlot))
-                        .withShadow(2f)
+                        .withShadow(5f)
                         .withCustomHover((mx, my) -> hoveredSlot == currentSlot)
                         .withShade(() -> hasActiveCooldown(spellInSlot)));
             }
-            else mainPanel.addChild(new UIImageButton(slotPos.x, slotPos.y, () ->  CADRE_ASSIGN_DEFAULT, () -> handleAssignation(currentSlot)));
+            else mainPanel.addChild(new UIImageButton(slotPos.x, slotPos.y, () ->  CADRE_ASSIGN_DEFAULT, () -> handleAssignation(currentSlot)).withShadow(5f));
 
             if(spellInSlot == null) continue;
 

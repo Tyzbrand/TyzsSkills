@@ -25,14 +25,22 @@ public class UIImageButton extends UIButton implements IShadowRenderable<UIImage
 
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        int finalU;
-        int finalV;
-        var currentStyle = style.get();
+        var src = getShadowSource();
+        if(src == null) return;
+        gui.blit(src.texture(), getRawX(), getRawY(), src.u(), src.v(), src.w(), src.h(), src.texW(), src.texH());
+    }
 
-        if(disabledWhen.get()) {finalU = currentStyle.uDisabled(); finalV = currentStyle.vDisabled();}
-        else if(isHovered()) {finalU =  currentStyle.uHover(); finalV = currentStyle.vHover();}
-        else {finalU = currentStyle.u(); finalV = currentStyle.v();}
+    @Override
+    public ShadowSource getShadowSource() {
+        var s = style.get();
+        if(s == null) return null;
 
-        gui.blit(currentStyle.image().texture(), getRawX(), getRawY(), finalU, finalV, getRawWidth(), getRawHeight(), currentStyle.image().width(), currentStyle.image().height());
+        int finalU, finalV;
+
+        if(disabledWhen.get()) {finalU = s.uDisabled(); finalV = s.vDisabled();}
+        else if(isHovered()) {finalU = s.uHover(); finalV = s.vHover();}
+        else {finalU = s.u(); finalV = s.v();}
+
+        return new ShadowSource(s.image().texture(), finalU, finalV, getRawWidth(), getRawHeight(), s.image().width(), s.image().height());
     }
 }

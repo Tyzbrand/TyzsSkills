@@ -49,16 +49,12 @@ public class SkillTooltip extends UITooltip {
             new UIStyles.BackgroundStyle(0xFF753636, Enums.BackgroundType.CUT)
                     .withBorder(new UIStyles.BorderStyle(ColorTools.darken(0xFF753636), Enums.BorderType.OUTER));
 
-    private static final UIStyles.BackgroundStyle TOOLTIP =
-            new UIStyles.BackgroundStyle(Styles.TOOLTIP_BACKGROUND_START, Styles.TOOLTIP_BACKGROUND_END, Enums.BackgroundType.CUT, 4, 4)
-                    .withBorder(new UIStyles.BorderStyle(0xFFA27C4F, 0xFF724C20, Enums.BorderType.INNER));
-
     private static final UIStyles.ImageStyle SLOT =
             new UIStyles.ImageStyle(32, 32, 96, 346, Styles.MAIN_TEXTURE);
     //endregion
 
     public SkillTooltip(ISkill skill){
-        super(() -> TOOLTIP);
+        super(() -> Styles.TOOLTIP);
 
         this.skill = skill;
 
