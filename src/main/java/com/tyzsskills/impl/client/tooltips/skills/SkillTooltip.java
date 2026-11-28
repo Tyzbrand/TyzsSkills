@@ -50,7 +50,7 @@ public class SkillTooltip extends UITooltip {
                     .withBorder(new UIStyles.BorderStyle(ColorTools.darken(0xFF753636), Enums.BorderType.OUTER));
 
     private static final UIStyles.ImageStyle SLOT =
-            new UIStyles.ImageStyle(32, 32, 96, 346, Styles.MAIN_TEXTURE);
+            new UIStyles.ImageStyle(30, 30, 97, 347, Styles.MAIN_TEXTURE);
     //endregion
 
     public SkillTooltip(ISkill skill){
@@ -68,9 +68,9 @@ public class SkillTooltip extends UITooltip {
         updateData();
 
         this.addChild(new UIImage(2, 2, () -> SLOT));
-        this.addChild(new UIImage(10, 10, 16, 16, () -> isSkillAvailable ? skillIcon : Styles.LOCKED_ICON)
+        this.addChild(new UIImage(9, 9, 16, 16, () -> isSkillAvailable ? skillIcon : Styles.LOCKED_ICON)
                 .withShadow(2f)
-                .withScale(1.27f, Enums.ScalePivot.CENTER));
+                .withScale(1.3f, Enums.ScalePivot.CENTER));
 
         this.addChild(new UIText(38, 5, () -> title)
                 .withScale(1.2f, Enums.ScalePivot.TOP_LEFT));

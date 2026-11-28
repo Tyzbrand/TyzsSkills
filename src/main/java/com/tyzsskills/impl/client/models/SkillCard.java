@@ -106,7 +106,7 @@ public class SkillCard extends UIContainer {
     //IMPLEMENTATION
     private void initElements(){
         //BACKGROUND & ICON
-        this.addChild(new UIImage(0, 0, () -> isMaxed ? SKILL_CARD_MAXED : SKILL_CARD));
+        this.addChild(new UIImage(0, 0, () -> isMaxed ? SKILL_CARD_MAXED : SKILL_CARD).withShadow(1f));
 
         var skillTooltip = new SkillTooltip(skill);
         this.addChild(new UIImageButton(4, 4, this::getCadreStyle, this::handleDeactivation)

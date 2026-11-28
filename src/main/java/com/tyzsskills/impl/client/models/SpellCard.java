@@ -80,7 +80,7 @@ public class SpellCard extends UIContainer {
     //IMPLEMENTATION
     private void initElements(){
         //BACKGROUND
-        this.addChild(new UIImage(0, 0, () -> SKILL_CARD));
+        this.addChild(new UIImage(0, 0, () -> SKILL_CARD).withShadow(1f));
 
         //CADRE && ICON
         var spellTooltip = new SpellTooltip(spell);

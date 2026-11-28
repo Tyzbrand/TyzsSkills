@@ -4,6 +4,7 @@ import com.tyzsskills.api.interfaces.ISkill;
 import com.tyzsskills.api.model.SkillBehavior;
 import com.tyzsskills.impl.client.active.TagMatchManager;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 
@@ -28,14 +29,20 @@ public class NutritionEffect extends SkillBehavior {
         var values = skill.getValueSet("nutrition_bonus");
         if(values == null) return;
 
-        float bonusPercentage = values.getValue(lvl) / 100f;
+        var bonusPercentage = values.getValue(lvl) / 100f;
+        var nutritionBonus = Math.round(foodValue.nutrition() * bonusPercentage);
+        var saturationBonus = foodValue.saturation() * bonusPercentage;
 
-        int nutritionBonus = Math.round(foodValue.nutrition() * bonusPercentage);
-
-        if(nutritionBonus > 0){
+        if(nutritionBonus > 0 || saturationBonus > 0f){
             if(TagMatchManager.isItemInList(skill.getSpecificParameters(), "food_blacklist", item)) return;
 
-            player.getFoodData().eat(nutritionBonus, foodValue.saturation() * 0.5f);
+            var foodData = player.getFoodData();
+            var newFood = Mth.clamp(foodData.getFoodLevel() + nutritionBonus, 0, 20);
+            var newSat = Mth.clamp(foodData.getSaturationLevel() + saturationBonus, 0f, (float) newFood);
+
+            foodData.setFoodLevel(newFood);
+            foodData.setSaturation(newSat);
+
             notifyClient(player, skill);
         }
     }

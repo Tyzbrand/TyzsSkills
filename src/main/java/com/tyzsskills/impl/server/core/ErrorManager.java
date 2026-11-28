@@ -93,6 +93,7 @@ public class ErrorManager {
         errors.add(message);
     }
 
+
     public static void registerSettingWarn(@NotNull String source, @NotNull String error, boolean isClient){
         var message = HEADER.copy().withStyle(WARNING)
                 .append(Component.literal("Warn in setting ").withStyle(WARNING))

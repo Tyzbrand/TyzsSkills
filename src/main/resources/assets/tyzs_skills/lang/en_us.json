@@ -26,6 +26,7 @@
   "skill.tyzs_skills.unit.slot" : "slot(s)",
   "skill.tyzs_skills.unit.spell_slot" : "spell slot(s)",
   "skill.tyzs_skills.unit.power" : "block/t",
+  "skill.tyzs_skills.unit.durability" : "durability",
 
 
   "overlay.tyzs_skills.level" : "Level",
@@ -79,7 +80,7 @@
   "skill.tyzs_skills.venomous_attack.description" : "Adds a {success_probability}% chance to poison targets on hit.",
 
   "skill.tyzs_skills.critical_hit.displayName" : "Critical Strike",
-  "skill.tyzs_skills.critical_hit.description" : "Adds a {success_probability}% chance to deal a critical hit (double damage).",
+  "skill.tyzs_skills.critical_hit.description" : "Adds a {success_probability}% chance to deal a critical hit.",
 
   "skill.tyzs_skills.damage_deal.displayName" : "Deflection",
   "skill.tyzs_skills.damage_deal.description" : "Adds a {success_probability}% chance to negate and reflect incoming melee damage.",
@@ -105,8 +106,8 @@
   "skill.tyzs_skills.green_thumb.displayName" : "Green Thumb",
   "skill.tyzs_skills.green_thumb.description" : "Adds a {success_probability}% chance to double drops when harvesting crops and plants.",
 
-  "skill.tyzs_skills.nutrition.displayName" : "Metabolism",
-  "skill.tyzs_skills.nutrition.description" : "Increases food value (nutrition & saturation) by {nutrition_bonus}%.",
+  "skill.tyzs_skills.nutrition.displayName" : "Cuistot",
+  "skill.tyzs_skills.nutrition.description" : "Increases nutritional benefits from food by {nutrition_bonus}%.",
 
   "skill.tyzs_skills.experience_boost.displayName" : "Wisdom",
   "skill.tyzs_skills.experience_boost.description" : "Increases Vanilla XP gain by {bonus_percentage}%.",
@@ -118,7 +119,7 @@
   "skill.tyzs_skills.stealth.description" : "Reduces the detection range of hostile mobs by {range_reduction}%.",
 
   "skill.tyzs_skills.magnet.displayName" : "Magnet",
-  "skill.tyzs_skills.magnet.description" : "Attracts items within a {block_radius} block radius [sneak to disable].",
+  "skill.tyzs_skills.magnet.description" : "Attracts items within a {block_radius} block radius.\n\n[sneak to avoid].",
 
   "skill.tyzs_skills.jinxed.displayName" : "Jinxed",
   "skill.tyzs_skills.jinxed.description" : "Adds a {success_probability}% chance to scramble the target's hotbar on hit.",
@@ -133,7 +134,7 @@
   "skill.tyzs_skills.shepherd_s_blessing.description" : "Baby animals grow {growth_speed}% faster.",
 
   "skill.tyzs_skills.spare_parts.displayName" : "Spare Parts",
-  "skill.tyzs_skills.spare_parts.description" : "Grants a {refund_chance}% chance for each ingredient to be recovered when crafting.\nUp to {max_materials} item(s) per craft.",
+  "skill.tyzs_skills.spare_parts.description" : "Grants a {refund_chance}% chance for each ingredient to be recovered when crafting.\n\nUp to {max_materials} item(s) per craft.",
 
   "skill.tyzs_skills.twist_of_fate.displayName" : "Twist Of Fate",
   "skill.tyzs_skills.twist_of_fate.description" : "Increases the quantity of items found in structure loot chests by {loot_multiplier}%.",
@@ -145,11 +146,10 @@
   "skill.tyzs_skills.keepsake.description" : "Safeguards the first {saved_slots} slot(s) of your inventory upon death.",
 
   "skill.tyzs_skills.impulse.displayName" : "Impulse",
-  "skill.tyzs_skills.impulse.description" : "Firing a crossbow knocks you backwards (recoil strength: {repulse_speed}).\n\nSneak to avoid.",
+  "skill.tyzs_skills.impulse.description" : "Firing a crossbow knocks you backwards at {repulse_speed} block/t.\n\nExtra wear per shot: {durability_penalty} durability.\n\n[sneak to avoid]",
 
   "skill.tyzs_skills.divine_salvation.displayName" : "Divine Salvation",
-  "skill.tyzs_skills.divine_salvation.description" : "Prevents a fatal blow and pushes entities within a {repulse_radius} block radius away at {repulse_power} block/t.\n\nGrants Reprieve for {reprieve_duration} sec.",
-
+  "skill.tyzs_skills.divine_salvation.description" : "Prevents a fatal blow and pushes entities within a {repulse_radius} block radius at {repulse_power} block/t.\n\nGrants Reprieve for {reprieve_duration} sec.",
 
   "skill.tyzs_skills.overload.displayName" : "Overload",
   "skill.tyzs_skills.overload.description" : "Increases the number of spell slots by {value}.",

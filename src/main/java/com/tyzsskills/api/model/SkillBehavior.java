@@ -2,9 +2,11 @@ package com.tyzsskills.api.model;
 
 import com.tyzsskills.Settings;
 import com.tyzsskills.api.interfaces.ISkill;
+import com.tyzsskills.impl.server.core.ErrorManager;
 import com.tyzsskills.impl.server.interfaces.ISkillBehavior;
 import com.tyzsskills.impl.server.payloads.SkillTriggerPayload;
 import com.tyzsskills.impl.server.skills.SkillManager;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.bus.api.Event;
@@ -45,9 +47,14 @@ public abstract class SkillBehavior implements ISkillBehavior {
 
 
     //Tools
-    protected void notifyClient(@NotNull ServerPlayer player, @NotNull ISkill skill){
+    protected final void notifyClient(@NotNull ServerPlayer player, @NotNull ISkill skill){
         if(!Settings.Server.TRIGGER_SKILL_OVERLAY.get()) return;
         PacketDistributor.sendToPlayer(player, new SkillTriggerPayload(skill.getId()));
+    }
+
+    protected final void registerMissingKey(@NotNull ServerPlayer player, @NotNull ISkill skill, @NotNull String valueKey){
+        var error = Component.literal("Missing '"+ valueKey + "' value set for skill : [" + skill.getId() + "]");
+        ErrorManager.printDynamicError(player, error);
     }
 
     //Utils

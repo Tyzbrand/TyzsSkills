@@ -33,8 +33,6 @@ public class PropertyCard extends UIContainer {
             new UIStyles.ImageStyle(9, 9, 206, 227, Styles.MAIN_TEXTURE);
     private static final UIStyles.ImageStyle PROGRESS =
             new UIStyles.ImageStyle(92, 5, 136, 335, Styles.MAIN_TEXTURE);
-    private static final UIStyles.ImageStyle PROGRESS_MAXED =
-            new UIStyles.ImageStyle(92, 5, 136, 330, Styles.MAIN_TEXTURE);
 
     private static final UIStyles.BackgroundStyle PROP_LABEL =
             new UIStyles.BackgroundStyle(Styles.COLOR_BG, Enums.BackgroundType.CUT, 3, 3);
@@ -50,12 +48,12 @@ public class PropertyCard extends UIContainer {
         this.property = property;
         this.spell = spell;
 
-        addChild(new UIImage(0, 0, () -> CARD));
+        addChild(new UIImage(0, 0, () -> CARD).withShadow(1f));
 
         var title = Component.translatable(property.displayName());
-        addChild(new UIText(9, 9, () -> title)
+        addChild(new UIText(9, 10, () -> title)
                 .withBackground(() -> PROP_LABEL)
-                .withScale(.75f, Enums.ScalePivot.TOP_LEFT));
+                .withScale(.65f, Enums.ScalePivot.TOP_LEFT));
 
         var purchaseTooltip = new PropertyPurchaseTooltip(spell, property);
         addChild(new UIImageButton(90, 7,() -> PURCHASE_BTN, this::handlePurchase)
@@ -66,7 +64,7 @@ public class PropertyCard extends UIContainer {
         addChild(new UIImage(79, 7, () -> INFO)
                 .withTooltip(() -> infoTooltip));
 
-        addChild(new UIProgressBar(7, 18, () -> getPropertyProgress() >= 1f ? PROGRESS_MAXED : PROGRESS, this::getPropertyProgress));
+        addChild(new UIProgressBar(7, 18, () -> PROGRESS, this::getPropertyProgress));
 
         updateData();
     }

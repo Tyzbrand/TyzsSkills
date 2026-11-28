@@ -30,6 +30,9 @@ public class SpellPanel extends UIContainer {
     private static final UIStyles.BackgroundStyle FOCUS_BLUR =
             new UIStyles.BackgroundStyle(0xA6000000, Enums.BackgroundType.CUT, 0, 0);
 
+    private static final UIStyles.BackgroundStyle SCROLL_BG =
+            new UIStyles.BackgroundStyle(0x33000000, Enums.BackgroundType.CUT, 0, 0);
+
     private static final UIStyles.ButtonStyle QUIT_BTN =
             new UIStyles.ButtonStyle(13, 13, 202, 248, 215, 248, Styles.MAIN_TEXTURE);
 
@@ -65,14 +68,8 @@ public class SpellPanel extends UIContainer {
         var originPanel = new UIContainer(origin.x, origin.y);
         focusPanel.addChild(originPanel);
 
-        originPanel.addChild(new UIImageButton(100, 5, () -> QUIT_BTN, this::unfocusSpell));
-
-        //TODO: translation
-        var message = Component.literal("Properties");
-        originPanel.addChild(new UIText(10, 9, () -> message)
-                .withBackground(() -> Styles.DEFAULT_BACKGROUND));
-
-        var scroll = new UIScrollView(5, 23, 110, 57, false);
+        var scroll = new UIScrollView(5, 5, 110, 75, false);
+        originPanel.addChild(new UIBackground(scroll.getOffsetX(), scroll.getOffsetY(), scroll.getRawWidth(), scroll.getRawHeight(), () -> SCROLL_BG));
         originPanel.addChild(scroll);
         //TO SEE SCROLL AREA => scroll.addChild(new UIBackground(0, 0, 110,200, () -> Styles.DEFAULT_BACKGROUND)
         //        .withBorder(() -> false, () -> false));
@@ -82,6 +79,9 @@ public class SpellPanel extends UIContainer {
             scroll.addChild(new PropertyCard(2, startY, property, spell));
             startY += PropertyCard.HEIGHT + 2;
         }
+
+        originPanel.addChild(new UIImageButton(FOCUS_POPUP.width() - 7, -6, () -> QUIT_BTN, this::unfocusSpell)
+                .withScale(.75f, Enums.ScalePivot.BOTTOM_LEFT));
     }
 
     //IMPLEMENTATION

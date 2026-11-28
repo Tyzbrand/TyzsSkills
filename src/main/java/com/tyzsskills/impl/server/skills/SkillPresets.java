@@ -166,6 +166,11 @@ public class SkillPresets {
                 .withBehavior(new SunderArmorEffect())
                 .build());
 
+        finalList.add(SkillPrefab.immutable("stealth", category, List.of(4, 6, 8, 12, 16))
+                .addCustomValue("range_reduction", new ValueSet(List.of(10f, 20f, 30f, 40f, 50f), "skill.tyzs_skills.unit.percentage"))
+                .withBehavior(new StealthEffect())
+                .build());
+
         return finalList;
     }
 
@@ -191,10 +196,6 @@ public class SkillPresets {
                 .withBehavior(new ExperienceBoostEffect())
                 .build());
 
-        finalList.add(SkillPrefab.immutable("stealth", category, List.of(4, 6, 8, 12, 16))
-                .addCustomValue("range_reduction", new ValueSet(List.of(10f, 20f, 30f, 40f, 50f), "skill.tyzs_skills.unit.percentage"))
-                .withBehavior(new StealthEffect())
-                .build());
 
         finalList.add(SkillPrefab.immutable("magnet", category, List.of(4, 6, 8, 12))
                 .addCustomValue("block_radius", new ValueSet(List.of(3f, 5f, 7f, 10f), "skill.tyzs_skills.unit.block_radius"))
@@ -249,12 +250,9 @@ public class SkillPresets {
 
         finalList.add(SkillPrefab.immutable("impulse", category, List.of(5, 8, 12, 18))
                 .addCustomValue("repulse_speed", new ValueSet(List.of(1.25f, 1.75f, 2.5f, 3.25f), "skill.tyzs_skills.unit.power"))
+                .addCustomValue("durability_penalty", new ValueSet(List.of(-2f, -5f, -8f, -11f), "skill.tyzs_skills.unit.durability"))
                 .withBehavior(new ImpulseEffect())
-                .withConfig(new SkillConfiguration().withParameters(makeTag(tag -> {
-                    tag.put("item_blacklist", new ListTag());
-                    tag.putBoolean("works_in_creative", false);
-                    tag.putBoolean("sneak_to_avoid", true);
-                })))
+                .withConfig(new SkillConfiguration().withParameters(makeTag(tag -> {tag.put("item_blacklist", new ListTag());})))
                 .build());
 
         finalList.add(SkillPrefab.immutable("divine_salvation", category, List.of(10, 15))
